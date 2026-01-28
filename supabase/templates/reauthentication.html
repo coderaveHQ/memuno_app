@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Re-Authentifizierung bestätigen - Memuno</title>
+</head>
+
+<body style="font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; line-height: 1.6; color: #fafafa; background-color: #09090b; margin: 0; padding: 0;">
+
+  <div style="max-width: 580px; margin: 0 auto; padding: 40px 20px;">
+
+    <!-- Header -->
+    <div style="text-align: center; margin-bottom: 40px;">
+      <div style="display: inline-block; background: #0f0f12; border: 1px solid #27272a; border-radius: 12px; padding: 16px 24px; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);">
+        <h1 style="color: #fafafa; margin: 0; font-size: 24px; font-weight: 600; letter-spacing: -0.025em;">Memuno</h1>
+      </div>
+    </div>
+
+    <!-- Main Card -->
+    <div style="background: #0f0f12; border: 1px solid #27272a; border-radius: 12px; padding: 32px; margin: 20px 0; box-shadow: 0 1px 3px rgba(0, 0, 0, 0.35);">
+
+      <h2 style="color: #fafafa; margin: 0 0 24px 0; font-size: 20px; font-weight: 600; letter-spacing: -0.025em;">Re-Authentifizierung erforderlich</h2>
+
+      <p style="color: #d4d4d8; margin-bottom: 24px; font-size: 16px;">
+        Hallo,
+      </p>
+
+      <p style="color: #d4d4d8; margin-bottom: 24px; font-size: 16px;">
+        Für diese Aktion ist eine erneute Bestätigung erforderlich. Bitte geben Sie den folgenden Code in der App ein:
+      </p>
+
+      <!-- OTP Display -->
+      <div style="background: #0b0b0d; border: 2px solid #3f3f46; border-radius: 8px; padding: 20px; text-align: center; margin: 16px 0;">
+        <div style="color: #a1a1aa; font-size: 12px; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px; font-weight: 500;">
+          Bestätigungs-Code
+        </div>
+        <div style="font-family: 'SF Mono', 'Monaco', 'Cascadia Code', 'Roboto Mono', monospace; font-size: 28px; font-weight: 700; color: #fafafa; letter-spacing: 6px; margin: 12px 0; user-select: all; -webkit-user-select: all; -moz-user-select: all; -ms-user-select: all;">
+          {{ .Token }}
+        </div>
+        <div style="color: #71717a; font-size: 11px; margin-top: 8px;">
+          Tippen Sie auf den Code, um ihn auszuwählen
+        </div>
+      </div>
+
+      <!-- Warning Box -->
+      <div style="background: #1a1407; border: 1px solid #a16207; border-radius: 8px; padding: 16px; margin: 32px 0;">
+        <p style="margin: 0; color: #fbbf24; font-size: 14px; font-weight: 500;">
+          Sicherheitshinweis: Dieser Link/Code ist zeitlich begrenzt und kann nur einmal verwendet werden.
+        </p>
+      </div>
+
+      <!-- Fallback Link -->
+      <div style="margin-top: 24px; padding-top: 24px; border-top: 1px solid #27272a;">
+        <p style="font-size: 14px; color: #a1a1aa; margin-bottom: 8px;">
+          Falls der Button nicht funktioniert, kopieren Sie diesen Link:
+        </p>
+        <div style="background: #0b0b0d; border: 1px solid #27272a; border-radius: 6px; padding: 12px; word-break: break-all; font-family: 'Monaco', 'Menlo', monospace; font-size: 12px; color: #d4d4d8; user-select: all; -webkit-user-select: all; -moz-user-select: all; -ms-user-select: all;">
+          {{ .ConfirmationURL }}
+        </div>
+      </div>
+    </div>
+
+    <!-- Footer -->
+    <div style="text-align: center; margin-top: 40px; padding-top: 24px; border-top: 1px solid #27272a;">
+      <p style="color: #71717a; font-size: 11px; margin: 0;">
+        © 2026 Memuno by coderave
+      </p>
+    </div>
+
+  </div>
+
+</body>
+</html>

@@ -1,0 +1,88 @@
+# -----------------------------------------------------------------------------
+# General / OS / Editor
+# -----------------------------------------------------------------------------
+*.class
+*.log
+*.pyc
+*.swp
+.DS_Store
+.history
+.svn/
+.swiftpm/
+migrate_working_dir/
+
+# -----------------------------------------------------------------------------
+# IDEs
+# -----------------------------------------------------------------------------
+# IntelliJ / Android Studio
+*.iml
+*.ipr
+*.iws
+.idea/
+
+# VS Code (uncomment if you don't want it in version control)
+# .vscode/
+
+# -----------------------------------------------------------------------------
+# Flutter / Dart / Pub
+# -----------------------------------------------------------------------------
+.dart_tool/
+.flutter-plugins
+.flutter-plugins-dependencies
+.pub-cache/
+.pub/
+build/
+coverage/
+**/doc/api/
+
+# iOS Flutter build metadata
+**/ios/Flutter/.last_build_id
+
+# -----------------------------------------------------------------------------
+# Generated code
+# -----------------------------------------------------------------------------
+*.g.dart
+*.freezed.dart
+*.gr.dart
+*.gen.dart
+
+# -----------------------------------------------------------------------------
+# Android
+# -----------------------------------------------------------------------------
+android/.gradle/
+android/local.properties
+
+# Build outputs (kept from the default Flutter template)
+android/app/debug/
+android/app/profile/
+android/app/release/
+
+# Keystores / signing (never commit these)
+*.jks
+*.keystore
+key.properties
+
+# -----------------------------------------------------------------------------
+# iOS
+# -----------------------------------------------------------------------------
+ios/Pods/
+ios/.symlinks/
+ios/Flutter/ephemeral/
+ios/Flutter/App.framework
+ios/Flutter/Flutter.framework
+ios/Flutter/Flutter.podspec
+ios/Flutter/Generated.xcconfig
+ios/Flutter/ephemeral/
+ios/Runner/GeneratedPluginRegistrant.*
+
+# -----------------------------------------------------------------------------
+# Symbolication / obfuscation
+# -----------------------------------------------------------------------------
+app.*.symbols
+app.*.map.json
+
+# -----------------------------------------------------------------------------
+# Environment / secrets
+# -----------------------------------------------------------------------------
+# Local env files
+.env.local
