@@ -1,0 +1,337 @@
+# -----------------------------------------------------------------------------
+# Release Build (production)
+# -----------------------------------------------------------------------------
+# Purpose:
+# - Build the "production" flavor on every release tag (v*).
+# - Produce reproducible artifacts for:
+#   - Android: APK (manual install) + AAB (Play Store format)
+#   - iOS: build products without code signing (compile validation)
+# - Upload artifacts to GitHub Actions.
+# - Attach those artifacts to the GitHub Release created by Release Please.
+#
+# Trigger:
+# - Push of tags "v*" (tags are created automatically by Release Please)
+# - Manual: workflow_dispatch
+#
+# Versioning strategy:
+# - build-name: derived from tag (v1.2.3 -> 1.2.3)
+# - build-number: GitHub Actions run_number (monotonically increasing)
+#
+# Why no code signing here (for now)?
+# - We want compilation validation + artifacts first.
+# - Store uploads require signing keys/certificates and a fully configured
+#   release pipeline (Fastlane / Play service account / certificates).
+#
+# Future (commented out for now):
+# - Android -> Google Play Production upload (AAB)
+# - iOS -> App Store Connect upload (IPA)
+# -----------------------------------------------------------------------------
+
+name: Release Build (production)
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+# We generally do NOT cancel production release builds.
+# If you re-run a release, you typically want all runs preserved.
+concurrency:
+  group: release-build-production-${{ github.ref }}
+  cancel-in-progress: false
+
+# Default: read-only. The upload job requests write permissions explicitly.
+permissions:
+  contents: read
+
+defaults:
+  run:
+    shell: bash
+
+env:
+  CI: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Android build job (production flavor)
+  # ---------------------------------------------------------------------------
+  android:
+    name: Android build (production)
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    environment: production
+
+    # Environment-scoped variables:
+    # - vars.* are non-secret configuration values
+    # - secrets.* are sensitive values
+    env:
+      SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+      # Optional (recommended) for later Play tooling:
+      # ANDROID_PACKAGE_NAME: dev.coderave.memunoapp
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Java is required for Gradle/Android builds.
+      - name: Set up Java (Android)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      # Install Flutter SDK with caching enabled.
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Print Flutter & Dart versions
+        run: flutter --version
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      # Cache build_runner intermediate outputs to speed up code generation.
+      - name: Cache build_runner outputs
+        uses: actions/cache@v4
+        with:
+          path: |
+            .dart_tool/build
+          key: ${{ runner.os }}-build-runner-${{ hashFiles('pubspec.lock') }}-${{ hashFiles('lib/**', 'test/**', 'pubspec.yaml', 'build.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-runner-${{ hashFiles('pubspec.lock') }}-
+
+      # Generate code required for a successful build:
+      # - freezed/json_serializable
+      # - riverpod_generator
+      # - go_router_builder
+      - name: Run code generation (build_runner)
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      # Determine version from the tag.
+      # Example: v1.2.3 -> build-name=1.2.3
+      #
+      # build-number is still taken from GitHub run_number so it always increases.
+      - name: Determine build name/number from tag
+        run: |
+          TAG="${{ github.ref_name }}"
+          VERSION_NAME="${TAG#v}"
+          echo "VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
+          echo "BUILD_NUMBER=${{ github.run_number }}" >> "$GITHUB_ENV"
+          echo "Using tag=$TAG -> build-name=$VERSION_NAME, build-number=${{ github.run_number }}"
+
+      # APK is useful for quick manual installs / smoke tests.
+      - name: Build APK (production)
+        run: >
+          flutter build apk
+          --flavor production
+          --build-name=$VERSION_NAME
+          --build-number=$BUILD_NUMBER
+          --dart-define=SUPABASE_URL=$SUPABASE_URL
+          --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
+
+      # AAB is the required format for Google Play releases.
+      - name: Build AppBundle (production)
+        run: >
+          flutter build appbundle
+          --flavor production
+          --build-name=$VERSION_NAME
+          --build-number=$BUILD_NUMBER
+          --dart-define=SUPABASE_URL=$SUPABASE_URL
+          --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
+
+      - name: Upload Android artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-production-${{ github.ref_name }}
+          retention-days: 30
+          path: |
+            build/app/outputs/flutter-apk/*.apk
+            build/app/outputs/bundle/**/*.aab
+
+      # -----------------------------------------------------------------------
+      # Google Play Production Upload (FUTURE) — intentionally disabled for now
+      # -----------------------------------------------------------------------
+      # Requirements (GitHub Environment "production" secrets):
+      # - GOOGLE_PLAY_SERVICE_ACCOUNT_JSON (service account json for Play)
+      # - (optional) SIGNING config if needed for local signing
+      #
+      # Preferred approach:
+      # - Use Fastlane `supply` to upload AAB to the Production track.
+      #
+      # - name: Set up Ruby (for Fastlane)
+      #   uses: ruby/setup-ruby@v1
+      #   with:
+      #     ruby-version: "3.3"
+      #     bundler-cache: true
+      #
+      # - name: Upload AAB to Google Play (production) [requires setup]
+      #   run: |
+      #     echo "TODO: configure Fastlane supply with service account credentials"
+
+  # ---------------------------------------------------------------------------
+  # iOS build job (production flavor, no code signing)
+  # ---------------------------------------------------------------------------
+  ios:
+    name: iOS build (production, no codesign)
+    runs-on: macos-latest
+    timeout-minutes: 110
+    environment: production
+
+    env:
+      SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+      # Optional (recommended) for later ASC tooling:
+      # IOS_BUNDLE_ID: dev.coderave.memunoapp
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Print Flutter & Dart versions
+        run: flutter --version
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      - name: Cache build_runner outputs
+        uses: actions/cache@v4
+        with:
+          path: |
+            .dart_tool/build
+          key: ${{ runner.os }}-build-runner-${{ hashFiles('pubspec.lock') }}-${{ hashFiles('lib/**', 'test/**', 'pubspec.yaml', 'build.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-runner-${{ hashFiles('pubspec.lock') }}-
+
+      - name: Run code generation (build_runner)
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Determine build name/number from tag
+        run: |
+          TAG="${{ github.ref_name }}"
+          VERSION_NAME="${TAG#v}"
+          echo "VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
+          echo "BUILD_NUMBER=${{ github.run_number }}" >> "$GITHUB_ENV"
+          echo "Using tag=$TAG -> build-name=$VERSION_NAME, build-number=${{ github.run_number }}"
+
+      # Cache CocoaPods to speed up iOS dependency installs.
+      - name: Cache CocoaPods
+        uses: actions/cache@v4
+        with:
+          path: |
+            ios/Pods
+            ~/.cocoapods
+            ~/Library/Caches/CocoaPods
+          key: ${{ runner.os }}-cocoapods-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cocoapods-
+
+      - name: CocoaPods install
+        run: |
+          cd ios
+          pod install
+          cd ..
+
+      # Build iOS without code signing:
+      # - validates compilation in CI
+      # - does NOT produce an installable IPA
+      - name: Build iOS (production, no codesign)
+        run: >
+          flutter build ios
+          --no-codesign
+          --flavor production
+          --build-name=$VERSION_NAME
+          --build-number=$BUILD_NUMBER
+          --dart-define=SUPABASE_URL=$SUPABASE_URL
+          --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
+
+      - name: Upload iOS artifacts (no codesign)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-production-nosign-${{ github.ref_name }}
+          retention-days: 30
+          path: build/ios/iphoneos
+
+      # -----------------------------------------------------------------------
+      # App Store Connect Upload (FUTURE) — intentionally disabled for now
+      # -----------------------------------------------------------------------
+      # Requirements (GitHub Environment "production" secrets):
+      # - ASC_KEY_ID
+      # - ASC_ISSUER_ID
+      # - ASC_PRIVATE_KEY
+      # - MATCH_GIT_URL (if using match)
+      # - MATCH_PASSWORD
+      #
+      # Typical approach:
+      # 1) Setup Ruby + Fastlane
+      # 2) Fetch signing certs/profiles (match) OR use Xcode automatic signing
+      # 3) Build IPA (signed)
+      # 4) Upload to App Store Connect (TestFlight / App Store)
+      #
+      # - name: Set up Ruby (for Fastlane)
+      #   uses: ruby/setup-ruby@v1
+      #   with:
+      #     ruby-version: "3.3"
+      #     bundler-cache: true
+      #
+      # - name: Build IPA (production) [requires signing]
+      #   run: >
+      #     flutter build ipa
+      #     --flavor production
+      #     --build-name=$VERSION_NAME
+      #     --build-number=$BUILD_NUMBER
+      #     --dart-define=SUPABASE_URL=$SUPABASE_URL
+      #     --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
+      #
+      # - name: Upload to App Store Connect [requires setup]
+      #   run: |
+      #     echo "TODO: configure Fastlane lanes + ASC API key + signing"
+
+  # ---------------------------------------------------------------------------
+  # Attach artifacts to the GitHub Release created by Release Please
+  # ---------------------------------------------------------------------------
+  upload_release_assets:
+    name: Attach artifacts to GitHub Release
+    runs-on: ubuntu-latest
+    needs: [android, ios]
+    timeout-minutes: 10
+
+    # This job needs write permission to upload assets to the release.
+    permissions:
+      contents: write
+
+    steps:
+      # Download all artifacts from previous jobs into ./dist
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: dist
+
+      # Release Please already created the GitHub Release for this tag.
+      # We attach build artifacts to that existing release.
+      #
+      # Note:
+      # - `fail_on_unmatched_files: false` avoids hard failures if an artifact path
+      #   changes or an optional artifact is missing.
+      - name: Upload assets to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ github.ref_name }}
+          files: |
+            dist/**/*
+          fail_on_unmatched_files: false
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

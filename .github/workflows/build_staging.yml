@@ -1,0 +1,329 @@
+# -----------------------------------------------------------------------------
+# Build (staging)
+# -----------------------------------------------------------------------------
+# Purpose:
+# - Build the "staging" flavor on every push to the `staging` branch.
+# - Produce build artifacts for manual QA / distribution preparation:
+#   - Android: APK (quick install) + AAB (Play Store format)
+#   - iOS: Xcode build products without code signing (compile validation)
+#
+# Why a dedicated staging build workflow?
+# - Staging is the integration environment before production releases.
+# - We want deterministic CI builds using environment-scoped secrets/vars.
+# - We keep upload/signing steps disabled until store setup is complete.
+#
+# Trigger:
+# - Automatic: push to `staging`
+# - Manual: workflow_dispatch
+#
+# Build metadata strategy:
+# - build-name: derived from pubspec.yaml (SemVer without +build suffix)
+# - build-number: GitHub Actions run_number (monotonically increasing per workflow)
+#   Rationale:
+#   - build-number must monotonically increase for Android bundles and iOS builds.
+#
+# Notes:
+# - We cache `.dart_tool/build` to speed up subsequent runs.
+# - We pass Supabase runtime secrets via `--dart-define` to avoid committing them.
+# -----------------------------------------------------------------------------
+
+name: Build (staging)
+
+on:
+  push:
+    branches: [staging]
+  workflow_dispatch:
+
+# Cancel older runs for the same branch to save CI minutes.
+concurrency:
+  group: build-staging-${{ github.ref }}
+  cancel-in-progress: true
+
+# Minimal permissions: we only read repo contents and upload artifacts.
+permissions:
+  contents: read
+
+# Use bash for consistency across Linux/macOS runners.
+defaults:
+  run:
+    shell: bash
+
+env:
+  # Convention: make tools behave like CI (less interactive, more strict).
+  CI: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Android build job
+  # ---------------------------------------------------------------------------
+  android:
+    name: Android build (staging)
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    environment: staging
+
+    # Environment-scoped variables:
+    # - vars.* are non-secret configuration values
+    # - secrets.* are sensitive values
+    env:
+      SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+      # Optional (recommended) for later store tooling:
+      # ANDROID_PACKAGE_NAME: dev.coderave.memunoapp.stg
+
+    steps:
+      # Checkout repository source code for this run.
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Java is required for Gradle / Android builds.
+      # We also enable Gradle caching for faster builds.
+      - name: Set up Java (Android)
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+
+      # Install Flutter SDK (stable) and enable caching.
+      # The flutter-action cache helps with the Flutter SDK and pub cache.
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      # Useful when CI starts failing after toolchain upgrades.
+      - name: Print Flutter & Dart versions
+        run: flutter --version
+
+      # Resolve pub dependencies.
+      - name: Flutter pub get
+        run: flutter pub get
+
+      # Cache build_runner intermediate outputs to speed up codegen.
+      # We use a key based on:
+      # - pubspec.lock (dependencies)
+      # - lib/test sources + build.yaml/pubspec.yaml (inputs to generators)
+      - name: Cache build_runner outputs
+        uses: actions/cache@v4
+        with:
+          path: |
+            .dart_tool/build
+          key: ${{ runner.os }}-build-runner-${{ hashFiles('pubspec.lock') }}-${{ hashFiles('lib/**', 'test/**', 'pubspec.yaml', 'build.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-runner-${{ hashFiles('pubspec.lock') }}-
+
+      # Generate code required for successful builds:
+      # - freezed
+      # - json_serializable
+      # - riverpod_generator
+      # - go_router_builder
+      #
+      # We also delete conflicting outputs to avoid stale/generated drift.
+      - name: Run code generation (build_runner)
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      # Determine build-name (SemVer without +build suffix) from pubspec.yaml.
+      # Example: version: 1.0.0+1 -> build-name = 1.0.0
+      # build-number uses GitHub Actions run_number.
+      - name: Determine build name/number
+        run: |
+          VERSION_LINE="$(grep -E '^version:' pubspec.yaml | awk '{print $2}')"
+          VERSION_NAME="${VERSION_LINE%%+*}"
+          echo "VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
+          echo "BUILD_NUMBER=${{ github.run_number }}" >> "$GITHUB_ENV"
+          echo "Using build-name=$VERSION_NAME, build-number=${{ github.run_number }}"
+
+      # Build an APK for quick installs / local QA (not Play Store preferred format).
+      - name: Build APK (staging)
+        run: >
+          flutter build apk
+          --flavor staging
+          --build-name=$VERSION_NAME
+          --build-number=$BUILD_NUMBER
+          --dart-define=SUPABASE_URL=$SUPABASE_URL
+          --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
+
+      # Build an AAB (Android App Bundle) for Play Store distribution.
+      - name: Build AppBundle (staging)
+        run: >
+          flutter build appbundle
+          --flavor staging
+          --build-name=$VERSION_NAME
+          --build-number=$BUILD_NUMBER
+          --dart-define=SUPABASE_URL=$SUPABASE_URL
+          --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
+
+      # Upload build outputs as workflow artifacts for download.
+      - name: Upload Android artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-staging-${{ github.run_number }}
+          retention-days: 14
+          path: |
+            build/app/outputs/flutter-apk/*.apk
+            build/app/outputs/bundle/**/*.aab
+
+      # -----------------------------------------------------------------------
+      # Google Play Internal Upload (FUTURE) — intentionally disabled for now
+      # -----------------------------------------------------------------------
+      # Requirements (GitHub Environment "staging" secrets):
+      # - ANDROID_KEYSTORE_BASE64        (base64 of upload-keystore.jks)
+      # - ANDROID_KEYSTORE_PASSWORD
+      # - ANDROID_KEY_ALIAS
+      # - ANDROID_KEY_PASSWORD
+      # - GOOGLE_PLAY_SERVICE_ACCOUNT_JSON (service account json for Play)
+      #
+      # Typical approach:
+      # 1) Decode keystore
+      # 2) Configure Gradle signing configs
+      # 3) Upload AAB via Fastlane supply (or google play action)
+      #
+      # - name: Decode Android keystore
+      #   run: |
+      #     echo "${{ secrets.ANDROID_KEYSTORE_BASE64 }}" | base64 --decode > android/app/upload-keystore.jks
+      #
+      # - name: Configure signing (example placeholder)
+      #   run: |
+      #     echo "TODO: configure signing using env vars / gradle properties"
+      #
+      # - name: Upload to Google Play (internal) [requires setup]
+      #   run: |
+      #     echo "TODO: configure Fastlane supply or an uploader action"
+
+  # ---------------------------------------------------------------------------
+  # iOS build job (no code signing)
+  # ---------------------------------------------------------------------------
+  ios:
+    name: iOS build (staging, no codesign)
+    runs-on: macos-latest
+    timeout-minutes: 110
+    environment: staging
+
+    env:
+      SUPABASE_URL: ${{ vars.SUPABASE_URL }}
+      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+
+      # Optional (recommended) for later store tooling:
+      # IOS_BUNDLE_ID: dev.coderave.memunoapp.stg
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Print Flutter & Dart versions
+        run: flutter --version
+
+      - name: Flutter pub get
+        run: flutter pub get
+
+      # Cache build_runner intermediate outputs (same strategy as Android).
+      - name: Cache build_runner outputs
+        uses: actions/cache@v4
+        with:
+          path: |
+            .dart_tool/build
+          key: ${{ runner.os }}-build-runner-${{ hashFiles('pubspec.lock') }}-${{ hashFiles('lib/**', 'test/**', 'pubspec.yaml', 'build.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-runner-${{ hashFiles('pubspec.lock') }}-
+
+      # Generate all required code before compiling.
+      - name: Run code generation (build_runner)
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      - name: Determine build name/number
+        run: |
+          VERSION_LINE="$(grep -E '^version:' pubspec.yaml | awk '{print $2}')"
+          VERSION_NAME="${VERSION_LINE%%+*}"
+          echo "VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
+          echo "BUILD_NUMBER=${{ github.run_number }}" >> "$GITHUB_ENV"
+          echo "Using build-name=$VERSION_NAME, build-number=${{ github.run_number }}"
+
+      # CocoaPods cache improves iOS dependency installation speed.
+      - name: Cache CocoaPods
+        uses: actions/cache@v4
+        with:
+          path: |
+            ios/Pods
+            ~/.cocoapods
+            ~/Library/Caches/CocoaPods
+          key: ${{ runner.os }}-cocoapods-${{ hashFiles('ios/Podfile.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-cocoapods-
+
+      # Install iOS native dependencies.
+      - name: CocoaPods install
+        run: |
+          cd ios
+          pod install
+          cd ..
+
+      # Build iOS without code signing:
+      # - This validates compilation in CI.
+      # - It does NOT produce an installable IPA.
+      # - For distribution, we later add a `flutter build ipa` step with signing.
+      - name: Build iOS (staging, no codesign)
+        run: >
+          flutter build ios
+          --no-codesign
+          --flavor staging
+          --build-name=$VERSION_NAME
+          --build-number=$BUILD_NUMBER
+          --dart-define=SUPABASE_URL=$SUPABASE_URL
+          --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
+
+      # Upload iOS build products as artifacts (compile validation output).
+      - name: Upload iOS artifacts (no codesign)
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-staging-nosign-${{ github.run_number }}
+          retention-days: 14
+          path: build/ios/iphoneos
+
+      # -----------------------------------------------------------------------
+      # TestFlight Upload via Fastlane (FUTURE) — intentionally disabled for now
+      # -----------------------------------------------------------------------
+      # Requirements (GitHub Environment "staging" secrets/vars):
+      #
+      # Secrets:
+      # - ASC_KEY_ID
+      # - ASC_ISSUER_ID
+      # - ASC_PRIVATE_KEY
+      # - MATCH_GIT_URL
+      # - MATCH_PASSWORD
+      #
+      # Vars (recommended):
+      # - IOS_BUNDLE_ID = dev.coderave.memunoapp.stg
+      #
+      # Typical approach:
+      # 1) Setup Ruby + Fastlane
+      # 2) Setup signing (match) or App Store Connect API key
+      # 3) Build IPA (requires code signing)
+      # 4) Upload to TestFlight
+      #
+      # - name: Set up Ruby (for Fastlane)
+      #   uses: ruby/setup-ruby@v1
+      #   with:
+      #     ruby-version: "3.3"
+      #     bundler-cache: true
+      #
+      # - name: Build IPA (staging) [requires signing]
+      #   run: >
+      #     flutter build ipa
+      #     --flavor staging
+      #     --build-name=$VERSION_NAME
+      #     --build-number=$BUILD_NUMBER
+      #     --dart-define=SUPABASE_URL=$SUPABASE_URL
+      #     --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
+      #
+      # - name: Upload to TestFlight (Fastlane) [requires setup]
+      #   run: |
+      #     echo "TODO: configure Fastlane lanes + match + ASC API key"

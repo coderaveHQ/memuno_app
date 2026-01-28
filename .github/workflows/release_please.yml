@@ -1,0 +1,100 @@
+# -----------------------------------------------------------------------------
+# Release Please (Automated Versioning + Release PR)
+# -----------------------------------------------------------------------------
+# Runs on pushes to the long-living "production" branch.
+#
+# What Release Please does in this repo:
+# 1) Reads commit history since the last release tag (e.g. v1.2.3).
+# 2) Uses Conventional Commits to decide the next SemVer bump:
+#    - fix:      -> patch bump   (1.2.3 -> 1.2.4)
+#    - feat:     -> minor bump   (1.2.3 -> 1.3.0)
+#    - feat!:    -> major bump   (1.2.3 -> 2.0.0)
+#    - BREAKING CHANGE: in commit body also -> major bump
+# 3) Creates or updates a dedicated "Release PR" against production that:
+#    - updates pubspec.yaml version (SemVer part)
+#    - updates CHANGELOG.md
+#    - updates .release-please-manifest.json (tracks released versions)
+#
+# When you merge the Release PR:
+# - Release Please creates a git tag like "v1.2.3"
+# - Release Please creates a GitHub Release for that tag
+#
+# IMPORTANT (Token / recursion protection):
+# - GitHub often prevents workflows from triggering on tags/releases created by
+#   a bot using the default GITHUB_TOKEN ("recursion protection").
+# - Therefore we use a PAT (Personal Access Token) stored in
+#   secrets.RELEASE_PLEASE_TOKEN.
+#
+# IMPORTANT (Flutter build numbers):
+# - Release Please bumps the SemVer (x.y.z) in pubspec.yaml.
+# - Our CI build workflows set the build-number via `--build-number` to
+#   `${{ github.run_number }}`.
+# - This means we typically do NOT manually bump the "+build" part in pubspec.yaml.
+#
+# Branching model compatibility:
+# - production is our "release source of truth".
+# - staging/development can rebase/merge freely; only production pushes are used
+#   for release PR generation.
+# -----------------------------------------------------------------------------
+
+name: Release Please (production)
+
+on:
+  # Trigger on every push to production.
+  # This keeps the Release PR up-to-date automatically as commits land.
+  push:
+    branches: [production]
+
+  # Manual trigger for debugging / recovering if something goes wrong.
+  workflow_dispatch:
+
+# Concurrency:
+# - If multiple commits land quickly on production, we only want the latest run
+#   updating the Release PR, so we cancel older runs.
+concurrency:
+  group: release-please-${{ github.ref }}
+  cancel-in-progress: true
+
+# Permissions required by the Release Please action:
+# - contents:write       -> to create tags/releases and commit changes in the PR
+# - pull-requests:write  -> to open/update the Release PR
+# - issues:write         -> some release-please features can create/update issues
+#                           (safe to keep; can be reduced later if unused)
+permissions:
+  contents: write
+  pull-requests: write
+  issues: write
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  release_please:
+    name: Create or update Release PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      # Runs the Release Please action.
+      #
+      # Inputs:
+      # - token:
+      #   PAT token stored in secrets.RELEASE_PLEASE_TOKEN to avoid recursion blocking
+      #   and ensure tag/release creation triggers downstream workflows reliably.
+      #
+      # - config-file:
+      #   Controls release strategy, changelog sections, packages, etc.
+      #
+      # - manifest-file:
+      #   Stores current released versions for packages (single-package repo is fine).
+      #
+      # - target-branch:
+      #   Explicitly declare which branch is considered the release base.
+      - name: Run Release Please
+        uses: googleapis/release-please-action@v4
+        with:
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          config-file: release-please-config.json
+          manifest-file: .release-please-manifest.json
+          target-branch: production

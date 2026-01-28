@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "39805782311",
+    "project_id": "memunoapp-dev",
+    "storage_bucket": "memunoapp-dev.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:39805782311:android:a4e3fbd09e97b72694c102",
+        "android_client_info": {
+          "package_name": "dev.coderave.memunoapp.dev"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDf66t8bwXZ8CTpUSzkPSQ0dU6qGGfBrYE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -1,0 +1,16 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Memuno (development)",
+      "request": "launch",
+      "type": "dart",
+      "program": "lib/main.dart",
+      "toolArgs": [
+        "--flavor",
+        "development",
+        "--dart-define-from-file=.env.local"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,31 @@
+# Use Flutter's recommended lint set (includes Dart best practices + Flutter-specific lints)
+include: package:flutter_lints/flutter.yaml
+
+analyzer:
+  # Enable additional lint plugins (custom_lint is the base for many ecosystem lints, e.g. riverpod_lint)
+  plugins:
+    - custom_lint
+
+  # Keep analysis noise down by excluding generated / build artifacts
+  exclude:
+    - build/**
+    - .dart_tool/**
+    - "**/*.g.dart"
+    - "**/*.freezed.dart"
+
+  # Optional but commonly recommended: stricter type checking
+  language:
+    strict-casts: true
+    strict-inference: true
+    strict-raw-types: true
+
+linter:
+  rules:
+    # --- Project style rules -------------------------------------------------
+    avoid_print: true
+    prefer_single_quotes: true
+
+custom_lint:
+  # Configure rules provided by custom_lint-based packages (e.g., riverpod_lint)
+  rules:
+    provider_parameters: true
