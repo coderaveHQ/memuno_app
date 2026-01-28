@@ -1,0 +1,251 @@
+# -----------------------------------------------------------------------------
+# CI
+# -----------------------------------------------------------------------------
+# Purpose:
+# - Validate code quality + correctness on PRs and the development branch.
+# - Ensure the Flutter app builds cleanly with generated code (build_runner).
+# - Ensure Supabase migrations/schema stay healthy via `db lint` + pgTAP tests.
+# - Run lightweight Edge Function smoke tests (Deno) against the repo.
+#
+# Why this workflow is split into two jobs:
+# - `flutter` job focuses on the Flutter/Dart toolchain (format/analyze/test).
+# - `supabase` job focuses on backend correctness (Postgres + functions).
+# - They can run in parallel and fail independently for clearer diagnostics.
+#
+# Triggers:
+# - pull_request to: development, staging, production
+#   -> we want PR validation no matter which long-living branch is targeted.
+# - push to: development
+#   -> we treat development as "integration", so every push is validated.
+# - workflow_dispatch
+#   -> manual runs for debugging CI changes.
+#
+# Concurrency:
+# - Cancels older runs for the same ref (branch/PR) to save CI minutes.
+# - This is safe because we only care about the most recent commit state.
+# -----------------------------------------------------------------------------
+
+name: CI
+
+on:
+  pull_request:
+    branches: [development, staging, production]
+  push:
+    branches: [development]
+  workflow_dispatch:
+
+# Cancel older runs for the same ref to save CI minutes.
+# Example:
+# - PR gets updated multiple times -> only the newest run continues.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+# Default minimal permissions for this workflow.
+# - We only need to read repository contents.
+# - If later we add PR comments / status reporting, we can expand permissions.
+permissions:
+  contents: read
+
+# Use bash for all run steps to keep scripting consistent across jobs.
+defaults:
+  run:
+    shell: bash
+
+# Common env flag for tooling that respects CI=true (less interactive output).
+env:
+  CI: true
+
+jobs:
+  # ---------------------------------------------------------------------------
+  # Flutter: format + codegen + analysis + tests
+  # ---------------------------------------------------------------------------
+  flutter:
+    name: Flutter format/analyze/test
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      # Checkout repository source code.
+      # Required for:
+      # - reading pubspec.yaml
+      # - running analysis/tests
+      # - code generation
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Install Flutter SDK (stable) and enable caching.
+      # subosito/flutter-action also caches the Flutter installation itself,
+      # speeding up subsequent runs.
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      # Print toolchain versions for debugging.
+      # This is very helpful when builds start failing due to toolchain updates.
+      - name: Print Flutter & Dart versions
+        run: flutter --version
+
+      # Install Dart/Flutter dependencies as defined in pubspec.yaml.
+      - name: Flutter pub get
+        run: flutter pub get
+
+      # Cache build_runner intermediate outputs.
+      #
+      # Why:
+      # - build_runner can be expensive on CI.
+      # - caching .dart_tool/build can significantly speed up runs.
+      #
+      # Why the key is safe:
+      # - keyed by pubspec.lock AND source inputs (lib/test/build.yaml),
+      #   so changes invalidate the cache correctly.
+      - name: Cache build_runner outputs
+        uses: actions/cache@v4
+        with:
+          path: |
+            .dart_tool/build
+          key: ${{ runner.os }}-build-runner-${{ hashFiles('pubspec.lock') }}-${{ hashFiles('lib/**', 'test/**', 'pubspec.yaml', 'build.yaml') }}
+          restore-keys: |
+            ${{ runner.os }}-build-runner-${{ hashFiles('pubspec.lock') }}-
+
+      # Fail CI if formatting would change files.
+      #
+      # We intentionally do NOT auto-format in CI:
+      # - formatting should be applied locally (or via pre-commit hooks)
+      # - CI should only validate
+      - name: Dart format check
+        run: dart format --output=none --set-exit-if-changed .
+
+      # Generate code required for analysis/tests.
+      #
+      # Important:
+      # - We intentionally do NOT commit generated files.
+      # - Therefore CI must generate them to:
+      #   - satisfy imports
+      #   - allow analysis to run correctly
+      #   - allow tests to compile
+      - name: Run code generation (build_runner)
+        run: dart run build_runner build --delete-conflicting-outputs
+
+      # Flutter-aware analysis (recommended for Flutter repos).
+      # This also checks things like asset references, Flutter-specific lints, etc.
+      - name: Flutter analyze
+        run: flutter analyze
+
+      # Run unit/widget tests.
+      # If later you add integration tests, keep them separate (often slower).
+      - name: Flutter tests
+        run: flutter test
+
+  # ---------------------------------------------------------------------------
+  # Supabase: local stack + schema lint + database tests + Edge tests
+  # ---------------------------------------------------------------------------
+  supabase:
+    name: Supabase lint/pgTAP/edge tests
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+
+    steps:
+      # Checkout repository source code.
+      # Required for:
+      # - supabase/migrations
+      # - supabase/tests
+      # - supabase/functions
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      # Install Supabase CLI.
+      #
+      # This enables:
+      # - `supabase start` (local docker stack)
+      # - `supabase db lint` (schema/migration checks)
+      # - `supabase test db` (pgTAP runner)
+      - name: Set up Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Print Supabase CLI version
+        run: supabase --version
+
+      # Install Deno for Edge Function tests.
+      #
+      # We use Deno directly for smoke tests, rather than invoking Supabase tooling,
+      # because it gives a simple, explicit test command and faster iteration.
+      - name: Set up Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+
+      - name: Print Deno version
+        run: deno --version
+
+      # Cache Deno dependencies.
+      #
+      # Why:
+      # - Deno caches downloaded modules.
+      # - Edge function tests can become slow if modules are re-downloaded.
+      #
+      # Key:
+      # - Based on function source files; if those change, cache invalidates.
+      - name: Cache Deno
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/deno
+          key: ${{ runner.os }}-deno-${{ hashFiles('supabase/functions/**/*.ts', 'supabase/functions/**/*.tsx', 'supabase/functions/**/*.js', 'supabase/functions/**/*.json') }}
+          restore-keys: |
+            ${{ runner.os }}-deno-
+
+      # Start the local Supabase stack (Docker).
+      #
+      # This brings up:
+      # - Postgres
+      # - Auth
+      # - Storage
+      # - Realtime
+      # - (and other components depending on your Supabase config)
+      #
+      # The local stack is required for:
+      # - db lint
+      # - pgTAP tests
+      # - any integration-like tests against Postgres
+      - name: Supabase start
+        run: supabase start
+
+      # Lint database migrations/schema for common issues.
+      #
+      # Examples of issues it can detect (varies by CLI version/config):
+      # - problematic SQL patterns
+      # - missing constraints / invalid references
+      # - potential migration inconsistencies
+      - name: Supabase DB lint
+        run: supabase db lint
+
+      # Run pgTAP tests (database unit tests).
+      #
+      # This assumes you have pgTAP tests configured under supabase/tests
+      # (Supabase CLI automatically discovers and runs them).
+      - name: Supabase pgTAP tests
+        run: supabase test db
+
+      # Run Edge Functions tests (smoke tests).
+      #
+      # We allow all permissions for smoke tests:
+      # - keeps initial setup simple
+      # - tighten later if needed (least privilege)
+      #
+      # Convention:
+      # - Keep these tests fast and focused (import/compile/basic handler behavior)
+      - name: Supabase Edge Functions tests (smoke)
+        run: deno test --allow-all supabase/functions/tests
+
+      # Always stop the Supabase stack even if earlier steps fail.
+      #
+      # Why:
+      # - Avoid leaving containers running on GitHub runners.
+      # - Ensure clean state for subsequent jobs on the same runner VM.
+      - name: Supabase stop (always)
+        if: always()
+        run: supabase stop

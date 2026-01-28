@@ -1,0 +1,66 @@
+# -----------------------------------------------------------------------------
+# Commit Message Lint
+# -----------------------------------------------------------------------------
+# Purpose:
+# - Enforce Conventional Commits for commit messages.
+# - This is especially important when using:
+#   - Rebase & Merge (your preferred strategy)
+#   - Release Please (it reads commit history to decide version bumps)
+#
+# What it checks:
+# - For Pull Requests:
+#   - validates *all commits* that are part of the PR (not just the title)
+# - For Push:
+#   - validates commits pushed directly to protected branches (safety net)
+#
+# Notes:
+# - This workflow intentionally does NOT require a Node toolchain in your repo.
+# - It uses a GitHub Action that runs commitlint internally.
+# - The rules live in `commitlint.config.cjs` at repo root.
+# -----------------------------------------------------------------------------
+
+name: Commit Message Lint
+
+on:
+  # Validate all commits in PRs that target long-living branches.
+  pull_request:
+    branches: [development, staging, production]
+
+  # Safety net if commits land directly on a protected branch.
+  push:
+    branches: [development, staging, production]
+
+  workflow_dispatch:
+
+# Cancel older runs for the same ref to save CI minutes
+concurrency:
+  group: commitlint-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+jobs:
+  commitlint:
+    name: Lint commit messages (Conventional Commits)
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+
+    steps:
+      # We need full git history so the action can inspect commit messages properly.
+      - name: Checkout (full history)
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      # Lints the commit messages.
+      # - On PR: checks the commit range introduced by this PR.
+      # - On push: checks the commits in the push range.
+      - name: Run commitlint
+        uses: wagoid/commitlint-github-action@v6
+        with:
+          # Where your commitlint rules live.
+          configFile: commitlint.config.cjs
+
+          # Optional: Improve output readability
+          failOnWarnings: false
