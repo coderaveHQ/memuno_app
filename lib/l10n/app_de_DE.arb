@@ -1,0 +1,134 @@
+{
+  "@@locale": "de_DE",
+
+  "toastTitleInfo": "Hinweis",
+  "toastTitleSuccess": "Erfolg",
+  "toastTitleWarning": "Warnung",
+  "toastTitleError": "Fehler",
+  "genericErrorMessage": "Etwas ist schiefgelaufen. Bitte versuche es später.",
+  "networkErrorMessage": "Keine Verbindung. Bitte prüfe dein Internet.",
+  "serverErrorMessage": "Serverfehler. Bitte versuche es später.",
+  "validationInvalidEmail": "Bitte gib eine gültige E-Mail-Adresse ein.",
+  "validationInvalidFormat": "Ungültiges Format.",
+  "validationInvalidCredentials": "E-Mail oder Passwort ist falsch.",
+  "validationUnknown": "Eingabe ungültig. Bitte prüfe deine Angaben.",
+  "validationMinLength": "Muss mindestens {min} Zeichen haben.",
+  "@validationMinLength": {
+    "placeholders": {
+      "min": {}
+    }
+  },
+  "validationMaxLength": "Darf maximal {max} Zeichen haben.",
+  "@validationMaxLength": {
+    "placeholders": {
+      "max": {}
+    }
+  },
+  "signInOtpSentMessage": "Wir haben dir einen Code gesendet.",
+  "signInConfirmRegistrationMessage": "Bitte bestätige deine Registrierung.",
+  "signInTitle": "Anmeldung",
+  "signInSubtitle": "Melde dich an, um fortzufahren.",
+  "signInEmailLabel": "E-Mail",
+  "signInPasswordLabel": "Passwort",
+  "signInSubmitWithPasswordButton": "Mit Passwort anmelden",
+  "signInUseOtpButton": "Anmeldecode nutzen",
+  "signInSendOtpButton": "Anmeldecode senden",
+  "signInSwitchToPasswordButton": "Mit Passwort anmelden",
+  "signInSignUpButton": "Registrieren",
+  "signOutButton": "Abmelden",
+  "homeTitle": "Startseite",
+  "settingsTitle": "Einstellungen",
+  "settingsSubtitle": "Verwalte dein Konto und deine App-Einstellungen.",
+  "settingsSectionAppearance": "Darstellung",
+  "settingsSectionAccountManagement": "Kontoverwaltung",
+  "settingsAccountManagementDescription": "Melde dich von deinem Konto ab.",
+  "settingsThemeModeTitle": "Designmodus",
+  "settingsThemeModeSubtitle": "Wähle aus, wie die App aussehen soll.",
+  "settingsThemeModeSystemOption": "System",
+  "settingsThemeModeLightOption": "Hell",
+  "settingsThemeModeDarkOption": "Dunkel",
+  "settingsThemeModeSystemDescription": "System folgen ({mode}).",
+  "@settingsThemeModeSystemDescription": {
+    "placeholders": {
+      "mode": {}
+    }
+  },
+  "settingsLanguageModeTitle": "Sprache",
+  "settingsLanguageModeSubtitle": "Wähle deine bevorzugte App-Sprache.",
+  "settingsLanguageModeSystemOption": "System",
+  "settingsLanguageModeSystemDescription": "System folgen ({language}).",
+  "@settingsLanguageModeSystemDescription": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "settingsChangeEmailListTileTitle": "E-Mail-Adresse ändern",
+  "settingsChangeEmailListTileSubtitle": "Aktualisiere deine Anmelde-E-Mail-Adresse.",
+  "settingsChangePasswordListTileTitle": "Passwort ändern",
+  "settingsChangePasswordListTileSubtitle": "Setze ein neues Passwort für dein Konto.",
+  "settingsDeleteAccountListTileTitle": "Konto löschen",
+  "settingsDeleteAccountListTileSubtitle": "Löscht dein Konto und deine Daten dauerhaft.",
+  "settingsChangeEmailTitle": "E-Mail-Adresse ändern",
+  "settingsChangeEmailSubtitle": "Gib deine neue E-Mail-Adresse ein und bestätige sie über deinen Posteingang.",
+  "settingsChangeEmailCurrentEmail": "Aktuelle E-Mail-Adresse: {email}",
+  "@settingsChangeEmailCurrentEmail": {
+    "placeholders": {
+      "email": {}
+    }
+  },
+  "settingsChangeEmailNewEmailLabel": "Neue E-Mail-Adresse",
+  "settingsChangeEmailSubmitButton": "Bestätigungs-E-Mail senden",
+  "settingsChangePasswordTitle": "Passwort ändern",
+  "settingsChangePasswordSubtitle": "Setze ein neues Passwort für dein Konto.",
+  "settingsChangePasswordNewPasswordLabel": "Neues Passwort",
+  "settingsChangePasswordSubmitButton": "Passwort ändern",
+  "settingsChangePasswordSuccessMessage": "Dein Passwort wurde erfolgreich geändert.",
+  "settingsDeleteAccountTitle": "Konto löschen",
+  "settingsDeleteAccountSubtitle": "Diese Aktion ist endgültig und kann nicht rückgängig gemacht werden.",
+  "settingsDeleteAccountWarningBody": "Durch das Löschen deines Kontos werden dein Profil und dein Zugriff auf die App dauerhaft entfernt.",
+  "settingsDeleteAccountSubmitButton": "Mein Konto löschen",
+  "settingsDeleteAccountConfirmTitle": "Konto löschen?",
+  "settingsDeleteAccountConfirmMessage": "Diese Aktion ist endgültig. Möchtest du fortfahren?",
+  "settingsDeleteAccountConfirmCancelButton": "Abbrechen",
+  "settingsDeleteAccountConfirmDeleteButton": "Löschen",
+  "settingsDeleteAccountSuccessMessage": "Dein Konto wurde gelöscht.",
+  "signUpConfirmRegistrationMessage": "Bitte bestätige deine Registrierung.",
+  "signUpTitle": "Registrierung",
+  "signUpSubtitle": "Gib deine Daten ein, um zu starten.",
+  "signUpNameLabel": "Vollständiger Name",
+  "signUpEmailLabel": "E-Mail",
+  "signUpPasswordLabel": "Passwort",
+  "signUpCreateAccountButton": "Konto erstellen",
+  "verifySignInResentCodeMessage": "Wir haben dir erneut einen Code gesendet.",
+  "verifySignInTitle": "Anmeldung verifizieren",
+  "verifySignInInstruction": "Gib den 6-stelligen Code ein, der an {email} gesendet wurde, oder öffne den Link in deiner E-Mail.",
+  "@verifySignInInstruction": {
+    "placeholders": {
+      "email": {}
+    }
+  },
+  "verifySignInCodeLabel": "Bestätigungscode",
+  "verifySignInConfirmButton": "Bestätigen",
+  "verifySignInNoEmailText": "Keine E-Mail erhalten?",
+  "verifySignInResendCodeButton": "Code erneut senden",
+  "verifySignUpResentCodeMessage": "Wir haben dir erneut einen Code gesendet.",
+  "verifySignUpTitle": "Anmeldung verifizieren",
+  "verifySignUpInstruction": "Gib den 6-stelligen Code ein, der an {email} gesendet wurde, oder öffne den Link in deiner E-Mail.",
+  "@verifySignUpInstruction": {
+    "placeholders": {
+      "email": {}
+    }
+  },
+  "verifySignUpCodeLabel": "Bestätigungscode",
+  "verifySignUpConfirmButton": "Bestätigen",
+  "verifySignUpNoEmailText": "Keine E-Mail erhalten?",
+  "verifySignUpResendCodeButton": "Code erneut senden",
+  "authToastEmailChangedTitle": "E-Mail-Adresse geändert",
+  "authToastEmailChangedMessage": "Wir haben deine E-Mail-Adresse erfolgreich geändert.",
+  "authToastSignedInTitle": "Anmeldung erfolgreich",
+  "authToastSignedInMessage": "Du wurdest erfolgreich angemeldet.",
+  "authToastSignedOutTitle": "Abmeldung erfolgreich",
+  "authToastSignedOutMessage": "Du wurdest erfolgreich abgemeldet.",
+  "authToastPasswordRecoveryTitle": "Anmeldung erfolgreich",
+  "authToastPasswordRecoveryMessage": "Du kannst nun dein Passwort ändern."
+}

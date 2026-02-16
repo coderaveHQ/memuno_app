@@ -28,6 +28,7 @@ android {
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
+        manifestPlaceholders["baseUrlScheme"] = "dev.coderave.memunoapp"
     }
 
     buildTypes {
@@ -46,15 +47,18 @@ android {
             dimension = "env"
             applicationIdSuffix = ".dev"
             resValue(type = "string", name = "app_name", value = "Memuno (dev)")
+            manifestPlaceholders["baseUrlScheme"] = "dev.coderave.memunoapp.dev"
         }
         create("staging") {
             dimension = "env"
             applicationIdSuffix = ".stg"
             resValue(type = "string", name = "app_name", value = "Memuno (stg)")
+            manifestPlaceholders["baseUrlScheme"] = "dev.coderave.memunoapp.stg"
         }
         create("production") {
             dimension = "env"
             resValue(type = "string", name = "app_name", value = "Memuno")
+            manifestPlaceholders["baseUrlScheme"] = "dev.coderave.memunoapp"
         }
     }
 }
