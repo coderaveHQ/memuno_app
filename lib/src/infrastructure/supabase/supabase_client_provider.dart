@@ -11,5 +11,6 @@ part 'supabase_client_provider.g.dart';
 /// - storage signed URLs
 @Riverpod(keepAlive: true)
 SupabaseClient supabaseClient(Ref ref) {
+  // Return the globally initialized Supabase client.
   return Supabase.instance.client;
 }

@@ -6,5 +6,6 @@ part 'firebase_crashlytics_provider.g.dart';
 /// Riverpod provider for [FirebaseCrashlytics].
 @Riverpod(keepAlive: true)
 FirebaseCrashlytics firebaseCrashlytics(Ref ref) {
+  // Return the singleton Crashlytics instance.
   return FirebaseCrashlytics.instance;
 }
