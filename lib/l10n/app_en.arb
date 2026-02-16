@@ -1,0 +1,133 @@
+{
+  "@@locale": "en",
+  "toastTitleInfo": "Info",
+  "toastTitleSuccess": "Success",
+  "toastTitleWarning": "Warning",
+  "toastTitleError": "Error",
+  "genericErrorMessage": "Something went wrong. Please try again later.",
+  "networkErrorMessage": "No connection. Please check your internet.",
+  "serverErrorMessage": "Server error. Please try again later.",
+  "validationInvalidEmail": "Please enter a valid email address.",
+  "validationInvalidFormat": "Invalid format.",
+  "validationInvalidCredentials": "Email or password is incorrect.",
+  "validationUnknown": "Invalid input. Please check your details.",
+  "validationMinLength": "Must be at least {min} characters.",
+  "@validationMinLength": {
+    "placeholders": {
+      "min": {}
+    }
+  },
+  "validationMaxLength": "Must be at most {max} characters.",
+  "@validationMaxLength": {
+    "placeholders": {
+      "max": {}
+    }
+  },
+  "signInOtpSentMessage": "We sent you a code.",
+  "signInConfirmRegistrationMessage": "Please confirm your registration.",
+  "signInTitle": "Sign in",
+  "signInSubtitle": "Sign in to continue.",
+  "signInEmailLabel": "Email",
+  "signInPasswordLabel": "Password",
+  "signInSubmitWithPasswordButton": "Sign in with password",
+  "signInUseOtpButton": "Use sign-in code",
+  "signInSendOtpButton": "Send sign-in code",
+  "signInSwitchToPasswordButton": "Sign in with password",
+  "signInSignUpButton": "Sign up",
+  "signOutButton": "Sign out",
+  "homeTitle": "Home",
+  "settingsTitle": "Settings",
+  "settingsSubtitle": "Manage your account and app preferences.",
+  "settingsSectionAppearance": "Appearance",
+  "settingsSectionAccountManagement": "Account management",
+  "settingsAccountManagementDescription": "Sign out from your account.",
+  "settingsThemeModeTitle": "Theme mode",
+  "settingsThemeModeSubtitle": "Choose how the app looks.",
+  "settingsThemeModeSystemOption": "System",
+  "settingsThemeModeLightOption": "Light",
+  "settingsThemeModeDarkOption": "Dark",
+  "settingsThemeModeSystemDescription": "Follow system ({mode}).",
+  "@settingsThemeModeSystemDescription": {
+    "placeholders": {
+      "mode": {}
+    }
+  },
+  "settingsLanguageModeTitle": "Language mode",
+  "settingsLanguageModeSubtitle": "Choose your preferred app language.",
+  "settingsLanguageModeSystemOption": "System",
+  "settingsLanguageModeSystemDescription": "Follow system ({language}).",
+  "@settingsLanguageModeSystemDescription": {
+    "placeholders": {
+      "language": {}
+    }
+  },
+  "settingsChangeEmailListTileTitle": "Change email",
+  "settingsChangeEmailListTileSubtitle": "Update your sign-in email address.",
+  "settingsChangePasswordListTileTitle": "Change password",
+  "settingsChangePasswordListTileSubtitle": "Set a new password for your account.",
+  "settingsDeleteAccountListTileTitle": "Delete account",
+  "settingsDeleteAccountListTileSubtitle": "Permanently delete your account and data.",
+  "settingsChangeEmailTitle": "Change email",
+  "settingsChangeEmailSubtitle": "Enter your new email and confirm it from your inbox.",
+  "settingsChangeEmailCurrentEmail": "Current email: {email}",
+  "@settingsChangeEmailCurrentEmail": {
+    "placeholders": {
+      "email": {}
+    }
+  },
+  "settingsChangeEmailNewEmailLabel": "New email",
+  "settingsChangeEmailSubmitButton": "Send confirmation email",
+  "settingsChangePasswordTitle": "Change password",
+  "settingsChangePasswordSubtitle": "Set a new password for your account.",
+  "settingsChangePasswordNewPasswordLabel": "New password",
+  "settingsChangePasswordSubmitButton": "Change password",
+  "settingsChangePasswordSuccessMessage": "Your password was changed successfully.",
+  "settingsDeleteAccountTitle": "Delete account",
+  "settingsDeleteAccountSubtitle": "This action is permanent and cannot be undone.",
+  "settingsDeleteAccountWarningBody": "Deleting your account permanently removes your profile and access to the app.",
+  "settingsDeleteAccountSubmitButton": "Delete my account",
+  "settingsDeleteAccountConfirmTitle": "Delete account?",
+  "settingsDeleteAccountConfirmMessage": "This action is permanent. Do you want to continue?",
+  "settingsDeleteAccountConfirmCancelButton": "Cancel",
+  "settingsDeleteAccountConfirmDeleteButton": "Delete",
+  "settingsDeleteAccountSuccessMessage": "Your account was deleted.",
+  "signUpConfirmRegistrationMessage": "Please confirm your registration.",
+  "signUpTitle": "Sign up",
+  "signUpSubtitle": "Enter your details to get started.",
+  "signUpNameLabel": "Full name",
+  "signUpEmailLabel": "Email",
+  "signUpPasswordLabel": "Password",
+  "signUpCreateAccountButton": "Create account",
+  "verifySignInResentCodeMessage": "We sent you another code.",
+  "verifySignInTitle": "Verify sign-in",
+  "verifySignInInstruction": "Enter the 6-digit code sent to {email}, or open the link in your email.",
+  "@verifySignInInstruction": {
+    "placeholders": {
+      "email": {}
+    }
+  },
+  "verifySignInCodeLabel": "Verification code",
+  "verifySignInConfirmButton": "Confirm",
+  "verifySignInNoEmailText": "Did not receive an email?",
+  "verifySignInResendCodeButton": "Resend code",
+  "verifySignUpResentCodeMessage": "We sent you another code.",
+  "verifySignUpTitle": "Verify sign-up",
+  "verifySignUpInstruction": "Enter the 6-digit code sent to {email}, or open the link in your email.",
+  "@verifySignUpInstruction": {
+    "placeholders": {
+      "email": {}
+    }
+  },
+  "verifySignUpCodeLabel": "Verification code",
+  "verifySignUpConfirmButton": "Confirm",
+  "verifySignUpNoEmailText": "Did not receive an email?",
+  "verifySignUpResendCodeButton": "Resend code",
+  "authToastEmailChangedTitle": "Email address changed",
+  "authToastEmailChangedMessage": "We successfully changed your email address.",
+  "authToastSignedInTitle": "Sign-in successful",
+  "authToastSignedInMessage": "You have been signed in successfully.",
+  "authToastSignedOutTitle": "Sign-out successful",
+  "authToastSignedOutMessage": "You have been signed out successfully.",
+  "authToastPasswordRecoveryTitle": "Sign-in successful",
+  "authToastPasswordRecoveryMessage": "You can now change your password."
+}

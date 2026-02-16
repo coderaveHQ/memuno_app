@@ -3,7 +3,21 @@ import 'package:go_router/go_router.dart';
 import 'package:memuno_app/src/app/router/extras_codec.dart';
 import 'package:memuno_app/src/app/router/route_utils.dart';
 import 'package:memuno_app/src/core/error/error_page.dart';
+import 'package:memuno_app/src/features/auth/application/providers/auth_router_refresh_provider.dart';
+import 'package:memuno_app/src/features/auth/application/providers/auth_state_provider.dart';
+import 'package:memuno_app/src/features/auth/domain/entities/auth_state_entity.dart';
+import 'package:memuno_app/src/features/auth/presentation/pages/auth_callback_page.dart';
+import 'package:memuno_app/src/features/auth/presentation/pages/change_email_page.dart';
+import 'package:memuno_app/src/features/auth/presentation/pages/change_password_page.dart';
+import 'package:memuno_app/src/features/auth/presentation/pages/delete_account_page.dart';
 import 'package:memuno_app/src/features/auth/presentation/pages/sign_in_page.dart';
+import 'package:memuno_app/src/features/auth/presentation/pages/sign_up_page.dart';
+import 'package:memuno_app/src/features/auth/presentation/pages/verify_sign_in_page.dart';
+import 'package:memuno_app/src/features/auth/presentation/pages/verify_sign_up_page.dart';
+import 'package:memuno_app/src/features/home/presentation/pages/home_page.dart';
+import 'package:memuno_app/src/features/settings/presentation/pages/language_mode_page.dart';
+import 'package:memuno_app/src/features/settings/presentation/pages/settings_page.dart';
+import 'package:memuno_app/src/features/settings/presentation/pages/theme_mode_page.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'app_router.g.dart';
@@ -18,11 +32,16 @@ part 'routes.dart';
 /// - global navigator key is also in `routes.dart`
 @riverpod
 GoRouter appRouter(Ref ref) {
+  // Get the refresh listenable (notifies on auth state changes).
+  final ChangeNotifier refreshListenable = ref.watch(authRouterRefreshProvider);
+
+  // Build the router configuration.
   final GoRouter router = GoRouter(
     navigatorKey: rootNavigatorKey,
     initialLocation: '/',
     routes: $appRoutes,
     extraCodec: const AppExtraCodec(),
+    refreshListenable: refreshListenable,
     errorBuilder: (BuildContext context, GoRouterState state) {
       final Exception error = (state.error is Exception)
           ? state.error! as Exception
@@ -31,7 +50,8 @@ GoRouter appRouter(Ref ref) {
       return ErrorRoute(error: error).build(context, state);
     },
     redirect: (BuildContext context, GoRouterState state) {
-      return '/sign-in';
+      // Use real redirect logic
+      return _redirect(context, state, ref);
     },
   );
 

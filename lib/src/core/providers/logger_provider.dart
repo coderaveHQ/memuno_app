@@ -6,5 +6,6 @@ part 'logger_provider.g.dart';
 /// Riverpod provider for the app [Logger].
 @Riverpod(keepAlive: true)
 Logger logger(Ref ref) {
+  // Use the singleton logger instance to avoid unnecessary allocations.
   return Logger.instance;
 }
