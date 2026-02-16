@@ -79,12 +79,15 @@ final class AppConfig {
   /// Creates the complete app configuration.
   const AppConfig({
     required this.environment,
+    required this.authCallbackRedirect,
     required this.secrets,
     required this.firebaseOptions,
   });
 
   /// The resolved environment derived from [appFlavor].
   final AppEnvironment environment;
+
+  final String authCallbackRedirect;
 
   /// Secrets for the resolved environment.
   final AppSecrets secrets;
@@ -93,8 +96,13 @@ final class AppConfig {
   final FirebaseOptions firebaseOptions;
 
   /// Convenience getters for readable environment checks.
+  /// Returns true when running a development build.
   bool get isDevelopment => environment == AppEnvironment.development;
+
+  /// Returns true when running a staging build.
   bool get isStaging => environment == AppEnvironment.staging;
+
+  /// Returns true when running a production build.
   bool get isProduction => environment == AppEnvironment.production;
 }
 
@@ -125,6 +133,31 @@ final class AppEnv {
     };
   }
 
+  /// Deep-link callback URI used for Supabase auth redirects in the
+  /// active flavor.
+  static String get authCallbackRedirect {
+    return switch (environment) {
+      AppEnvironment.production => 'dev.coderave.memunoapp://auth/callback',
+      AppEnvironment.staging => 'dev.coderave.memunoapp.stg://auth/callback',
+      AppEnvironment.development =>
+        'dev.coderave.memunoapp.dev://auth/callback',
+    };
+  }
+
+  /// Deep-link callback URIs supported across all flavors.
+  static Set<String> get allAuthCallbackRedirects => const <String>{
+    'dev.coderave.memunoapp://auth/callback',
+    'dev.coderave.memunoapp.stg://auth/callback',
+    'dev.coderave.memunoapp.dev://auth/callback',
+  };
+
+  /// Custom URL schemes accepted for deep links across all flavors.
+  static Set<String> get supportedDeepLinkSchemes {
+    return allAuthCallbackRedirects
+        .map((String uri) => Uri.parse(uri).scheme)
+        .toSet();
+  }
+
   /// Convenience environment checks.
   static bool get isDevelopment => environment == AppEnvironment.development;
   static bool get isStaging => environment == AppEnvironment.staging;
@@ -135,6 +168,8 @@ final class AppEnv {
   /// We do this as a `final` initializer to:
   /// - avoid repeated parsing
   /// - ensure consistent values during app lifetime
+  ///
+  /// This field is private to prevent accidental modification.
   static final AppSecrets _secrets = (() {
     // `String.fromEnvironment` is compile-time injected by Flutter tooling.
     const String supabaseUrl = String.fromEnvironment('SUPABASE_URL');
@@ -165,7 +200,8 @@ final class AppEnv {
         firebase_options_production.DefaultFirebaseOptions.currentPlatform,
       AppEnvironment.staging =>
         firebase_options_staging.DefaultFirebaseOptions.currentPlatform,
-      _ => firebase_options_development.DefaultFirebaseOptions.currentPlatform,
+      AppEnvironment.development =>
+        firebase_options_development.DefaultFirebaseOptions.currentPlatform,
     };
   }
 
@@ -174,6 +210,7 @@ final class AppEnv {
     final AppEnvironment env = environment;
     return AppConfig(
       environment: env,
+      authCallbackRedirect: authCallbackRedirect,
       secrets: secrets,
       firebaseOptions: firebaseOptions,
     );

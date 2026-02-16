@@ -3,11 +3,15 @@ import 'dart:async';
 import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:memuno_app/src/app/app.dart';
 import 'package:memuno_app/src/app/bootstrap/firebase/firebase_bootstrap.dart';
 import 'package:memuno_app/src/app/bootstrap/supabase/supabase_bootstrap.dart';
 import 'package:memuno_app/src/core/utils/logger.dart';
+import 'package:memuno_app/src/infrastructure/shared_preferences/shared_preferences_provider.dart';
+import 'package:riverpod_annotation/riverpod_annotation.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 /// Centralized app bootstrap.
 ///
@@ -65,8 +69,20 @@ Future<void> bootstrap() async {
       await bootstrapSupabase();
       await bootstrapFirebase();
 
+      final SharedPreferences sharedPreferences =
+          await SharedPreferences.getInstance();
+
+      SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
       // Start the app with Riverpod.
-      runApp(const ProviderScope(child: App()));
+      runApp(
+        ProviderScope(
+          overrides: <Override>[
+            sharedPreferencesProvider.overrideWithValue(sharedPreferences),
+          ],
+          child: const App(),
+        ),
+      );
     },
     (final Object error, final StackTrace stackTrace) async {
       // A last-resort catch for anything escaping the guarded zone.

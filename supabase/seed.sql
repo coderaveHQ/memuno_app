@@ -1,0 +1,4 @@
+-- Seed data is intentionally empty for now.
+--
+-- Keep this file so local/dev environments can add deterministic fixtures later
+-- without changing Supabase CLI defaults.

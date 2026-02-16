@@ -6,5 +6,6 @@ part 'firebase_messaging_provider.g.dart';
 /// Riverpod provider for [FirebaseMessaging].
 @Riverpod(keepAlive: true)
 FirebaseMessaging firebaseMessaging(Ref ref) {
+  // Return the singleton Firebase Messaging instance.
   return FirebaseMessaging.instance;
 }
