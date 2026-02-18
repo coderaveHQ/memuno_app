@@ -7,14 +7,14 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
   /// Creates the app bar.
   const AppAppBar({
     super.key,
-    required this.title,
+    this.title,
     this.subtitle,
     this.onBack,
     this.actions,
   });
 
-  /// Title shown in the bar.
-  final String title;
+  /// Optional title shown in the bar.
+  final String? title;
 
   /// Optional subtitle shown under the title.
   final String? subtitle;
@@ -25,7 +25,9 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
   /// Optional trailing actions.
   final List<Widget>? actions;
 
+  bool get _hasTitle => title != null && title!.trim().isNotEmpty;
   bool get _hasSubtitle => subtitle != null && subtitle!.trim().isNotEmpty;
+  bool get _hasText => _hasTitle || _hasSubtitle;
 
   @override
   Size get preferredSize =>
@@ -38,30 +40,33 @@ class AppAppBar extends StatelessWidget implements PreferredSizeWidget {
     final TextTheme textTheme = Theme.of(context).textTheme;
 
     return AppBar(
-      title: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        mainAxisSize: MainAxisSize.min,
-        children: <Widget>[
-          Text(
-            title,
-            style: textTheme.headlineSmall?.copyWith(
-              fontWeight: FontWeight.w600,
-              color: colors.foreground,
+      title: !_hasText
+          ? null
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                if (_hasTitle)
+                  Text(
+                    title!,
+                    style: textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.w600,
+                      color: colors.foreground,
+                    ),
+                  ),
+                if (_hasSubtitle) ...<Widget>[
+                  if (_hasTitle) const SizedBox(height: 4),
+                  Text(
+                    subtitle!,
+                    style: textTheme.bodyMedium?.copyWith(
+                      color: colors.mutedForeground,
+                    ),
+                    maxLines: 3,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ],
             ),
-          ),
-          if (_hasSubtitle) ...<Widget>[
-            const SizedBox(height: 4),
-            Text(
-              subtitle!,
-              style: textTheme.bodyMedium?.copyWith(
-                color: colors.mutedForeground,
-              ),
-              maxLines: 3,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ],
-      ),
       toolbarHeight: _hasSubtitle ? 120 : kToolbarHeight + 8,
       centerTitle: false,
       automaticallyImplyLeading: false,

@@ -102,6 +102,12 @@ final class AppFeedback {
     );
   }
 
+  String resolve(BuildContext context, Object error) {
+    final Failure failure = _failureMapper.map(error);
+    final String message = _failureMessageResolver.resolve(context, failure);
+    return message;
+  }
+
   /// Resolves an [error] and shows it as an error toast.
   void resolveAndShowError(
     BuildContext context,
@@ -109,8 +115,7 @@ final class AppFeedback {
     String? title,
     AppToastAction? action,
   }) {
-    final Failure failure = _failureMapper.map(error);
-    final String message = _failureMessageResolver.resolve(context, failure);
+    final String message = resolve(context, error);
     showError(context, message: message, title: title, action: action);
   }
 }
