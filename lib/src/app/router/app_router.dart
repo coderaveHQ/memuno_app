@@ -14,7 +14,9 @@ import 'package:memuno_app/src/features/auth/presentation/pages/sign_in_page.dar
 import 'package:memuno_app/src/features/auth/presentation/pages/sign_up_page.dart';
 import 'package:memuno_app/src/features/auth/presentation/pages/verify_sign_in_page.dart';
 import 'package:memuno_app/src/features/auth/presentation/pages/verify_sign_up_page.dart';
+import 'package:memuno_app/src/features/friendships/presentation/pages/friendships_page.dart';
 import 'package:memuno_app/src/features/home/presentation/pages/home_page.dart';
+import 'package:memuno_app/src/features/profile/presentation/pages/profile_page.dart';
 import 'package:memuno_app/src/features/settings/presentation/pages/language_mode_page.dart';
 import 'package:memuno_app/src/features/settings/presentation/pages/settings_page.dart';
 import 'package:memuno_app/src/features/settings/presentation/pages/theme_mode_page.dart';

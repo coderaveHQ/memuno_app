@@ -7,9 +7,11 @@ import 'package:memuno_app/src/app/router/app_router.dart';
 import 'package:memuno_app/src/app/settings/language_resolution_provider.dart';
 import 'package:memuno_app/src/app/settings/theme_resolution_provider.dart';
 import 'package:memuno_app/src/app/theme/app_theme.dart' as app_theme;
+import 'package:memuno_app/src/app/widgets/m/m_theme.dart';
 import 'package:memuno_app/src/features/settings/domain/entities/app_theme.dart';
 import 'package:memuno_app/src/infrastructure/platform/system_brightness_provider.dart';
 import 'package:memuno_app/src/infrastructure/platform/system_locale_provider.dart';
+import 'package:skeletonizer/skeletonizer.dart';
 
 /// Root widget of the application.
 ///
@@ -94,8 +96,10 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
         darkTheme: app_theme.AppTheme.dark(),
         themeMode: themeMode,
         builder: (BuildContext context, Widget? child) {
-          final Widget safeChild = child ?? const SizedBox.shrink();
-          return AppEffects(child: safeChild);
+          return SkeletonizerConfig(
+            data: MTheme.sekeltonizerDarkData,
+            child: AppEffects(child: child ?? const SizedBox.shrink()),
+          );
         },
       ),
     );

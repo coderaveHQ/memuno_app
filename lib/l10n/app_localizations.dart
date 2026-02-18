@@ -154,6 +154,12 @@ abstract class AppLocalizations {
   /// **'Invalid format.'**
   String get validationInvalidFormat;
 
+  /// No description provided for @validationInvalidFriendshipCode.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Please enter a valid 8-digit friendship code.'**
+  String get validationInvalidFriendshipCode;
+
   /// No description provided for @validationInvalidCredentials.
   ///
   /// In en_US, this message translates to:
@@ -250,11 +256,107 @@ abstract class AppLocalizations {
   /// **'Sign out'**
   String get signOutButton;
 
-  /// No description provided for @homeTitle.
+  /// No description provided for @homePullToRefreshHint.
   ///
   /// In en_US, this message translates to:
-  /// **'Home'**
-  String get homeTitle;
+  /// **'Pull down to refresh.'**
+  String get homePullToRefreshHint;
+
+  /// No description provided for @profileTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Profile'**
+  String get profileTitle;
+
+  /// No description provided for @profileFriendshipCodeLabel.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Friendship code:'**
+  String get profileFriendshipCodeLabel;
+
+  /// No description provided for @profileFriendshipCodeShareText.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Let\'\'s be friends on Memuno: {code}'**
+  String profileFriendshipCodeShareText(Object code);
+
+  /// No description provided for @profileJoinedAtLabel.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Joined on:'**
+  String get profileJoinedAtLabel;
+
+  /// No description provided for @friendshipsTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Friendships'**
+  String get friendshipsTitle;
+
+  /// No description provided for @friendshipsTabFriendships.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Friendships'**
+  String get friendshipsTabFriendships;
+
+  /// No description provided for @friendshipsTabRequests.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Requests'**
+  String get friendshipsTabRequests;
+
+  /// No description provided for @friendshipsAddDialogTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Send friendship request'**
+  String get friendshipsAddDialogTitle;
+
+  /// No description provided for @friendshipsAddDialogFieldLabel.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Friendship code'**
+  String get friendshipsAddDialogFieldLabel;
+
+  /// No description provided for @friendshipsAddDialogSubmitButton.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Send request'**
+  String get friendshipsAddDialogSubmitButton;
+
+  /// No description provided for @friendshipsRequestCreateSuccessMessage.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Friendship request sent.'**
+  String get friendshipsRequestCreateSuccessMessage;
+
+  /// No description provided for @friendshipsListEmpty.
+  ///
+  /// In en_US, this message translates to:
+  /// **'No friendships yet.'**
+  String get friendshipsListEmpty;
+
+  /// No description provided for @friendshipsRequestsListEmpty.
+  ///
+  /// In en_US, this message translates to:
+  /// **'No pending friendship requests.'**
+  String get friendshipsRequestsListEmpty;
+
+  /// No description provided for @friendshipsFriendsSincePrefix.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Friends since'**
+  String get friendshipsFriendsSincePrefix;
+
+  /// No description provided for @friendshipsRequestDirectionIncoming.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Incoming'**
+  String get friendshipsRequestDirectionIncoming;
+
+  /// No description provided for @friendshipsRequestDirectionOutgoing.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Outgoing'**
+  String get friendshipsRequestDirectionOutgoing;
 
   /// No description provided for @settingsTitle.
   ///
@@ -279,12 +381,6 @@ abstract class AppLocalizations {
   /// In en_US, this message translates to:
   /// **'Account management'**
   String get settingsSectionAccountManagement;
-
-  /// No description provided for @settingsAccountManagementDescription.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Sign out from your account.'**
-  String get settingsAccountManagementDescription;
 
   /// No description provided for @settingsThemeModeTitle.
   ///
@@ -669,6 +765,18 @@ abstract class AppLocalizations {
   /// In en_US, this message translates to:
   /// **'You can now change your password.'**
   String get authToastPasswordRecoveryMessage;
+
+  /// No description provided for @homeGreetingGeneric.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Hey! 👋'**
+  String get homeGreetingGeneric;
+
+  /// No description provided for @homeGreetingWithName.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Hey, {name}! 👋'**
+  String homeGreetingWithName(Object name);
 }
 
 class _AppLocalizationsDelegate

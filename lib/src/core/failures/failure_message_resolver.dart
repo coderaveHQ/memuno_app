@@ -79,6 +79,7 @@ final class FailureMessageResolver {
     return switch (code) {
       'invalid_email' => l10n.validationInvalidEmail,
       'invalid_format' => l10n.validationInvalidFormat,
+      'invalid_friendship_code' => l10n.validationInvalidFriendshipCode,
       'min_length' => _withMinLength(l10n, params),
       'max_length' => _withMaxLength(l10n, params),
       'invalid_credentials' => l10n.validationInvalidCredentials,

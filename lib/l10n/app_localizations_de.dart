@@ -39,6 +39,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get validationInvalidFormat => 'Ungültiges Format.';
 
   @override
+  String get validationInvalidFriendshipCode =>
+      'Bitte gib einen gültigen 8-stelligen Freundschaftscode ein.';
+
+  @override
   String get validationInvalidCredentials => 'E-Mail oder Passwort ist falsch.';
 
   @override
@@ -93,7 +97,59 @@ class AppLocalizationsDe extends AppLocalizations {
   String get signOutButton => 'Abmelden';
 
   @override
-  String get homeTitle => 'Startseite';
+  String get homePullToRefreshHint => 'Zum Aktualisieren nach unten ziehen.';
+
+  @override
+  String get profileTitle => 'Profil';
+
+  @override
+  String get profileFriendshipCodeLabel => 'Freundschaftscode:';
+
+  @override
+  String profileFriendshipCodeShareText(Object code) {
+    return 'Lass uns bei Memuno befreundet sein: $code';
+  }
+
+  @override
+  String get profileJoinedAtLabel => 'Beigetreten am:';
+
+  @override
+  String get friendshipsTitle => 'Freundschaften';
+
+  @override
+  String get friendshipsTabFriendships => 'Freunde';
+
+  @override
+  String get friendshipsTabRequests => 'Anfragen';
+
+  @override
+  String get friendshipsAddDialogTitle => 'Freundschaftsanfrage senden';
+
+  @override
+  String get friendshipsAddDialogFieldLabel => 'Freundschaftscode';
+
+  @override
+  String get friendshipsAddDialogSubmitButton => 'Anfrage senden';
+
+  @override
+  String get friendshipsRequestCreateSuccessMessage =>
+      'Freundschaftsanfrage gesendet.';
+
+  @override
+  String get friendshipsListEmpty => 'Noch keine Freundschaften vorhanden.';
+
+  @override
+  String get friendshipsRequestsListEmpty =>
+      'Keine ausstehenden Freundschaftsanfragen.';
+
+  @override
+  String get friendshipsFriendsSincePrefix => 'Befreundet seit';
+
+  @override
+  String get friendshipsRequestDirectionIncoming => 'Eingehend';
+
+  @override
+  String get friendshipsRequestDirectionOutgoing => 'Ausgehend';
 
   @override
   String get settingsTitle => 'Einstellungen';
@@ -107,10 +163,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get settingsSectionAccountManagement => 'Kontoverwaltung';
-
-  @override
-  String get settingsAccountManagementDescription =>
-      'Melde dich von deinem Konto ab.';
 
   @override
   String get settingsThemeModeTitle => 'Designmodus';
@@ -330,6 +382,14 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get authToastPasswordRecoveryMessage =>
       'Du kannst nun dein Passwort ändern.';
+
+  @override
+  String get homeGreetingGeneric => 'Hey! 👋';
+
+  @override
+  String homeGreetingWithName(Object name) {
+    return 'Hey, $name! 👋';
+  }
 }
 
 /// The translations for German, as used in Germany (`de_DE`).
@@ -367,6 +427,10 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
   String get validationInvalidFormat => 'Ungültiges Format.';
 
   @override
+  String get validationInvalidFriendshipCode =>
+      'Bitte gib einen gültigen 8-stelligen Freundschaftscode ein.';
+
+  @override
   String get validationInvalidCredentials => 'E-Mail oder Passwort ist falsch.';
 
   @override
@@ -421,7 +485,59 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
   String get signOutButton => 'Abmelden';
 
   @override
-  String get homeTitle => 'Startseite';
+  String get homePullToRefreshHint => 'Zum Aktualisieren nach unten ziehen.';
+
+  @override
+  String get profileTitle => 'Profil';
+
+  @override
+  String get profileFriendshipCodeLabel => 'Freundschaftscode:';
+
+  @override
+  String profileFriendshipCodeShareText(Object code) {
+    return 'Lass uns bei Memuno befreundet sein: $code';
+  }
+
+  @override
+  String get profileJoinedAtLabel => 'Beigetreten am:';
+
+  @override
+  String get friendshipsTitle => 'Freundschaften';
+
+  @override
+  String get friendshipsTabFriendships => 'Freunde';
+
+  @override
+  String get friendshipsTabRequests => 'Anfragen';
+
+  @override
+  String get friendshipsAddDialogTitle => 'Freundschaftsanfrage senden';
+
+  @override
+  String get friendshipsAddDialogFieldLabel => 'Freundschaftscode';
+
+  @override
+  String get friendshipsAddDialogSubmitButton => 'Anfrage senden';
+
+  @override
+  String get friendshipsRequestCreateSuccessMessage =>
+      'Freundschaftsanfrage gesendet.';
+
+  @override
+  String get friendshipsListEmpty => 'Noch keine Freundschaften vorhanden.';
+
+  @override
+  String get friendshipsRequestsListEmpty =>
+      'Keine ausstehenden Freundschaftsanfragen.';
+
+  @override
+  String get friendshipsFriendsSincePrefix => 'Befreundet seit';
+
+  @override
+  String get friendshipsRequestDirectionIncoming => 'Eingehend';
+
+  @override
+  String get friendshipsRequestDirectionOutgoing => 'Ausgehend';
 
   @override
   String get settingsTitle => 'Einstellungen';
@@ -435,10 +551,6 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
 
   @override
   String get settingsSectionAccountManagement => 'Kontoverwaltung';
-
-  @override
-  String get settingsAccountManagementDescription =>
-      'Melde dich von deinem Konto ab.';
 
   @override
   String get settingsThemeModeTitle => 'Designmodus';
@@ -658,4 +770,12 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
   @override
   String get authToastPasswordRecoveryMessage =>
       'Du kannst nun dein Passwort ändern.';
+
+  @override
+  String get homeGreetingGeneric => 'Hey! 👋';
+
+  @override
+  String homeGreetingWithName(Object name) {
+    return 'Hey, $name! 👋';
+  }
 }

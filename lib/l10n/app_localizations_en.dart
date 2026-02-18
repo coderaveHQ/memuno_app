@@ -38,6 +38,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get validationInvalidFormat => 'Invalid format.';
 
   @override
+  String get validationInvalidFriendshipCode =>
+      'Please enter a valid 8-digit friendship code.';
+
+  @override
   String get validationInvalidCredentials => 'Email or password is incorrect.';
 
   @override
@@ -91,7 +95,58 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signOutButton => 'Sign out';
 
   @override
-  String get homeTitle => 'Home';
+  String get homePullToRefreshHint => 'Pull down to refresh.';
+
+  @override
+  String get profileTitle => 'Profile';
+
+  @override
+  String get profileFriendshipCodeLabel => 'Friendship code:';
+
+  @override
+  String profileFriendshipCodeShareText(Object code) {
+    return 'Let\'s be friends on Memuno: $code';
+  }
+
+  @override
+  String get profileJoinedAtLabel => 'Joined on:';
+
+  @override
+  String get friendshipsTitle => 'Friendships';
+
+  @override
+  String get friendshipsTabFriendships => 'Friendships';
+
+  @override
+  String get friendshipsTabRequests => 'Requests';
+
+  @override
+  String get friendshipsAddDialogTitle => 'Send friendship request';
+
+  @override
+  String get friendshipsAddDialogFieldLabel => 'Friendship code';
+
+  @override
+  String get friendshipsAddDialogSubmitButton => 'Send request';
+
+  @override
+  String get friendshipsRequestCreateSuccessMessage =>
+      'Friendship request sent.';
+
+  @override
+  String get friendshipsListEmpty => 'No friendships yet.';
+
+  @override
+  String get friendshipsRequestsListEmpty => 'No pending friendship requests.';
+
+  @override
+  String get friendshipsFriendsSincePrefix => 'Friends since';
+
+  @override
+  String get friendshipsRequestDirectionIncoming => 'Incoming';
+
+  @override
+  String get friendshipsRequestDirectionOutgoing => 'Outgoing';
 
   @override
   String get settingsTitle => 'Settings';
@@ -104,10 +159,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get settingsSectionAccountManagement => 'Account management';
-
-  @override
-  String get settingsAccountManagementDescription =>
-      'Sign out from your account.';
 
   @override
   String get settingsThemeModeTitle => 'Theme mode';
@@ -325,6 +376,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get authToastPasswordRecoveryMessage =>
       'You can now change your password.';
+
+  @override
+  String get homeGreetingGeneric => 'Hey! 👋';
+
+  @override
+  String homeGreetingWithName(Object name) {
+    return 'Hey, $name! 👋';
+  }
 }
 
 /// The translations for English, as used in the United States (`en_US`).
@@ -361,6 +420,10 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   String get validationInvalidFormat => 'Invalid format.';
 
   @override
+  String get validationInvalidFriendshipCode =>
+      'Please enter a valid 8-digit friendship code.';
+
+  @override
   String get validationInvalidCredentials => 'Email or password is incorrect.';
 
   @override
@@ -414,7 +477,58 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   String get signOutButton => 'Sign out';
 
   @override
-  String get homeTitle => 'Home';
+  String get homePullToRefreshHint => 'Pull down to refresh.';
+
+  @override
+  String get profileTitle => 'Profile';
+
+  @override
+  String get profileFriendshipCodeLabel => 'Friendship code:';
+
+  @override
+  String profileFriendshipCodeShareText(Object code) {
+    return 'Let\'s be friends on Memuno: $code';
+  }
+
+  @override
+  String get profileJoinedAtLabel => 'Joined on:';
+
+  @override
+  String get friendshipsTitle => 'Friendships';
+
+  @override
+  String get friendshipsTabFriendships => 'Friendships';
+
+  @override
+  String get friendshipsTabRequests => 'Requests';
+
+  @override
+  String get friendshipsAddDialogTitle => 'Send friendship request';
+
+  @override
+  String get friendshipsAddDialogFieldLabel => 'Friendship code';
+
+  @override
+  String get friendshipsAddDialogSubmitButton => 'Send request';
+
+  @override
+  String get friendshipsRequestCreateSuccessMessage =>
+      'Friendship request sent.';
+
+  @override
+  String get friendshipsListEmpty => 'No friendships yet.';
+
+  @override
+  String get friendshipsRequestsListEmpty => 'No pending friendship requests.';
+
+  @override
+  String get friendshipsFriendsSincePrefix => 'Friends since';
+
+  @override
+  String get friendshipsRequestDirectionIncoming => 'Incoming';
+
+  @override
+  String get friendshipsRequestDirectionOutgoing => 'Outgoing';
 
   @override
   String get settingsTitle => 'Settings';
@@ -427,10 +541,6 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
 
   @override
   String get settingsSectionAccountManagement => 'Account management';
-
-  @override
-  String get settingsAccountManagementDescription =>
-      'Sign out from your account.';
 
   @override
   String get settingsThemeModeTitle => 'Theme mode';
@@ -648,4 +758,12 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   @override
   String get authToastPasswordRecoveryMessage =>
       'You can now change your password.';
+
+  @override
+  String get homeGreetingGeneric => 'Hey! 👋';
+
+  @override
+  String homeGreetingWithName(Object name) {
+    return 'Hey, $name! 👋';
+  }
 }
