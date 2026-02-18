@@ -9,6 +9,7 @@
   "serverErrorMessage": "Server error. Please try again later.",
   "validationInvalidEmail": "Please enter a valid email address.",
   "validationInvalidFormat": "Invalid format.",
+  "validationInvalidFriendshipCode": "Please enter a valid 8-digit friendship code.",
   "validationInvalidCredentials": "Email or password is incorrect.",
   "validationUnknown": "Invalid input. Please check your details.",
   "validationMinLength": "Must be at least {min} characters.",
@@ -35,12 +36,32 @@
   "signInSwitchToPasswordButton": "Sign in with password",
   "signInSignUpButton": "Sign up",
   "signOutButton": "Sign out",
-  "homeTitle": "Home",
+  "homePullToRefreshHint": "Pull down to refresh.",
+  "profileTitle": "Profile",
+  "profileFriendshipCodeLabel": "Friendship code:",
+  "profileFriendshipCodeShareText": "Let''s be friends on Memuno: {code}",
+  "@profileFriendshipCodeShareText": {
+    "placeholders": {
+      "code": {}
+    }
+  },
+  "profileJoinedAtLabel": "Joined on:",
+  "friendshipsTitle": "Friendships",
+  "friendshipsTabFriendships": "Friendships",
+  "friendshipsTabRequests": "Requests",
+  "friendshipsAddDialogTitle": "Send friendship request",
+  "friendshipsAddDialogFieldLabel": "Friendship code",
+  "friendshipsAddDialogSubmitButton": "Send request",
+  "friendshipsRequestCreateSuccessMessage": "Friendship request sent.",
+  "friendshipsListEmpty": "No friendships yet.",
+  "friendshipsRequestsListEmpty": "No pending friendship requests.",
+  "friendshipsFriendsSincePrefix": "Friends since",
+  "friendshipsRequestDirectionIncoming": "Incoming",
+  "friendshipsRequestDirectionOutgoing": "Outgoing",
   "settingsTitle": "Settings",
   "settingsSubtitle": "Manage your account and app preferences.",
   "settingsSectionAppearance": "Appearance",
   "settingsSectionAccountManagement": "Account management",
-  "settingsAccountManagementDescription": "Sign out from your account.",
   "settingsThemeModeTitle": "Theme mode",
   "settingsThemeModeSubtitle": "Choose how the app looks.",
   "settingsThemeModeSystemOption": "System",
@@ -129,5 +150,12 @@
   "authToastSignedOutTitle": "Sign-out successful",
   "authToastSignedOutMessage": "You have been signed out successfully.",
   "authToastPasswordRecoveryTitle": "Sign-in successful",
-  "authToastPasswordRecoveryMessage": "You can now change your password."
+  "authToastPasswordRecoveryMessage": "You can now change your password.",
+  "homeGreetingGeneric": "Hey! 👋",
+  "homeGreetingWithName": "Hey, {name}! 👋",
+  "@homeGreetingWithName": {
+    "placeholders": {
+      "name": {}
+    }
+  }
 }

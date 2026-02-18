@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:memuno_app/src/app/theme/app_colors.dart';
+import 'package:memuno_app/src/app/widgets/app_loading_indicator.dart';
 
 /// Visual variants for [AppButton].
 enum AppButtonVariant { primary, secondary, bordered, destructive, ghost }
@@ -173,7 +174,7 @@ class AppButton extends StatelessWidget {
     );
 
     final Widget content = isLoading
-        ? _LoadingIndicator(color: foreground)
+        ? AppLoadingIndicator(color: foreground)
         : child;
 
     final Widget button = TextButton(
@@ -217,25 +218,5 @@ class AppButton extends StatelessWidget {
       return BorderSide(color: colors.border, width: 1);
     }
     return null;
-  }
-}
-
-class _LoadingIndicator extends StatelessWidget {
-  /// Creates a _LoadingIndicator instance.
-  const _LoadingIndicator({required this.color});
-
-  final Color color;
-
-  @override
-  /// Builds and returns the widget tree for this component.
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: 16,
-      height: 16,
-      child: CircularProgressIndicator(
-        strokeWidth: 2,
-        valueColor: AlwaysStoppedAnimation<Color>(color),
-      ),
-    );
   }
 }

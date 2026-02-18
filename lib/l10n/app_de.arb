@@ -9,6 +9,7 @@
   "serverErrorMessage": "Serverfehler. Bitte versuche es später.",
   "validationInvalidEmail": "Bitte gib eine gültige E-Mail-Adresse ein.",
   "validationInvalidFormat": "Ungültiges Format.",
+  "validationInvalidFriendshipCode": "Bitte gib einen gültigen 8-stelligen Freundschaftscode ein.",
   "validationInvalidCredentials": "E-Mail oder Passwort ist falsch.",
   "validationUnknown": "Eingabe ungültig. Bitte prüfe deine Angaben.",
   "validationMinLength": "Muss mindestens {min} Zeichen haben.",
@@ -35,12 +36,32 @@
   "signInSwitchToPasswordButton": "Mit Passwort anmelden",
   "signInSignUpButton": "Registrieren",
   "signOutButton": "Abmelden",
-  "homeTitle": "Startseite",
+  "homePullToRefreshHint": "Zum Aktualisieren nach unten ziehen.",
+  "profileTitle": "Profil",
+  "profileFriendshipCodeLabel": "Freundschaftscode:",
+  "profileFriendshipCodeShareText": "Lass uns bei Memuno befreundet sein: {code}",
+  "@profileFriendshipCodeShareText": {
+    "placeholders": {
+      "code": {}
+    }
+  },
+  "profileJoinedAtLabel": "Beigetreten am:",
+  "friendshipsTitle": "Freundschaften",
+  "friendshipsTabFriendships": "Freunde",
+  "friendshipsTabRequests": "Anfragen",
+  "friendshipsAddDialogTitle": "Freundschaftsanfrage senden",
+  "friendshipsAddDialogFieldLabel": "Freundschaftscode",
+  "friendshipsAddDialogSubmitButton": "Anfrage senden",
+  "friendshipsRequestCreateSuccessMessage": "Freundschaftsanfrage gesendet.",
+  "friendshipsListEmpty": "Noch keine Freundschaften vorhanden.",
+  "friendshipsRequestsListEmpty": "Keine ausstehenden Freundschaftsanfragen.",
+  "friendshipsFriendsSincePrefix": "Befreundet seit",
+  "friendshipsRequestDirectionIncoming": "Eingehend",
+  "friendshipsRequestDirectionOutgoing": "Ausgehend",
   "settingsTitle": "Einstellungen",
   "settingsSubtitle": "Verwalte dein Konto und deine App-Einstellungen.",
   "settingsSectionAppearance": "Darstellung",
   "settingsSectionAccountManagement": "Kontoverwaltung",
-  "settingsAccountManagementDescription": "Melde dich von deinem Konto ab.",
   "settingsThemeModeTitle": "Designmodus",
   "settingsThemeModeSubtitle": "Wähle aus, wie die App aussehen soll.",
   "settingsThemeModeSystemOption": "System",
@@ -129,5 +150,12 @@
   "authToastSignedOutTitle": "Abmeldung erfolgreich",
   "authToastSignedOutMessage": "Du wurdest erfolgreich abgemeldet.",
   "authToastPasswordRecoveryTitle": "Anmeldung erfolgreich",
-  "authToastPasswordRecoveryMessage": "Du kannst nun dein Passwort ändern."
+  "authToastPasswordRecoveryMessage": "Du kannst nun dein Passwort ändern.",
+  "homeGreetingGeneric": "Hey! 👋",
+  "homeGreetingWithName": "Hey, {name}! 👋",
+  "@homeGreetingWithName": {
+    "placeholders": {
+      "name": {}
+    }
+  }
 }
