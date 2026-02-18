@@ -20,6 +20,9 @@ final class Validator {
   /// Name validation regex (2 to 64 characters).
   static final RegExp _nameRegex = RegExp(r'^.{2,64}$');
 
+  /// Friendship-code regex (exactly 8 digits).
+  static final RegExp _friendshipCodeRegex = RegExp(r'^\d{8}$');
+
   /// Validates an email address.
   ///
   /// Returns a [Failure.validation] when invalid, otherwise `null`.
@@ -72,6 +75,19 @@ final class Validator {
       code: 'max_length',
       field: 'name',
       params: {'max': 64},
+    );
+  }
+
+  /// Validates an 8-digit friendship code.
+  ///
+  /// Returns a [Failure.validation] when invalid, otherwise `null`.
+  Failure? validateFriendshipCode(String friendshipCode) {
+    if (_friendshipCodeRegex.hasMatch(friendshipCode)) {
+      return null;
+    }
+    return const Failure.validation(
+      code: 'invalid_friendship_code',
+      field: 'friendship_code',
     );
   }
 }

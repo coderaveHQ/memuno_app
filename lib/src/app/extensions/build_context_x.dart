@@ -8,14 +8,15 @@ extension BuildContextX on BuildContext {
   AppSpacing get spacing =>
       Theme.of(this).extension<AppSpacing>() ?? const AppSpacing();
 
-  /// Current media size.
   Size get screenSize => MediaQuery.sizeOf(this);
-
-  /// Current screen width.
+  double get screenHeight => screenSize.height;
   double get screenWidth => screenSize.width;
 
-  /// Current screen height.
-  double get screenHeight => screenSize.height;
+  EdgeInsets get padding => MediaQuery.paddingOf(this);
+  double get topPadding => padding.top;
+  double get leftPadding => padding.left;
+  double get rightPadding => padding.right;
+  double get bottomPadding => padding.bottom;
 
   /// Current orientation.
   Orientation get orientation => MediaQuery.orientationOf(this);
@@ -27,4 +28,20 @@ extension BuildContextX on BuildContext {
   bool get isMedium => layoutSize == AppLayoutSize.medium;
   bool get isLarge => layoutSize == AppLayoutSize.large;
   bool get isExtraLarge => layoutSize == AppLayoutSize.extraLarge;
+}
+
+class DeviceInsets {
+  final double top;
+  final double right;
+  final double bottom;
+  final double left;
+
+  const DeviceInsets({
+    required this.top,
+    required this.right,
+    required this.bottom,
+    required this.left,
+  });
+
+  EdgeInsets toEdgeInsets() => EdgeInsets.fromLTRB(left, top, right, bottom);
 }
