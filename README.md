@@ -40,3 +40,28 @@ dart run build_runner build --delete-conflicting-outputs
 ```sh
 flutter run --flavor development --dart-define-from-file=.env.local
 ```
+
+### Tools
+
+#### Meme Template Uploader
+
+This tool helps uploading meme templates to the storage and linking them to the database making it possible for users to use images as a template for their memes.
+
+##### 1. Navigate into the folder
+
+```sh
+cd tools/memuno-template-uploader/
+```
+
+##### 2. Install packages
+
+```sh
+npm i
+```
+
+##### 3. Run the App
+
+```sh
+npm run dev
+```
+

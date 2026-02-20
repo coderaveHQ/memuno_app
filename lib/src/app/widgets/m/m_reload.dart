@@ -7,7 +7,7 @@ import 'package:memuno_app/src/app/widgets/m/m_tappable.dart';
 import 'package:memuno_app/src/app/widgets/m/m_text.dart';
 
 class MReload extends StatelessWidget {
-  final EdgeInsets? padding;
+  final EdgeInsetsGeometry? padding;
   final String? text;
   final void Function()? onReload;
   const MReload({super.key, this.padding, this.text, this.onReload});

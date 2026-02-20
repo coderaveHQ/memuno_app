@@ -33,9 +33,12 @@ final Map<bool, _AuthRoutingPolicy> _authRoutingPolicies =
       ),
       // Policy for authenticated users.
       true: _AuthRoutingPolicy(
-        redirectRouteName: HomeRoute.routeName,
+        redirectRouteName: FeedRoute.routeName,
         allowedRouteNames: <String>{
-          HomeRoute.routeName,
+          FeedRoute.routeName,
+          CommunityRoute.routeName,
+          CreateRoute.routeName,
+          SendRoute.routeName,
           ProfileRoute.routeName,
           FriendshipsRoute.routeName,
           SettingsRoute.routeName,
@@ -77,7 +80,7 @@ String? _redirect(BuildContext context, GoRouterState state, Ref ref) {
   // It never renders - always redirects based on auth state.
   if (path == '/') {
     final String target = authState.value!.isAuthenticated
-        ? state.namedLocation(HomeRoute.routeName)
+        ? state.namedLocation(FeedRoute.routeName)
         : state.namedLocation(SignInRoute.routeName);
 
     return target == location ? null : target;

@@ -68,6 +68,19 @@ create type public.friendship_request_list_page as (
   "next_cursor_id" uuid
 );
 
+create type public.meme_template_list_item as (
+  "id" uuid,
+  "image_path" text,
+  "aspect_ratio" double precision,
+  "created_at" timestamptz
+);
+
+create type public.meme_template_list_page as (
+  "items" jsonb,
+  "next_cursor_created_at" timestamptz,
+  "next_cursor_id" uuid
+);
+
 -- -----------------------------------------------------------------------------
 -- Core tables
 -- -----------------------------------------------------------------------------
@@ -125,6 +138,53 @@ create table public.friendship_requests (
     check ("requester_id" <> "addressee_id")
 );
 
+create table public.meme_templates (
+  "id" uuid not null default gen_random_uuid(),
+  "image_path" text not null,
+  "aspect_ratio" double precision not null,
+  "tags" text[] not null default '{}'::text[],
+  "is_active" boolean not null default true,
+  "created_at" timestamptz not null default now(),
+  "updated_at" timestamptz not null default now(),
+  constraint pk_meme_templates primary key ("id"),
+  constraint uq_meme_templates__image_path unique ("image_path"),
+  constraint ck_meme_templates__positive_aspect_ratio
+    check ("aspect_ratio" > 0)
+);
+
+create table public.memes (
+  "id" uuid not null default gen_random_uuid(),
+  "user_id" uuid not null,
+  "template_id" uuid not null,
+  "image_path" text not null,
+  "created_at" timestamptz not null default now(),
+  "updated_at" timestamptz not null default now(),
+  constraint pk_memes primary key ("id"),
+  constraint uq_memes__image_path unique ("image_path"),
+  constraint fk_memes__user_id__auth_users__id
+    foreign key ("user_id") references auth.users ("id")
+    on update cascade on delete cascade,
+  constraint fk_memes__template_id__meme_templates__id
+    foreign key ("template_id") references public.meme_templates ("id")
+    on update cascade on delete restrict,
+  constraint ck_memes__image_path_not_empty
+    check (length(trim("image_path")) > 0)
+);
+
+create table public.meme_recipients (
+  "meme_id" uuid not null,
+  "user_id" uuid not null,
+  "created_at" timestamptz not null default now(),
+  "updated_at" timestamptz not null default now(),
+  constraint pk_meme_recipients primary key ("meme_id", "user_id"),
+  constraint fk_meme_recipients__meme_id__memes__id
+    foreign key ("meme_id") references public.memes ("id")
+    on update cascade on delete cascade,
+  constraint fk_meme_recipients__user_id__auth_users__id
+    foreign key ("user_id") references auth.users ("id")
+    on update cascade on delete cascade
+);
+
 -- -----------------------------------------------------------------------------
 -- Indexes for friendship request workflows
 -- -----------------------------------------------------------------------------
@@ -144,6 +204,19 @@ where "status" = 'pending';
 create index friendship_requests_pair_pending_lookup_idx
 on public.friendship_requests ("requester_id", "addressee_id")
 where "status" = 'pending';
+
+create index meme_templates_tags_idx
+on public.meme_templates
+using gin ("tags");
+
+create index meme_templates_created_at_id_idx
+on public.meme_templates ("created_at" desc, "id" desc);
+
+create index memes_created_at_id_idx
+on public.memes ("created_at" desc, "id" desc);
+
+create index meme_recipients_user_id_meme_id_idx
+on public.meme_recipients ("user_id", "meme_id");
 
 -- -----------------------------------------------------------------------------
 -- Friendship synchronization trigger function
@@ -190,10 +263,79 @@ before update on public.friendship_requests
 for each row
 execute function public.touch_updated_at();
 
+create trigger trg_meme_templates__touch_updated_at
+before update on public.meme_templates
+for each row
+execute function public.touch_updated_at();
+
+create trigger trg_memes__touch_updated_at
+before update on public.memes
+for each row
+execute function public.touch_updated_at();
+
+create trigger trg_meme_recipients__touch_updated_at
+before update on public.meme_recipients
+for each row
+execute function public.touch_updated_at();
+
 create trigger trg_friendship_requests__sync_friendships_on_accepted
 after insert or update of "status" on public.friendship_requests
 for each row
 execute function public.sync_friendships_from_accepted_request();
+
+-- -----------------------------------------------------------------------------
+-- Meme access helper functions
+-- -----------------------------------------------------------------------------
+
+create function public.is_meme_creator(
+  p_meme_id uuid,
+  p_user_id uuid
+)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.memes m
+    where m."id" = p_meme_id
+      and m."user_id" = p_user_id
+  );
+$$;
+
+create function public.is_meme_recipient(
+  p_meme_id uuid,
+  p_user_id uuid
+)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.meme_recipients mr
+    where mr."meme_id" = p_meme_id
+      and mr."user_id" = p_user_id
+  );
+$$;
+
+create function public.can_view_meme(
+  p_meme_id uuid,
+  p_user_id uuid
+)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select public.is_meme_creator(p_meme_id, p_user_id)
+     or public.is_meme_recipient(p_meme_id, p_user_id);
+$$;
 
 -- -----------------------------------------------------------------------------
 -- Row-level security and policies
@@ -202,6 +344,9 @@ execute function public.sync_friendships_from_accepted_request();
 alter table public.users enable row level security;
 alter table public.friendships enable row level security;
 alter table public.friendship_requests enable row level security;
+alter table public.meme_templates enable row level security;
+alter table public.memes enable row level security;
+alter table public.meme_recipients enable row level security;
 
 create policy "users:select:self:authenticated"
 on public.users
@@ -260,6 +405,46 @@ using (
 with check (
   "requester_id" = (select auth.uid())
   or "addressee_id" = (select auth.uid())
+);
+
+create policy "meme_templates:select:active:authenticated"
+on public.meme_templates
+for select
+to authenticated
+using ("is_active" = true);
+
+create policy "memes:select:owner_or_recipient:authenticated"
+on public.memes
+for select
+to authenticated
+using (
+  "user_id" = (select auth.uid())
+  or public.is_meme_recipient(public.memes."id", (select auth.uid()))
+);
+
+create policy "memes:insert:owner:authenticated"
+on public.memes
+for insert
+to authenticated
+with check ("user_id" = (select auth.uid()));
+
+create policy "meme_recipients:select:self:authenticated"
+on public.meme_recipients
+for select
+to authenticated
+using ("user_id" = (select auth.uid()));
+
+create policy "meme_recipients:insert:owner:authenticated"
+on public.meme_recipients
+for insert
+to authenticated
+with check (
+  exists (
+    select 1
+    from public.memes m
+    where m."id" = public.meme_recipients."meme_id"
+      and m."user_id" = (select auth.uid())
+  )
 );
 
 -- -----------------------------------------------------------------------------
@@ -553,6 +738,79 @@ as $$
 $$;
 
 -- -----------------------------------------------------------------------------
+-- Meme templates list RPC
+-- -----------------------------------------------------------------------------
+
+create function public.meme_templates_list(
+  p_search text default null,
+  p_limit integer default 30,
+  p_cursor_created_at timestamptz default null,
+  p_cursor_id uuid default null
+)
+returns public.meme_template_list_page
+language sql
+security definer
+set search_path = public
+as $$
+  with params as (
+    select nullif(trim(p_search), '') as "search_term"
+  ),
+  base as (
+    select
+      t."id",
+      t."image_path",
+      t."aspect_ratio",
+      t."created_at"
+    from public.meme_templates t
+    where t."is_active" = true
+      and (
+        (select "search_term" from params) is null
+        or exists (
+          select 1
+          from unnest(t."tags") as tag
+          where tag ilike '%' || (select "search_term" from params) || '%'
+        )
+      )
+  ),
+  ordered as (
+    select
+      row(
+        "id",
+        "image_path",
+        "aspect_ratio",
+        "created_at"
+      )::public.meme_template_list_item as "item",
+      "created_at" as "sort_created_at",
+      "id" as "sort_id"
+    from base
+  ),
+  paged as (
+    select *
+    from ordered
+    where (
+      p_cursor_created_at is null
+      or p_cursor_id is null
+      or ("sort_created_at", "sort_id") < (p_cursor_created_at, p_cursor_id)
+    )
+    order by "sort_created_at" desc, "sort_id" desc
+    limit coalesce(p_limit, 30)
+  ),
+  next_cursor as (
+    select
+      "sort_created_at" as "next_created_at",
+      "sort_id" as "next_id"
+    from paged
+    order by "sort_created_at" asc, "sort_id" asc
+    limit 1
+  )
+  select
+    coalesce(jsonb_agg(to_jsonb(paged."item")), '[]'::jsonb) as "items",
+    (select "next_created_at" from next_cursor) as "next_cursor_created_at",
+    (select "next_id" from next_cursor) as "next_cursor_id"
+  from paged;
+$$;
+
+-- -----------------------------------------------------------------------------
 -- Friendship mutation RPCs
 -- -----------------------------------------------------------------------------
 
@@ -669,9 +927,9 @@ as $$
 declare
   v_addressee_id uuid := (select auth.uid());
   v_requester_id uuid;
-  v_friendship_created_at timestamptz;
-  v_friendship_updated_at timestamptz;
-  v_result public.friendship_list_item;
+  v_result_user jsonb;
+  v_result_created_at timestamptz;
+  v_result_updated_at timestamptz;
 begin
   if v_addressee_id is null then
     raise exception 'not authenticated';
@@ -693,13 +951,7 @@ begin
     raise exception 'no pending request';
   end if;
 
-  select f."created_at", f."updated_at"
-  into v_friendship_created_at, v_friendship_updated_at
-  from public.friendships f
-  where f."user_id" = v_addressee_id
-    and f."friend_id" = v_requester_id;
-
-  select row(
+  select
     jsonb_build_object(
       'id',
       u."id",
@@ -708,19 +960,30 @@ begin
       'friendship_code',
       u."friendship_code"
     ),
-    v_friendship_created_at,
-    v_friendship_updated_at
-  )::public.friendship_list_item
-  into v_result
+    f."created_at",
+    f."updated_at"
+  into
+    v_result_user,
+    v_result_created_at,
+    v_result_updated_at
   from public.users u
+  join public.friendships f
+    on f."user_id" = v_addressee_id
+   and f."friend_id" = u."id"
   where u."id" = v_requester_id
   limit 1;
 
-  if v_result is null then
+  if v_result_user is null
+    or v_result_created_at is null
+    or v_result_updated_at is null then
     raise exception 'failed to load accepted friendship payload';
   end if;
 
-  return v_result;
+  return (
+    v_result_user,
+    v_result_created_at,
+    v_result_updated_at
+  )::public.friendship_list_item;
 end;
 $$;
 
@@ -826,6 +1089,79 @@ end;
 $$;
 
 -- -----------------------------------------------------------------------------
+-- Meme mutation RPCs
+-- -----------------------------------------------------------------------------
+
+create function public.meme_create(
+  p_image_path text,
+  p_template_id uuid,
+  p_recipient_ids uuid[]
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_user_id uuid := (select auth.uid());
+  v_meme public.memes;
+  v_recipient_ids uuid[];
+begin
+  if v_user_id is null then
+    raise exception 'not authenticated';
+  end if;
+
+  if p_image_path is null or length(trim(p_image_path)) = 0 then
+    raise exception 'image_path is required';
+  end if;
+
+  if p_template_id is null then
+    raise exception 'template_id is required';
+  end if;
+
+  if p_recipient_ids is null or array_length(p_recipient_ids, 1) is null then
+    raise exception 'recipient_ids is required';
+  end if;
+
+  select array_agg(distinct recipient_id)
+  into v_recipient_ids
+  from (
+    select r_id as recipient_id
+    from unnest(p_recipient_ids) as r_id
+    where r_id is not null
+      and r_id <> v_user_id
+  ) normalized;
+
+  if v_recipient_ids is null or array_length(v_recipient_ids, 1) is null then
+    raise exception 'recipient_ids is required';
+  end if;
+
+  if exists (
+    select 1
+    from unnest(v_recipient_ids) as r_id
+    where not exists (
+      select 1
+      from public.friendships f
+      where f."user_id" = v_user_id
+        and f."friend_id" = r_id
+    )
+  ) then
+    raise exception 'all recipients must be friends';
+  end if;
+
+  insert into public.memes ("user_id", "template_id", "image_path")
+  values (v_user_id, p_template_id, p_image_path)
+  returning *
+  into v_meme;
+
+  insert into public.meme_recipients ("meme_id", "user_id")
+  select v_meme."id", r_id
+  from unnest(v_recipient_ids) as r_id
+  on conflict do nothing;
+end;
+$$;
+
+-- -----------------------------------------------------------------------------
 -- Function metadata
 -- -----------------------------------------------------------------------------
 
@@ -843,6 +1179,9 @@ comment on function public.friendships_list(text, integer, text, uuid) is
 
 comment on function public.friendship_requests_list(text, integer, timestamptz, uuid) is
 'Returns one cursor-paginated page of pending friendship requests for auth.uid(), including request ids.';
+
+comment on function public.meme_templates_list(text, integer, timestamptz, uuid) is
+'Returns one cursor-paginated page of active meme templates, optionally filtered by tag search.';
 
 comment on function public.friendship_request_create(text) is
 'Creates one pending friendship request by addressee friendship code and returns the new request id.';
@@ -862,6 +1201,18 @@ comment on function public.friendship_request_cancel(uuid) is
 comment on function public.friendship_delete(uuid) is
 'Deletes both directional friendship edges for auth.uid() and the provided friend id.';
 
+comment on function public.meme_create(text, uuid, uuid[]) is
+'Creates one meme for auth.uid(), validates friend recipients, and inserts recipient edges.';
+
+comment on function public.is_meme_creator(uuid, uuid) is
+'Returns whether the given user id created the given meme id.';
+
+comment on function public.is_meme_recipient(uuid, uuid) is
+'Returns whether the given user id is a recipient of the given meme id.';
+
+comment on function public.can_view_meme(uuid, uuid) is
+'Returns whether the given user id can view the given meme as creator or recipient.';
+
 -- -----------------------------------------------------------------------------
 -- RPC execute permissions
 -- -----------------------------------------------------------------------------
@@ -871,19 +1222,78 @@ revoke all on function public.get_users_profile(uuid) from public;
 revoke all on function public.get_current_users_profile() from public;
 revoke all on function public.friendships_list(text, integer, text, uuid) from public;
 revoke all on function public.friendship_requests_list(text, integer, timestamptz, uuid) from public;
+revoke all on function public.meme_templates_list(text, integer, timestamptz, uuid) from public;
 revoke all on function public.friendship_request_create(text) from public;
 revoke all on function public.friendship_request_accept(uuid) from public;
 revoke all on function public.friendship_request_decline(uuid) from public;
 revoke all on function public.friendship_request_cancel(uuid) from public;
 revoke all on function public.friendship_delete(uuid) from public;
+revoke all on function public.meme_create(text, uuid, uuid[]) from public;
+revoke all on function public.is_meme_creator(uuid, uuid) from public;
+revoke all on function public.is_meme_recipient(uuid, uuid) from public;
+revoke all on function public.can_view_meme(uuid, uuid) from public;
 
 grant execute on function public.update_current_user_name(text) to authenticated;
 grant execute on function public.get_users_profile(uuid) to authenticated;
 grant execute on function public.get_current_users_profile() to authenticated;
 grant execute on function public.friendships_list(text, integer, text, uuid) to authenticated;
 grant execute on function public.friendship_requests_list(text, integer, timestamptz, uuid) to authenticated;
+grant execute on function public.meme_templates_list(text, integer, timestamptz, uuid) to authenticated;
 grant execute on function public.friendship_request_create(text) to authenticated;
 grant execute on function public.friendship_request_accept(uuid) to authenticated;
 grant execute on function public.friendship_request_decline(uuid) to authenticated;
 grant execute on function public.friendship_request_cancel(uuid) to authenticated;
 grant execute on function public.friendship_delete(uuid) to authenticated;
+grant execute on function public.meme_create(text, uuid, uuid[]) to authenticated;
+grant execute on function public.is_meme_creator(uuid, uuid) to authenticated;
+grant execute on function public.is_meme_recipient(uuid, uuid) to authenticated;
+grant execute on function public.can_view_meme(uuid, uuid) to authenticated;
+
+-- -----------------------------------------------------------------------------
+-- Storage buckets and policies
+-- -----------------------------------------------------------------------------
+
+insert into storage.buckets ("id", "name", "public")
+values ('meme_templates', 'meme_templates', false)
+on conflict do nothing;
+
+create policy "storage.objects:meme_templates:select:authenticated"
+on storage.objects
+for select
+to authenticated
+using (
+  "bucket_id" = 'meme_templates'
+  and exists (
+    select 1
+    from public.meme_templates t
+    where t."image_path" = storage.objects."name"
+      and t."is_active" = true
+  )
+);
+
+insert into storage.buckets ("id", "name", "public")
+values ('memes', 'memes', false)
+on conflict do nothing;
+
+create policy "storage.objects:memes:insert:authenticated"
+on storage.objects
+for insert
+to authenticated
+with check (
+  "bucket_id" = 'memes'
+  and (storage.foldername("name"))[1] = ((select auth.uid()))::text
+);
+
+create policy "storage.objects:memes:select:owner_or_recipient:authenticated"
+on storage.objects
+for select
+to authenticated
+using (
+  "bucket_id" = 'memes'
+  and exists (
+    select 1
+    from public.memes m
+    where m."image_path" = storage.objects."name"
+      and public.can_view_meme(m."id", (select auth.uid()))
+  )
+);

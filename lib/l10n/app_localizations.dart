@@ -358,6 +358,84 @@ abstract class AppLocalizations {
   /// **'Outgoing'**
   String get friendshipsRequestDirectionOutgoing;
 
+  /// No description provided for @memeEditorTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'New meme'**
+  String get memeEditorTitle;
+
+  /// No description provided for @memeEditorFinalizeButton.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Done'**
+  String get memeEditorFinalizeButton;
+
+  /// No description provided for @memeEditorCanvasSelectTemplateHint.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Select a meme template first.'**
+  String get memeEditorCanvasSelectTemplateHint;
+
+  /// No description provided for @memeEditorCanvasImageLoadError.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Image could not be loaded.'**
+  String get memeEditorCanvasImageLoadError;
+
+  /// No description provided for @memeEditorAddTextButton.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Add text'**
+  String get memeEditorAddTextButton;
+
+  /// No description provided for @memeEditorTextLabel.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Text'**
+  String get memeEditorTextLabel;
+
+  /// No description provided for @memeEditorTextHint.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Write your meme text'**
+  String get memeEditorTextHint;
+
+  /// No description provided for @memeEditorDefaultText.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Text'**
+  String get memeEditorDefaultText;
+
+  /// No description provided for @memeEditorRenderError.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Unable to render meme editor output.'**
+  String get memeEditorRenderError;
+
+  /// No description provided for @memeEditorPngEncodeError.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Unable to convert meme to PNG bytes.'**
+  String get memeEditorPngEncodeError;
+
+  /// No description provided for @sendMemeTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Send meme'**
+  String get sendMemeTitle;
+
+  /// No description provided for @sendMemeSubmitButton.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Send'**
+  String get sendMemeSubmitButton;
+
+  /// No description provided for @sendMemeSuccessMessage.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Meme sent successfully.'**
+  String get sendMemeSuccessMessage;
+
   /// No description provided for @settingsTitle.
   ///
   /// In en_US, this message translates to:

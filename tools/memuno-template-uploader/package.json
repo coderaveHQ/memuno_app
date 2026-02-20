@@ -1,0 +1,21 @@
+{
+  "name": "memuno-template-uploader",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Admin web app for managing meme templates across environments.",
+  "main": "server.js",
+  "scripts": {
+    "dev": "node --watch server.js",
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=20.0.0"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.52.0",
+    "dotenv": "^17.2.2",
+    "express": "^5.1.0",
+    "multer": "^2.0.2",
+    "sharp": "^0.34.4"
+  }
+}

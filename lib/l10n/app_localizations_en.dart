@@ -149,6 +149,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get friendshipsRequestDirectionOutgoing => 'Outgoing';
 
   @override
+  String get memeEditorTitle => 'New meme';
+
+  @override
+  String get memeEditorFinalizeButton => 'Done';
+
+  @override
+  String get memeEditorCanvasSelectTemplateHint =>
+      'Select a meme template first.';
+
+  @override
+  String get memeEditorCanvasImageLoadError => 'Image could not be loaded.';
+
+  @override
+  String get memeEditorAddTextButton => 'Add text';
+
+  @override
+  String get memeEditorTextLabel => 'Text';
+
+  @override
+  String get memeEditorTextHint => 'Write your meme text';
+
+  @override
+  String get memeEditorDefaultText => 'Text';
+
+  @override
+  String get memeEditorRenderError => 'Unable to render meme editor output.';
+
+  @override
+  String get memeEditorPngEncodeError => 'Unable to convert meme to PNG bytes.';
+
+  @override
+  String get sendMemeTitle => 'Send meme';
+
+  @override
+  String get sendMemeSubmitButton => 'Send';
+
+  @override
+  String get sendMemeSuccessMessage => 'Meme sent successfully.';
+
+  @override
   String get settingsTitle => 'Settings';
 
   @override
@@ -529,6 +569,46 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
 
   @override
   String get friendshipsRequestDirectionOutgoing => 'Outgoing';
+
+  @override
+  String get memeEditorTitle => 'New meme';
+
+  @override
+  String get memeEditorFinalizeButton => 'Done';
+
+  @override
+  String get memeEditorCanvasSelectTemplateHint =>
+      'Select a meme template first.';
+
+  @override
+  String get memeEditorCanvasImageLoadError => 'Image could not be loaded.';
+
+  @override
+  String get memeEditorAddTextButton => 'Add text';
+
+  @override
+  String get memeEditorTextLabel => 'Text';
+
+  @override
+  String get memeEditorTextHint => 'Write your meme text';
+
+  @override
+  String get memeEditorDefaultText => 'Text';
+
+  @override
+  String get memeEditorRenderError => 'Unable to render meme editor output.';
+
+  @override
+  String get memeEditorPngEncodeError => 'Unable to convert meme to PNG bytes.';
+
+  @override
+  String get sendMemeTitle => 'Send meme';
+
+  @override
+  String get sendMemeSubmitButton => 'Send';
+
+  @override
+  String get sendMemeSuccessMessage => 'Meme sent successfully.';
 
   @override
   String get settingsTitle => 'Settings';

@@ -5,24 +5,32 @@ import 'package:memuno_app/src/app/widgets/m/m_typography.dart';
 
 class MTextField extends StatelessWidget {
   final TextEditingController? controller;
+  final FocusNode? focusNode;
   final TextInputType? inputType;
+  final TextInputAction? textInputAction;
   final IconData? icon;
   final String? hint;
   final String? label;
   final bool obscure;
   final bool isEnabled;
   final int? maxLength;
+  final int? minLines;
+  final int? maxLines;
 
   const MTextField({
     super.key,
     this.controller,
+    this.focusNode,
     this.inputType = TextInputType.text,
+    this.textInputAction,
     this.icon,
     this.hint,
     this.label,
     this.obscure = false,
     this.isEnabled = true,
     this.maxLength,
+    this.minLines,
+    this.maxLines = 1,
   });
 
   @override
@@ -41,12 +49,16 @@ class MTextField extends StatelessWidget {
       maxLength: maxLength,
       keyboardAppearance: Brightness.dark,
       controller: controller,
+      focusNode: focusNode,
       autocorrect: false,
       enabled: isEnabled,
       readOnly: !isEnabled,
       keyboardType: inputType,
+      textInputAction: textInputAction,
       canRequestFocus: isEnabled,
       obscureText: obscure,
+      minLines: minLines,
+      maxLines: maxLines,
       cursorColor: MColors.gray400,
       style: defaultTextStyle,
       decoration: InputDecoration(
@@ -65,6 +77,7 @@ class MTextField extends StatelessWidget {
         hintText: hint,
         hintStyle: defaultTextStyle.copyWith(color: MColors.gray400),
         floatingLabelStyle: defaultTextStyle,
+        counterStyle: defaultTextStyle,
         labelText: label,
       ),
     );

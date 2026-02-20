@@ -15,7 +15,7 @@ class MRefreshIndicator extends StatelessWidget {
   Widget build(BuildContext context) {
     return RefreshIndicator(
       onRefresh: onRefresh,
-      backgroundColor: MColors.white,
+      backgroundColor: MColors.gray100,
       color: MColors.gray900,
       strokeWidth: 2.0,
       child: child,
