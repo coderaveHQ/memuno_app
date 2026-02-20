@@ -358,6 +358,30 @@ abstract class AppLocalizations {
   /// **'Outgoing'**
   String get friendshipsRequestDirectionOutgoing;
 
+  /// No description provided for @memeTemplatePickerTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Meme templates'**
+  String get memeTemplatePickerTitle;
+
+  /// No description provided for @memeTemplatePickerSearchLabel.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Search template'**
+  String get memeTemplatePickerSearchLabel;
+
+  /// No description provided for @memeTemplatePickerSearchHint.
+  ///
+  /// In en_US, this message translates to:
+  /// **'e.g. drake, distracted, doge'**
+  String get memeTemplatePickerSearchHint;
+
+  /// No description provided for @memeTemplatePickerEmpty.
+  ///
+  /// In en_US, this message translates to:
+  /// **'No meme templates found.'**
+  String get memeTemplatePickerEmpty;
+
   /// No description provided for @memeEditorTitle.
   ///
   /// In en_US, this message translates to:
