@@ -152,6 +152,49 @@ class AppLocalizationsDe extends AppLocalizations {
   String get friendshipsRequestDirectionOutgoing => 'Ausgehend';
 
   @override
+  String get memeEditorTitle => 'Neues Meme';
+
+  @override
+  String get memeEditorFinalizeButton => 'Fertig';
+
+  @override
+  String get memeEditorCanvasSelectTemplateHint =>
+      'Wähle zuerst eine Meme-Vorlage aus.';
+
+  @override
+  String get memeEditorCanvasImageLoadError =>
+      'Bild konnte nicht geladen werden.';
+
+  @override
+  String get memeEditorAddTextButton => 'Text hinzufügen';
+
+  @override
+  String get memeEditorTextLabel => 'Text';
+
+  @override
+  String get memeEditorTextHint => 'Schreibe deinen Meme-Text';
+
+  @override
+  String get memeEditorDefaultText => 'Text';
+
+  @override
+  String get memeEditorRenderError =>
+      'Meme-Editor-Ausgabe konnte nicht gerendert werden.';
+
+  @override
+  String get memeEditorPngEncodeError =>
+      'Meme konnte nicht in PNG-Bytes konvertiert werden.';
+
+  @override
+  String get sendMemeTitle => 'Meme senden';
+
+  @override
+  String get sendMemeSubmitButton => 'Senden';
+
+  @override
+  String get sendMemeSuccessMessage => 'Meme erfolgreich gesendet.';
+
+  @override
   String get settingsTitle => 'Einstellungen';
 
   @override
@@ -538,6 +581,49 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
 
   @override
   String get friendshipsRequestDirectionOutgoing => 'Ausgehend';
+
+  @override
+  String get memeEditorTitle => 'Neues Meme';
+
+  @override
+  String get memeEditorFinalizeButton => 'Fertig';
+
+  @override
+  String get memeEditorCanvasSelectTemplateHint =>
+      'Wähle zuerst eine Meme-Vorlage aus.';
+
+  @override
+  String get memeEditorCanvasImageLoadError =>
+      'Bild konnte nicht geladen werden.';
+
+  @override
+  String get memeEditorAddTextButton => 'Text hinzufügen';
+
+  @override
+  String get memeEditorTextLabel => 'Text';
+
+  @override
+  String get memeEditorTextHint => 'Schreibe deinen Meme-Text';
+
+  @override
+  String get memeEditorDefaultText => 'Text';
+
+  @override
+  String get memeEditorRenderError =>
+      'Meme-Editor-Ausgabe konnte nicht gerendert werden.';
+
+  @override
+  String get memeEditorPngEncodeError =>
+      'Meme konnte nicht in PNG-Bytes konvertiert werden.';
+
+  @override
+  String get sendMemeTitle => 'Meme senden';
+
+  @override
+  String get sendMemeSubmitButton => 'Senden';
+
+  @override
+  String get sendMemeSuccessMessage => 'Meme erfolgreich gesendet.';
 
   @override
   String get settingsTitle => 'Einstellungen';

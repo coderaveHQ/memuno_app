@@ -104,7 +104,7 @@ class ProfilePage extends HookConsumerWidget {
             Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                color: MColors.white,
+                color: MColors.gray100,
                 borderRadius: BorderRadius.circular(20.0),
               ),
               padding: EdgeInsets.only(

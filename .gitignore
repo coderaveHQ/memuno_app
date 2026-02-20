@@ -89,3 +89,6 @@ app.*.map.json
 
 # l10n
 untranslated_messages.txt
+
+# meme templates
+meme_templates/

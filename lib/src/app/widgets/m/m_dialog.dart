@@ -44,9 +44,12 @@ class MDialog extends StatelessWidget {
             Row(
               children: <Widget>[
                 Expanded(
-                  child: MText.h4(
-                    text: title,
-                    style: TextStyle(color: MColors.gray100),
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: MText.h4(
+                      text: title,
+                      style: TextStyle(color: MColors.gray100),
+                    ),
                   ),
                 ),
                 const MGap.md(),

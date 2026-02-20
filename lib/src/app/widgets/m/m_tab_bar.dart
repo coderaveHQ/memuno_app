@@ -30,7 +30,7 @@ class MTabBar extends StatelessWidget implements PreferredSizeWidget {
           fontWeight: FontWeight.w400,
         ),
         indicator: BoxDecoration(
-          color: MColors.white,
+          color: MColors.gray100,
           borderRadius: BorderRadius.circular(20.0 - MSpacing.xxs),
         ),
         indicatorSize: TabBarIndicatorSize.tab,

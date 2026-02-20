@@ -2,6 +2,7 @@ import 'package:memuno_app/src/core/state/optimistic/optimistic_async_state_mixi
 import 'package:memuno_app/src/core/state/pagination/async_pagination_mixin.dart';
 import 'package:memuno_app/src/core/state/pagination/paginated_list_state.dart';
 import 'package:memuno_app/src/core/state/pagination/paginated_page.dart';
+import 'package:memuno_app/src/core/state/search/async_pagination_search_mixin.dart';
 import 'package:memuno_app/src/features/friendships/application/providers/friendships_list_provider.dart';
 import 'package:memuno_app/src/features/friendships/application/providers/usecases/accept_friendship_request_usecase_provider.dart';
 import 'package:memuno_app/src/features/friendships/application/providers/usecases/cancel_friendship_request_usecase_provider.dart';
@@ -29,6 +30,10 @@ class FriendshipRequestsList extends _$FriendshipRequestsList
           FriendshipRequestEntity,
           FriendshipRequestCursorEntity
         >,
+        AsyncPaginationSearchMixin<
+          FriendshipRequestEntity,
+          FriendshipRequestCursorEntity
+        >,
         OptimisticAsyncStateMixin<
           PaginatedListState<
             FriendshipRequestEntity,
@@ -41,7 +46,7 @@ class FriendshipRequestsList extends _$FriendshipRequestsList
     PaginatedListState<FriendshipRequestEntity, FriendshipRequestCursorEntity>
   >
   build() {
-    return buildPaginatedState();
+    return buildSearchPaginatedState();
   }
 
   @override
@@ -51,7 +56,7 @@ class FriendshipRequestsList extends _$FriendshipRequestsList
     final ListFriendshipRequestsUsecase usecase = ref.watch(
       listFriendshipRequestsUsecaseProvider,
     );
-    return usecase(limit: limit, cursor: cursor);
+    return usecase(search: searchQuery, limit: limit, cursor: cursor);
   }
 
   /// Refreshes the friendship-requests list from page 1.

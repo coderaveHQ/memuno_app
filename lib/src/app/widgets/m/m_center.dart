@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class MCenter extends StatelessWidget {
-  final EdgeInsets? padding;
+  final EdgeInsetsGeometry? padding;
   final Widget? child;
 
   const MCenter({super.key, this.padding, this.child});
