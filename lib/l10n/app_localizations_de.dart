@@ -152,6 +152,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get friendshipsRequestDirectionOutgoing => 'Ausgehend';
 
   @override
+  String get memeTemplatePickerTitle => 'Meme-Vorlagen';
+
+  @override
+  String get memeTemplatePickerSearchLabel => 'Vorlage suchen';
+
+  @override
+  String get memeTemplatePickerSearchHint => 'z. B. drake, distracted, doge';
+
+  @override
+  String get memeTemplatePickerEmpty => 'Keine Meme-Vorlagen gefunden.';
+
+  @override
   String get memeEditorTitle => 'Neues Meme';
 
   @override
@@ -581,6 +593,18 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
 
   @override
   String get friendshipsRequestDirectionOutgoing => 'Ausgehend';
+
+  @override
+  String get memeTemplatePickerTitle => 'Meme-Vorlagen';
+
+  @override
+  String get memeTemplatePickerSearchLabel => 'Vorlage suchen';
+
+  @override
+  String get memeTemplatePickerSearchHint => 'z. B. drake, distracted, doge';
+
+  @override
+  String get memeTemplatePickerEmpty => 'Keine Meme-Vorlagen gefunden.';
 
   @override
   String get memeEditorTitle => 'Neues Meme';
