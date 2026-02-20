@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Memuno Template Uploader</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <main class="page">
+      <header class="header">
+        <div>
+          <h1>Memuno Template Uploader</h1>
+          <p>Upload templates, edit tags, and switch environments quickly.</p>
+        </div>
+
+        <div class="environment-panel">
+          <label for="environment-select">Environment</label>
+          <div class="environment-controls">
+            <select id="environment-select"></select>
+            <span id="environment-badge" class="environment-badge"></span>
+          </div>
+        </div>
+      </header>
+
+      <section class="card">
+        <h2>Upload New Template</h2>
+        <form id="upload-form">
+          <div class="form-grid">
+            <label class="field">
+              <span>Image files</span>
+              <input
+                id="upload-files"
+                type="file"
+                name="files"
+                accept="image/*"
+                multiple
+                required
+              />
+            </label>
+          </div>
+
+          <div id="upload-file-tags" class="upload-file-tags"></div>
+
+          <p class="hint-text">
+            Every selected file is converted to PNG, renamed to UUID v4, and can
+            have its own tags.
+          </p>
+
+          <div class="inline-actions">
+            <button id="upload-button" type="submit">Upload Selected Files</button>
+          </div>
+        </form>
+      </section>
+
+      <section class="card">
+        <div class="templates-toolbar">
+          <h2>Templates</h2>
+          <div class="templates-toolbar-actions">
+            <input
+              id="search-input"
+              type="search"
+              placeholder="Search by tags..."
+            />
+            <button id="search-button" type="button">Search</button>
+            <button id="clear-search-button" type="button">Clear</button>
+          </div>
+        </div>
+
+        <p id="status-text" class="status-text"></p>
+        <p id="error-text" class="error-text"></p>
+
+        <div id="templates-grid" class="templates-grid"></div>
+        <div class="load-more-row">
+          <button id="load-more-button" type="button">Load More</button>
+        </div>
+      </section>
+    </main>
+
+    <template id="template-card-template">
+      <article class="template-card">
+        <img class="template-image" alt="Meme template preview" />
+        <div class="template-meta">
+          <code class="template-id"></code>
+          <label class="field">
+            <span>Tags</span>
+            <input class="template-tags-input" type="text" />
+          </label>
+          <button class="template-save-button" type="button">Save Tags</button>
+        </div>
+      </article>
+    </template>
+
+    <script src="./app.js" defer></script>
+  </body>
+</html>
