@@ -47,7 +47,7 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
         width: preferredSize.width,
         height: preferredSize.height,
         decoration: BoxDecoration(
-          color: MColors.white,
+          color: MColors.gray100,
           borderRadius: BorderRadius.vertical(bottom: Radius.circular(20.0)),
         ),
         padding: EdgeInsets.only(
@@ -56,6 +56,7 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
           right: context.rightPadding + MSpacing.md,
         ),
         child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
             Padding(
               padding: EdgeInsets.symmetric(vertical: 2.0),

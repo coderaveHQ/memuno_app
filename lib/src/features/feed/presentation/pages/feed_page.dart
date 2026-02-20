@@ -11,10 +11,10 @@ import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
 import 'package:memuno_app/src/features/profile/application/providers/current_user_profile_provider.dart';
 import 'package:memuno_app/src/features/profile/domain/entities/user_profile_entity.dart';
 
-/// Home page shown after successful authentication.
-class HomePage extends ConsumerWidget {
-  /// Creates the home page.
-  const HomePage({super.key});
+/// Feed page shown after successful authentication.
+class FeedPage extends ConsumerWidget {
+  /// Creates the feed page.
+  const FeedPage({super.key});
 
   Future<void> _onProfile(BuildContext context) async {
     await const ProfileRoute().push<void>(context);

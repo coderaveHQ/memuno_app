@@ -14,6 +14,10 @@ class MTappable extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(onTap: isEnabled ? onPressed : null, child: child);
+    return GestureDetector(
+      onTap: isEnabled ? onPressed : null,
+      behavior: HitTestBehavior.opaque,
+      child: child,
+    );
   }
 }

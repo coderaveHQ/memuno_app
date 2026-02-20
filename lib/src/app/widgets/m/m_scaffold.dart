@@ -1,12 +1,20 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:memuno_app/src/app/widgets/m/m_app_bar.dart';
+import 'package:memuno_app/src/app/widgets/m/m_bottom_navigation_bar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_colors.dart';
 
 class MScaffold extends StatelessWidget {
   final MAppBar? appBar;
   final Widget? body;
-  const MScaffold({super.key, this.appBar, this.body});
+  final MBottomNavigationBar? bottomNavigationBar;
+
+  const MScaffold({
+    super.key,
+    this.appBar,
+    this.body,
+    this.bottomNavigationBar,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -23,6 +31,7 @@ class MScaffold extends StatelessWidget {
         backgroundColor: MColors.gray900,
         appBar: appBar,
         body: body,
+        bottomNavigationBar: bottomNavigationBar,
       ),
     );
   }

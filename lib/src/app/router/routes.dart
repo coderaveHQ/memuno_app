@@ -3,6 +3,8 @@ part of 'app_router.dart';
 /// Root navigator key used for typed routes.
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
+final GlobalKey<NavigatorState> shellNavigatorKey = GlobalKey<NavigatorState>();
+
 /// Route shown when GoRouter catches an error.
 class ErrorRoute extends GoRouteData {
   /// Creates the error route with the captured [error].
@@ -167,13 +169,92 @@ class VerifySignUpRoute extends GoRouteData with $VerifySignUpRoute {
   }
 }
 
-@TypedGoRoute<HomeRoute>(path: '/home', name: HomeRoute.routeName)
-class HomeRoute extends GoRouteData with $HomeRoute {
-  /// Creates the home route.
-  const HomeRoute();
+@TypedShellRoute<MainRoute>(
+  routes: <TypedRoute<RouteData>>[
+    TypedGoRoute<FeedRoute>(path: '/feed', name: FeedRoute.routeName),
+    TypedGoRoute<CommunityRoute>(path: '/m', name: CommunityRoute.routeName),
+  ],
+)
+class MainRoute extends ShellRouteData {
+  const MainRoute();
+
+  static final GlobalKey<NavigatorState> $navigatorKey = shellNavigatorKey;
+
+  @override
+  Page<void> pageBuilder(
+    BuildContext context,
+    GoRouterState state,
+    Widget navigator,
+  ) {
+    return NoTransitionPage(child: MainShellPage(navigator: navigator));
+  }
+}
+
+class FeedRoute extends GoRouteData with $FeedRoute {
+  /// Creates the feed route.
+  const FeedRoute();
 
   /// Route name used in navigation.
-  static const String routeName = 'home';
+  static const String routeName = 'feed';
+
+  /// Returns true if this route is the top-most leaf in the stack.
+  static bool isLeaf(BuildContext context) =>
+      RouteUtils.isLeaf(context, routeName);
+
+  /// Returns true if this route exists anywhere in the stack.
+  static bool isInStack(BuildContext context) =>
+      RouteUtils.isInStack(context, routeName);
+
+  /// Parent navigator used by this route.
+  static final GlobalKey<NavigatorState> $parentNavigatorKey =
+      shellNavigatorKey;
+
+  @override
+  /// Builds the page for this route.
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return NoTransitionPage<void>(child: const FeedPage());
+  }
+}
+
+class CommunityRoute extends GoRouteData with $CommunityRoute {
+  /// Creates the community route.
+  const CommunityRoute();
+
+  /// Route name used in navigation.
+  static const String routeName = 'm';
+
+  /// Returns true if this route is the top-most leaf in the stack.
+  static bool isLeaf(BuildContext context) =>
+      RouteUtils.isLeaf(context, routeName);
+
+  /// Returns true if this route exists anywhere in the stack.
+  static bool isInStack(BuildContext context) =>
+      RouteUtils.isInStack(context, routeName);
+
+  /// Parent navigator used by this route.
+  static final GlobalKey<NavigatorState> $parentNavigatorKey =
+      shellNavigatorKey;
+
+  @override
+  /// Builds the page for this route.
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return NoTransitionPage<void>(child: const CommunityPage());
+  }
+}
+
+@TypedGoRoute<CreateRoute>(
+  path: '/create',
+  name: CreateRoute.routeName,
+  routes: <TypedRoute<RouteData>>[
+    TypedGoRoute<SendRoute>(path: 'send', name: SendRoute.routeName),
+  ],
+)
+class CreateRoute extends GoRouteData with $CreateRoute {
+  /// Creates the create route.
+  const CreateRoute();
+
+  /// Route name used in navigation.
+  static const String routeName = 'create';
 
   /// Returns true if this route is the top-most leaf in the stack.
   static bool isLeaf(BuildContext context) =>
@@ -188,8 +269,36 @@ class HomeRoute extends GoRouteData with $HomeRoute {
 
   @override
   /// Builds the page for this route.
-  Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return NoTransitionPage<void>(child: const HomePage());
+  Widget build(BuildContext context, GoRouterState state) {
+    return const MemeEditorPage();
+  }
+}
+
+class SendRoute extends GoRouteData with $SendRoute {
+  /// Finalized meme bytes forwarded to send flow.
+  final List<int> $extra;
+
+  /// Creates the send route.
+  const SendRoute(this.$extra);
+
+  /// Route name used in navigation.
+  static const String routeName = 'send';
+
+  /// Returns true if this route is the top-most leaf in the stack.
+  static bool isLeaf(BuildContext context) =>
+      RouteUtils.isLeaf(context, routeName);
+
+  /// Returns true if this route exists anywhere in the stack.
+  static bool isInStack(BuildContext context) =>
+      RouteUtils.isInStack(context, routeName);
+
+  /// Parent navigator used by this route.
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+
+  @override
+  /// Builds the page for this route.
+  Widget build(BuildContext context, GoRouterState state) {
+    return SendMemePage(memeBytes: $extra);
   }
 }
 
