@@ -1,6 +1,5 @@
 import 'package:flutter/widgets.dart';
-import 'package:memuno_app/l10n/app_localizations.dart';
-import 'package:memuno_app/src/app/widgets/app_toast.dart';
+import 'package:memuno_app/src/app/widgets/m/m_toast.dart';
 import 'package:memuno_app/src/core/failures/failure.dart';
 import 'package:memuno_app/src/core/failures/failure_mapper.dart';
 import 'package:memuno_app/src/core/failures/failure_message_resolver.dart';
@@ -20,86 +19,30 @@ final class AppFeedback {
   /// Shows a generic toast.
   void showToast(
     BuildContext context, {
+    required MToastVariant variant,
     required String message,
-    AppToastVariant variant = AppToastVariant.info,
-    String? title,
-    AppToastAction? action,
   }) {
-    AppToaster.show(
-      context,
-      message: message,
-      variant: variant,
-      title: title,
-      action: action,
-    );
-  }
-
-  /// Shows an info toast.
-  void showInfo(
-    BuildContext context, {
-    required String message,
-    String? title,
-    AppToastAction? action,
-  }) {
-    final AppLocalizations l10n = AppLocalizations.of(context);
-    showToast(
-      context,
-      message: message,
-      variant: AppToastVariant.info,
-      title: title ?? l10n.toastTitleInfo,
-      action: action,
-    );
+    showMToast(context, variant, message);
   }
 
   /// Shows a success toast.
-  void showSuccess(
-    BuildContext context, {
-    required String message,
-    String? title,
-    AppToastAction? action,
-  }) {
-    final AppLocalizations l10n = AppLocalizations.of(context);
-    showToast(
-      context,
-      message: message,
-      variant: AppToastVariant.success,
-      title: title ?? l10n.toastTitleSuccess,
-      action: action,
-    );
+  void showSuccess(BuildContext context, {required String message}) {
+    showToast(context, message: message, variant: MToastVariant.success);
+  }
+
+  /// Shows an info toast.
+  void showInfo(BuildContext context, {required String message}) {
+    showToast(context, message: message, variant: MToastVariant.info);
   }
 
   /// Shows a warning toast.
-  void showWarning(
-    BuildContext context, {
-    required String message,
-    String? title,
-    AppToastAction? action,
-  }) {
-    final AppLocalizations l10n = AppLocalizations.of(context);
-    showToast(
-      context,
-      message: message,
-      variant: AppToastVariant.warning,
-      title: title ?? l10n.toastTitleWarning,
-      action: action,
-    );
+  void showWarning(BuildContext context, {required String message}) {
+    showToast(context, message: message, variant: MToastVariant.warning);
   }
 
   /// Shows an error toast.
-  void showError(
-    BuildContext context, {
-    required String message,
-    String? title,
-    AppToastAction? action,
-  }) {
-    final AppLocalizations l10n = AppLocalizations.of(context);
-    showToast(
-      context,
-      message: message,
-      variant: AppToastVariant.error,
-      title: title ?? l10n.toastTitleError,
-      action: action,
-    );
+  void showError(BuildContext context, {required String message}) {
+    showToast(context, message: message, variant: MToastVariant.error);
   }
 
   String resolve(BuildContext context, Object error) {
@@ -109,13 +52,8 @@ final class AppFeedback {
   }
 
   /// Resolves an [error] and shows it as an error toast.
-  void resolveAndShowError(
-    BuildContext context,
-    Object error, {
-    String? title,
-    AppToastAction? action,
-  }) {
+  void resolveAndShowError(BuildContext context, Object error) {
     final String message = resolve(context, error);
-    showError(context, message: message, title: title, action: action);
+    showError(context, message: message);
   }
 }

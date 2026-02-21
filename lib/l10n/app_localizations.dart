@@ -202,12 +202,6 @@ abstract class AppLocalizations {
   /// **'Sign in'**
   String get signInTitle;
 
-  /// No description provided for @signInSubtitle.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Sign in to continue.'**
-  String get signInSubtitle;
-
   /// No description provided for @signInEmailLabel.
   ///
   /// In en_US, this message translates to:
@@ -466,12 +460,6 @@ abstract class AppLocalizations {
   /// **'Settings'**
   String get settingsTitle;
 
-  /// No description provided for @settingsSubtitle.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Manage your account and app preferences.'**
-  String get settingsSubtitle;
-
   /// No description provided for @settingsSectionAppearance.
   ///
   /// In en_US, this message translates to:
@@ -484,215 +472,155 @@ abstract class AppLocalizations {
   /// **'Account management'**
   String get settingsSectionAccountManagement;
 
-  /// No description provided for @settingsThemeModeTitle.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Theme mode'**
-  String get settingsThemeModeTitle;
-
-  /// No description provided for @settingsThemeModeSubtitle.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Choose how the app looks.'**
-  String get settingsThemeModeSubtitle;
-
-  /// No description provided for @settingsThemeModeSystemOption.
-  ///
-  /// In en_US, this message translates to:
-  /// **'System'**
-  String get settingsThemeModeSystemOption;
-
-  /// No description provided for @settingsThemeModeLightOption.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Light'**
-  String get settingsThemeModeLightOption;
-
-  /// No description provided for @settingsThemeModeDarkOption.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Dark'**
-  String get settingsThemeModeDarkOption;
-
-  /// No description provided for @settingsThemeModeSystemDescription.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Follow system ({mode}).'**
-  String settingsThemeModeSystemDescription(Object mode);
-
-  /// No description provided for @settingsLanguageModeTitle.
+  /// No description provided for @languageModeTitle.
   ///
   /// In en_US, this message translates to:
   /// **'Language mode'**
-  String get settingsLanguageModeTitle;
+  String get languageModeTitle;
 
-  /// No description provided for @settingsLanguageModeSubtitle.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Choose your preferred app language.'**
-  String get settingsLanguageModeSubtitle;
-
-  /// No description provided for @settingsLanguageModeSystemOption.
+  /// No description provided for @languageModeSystemOption.
   ///
   /// In en_US, this message translates to:
   /// **'System'**
-  String get settingsLanguageModeSystemOption;
+  String get languageModeSystemOption;
 
-  /// No description provided for @settingsLanguageModeSystemDescription.
+  /// No description provided for @languageModeSystemDescription.
   ///
   /// In en_US, this message translates to:
   /// **'Follow system ({language}).'**
-  String settingsLanguageModeSystemDescription(Object language);
+  String languageModeSystemDescription(Object language);
 
-  /// No description provided for @settingsChangeEmailListTileTitle.
+  /// No description provided for @changeEmailListTileTitle.
   ///
   /// In en_US, this message translates to:
   /// **'Change email'**
-  String get settingsChangeEmailListTileTitle;
+  String get changeEmailListTileTitle;
 
-  /// No description provided for @settingsChangeEmailListTileSubtitle.
+  /// No description provided for @changeEmailListTileSubtitle.
   ///
   /// In en_US, this message translates to:
   /// **'Update your sign-in email address.'**
-  String get settingsChangeEmailListTileSubtitle;
+  String get changeEmailListTileSubtitle;
 
-  /// No description provided for @settingsChangePasswordListTileTitle.
+  /// No description provided for @changePasswordListTileTitle.
   ///
   /// In en_US, this message translates to:
   /// **'Change password'**
-  String get settingsChangePasswordListTileTitle;
+  String get changePasswordListTileTitle;
 
-  /// No description provided for @settingsChangePasswordListTileSubtitle.
+  /// No description provided for @changePasswordListTileSubtitle.
   ///
   /// In en_US, this message translates to:
   /// **'Set a new password for your account.'**
-  String get settingsChangePasswordListTileSubtitle;
+  String get changePasswordListTileSubtitle;
 
-  /// No description provided for @settingsDeleteAccountListTileTitle.
+  /// No description provided for @deleteAccountListTileTitle.
   ///
   /// In en_US, this message translates to:
   /// **'Delete account'**
-  String get settingsDeleteAccountListTileTitle;
+  String get deleteAccountListTileTitle;
 
-  /// No description provided for @settingsDeleteAccountListTileSubtitle.
+  /// No description provided for @deleteAccountListTileSubtitle.
   ///
   /// In en_US, this message translates to:
   /// **'Permanently delete your account and data.'**
-  String get settingsDeleteAccountListTileSubtitle;
+  String get deleteAccountListTileSubtitle;
 
-  /// No description provided for @settingsChangeEmailTitle.
+  /// No description provided for @changeEmailTitle.
   ///
   /// In en_US, this message translates to:
   /// **'Change email'**
-  String get settingsChangeEmailTitle;
+  String get changeEmailTitle;
 
-  /// No description provided for @settingsChangeEmailSubtitle.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Enter your new email and confirm it from your inbox.'**
-  String get settingsChangeEmailSubtitle;
-
-  /// No description provided for @settingsChangeEmailCurrentEmail.
+  /// No description provided for @changeEmailCurrentEmail.
   ///
   /// In en_US, this message translates to:
   /// **'Current email: {email}'**
-  String settingsChangeEmailCurrentEmail(Object email);
+  String changeEmailCurrentEmail(Object email);
 
-  /// No description provided for @settingsChangeEmailNewEmailLabel.
+  /// No description provided for @changeEmailNewEmailLabel.
   ///
   /// In en_US, this message translates to:
   /// **'New email'**
-  String get settingsChangeEmailNewEmailLabel;
+  String get changeEmailNewEmailLabel;
 
-  /// No description provided for @settingsChangeEmailSubmitButton.
+  /// No description provided for @changeEmailSubmitButton.
   ///
   /// In en_US, this message translates to:
   /// **'Send confirmation email'**
-  String get settingsChangeEmailSubmitButton;
+  String get changeEmailSubmitButton;
 
-  /// No description provided for @settingsChangePasswordTitle.
+  /// No description provided for @changePasswordTitle.
   ///
   /// In en_US, this message translates to:
   /// **'Change password'**
-  String get settingsChangePasswordTitle;
+  String get changePasswordTitle;
 
-  /// No description provided for @settingsChangePasswordSubtitle.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Set a new password for your account.'**
-  String get settingsChangePasswordSubtitle;
-
-  /// No description provided for @settingsChangePasswordNewPasswordLabel.
+  /// No description provided for @changePasswordNewPasswordLabel.
   ///
   /// In en_US, this message translates to:
   /// **'New password'**
-  String get settingsChangePasswordNewPasswordLabel;
+  String get changePasswordNewPasswordLabel;
 
-  /// No description provided for @settingsChangePasswordSubmitButton.
+  /// No description provided for @changePasswordSubmitButton.
   ///
   /// In en_US, this message translates to:
   /// **'Change password'**
-  String get settingsChangePasswordSubmitButton;
+  String get changePasswordSubmitButton;
 
-  /// No description provided for @settingsChangePasswordSuccessMessage.
+  /// No description provided for @changePasswordSuccessMessage.
   ///
   /// In en_US, this message translates to:
   /// **'Your password was changed successfully.'**
-  String get settingsChangePasswordSuccessMessage;
+  String get changePasswordSuccessMessage;
 
-  /// No description provided for @settingsDeleteAccountTitle.
+  /// No description provided for @deleteAccountTitle.
   ///
   /// In en_US, this message translates to:
   /// **'Delete account'**
-  String get settingsDeleteAccountTitle;
+  String get deleteAccountTitle;
 
-  /// No description provided for @settingsDeleteAccountSubtitle.
-  ///
-  /// In en_US, this message translates to:
-  /// **'This action is permanent and cannot be undone.'**
-  String get settingsDeleteAccountSubtitle;
-
-  /// No description provided for @settingsDeleteAccountWarningBody.
+  /// No description provided for @deleteAccountWarningBody.
   ///
   /// In en_US, this message translates to:
   /// **'Deleting your account permanently removes your profile and access to the app.'**
-  String get settingsDeleteAccountWarningBody;
+  String get deleteAccountWarningBody;
 
-  /// No description provided for @settingsDeleteAccountSubmitButton.
+  /// No description provided for @deleteAccountSubmitButton.
   ///
   /// In en_US, this message translates to:
   /// **'Delete my account'**
-  String get settingsDeleteAccountSubmitButton;
+  String get deleteAccountSubmitButton;
 
-  /// No description provided for @settingsDeleteAccountConfirmTitle.
+  /// No description provided for @deleteAccountConfirmTitle.
   ///
   /// In en_US, this message translates to:
   /// **'Delete account?'**
-  String get settingsDeleteAccountConfirmTitle;
+  String get deleteAccountConfirmTitle;
 
-  /// No description provided for @settingsDeleteAccountConfirmMessage.
+  /// No description provided for @deleteAccountConfirmMessage.
   ///
   /// In en_US, this message translates to:
   /// **'This action is permanent. Do you want to continue?'**
-  String get settingsDeleteAccountConfirmMessage;
+  String get deleteAccountConfirmMessage;
 
-  /// No description provided for @settingsDeleteAccountConfirmCancelButton.
+  /// No description provided for @deleteAccountConfirmCancelButton.
   ///
   /// In en_US, this message translates to:
   /// **'Cancel'**
-  String get settingsDeleteAccountConfirmCancelButton;
+  String get deleteAccountConfirmCancelButton;
 
-  /// No description provided for @settingsDeleteAccountConfirmDeleteButton.
+  /// No description provided for @deleteAccountConfirmDeleteButton.
   ///
   /// In en_US, this message translates to:
   /// **'Delete'**
-  String get settingsDeleteAccountConfirmDeleteButton;
+  String get deleteAccountConfirmDeleteButton;
 
-  /// No description provided for @settingsDeleteAccountSuccessMessage.
+  /// No description provided for @deleteAccountSuccessMessage.
   ///
   /// In en_US, this message translates to:
   /// **'Your account was deleted.'**
-  String get settingsDeleteAccountSuccessMessage;
+  String get deleteAccountSuccessMessage;
 
   /// No description provided for @signUpConfirmRegistrationMessage.
   ///
@@ -705,12 +633,6 @@ abstract class AppLocalizations {
   /// In en_US, this message translates to:
   /// **'Sign up'**
   String get signUpTitle;
-
-  /// No description provided for @signUpSubtitle.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Enter your details to get started.'**
-  String get signUpSubtitle;
 
   /// No description provided for @signUpNameLabel.
   ///
@@ -748,29 +670,11 @@ abstract class AppLocalizations {
   /// **'Verify sign-in'**
   String get verifySignInTitle;
 
-  /// No description provided for @verifySignInInstruction.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Enter the 6-digit code sent to {email}, or open the link in your email.'**
-  String verifySignInInstruction(Object email);
-
-  /// No description provided for @verifySignInCodeLabel.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Verification code'**
-  String get verifySignInCodeLabel;
-
   /// No description provided for @verifySignInConfirmButton.
   ///
   /// In en_US, this message translates to:
   /// **'Confirm'**
   String get verifySignInConfirmButton;
-
-  /// No description provided for @verifySignInNoEmailText.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Did not receive an email?'**
-  String get verifySignInNoEmailText;
 
   /// No description provided for @verifySignInResendCodeButton.
   ///
@@ -790,29 +694,11 @@ abstract class AppLocalizations {
   /// **'Verify sign-up'**
   String get verifySignUpTitle;
 
-  /// No description provided for @verifySignUpInstruction.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Enter the 6-digit code sent to {email}, or open the link in your email.'**
-  String verifySignUpInstruction(Object email);
-
-  /// No description provided for @verifySignUpCodeLabel.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Verification code'**
-  String get verifySignUpCodeLabel;
-
   /// No description provided for @verifySignUpConfirmButton.
   ///
   /// In en_US, this message translates to:
   /// **'Confirm'**
   String get verifySignUpConfirmButton;
-
-  /// No description provided for @verifySignUpNoEmailText.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Did not receive an email?'**
-  String get verifySignUpNoEmailText;
 
   /// No description provided for @verifySignUpResendCodeButton.
   ///
@@ -820,23 +706,11 @@ abstract class AppLocalizations {
   /// **'Resend code'**
   String get verifySignUpResendCodeButton;
 
-  /// No description provided for @authToastEmailChangedTitle.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Email address changed'**
-  String get authToastEmailChangedTitle;
-
   /// No description provided for @authToastEmailChangedMessage.
   ///
   /// In en_US, this message translates to:
   /// **'We successfully changed your email address.'**
   String get authToastEmailChangedMessage;
-
-  /// No description provided for @authToastSignedInTitle.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Sign-in successful'**
-  String get authToastSignedInTitle;
 
   /// No description provided for @authToastSignedInMessage.
   ///
@@ -844,23 +718,11 @@ abstract class AppLocalizations {
   /// **'You have been signed in successfully.'**
   String get authToastSignedInMessage;
 
-  /// No description provided for @authToastSignedOutTitle.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Sign-out successful'**
-  String get authToastSignedOutTitle;
-
   /// No description provided for @authToastSignedOutMessage.
   ///
   /// In en_US, this message translates to:
   /// **'You have been signed out successfully.'**
   String get authToastSignedOutMessage;
-
-  /// No description provided for @authToastPasswordRecoveryTitle.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Sign-in successful'**
-  String get authToastPasswordRecoveryTitle;
 
   /// No description provided for @authToastPasswordRecoveryMessage.
   ///

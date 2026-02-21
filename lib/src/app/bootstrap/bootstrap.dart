@@ -12,6 +12,7 @@ import 'package:memuno_app/src/core/utils/logger.dart';
 import 'package:memuno_app/src/infrastructure/shared_preferences/shared_preferences_provider.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:zentoast/zentoast.dart';
 
 /// Centralized app bootstrap.
 ///
@@ -80,7 +81,7 @@ Future<void> bootstrap() async {
           overrides: <Override>[
             sharedPreferencesProvider.overrideWithValue(sharedPreferences),
           ],
-          child: const App(),
+          child: ToastProvider.create(child: const App()),
         ),
       );
     },

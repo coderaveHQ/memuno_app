@@ -131,6 +131,8 @@ class MAppBarAvatar extends StatelessWidget {
       isEnabled: isEnabled,
       isLoading: isLoading,
       name: name,
+      background: MColors.gray200,
+      foreground: MColors.gray900,
       dimension: kToolbarHeight - 4.0,
     );
   }
@@ -191,6 +193,8 @@ class MAppBarButton extends StatelessWidget {
       isLoading: isLoading,
       isEnabled: isEnabled,
       icon: icon,
+      background: MColors.gray200,
+      foreground: MColors.gray900,
       dimension: kToolbarHeight - 4.0,
     );
   }

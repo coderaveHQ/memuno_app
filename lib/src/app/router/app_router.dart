@@ -23,7 +23,6 @@ import 'package:memuno_app/src/features/friendships/presentation/pages/friendshi
 import 'package:memuno_app/src/features/profile/presentation/pages/profile_page.dart';
 import 'package:memuno_app/src/features/settings/presentation/pages/language_mode_page.dart';
 import 'package:memuno_app/src/features/settings/presentation/pages/settings_page.dart';
-import 'package:memuno_app/src/features/settings/presentation/pages/theme_mode_page.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'app_router.g.dart';

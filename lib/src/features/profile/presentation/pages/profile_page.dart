@@ -120,6 +120,8 @@ class ProfilePage extends HookConsumerWidget {
                     children: <Widget>[
                       MAvatar(
                         dimension: 56.0,
+                        background: MColors.gray200,
+                        foreground: MColors.gray900,
                         isLoading: profileState.isLoading,
                         name: profileState.value?.name,
                       ),
@@ -159,7 +161,6 @@ class ProfilePage extends HookConsumerWidget {
                               ),
                               maxLines: 1,
                               overflow: TextOverflow.ellipsis,
-                              style: Theme.of(context).textTheme.bodySmall,
                               isLoading: profileState.isLoading,
                             ),
                             const MGap.xxs(),

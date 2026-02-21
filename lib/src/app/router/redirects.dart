@@ -42,7 +42,6 @@ final Map<bool, _AuthRoutingPolicy> _authRoutingPolicies =
           ProfileRoute.routeName,
           FriendshipsRoute.routeName,
           SettingsRoute.routeName,
-          ThemeModeRoute.routeName,
           LanguageModeRoute.routeName,
           ChangeEmailRoute.routeName,
           ChangePasswordRoute.routeName,

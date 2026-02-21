@@ -3,7 +3,7 @@ import 'package:memuno_app/src/app/widgets/m/m_colors.dart';
 
 enum MButtonVariant {
   primary(backgroundColor: MColors.gray100, foregroundColor: MColors.gray900),
-  secondary(backgroundColor: MColors.gray200, foregroundColor: MColors.gray900),
+  secondary(backgroundColor: MColors.gray800, foregroundColor: MColors.gray100),
   destructive(backgroundColor: MColors.red400, foregroundColor: MColors.white);
 
   final Color backgroundColor;
