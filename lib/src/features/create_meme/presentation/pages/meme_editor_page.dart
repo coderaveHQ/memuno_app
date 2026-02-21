@@ -407,8 +407,6 @@ class MemeEditorPage extends HookConsumerWidget {
         ref
             .read(memeEditorControllerProvider.notifier)
             .setStateSnapshot(nextState);
-
-        // TODO: Send finalized meme bytes to backend after friend selection.
         return bytes;
       } finally {
         hideSelectionOverlay.value = false;

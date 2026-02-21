@@ -16,7 +16,7 @@ class MCircularProgressIndicator extends StatelessWidget {
       dimension: dimension,
       child: CircularProgressIndicator(
         strokeWidth: 2.0,
-        valueColor: AlwaysStoppedAnimation<Color>(color ?? MColors.gray900),
+        valueColor: AlwaysStoppedAnimation<Color>(color ?? MColors.gray100),
       ),
     );
   }

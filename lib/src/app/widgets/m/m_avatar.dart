@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:memuno_app/src/app/extensions/string_x.dart';
 import 'package:memuno_app/src/app/widgets/m/m_button_variant.dart';
 import 'package:memuno_app/src/app/widgets/m/m_circular_button.dart';
+import 'package:memuno_app/src/app/widgets/m/m_colors.dart';
 import 'package:memuno_app/src/app/widgets/m/m_text.dart';
 
 class MAvatar extends StatelessWidget {
@@ -33,8 +34,8 @@ class MAvatar extends StatelessWidget {
       isEnabled: isEnabled,
       isLoading: isLoading,
       dimension: dimension,
-      background: background,
-      foreground: foreground,
+      background: background ?? MColors.gray200,
+      foreground: foreground ?? MColors.gray900,
       child: MText.h4(
         text: name.initials,
         style: TextStyle(fontSize: dimension * 0.4),

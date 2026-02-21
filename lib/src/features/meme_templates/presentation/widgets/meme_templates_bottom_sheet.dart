@@ -74,17 +74,6 @@ class MemeTemplatesBottomSheet extends HookConsumerWidget {
     }
   }
 
-  /// Resolves responsive column count for the masonry grid.
-  int _crossAxisCount(BuildContext context) {
-    if (context.isExtraLarge) {
-      return 4;
-    }
-    if (context.isLarge || context.isMedium) {
-      return 3;
-    }
-    return 2;
-  }
-
   /// Returns the total number of grid cells for current [state].
   int _itemCount(
     PaginatedListState<MemeTemplateEntity, MemeTemplateCursorEntity> state,
@@ -179,7 +168,7 @@ class MemeTemplatesBottomSheet extends HookConsumerWidget {
                           ),
                           gridDelegate:
                               SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: _crossAxisCount(context),
+                                crossAxisCount: 2,
                               ),
                           crossAxisSpacing: MSpacing.xs,
                           mainAxisSpacing: MSpacing.xs,
@@ -201,9 +190,7 @@ class MemeTemplatesBottomSheet extends HookConsumerWidget {
 
                               return MCenter(
                                 padding: paddingWithoutBottom,
-                                child: MCircularProgressIndicator(
-                                  color: MColors.gray100,
-                                ),
+                                child: const MCircularProgressIndicator(),
                               );
                             }
 
@@ -226,7 +213,7 @@ class MemeTemplatesBottomSheet extends HookConsumerWidget {
               loading: () {
                 return MCenter(
                   padding: paddingWithBottom,
-                  child: MCircularProgressIndicator(color: MColors.gray100),
+                  child: const MCircularProgressIndicator(),
                 );
               },
             ),
@@ -271,9 +258,7 @@ final class _MemeTemplateGridItem extends StatelessWidget {
                     return child;
                   }
 
-                  return const Center(
-                    child: MCircularProgressIndicator(color: MColors.gray100),
-                  );
+                  return const Center(child: MCircularProgressIndicator());
                 },
             errorBuilder:
                 (BuildContext context, Object error, StackTrace? stackTrace) {
