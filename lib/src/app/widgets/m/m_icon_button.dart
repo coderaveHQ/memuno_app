@@ -11,6 +11,7 @@ class MIconButton extends StatelessWidget {
   final double dimension;
   final IconData? icon;
   final MButtonVariant variant;
+  final double? borderRadius;
 
   const MIconButton({
     super.key,
@@ -22,6 +23,7 @@ class MIconButton extends StatelessWidget {
     this.background,
     this.foreground,
     this.icon,
+    this.borderRadius,
   });
 
   const MIconButton.primary({
@@ -33,6 +35,7 @@ class MIconButton extends StatelessWidget {
     this.background,
     this.foreground,
     this.icon,
+    this.borderRadius,
   }) : variant = MButtonVariant.primary;
 
   const MIconButton.secondary({
@@ -44,6 +47,7 @@ class MIconButton extends StatelessWidget {
     this.background,
     this.foreground,
     this.icon,
+    this.borderRadius,
   }) : variant = MButtonVariant.secondary;
 
   const MIconButton.destructive({
@@ -55,6 +59,7 @@ class MIconButton extends StatelessWidget {
     this.background,
     this.foreground,
     this.icon,
+    this.borderRadius,
   }) : variant = MButtonVariant.destructive;
 
   @override
@@ -66,6 +71,7 @@ class MIconButton extends StatelessWidget {
       isLoading: isLoading,
       dimension: dimension,
       background: background,
+      borderRadius: borderRadius,
       child: Icon(
         icon,
         size: dimension * 0.5,

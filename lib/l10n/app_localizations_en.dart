@@ -68,9 +68,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signInTitle => 'Sign in';
 
   @override
-  String get signInSubtitle => 'Sign in to continue.';
-
-  @override
   String get signInEmailLabel => 'Email';
 
   @override
@@ -204,134 +201,95 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsTitle => 'Settings';
 
   @override
-  String get settingsSubtitle => 'Manage your account and app preferences.';
-
-  @override
   String get settingsSectionAppearance => 'Appearance';
 
   @override
   String get settingsSectionAccountManagement => 'Account management';
 
   @override
-  String get settingsThemeModeTitle => 'Theme mode';
+  String get languageModeTitle => 'Language mode';
 
   @override
-  String get settingsThemeModeSubtitle => 'Choose how the app looks.';
+  String get languageModeSystemOption => 'System';
 
   @override
-  String get settingsThemeModeSystemOption => 'System';
-
-  @override
-  String get settingsThemeModeLightOption => 'Light';
-
-  @override
-  String get settingsThemeModeDarkOption => 'Dark';
-
-  @override
-  String settingsThemeModeSystemDescription(Object mode) {
-    return 'Follow system ($mode).';
-  }
-
-  @override
-  String get settingsLanguageModeTitle => 'Language mode';
-
-  @override
-  String get settingsLanguageModeSubtitle =>
-      'Choose your preferred app language.';
-
-  @override
-  String get settingsLanguageModeSystemOption => 'System';
-
-  @override
-  String settingsLanguageModeSystemDescription(Object language) {
+  String languageModeSystemDescription(Object language) {
     return 'Follow system ($language).';
   }
 
   @override
-  String get settingsChangeEmailListTileTitle => 'Change email';
+  String get changeEmailListTileTitle => 'Change email';
 
   @override
-  String get settingsChangeEmailListTileSubtitle =>
+  String get changeEmailListTileSubtitle =>
       'Update your sign-in email address.';
 
   @override
-  String get settingsChangePasswordListTileTitle => 'Change password';
+  String get changePasswordListTileTitle => 'Change password';
 
   @override
-  String get settingsChangePasswordListTileSubtitle =>
+  String get changePasswordListTileSubtitle =>
       'Set a new password for your account.';
 
   @override
-  String get settingsDeleteAccountListTileTitle => 'Delete account';
+  String get deleteAccountListTileTitle => 'Delete account';
 
   @override
-  String get settingsDeleteAccountListTileSubtitle =>
+  String get deleteAccountListTileSubtitle =>
       'Permanently delete your account and data.';
 
   @override
-  String get settingsChangeEmailTitle => 'Change email';
+  String get changeEmailTitle => 'Change email';
 
   @override
-  String get settingsChangeEmailSubtitle =>
-      'Enter your new email and confirm it from your inbox.';
-
-  @override
-  String settingsChangeEmailCurrentEmail(Object email) {
+  String changeEmailCurrentEmail(Object email) {
     return 'Current email: $email';
   }
 
   @override
-  String get settingsChangeEmailNewEmailLabel => 'New email';
+  String get changeEmailNewEmailLabel => 'New email';
 
   @override
-  String get settingsChangeEmailSubmitButton => 'Send confirmation email';
+  String get changeEmailSubmitButton => 'Send confirmation email';
 
   @override
-  String get settingsChangePasswordTitle => 'Change password';
+  String get changePasswordTitle => 'Change password';
 
   @override
-  String get settingsChangePasswordSubtitle =>
-      'Set a new password for your account.';
+  String get changePasswordNewPasswordLabel => 'New password';
 
   @override
-  String get settingsChangePasswordNewPasswordLabel => 'New password';
+  String get changePasswordSubmitButton => 'Change password';
 
   @override
-  String get settingsChangePasswordSubmitButton => 'Change password';
-
-  @override
-  String get settingsChangePasswordSuccessMessage =>
+  String get changePasswordSuccessMessage =>
       'Your password was changed successfully.';
 
   @override
-  String get settingsDeleteAccountTitle => 'Delete account';
+  String get deleteAccountTitle => 'Delete account';
 
   @override
-  String get settingsDeleteAccountSubtitle =>
-      'This action is permanent and cannot be undone.';
-
-  @override
-  String get settingsDeleteAccountWarningBody =>
+  String get deleteAccountWarningBody =>
       'Deleting your account permanently removes your profile and access to the app.';
 
   @override
-  String get settingsDeleteAccountSubmitButton => 'Delete my account';
+  String get deleteAccountSubmitButton => 'Delete my account';
 
   @override
-  String get settingsDeleteAccountConfirmTitle => 'Delete account?';
+  String get deleteAccountConfirmTitle => 'Delete account?';
 
   @override
-  String get settingsDeleteAccountConfirmMessage =>
+  String get deleteAccountConfirmMessage =>
       'This action is permanent. Do you want to continue?';
 
   @override
-  String get settingsDeleteAccountConfirmCancelButton => 'Cancel';
+  String get deleteAccountConfirmCancelButton => 'Cancel';
 
   @override
-  String get settingsDeleteAccountConfirmDeleteButton => 'Delete';
+  String get deleteAccountConfirmDeleteButton => 'Delete';
 
   @override
-  String get settingsDeleteAccountSuccessMessage => 'Your account was deleted.';
+  String get deleteAccountSuccessMessage => 'Your account was deleted.';
 
   @override
   String get signUpConfirmRegistrationMessage =>
@@ -339,9 +297,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get signUpTitle => 'Sign up';
-
-  @override
-  String get signUpSubtitle => 'Enter your details to get started.';
 
   @override
   String get signUpNameLabel => 'Full name';
@@ -362,18 +317,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get verifySignInTitle => 'Verify sign-in';
 
   @override
-  String verifySignInInstruction(Object email) {
-    return 'Enter the 6-digit code sent to $email, or open the link in your email.';
-  }
-
-  @override
-  String get verifySignInCodeLabel => 'Verification code';
-
-  @override
   String get verifySignInConfirmButton => 'Confirm';
-
-  @override
-  String get verifySignInNoEmailText => 'Did not receive an email?';
 
   @override
   String get verifySignInResendCodeButton => 'Resend code';
@@ -385,45 +329,22 @@ class AppLocalizationsEn extends AppLocalizations {
   String get verifySignUpTitle => 'Verify sign-up';
 
   @override
-  String verifySignUpInstruction(Object email) {
-    return 'Enter the 6-digit code sent to $email, or open the link in your email.';
-  }
-
-  @override
-  String get verifySignUpCodeLabel => 'Verification code';
-
-  @override
   String get verifySignUpConfirmButton => 'Confirm';
 
   @override
-  String get verifySignUpNoEmailText => 'Did not receive an email?';
-
-  @override
   String get verifySignUpResendCodeButton => 'Resend code';
-
-  @override
-  String get authToastEmailChangedTitle => 'Email address changed';
 
   @override
   String get authToastEmailChangedMessage =>
       'We successfully changed your email address.';
 
   @override
-  String get authToastSignedInTitle => 'Sign-in successful';
-
-  @override
   String get authToastSignedInMessage =>
       'You have been signed in successfully.';
 
   @override
-  String get authToastSignedOutTitle => 'Sign-out successful';
-
-  @override
   String get authToastSignedOutMessage =>
       'You have been signed out successfully.';
-
-  @override
-  String get authToastPasswordRecoveryTitle => 'Sign-in successful';
 
   @override
   String get authToastPasswordRecoveryMessage =>
@@ -502,9 +423,6 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   String get signInTitle => 'Sign in';
 
   @override
-  String get signInSubtitle => 'Sign in to continue.';
-
-  @override
   String get signInEmailLabel => 'Email';
 
   @override
@@ -638,134 +556,95 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   String get settingsTitle => 'Settings';
 
   @override
-  String get settingsSubtitle => 'Manage your account and app preferences.';
-
-  @override
   String get settingsSectionAppearance => 'Appearance';
 
   @override
   String get settingsSectionAccountManagement => 'Account management';
 
   @override
-  String get settingsThemeModeTitle => 'Theme mode';
+  String get languageModeTitle => 'Language mode';
 
   @override
-  String get settingsThemeModeSubtitle => 'Choose how the app looks.';
+  String get languageModeSystemOption => 'System';
 
   @override
-  String get settingsThemeModeSystemOption => 'System';
-
-  @override
-  String get settingsThemeModeLightOption => 'Light';
-
-  @override
-  String get settingsThemeModeDarkOption => 'Dark';
-
-  @override
-  String settingsThemeModeSystemDescription(Object mode) {
-    return 'Follow system ($mode).';
-  }
-
-  @override
-  String get settingsLanguageModeTitle => 'Language mode';
-
-  @override
-  String get settingsLanguageModeSubtitle =>
-      'Choose your preferred app language.';
-
-  @override
-  String get settingsLanguageModeSystemOption => 'System';
-
-  @override
-  String settingsLanguageModeSystemDescription(Object language) {
+  String languageModeSystemDescription(Object language) {
     return 'Follow system ($language).';
   }
 
   @override
-  String get settingsChangeEmailListTileTitle => 'Change email';
+  String get changeEmailListTileTitle => 'Change email';
 
   @override
-  String get settingsChangeEmailListTileSubtitle =>
+  String get changeEmailListTileSubtitle =>
       'Update your sign-in email address.';
 
   @override
-  String get settingsChangePasswordListTileTitle => 'Change password';
+  String get changePasswordListTileTitle => 'Change password';
 
   @override
-  String get settingsChangePasswordListTileSubtitle =>
+  String get changePasswordListTileSubtitle =>
       'Set a new password for your account.';
 
   @override
-  String get settingsDeleteAccountListTileTitle => 'Delete account';
+  String get deleteAccountListTileTitle => 'Delete account';
 
   @override
-  String get settingsDeleteAccountListTileSubtitle =>
+  String get deleteAccountListTileSubtitle =>
       'Permanently delete your account and data.';
 
   @override
-  String get settingsChangeEmailTitle => 'Change email';
+  String get changeEmailTitle => 'Change email';
 
   @override
-  String get settingsChangeEmailSubtitle =>
-      'Enter your new email and confirm it from your inbox.';
-
-  @override
-  String settingsChangeEmailCurrentEmail(Object email) {
+  String changeEmailCurrentEmail(Object email) {
     return 'Current email: $email';
   }
 
   @override
-  String get settingsChangeEmailNewEmailLabel => 'New email';
+  String get changeEmailNewEmailLabel => 'New email';
 
   @override
-  String get settingsChangeEmailSubmitButton => 'Send confirmation email';
+  String get changeEmailSubmitButton => 'Send confirmation email';
 
   @override
-  String get settingsChangePasswordTitle => 'Change password';
+  String get changePasswordTitle => 'Change password';
 
   @override
-  String get settingsChangePasswordSubtitle =>
-      'Set a new password for your account.';
+  String get changePasswordNewPasswordLabel => 'New password';
 
   @override
-  String get settingsChangePasswordNewPasswordLabel => 'New password';
+  String get changePasswordSubmitButton => 'Change password';
 
   @override
-  String get settingsChangePasswordSubmitButton => 'Change password';
-
-  @override
-  String get settingsChangePasswordSuccessMessage =>
+  String get changePasswordSuccessMessage =>
       'Your password was changed successfully.';
 
   @override
-  String get settingsDeleteAccountTitle => 'Delete account';
+  String get deleteAccountTitle => 'Delete account';
 
   @override
-  String get settingsDeleteAccountSubtitle =>
-      'This action is permanent and cannot be undone.';
-
-  @override
-  String get settingsDeleteAccountWarningBody =>
+  String get deleteAccountWarningBody =>
       'Deleting your account permanently removes your profile and access to the app.';
 
   @override
-  String get settingsDeleteAccountSubmitButton => 'Delete my account';
+  String get deleteAccountSubmitButton => 'Delete my account';
 
   @override
-  String get settingsDeleteAccountConfirmTitle => 'Delete account?';
+  String get deleteAccountConfirmTitle => 'Delete account?';
 
   @override
-  String get settingsDeleteAccountConfirmMessage =>
+  String get deleteAccountConfirmMessage =>
       'This action is permanent. Do you want to continue?';
 
   @override
-  String get settingsDeleteAccountConfirmCancelButton => 'Cancel';
+  String get deleteAccountConfirmCancelButton => 'Cancel';
 
   @override
-  String get settingsDeleteAccountConfirmDeleteButton => 'Delete';
+  String get deleteAccountConfirmDeleteButton => 'Delete';
 
   @override
-  String get settingsDeleteAccountSuccessMessage => 'Your account was deleted.';
+  String get deleteAccountSuccessMessage => 'Your account was deleted.';
 
   @override
   String get signUpConfirmRegistrationMessage =>
@@ -773,9 +652,6 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
 
   @override
   String get signUpTitle => 'Sign up';
-
-  @override
-  String get signUpSubtitle => 'Enter your details to get started.';
 
   @override
   String get signUpNameLabel => 'Full name';
@@ -796,18 +672,7 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   String get verifySignInTitle => 'Verify sign-in';
 
   @override
-  String verifySignInInstruction(Object email) {
-    return 'Enter the 6-digit code sent to $email, or open the link in your email.';
-  }
-
-  @override
-  String get verifySignInCodeLabel => 'Verification code';
-
-  @override
   String get verifySignInConfirmButton => 'Confirm';
-
-  @override
-  String get verifySignInNoEmailText => 'Did not receive an email?';
 
   @override
   String get verifySignInResendCodeButton => 'Resend code';
@@ -819,45 +684,22 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   String get verifySignUpTitle => 'Verify sign-up';
 
   @override
-  String verifySignUpInstruction(Object email) {
-    return 'Enter the 6-digit code sent to $email, or open the link in your email.';
-  }
-
-  @override
-  String get verifySignUpCodeLabel => 'Verification code';
-
-  @override
   String get verifySignUpConfirmButton => 'Confirm';
 
   @override
-  String get verifySignUpNoEmailText => 'Did not receive an email?';
-
-  @override
   String get verifySignUpResendCodeButton => 'Resend code';
-
-  @override
-  String get authToastEmailChangedTitle => 'Email address changed';
 
   @override
   String get authToastEmailChangedMessage =>
       'We successfully changed your email address.';
 
   @override
-  String get authToastSignedInTitle => 'Sign-in successful';
-
-  @override
   String get authToastSignedInMessage =>
       'You have been signed in successfully.';
 
   @override
-  String get authToastSignedOutTitle => 'Sign-out successful';
-
-  @override
   String get authToastSignedOutMessage =>
       'You have been signed out successfully.';
-
-  @override
-  String get authToastPasswordRecoveryTitle => 'Sign-in successful';
 
   @override
   String get authToastPasswordRecoveryMessage =>

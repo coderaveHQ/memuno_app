@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:memuno_app/src/app/widgets/m/m_colors.dart';
+import 'package:memuno_app/src/app/widgets/m/m_icon_button.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/app/widgets/m/m_typography.dart';
 
@@ -16,6 +17,8 @@ class MTextField extends StatelessWidget {
   final int? maxLength;
   final int? minLines;
   final int? maxLines;
+  final Iterable<String>? autofillHints;
+  final MTextFieldAction? action;
 
   const MTextField({
     super.key,
@@ -31,6 +34,8 @@ class MTextField extends StatelessWidget {
     this.maxLength,
     this.minLines,
     this.maxLines = 1,
+    this.autofillHints,
+    this.action,
   });
 
   @override
@@ -61,9 +66,10 @@ class MTextField extends StatelessWidget {
       maxLines: maxLines,
       cursorColor: MColors.gray400,
       style: defaultTextStyle,
+      autofillHints: autofillHints,
       decoration: InputDecoration(
         fillColor: MColors.gray800,
-        contentPadding: const EdgeInsets.symmetric(horizontal: MSpacing.md),
+        contentPadding: const EdgeInsets.symmetric(horizontal: MSpacing.sm),
         border: defaultBorder,
         errorBorder: defaultBorder,
         enabledBorder: defaultBorder,
@@ -72,13 +78,48 @@ class MTextField extends StatelessWidget {
         focusedBorder: defaultBorder.copyWith(
           borderSide: defaultBorder.borderSide.copyWith(color: MColors.gray100),
         ),
-        prefixIcon: icon != null ? Icon(icon) : null,
+        prefixIcon: icon != null
+            ? Padding(
+                padding: EdgeInsetsGeometry.only(left: MSpacing.sm),
+                child: Icon(icon),
+              )
+            : null,
         prefixIconColor: MColors.gray400,
+        suffixIcon: action,
         hintText: hint,
         hintStyle: defaultTextStyle.copyWith(color: MColors.gray400),
         floatingLabelStyle: defaultTextStyle,
         counterStyle: defaultTextStyle,
         labelText: label,
+      ),
+    );
+  }
+}
+
+class MTextFieldAction extends StatelessWidget {
+  final void Function()? onPressed;
+  final IconData? icon;
+  final bool isEnabled;
+
+  const MTextFieldAction({
+    super.key,
+    this.onPressed,
+    this.icon,
+    this.isEnabled = true,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.only(right: 1.5, top: 1.5, bottom: 1.5),
+      child: MIconButton.secondary(
+        onPressed: onPressed,
+        isEnabled: isEnabled,
+        dimension: 48.0 - 2 * 1.5,
+        borderRadius: 20.0 - 1.5,
+        background: MColors.gray100,
+        foreground: MColors.gray900,
+        icon: icon,
       ),
     );
   }

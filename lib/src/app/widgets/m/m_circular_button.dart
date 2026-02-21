@@ -12,6 +12,7 @@ class MCircularButton extends StatelessWidget {
   final double dimension;
   final Widget? child;
   final MButtonVariant variant;
+  final double? borderRadius;
 
   const MCircularButton({
     super.key,
@@ -23,6 +24,7 @@ class MCircularButton extends StatelessWidget {
     this.background,
     this.foreground,
     this.child,
+    this.borderRadius,
   });
 
   const MCircularButton.primary({
@@ -34,6 +36,7 @@ class MCircularButton extends StatelessWidget {
     this.background,
     this.foreground,
     this.child,
+    this.borderRadius,
   }) : variant = MButtonVariant.primary;
 
   const MCircularButton.secondary({
@@ -45,6 +48,7 @@ class MCircularButton extends StatelessWidget {
     this.background,
     this.foreground,
     this.child,
+    this.borderRadius,
   }) : variant = MButtonVariant.secondary;
 
   const MCircularButton.destructive({
@@ -56,6 +60,7 @@ class MCircularButton extends StatelessWidget {
     this.background,
     this.foreground,
     this.child,
+    this.borderRadius,
   }) : variant = MButtonVariant.destructive;
 
   @override
@@ -69,7 +74,7 @@ class MCircularButton extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: background ?? variant.backgroundColor,
-          borderRadius: BorderRadius.circular(dimension / 2.0),
+          borderRadius: BorderRadius.circular(borderRadius ?? dimension / 2.0),
         ),
         child: isLoading
             ? MCircularProgressIndicator(

@@ -7,7 +7,6 @@ import 'package:memuno_app/src/app/feedback/app_feedback.dart';
 import 'package:memuno_app/src/app/feedback/app_feedback_provider.dart';
 import 'package:memuno_app/src/app/widgets/m/m_center.dart';
 import 'package:memuno_app/src/app/widgets/m/m_circular_progress_indicator.dart';
-import 'package:memuno_app/src/app/widgets/m/m_colors.dart';
 import 'package:memuno_app/src/app/widgets/m/m_divider.dart';
 import 'package:memuno_app/src/app/widgets/m/m_refresh_indicator.dart';
 import 'package:memuno_app/src/app/widgets/m/m_reload.dart';
@@ -135,7 +134,7 @@ class MAsyncList<TItem, TCursor> extends ConsumerWidget {
 
                   return MCenter(
                     padding: safeListChildPadding,
-                    child: MCircularProgressIndicator(color: MColors.gray100),
+                    child: const MCircularProgressIndicator(),
                   );
                 }
 
@@ -157,7 +156,7 @@ class MAsyncList<TItem, TCursor> extends ConsumerWidget {
       loading: () {
         return MCenter(
           padding: safeChildPadding,
-          child: MCircularProgressIndicator(color: MColors.gray100),
+          child: const MCircularProgressIndicator(),
         );
       },
     );

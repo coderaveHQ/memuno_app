@@ -113,7 +113,6 @@ class _AppEffectsState extends ConsumerState<AppEffects> {
         if (emailChanged) {
           feedback.showSuccess(
             toastContext,
-            title: l10n.authToastEmailChangedTitle,
             message: l10n.authToastEmailChangedMessage,
           );
           return;
@@ -121,7 +120,6 @@ class _AppEffectsState extends ConsumerState<AppEffects> {
         // Default sign-in toast.
         feedback.showSuccess(
           toastContext,
-          title: l10n.authToastSignedInTitle,
           message: l10n.authToastSignedInMessage,
         );
         return;
@@ -134,7 +132,6 @@ class _AppEffectsState extends ConsumerState<AppEffects> {
         }
         feedback.showSuccess(
           toastContext,
-          title: l10n.authToastSignedOutTitle,
           message: l10n.authToastSignedOutMessage,
         );
         return;
@@ -143,7 +140,6 @@ class _AppEffectsState extends ConsumerState<AppEffects> {
         _pendingEmailChangeEmail = null;
         feedback.showSuccess(
           toastContext,
-          title: l10n.authToastPasswordRecoveryTitle,
           message: l10n.authToastPasswordRecoveryMessage,
         );
         return;
@@ -154,7 +150,6 @@ class _AppEffectsState extends ConsumerState<AppEffects> {
           _pendingEmailChangeEmail = nextEmail;
           feedback.showSuccess(
             toastContext,
-            title: l10n.authToastEmailChangedTitle,
             message: l10n.authToastEmailChangedMessage,
           );
         }

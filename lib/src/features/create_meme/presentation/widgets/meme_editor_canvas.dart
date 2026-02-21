@@ -104,9 +104,7 @@ final class MemeEditorCanvas extends StatelessWidget {
                             }
 
                             return const MCenter(
-                              child: MCircularProgressIndicator(
-                                color: MColors.gray100,
-                              ),
+                              child: MCircularProgressIndicator(),
                             );
                           },
                       errorBuilder:
