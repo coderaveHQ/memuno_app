@@ -22,7 +22,7 @@ final class MemeSendRepositoryImpl implements MemeSendRepository {
   @override
   Future<void> sendMeme({
     required Uint8List memeBytes,
-    required String templateId,
+    required String? templateId,
     required List<String> recipientUserIds,
   }) async {
     try {

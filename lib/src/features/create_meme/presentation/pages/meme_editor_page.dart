@@ -22,13 +22,17 @@ import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/features/create_meme/application/mutations/finalize_meme_image_mutation.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/meme_editor_controller_provider.dart';
+import 'package:memuno_app/src/features/create_meme/application/providers/usecases/optimize_custom_template_image_for_upload_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/set_finalized_meme_bytes_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_state_entity.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_text_layer_entity.dart';
+import 'package:memuno_app/src/features/create_meme/domain/usecases/optimize_custom_template_image_for_upload_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/set_finalized_meme_bytes_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/presentation/widgets/meme_editor_canvas.dart';
 import 'package:memuno_app/src/features/create_meme/presentation/widgets/meme_editor_controls.dart';
 import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_entity.dart';
+import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_picker_selection_entity.dart';
+import 'package:memuno_app/src/features/meme_templates/domain/entities/picked_meme_template_image_entity.dart';
 import 'package:memuno_app/src/features/meme_templates/presentation/widgets/meme_templates_bottom_sheet.dart';
 
 /// Meme editor page where users compose one meme image.
@@ -239,6 +243,8 @@ class MemeEditorPage extends HookConsumerWidget {
               child: MemeEditorCanvas(
                 repaintBoundaryKey: repaintBoundaryKey,
                 template: state.template,
+                customTemplateImageBytes: state.customTemplateImageBytes,
+                customTemplateAspectRatio: state.customTemplateAspectRatio,
                 layers: state.textLayers,
                 selectedLayerId: state.selectedTextLayerId,
                 showSelectionOverlay: !hideSelectionOverlay.value,
@@ -346,28 +352,39 @@ class MemeEditorPage extends HookConsumerWidget {
     );
   }
 
-  /// Opens the template picker and applies the selected template.
+  /// Opens the picker and applies selected template or gallery image.
   Future<void> _pickTemplate({
     required BuildContext context,
     required MemeEditorController controller,
     required bool closePageOnCancel,
   }) async {
-    final MemeTemplateEntity? template = await showMemeTemplatesBottomSheet(
-      context,
-    );
+    final MemeTemplatePickerSelectionEntity? selection =
+        await showMemeTemplatesBottomSheet(context);
 
     if (!context.mounted) {
       return;
     }
 
-    if (template == null) {
+    if (selection == null) {
       if (closePageOnCancel) {
         context.pop();
       }
       return;
     }
 
-    controller.setTemplate(template);
+    final MemeTemplateEntity? template = selection.template;
+    if (template != null) {
+      controller.setTemplate(template);
+      return;
+    }
+
+    final PickedMemeTemplateImageEntity? pickedImage = selection.pickedImage;
+    if (pickedImage != null) {
+      controller.setCustomTemplateImage(
+        imageBytes: pickedImage.pngBytes,
+        aspectRatio: pickedImage.aspectRatio,
+      );
+    }
   }
 
   /// Runs the finalize mutation and stores generated PNG bytes in state.
@@ -386,6 +403,21 @@ class MemeEditorPage extends HookConsumerWidget {
     await mutation.runSafely(ref, (MutationTransaction tx) async {
       hideSelectionOverlay.value = true;
       try {
+        final MemeEditorStateEntity stateBeforeOptimization = ref.read(
+          memeEditorControllerProvider,
+        );
+        if (stateBeforeOptimization.hasCustomTemplateImage) {
+          final OptimizeCustomTemplateImageForUploadUsecase optimizeUsecase = tx
+              .get(optimizeCustomTemplateImageForUploadUsecaseProvider);
+          final MemeEditorStateEntity optimizedState = optimizeUsecase(
+            state: stateBeforeOptimization,
+          );
+          ref
+              .read(memeEditorControllerProvider.notifier)
+              .setStateSnapshot(optimizedState);
+          await WidgetsBinding.instance.endOfFrame;
+        }
+
         final Uint8List bytes = await _captureMemeBytes(
           repaintBoundaryKey: repaintBoundaryKey,
           devicePixelRatio: devicePixelRatio,

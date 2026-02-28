@@ -155,7 +155,7 @@ create table public.meme_templates (
 create table public.memes (
   "id" uuid not null default gen_random_uuid(),
   "user_id" uuid not null,
-  "template_id" uuid not null,
+  "template_id" uuid,
   "image_path" text not null,
   "created_at" timestamptz not null default now(),
   "updated_at" timestamptz not null default now(),
@@ -1115,10 +1115,6 @@ begin
     raise exception 'image_path is required';
   end if;
 
-  if p_template_id is null then
-    raise exception 'template_id is required';
-  end if;
-
   if p_recipient_ids is null or array_length(p_recipient_ids, 1) is null then
     raise exception 'recipient_ids is required';
   end if;
@@ -1202,7 +1198,7 @@ comment on function public.friendship_delete(uuid) is
 'Deletes both directional friendship edges for auth.uid() and the provided friend id.';
 
 comment on function public.meme_create(text, uuid, uuid[]) is
-'Creates one meme for auth.uid(), validates friend recipients, and inserts recipient edges.';
+'Creates one meme for auth.uid(), supports optional template_id, validates friend recipients, and inserts recipient edges.';
 
 comment on function public.is_meme_creator(uuid, uuid) is
 'Returns whether the given user id created the given meme id.';

@@ -45,6 +45,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get validationInvalidCredentials => 'Email or password is incorrect.';
 
   @override
+  String get permissionGalleryDeniedMessage =>
+      'Please allow photo-library access to choose an image from your device.';
+
+  @override
+  String get validationMemePayloadTooLarge =>
+      'Image and text exceed 5 MB together. Please use a smaller image.';
+
+  @override
   String get validationUnknown => 'Invalid input. Please check your details.';
 
   @override
@@ -158,6 +166,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get memeTemplatePickerEmpty => 'No meme templates found.';
 
   @override
+  String get memeTemplatePickerGalleryButton => 'From gallery';
+
+  @override
   String get memeEditorTitle => 'New meme';
 
   @override
@@ -165,7 +176,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get memeEditorCanvasSelectTemplateHint =>
-      'Select a meme template first.';
+      'Select a meme template or choose an image from your gallery.';
 
   @override
   String get memeEditorCanvasImageLoadError => 'Image could not be loaded.';
@@ -400,6 +411,14 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   String get validationInvalidCredentials => 'Email or password is incorrect.';
 
   @override
+  String get permissionGalleryDeniedMessage =>
+      'Please allow photo-library access to choose an image from your device.';
+
+  @override
+  String get validationMemePayloadTooLarge =>
+      'Image and text exceed 5 MB together. Please use a smaller image.';
+
+  @override
   String get validationUnknown => 'Invalid input. Please check your details.';
 
   @override
@@ -513,6 +532,9 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   String get memeTemplatePickerEmpty => 'No meme templates found.';
 
   @override
+  String get memeTemplatePickerGalleryButton => 'From gallery';
+
+  @override
   String get memeEditorTitle => 'New meme';
 
   @override
@@ -520,7 +542,7 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
 
   @override
   String get memeEditorCanvasSelectTemplateHint =>
-      'Select a meme template first.';
+      'Select a meme template or choose an image from your gallery.';
 
   @override
   String get memeEditorCanvasImageLoadError => 'Image could not be loaded.';

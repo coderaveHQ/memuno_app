@@ -98,6 +98,7 @@ class ChangeEmailPage extends HookConsumerWidget {
                 autofillHints: const <String>[AutofillHints.email],
                 label: l10n.changeEmailNewEmailLabel,
                 isEnabled: !isLoading,
+                autofocus: true,
               ),
               const MGap.md(),
               MButton.primary(
