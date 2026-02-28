@@ -133,6 +133,7 @@ class SignInPage extends HookConsumerWidget {
                 autofillHints: const <String>[AutofillHints.email],
                 label: l10n.signInEmailLabel,
                 isEnabled: !isOtpLoading && !isPasswordLoading,
+                autofocus: true,
               ),
               const MGap.md(),
               if (usePassword.value) ...<Widget>[

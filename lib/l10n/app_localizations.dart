@@ -166,6 +166,18 @@ abstract class AppLocalizations {
   /// **'Email or password is incorrect.'**
   String get validationInvalidCredentials;
 
+  /// No description provided for @permissionGalleryDeniedMessage.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Please allow photo-library access to choose an image from your device.'**
+  String get permissionGalleryDeniedMessage;
+
+  /// No description provided for @validationMemePayloadTooLarge.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Image and text exceed 5 MB together. Please use a smaller image.'**
+  String get validationMemePayloadTooLarge;
+
   /// No description provided for @validationUnknown.
   ///
   /// In en_US, this message translates to:
@@ -376,6 +388,12 @@ abstract class AppLocalizations {
   /// **'No meme templates found.'**
   String get memeTemplatePickerEmpty;
 
+  /// No description provided for @memeTemplatePickerGalleryButton.
+  ///
+  /// In en_US, this message translates to:
+  /// **'From gallery'**
+  String get memeTemplatePickerGalleryButton;
+
   /// No description provided for @memeEditorTitle.
   ///
   /// In en_US, this message translates to:
@@ -391,7 +409,7 @@ abstract class AppLocalizations {
   /// No description provided for @memeEditorCanvasSelectTemplateHint.
   ///
   /// In en_US, this message translates to:
-  /// **'Select a meme template first.'**
+  /// **'Select a meme template or choose an image from your gallery.'**
   String get memeEditorCanvasSelectTemplateHint;
 
   /// No description provided for @memeEditorCanvasImageLoadError.

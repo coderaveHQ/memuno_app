@@ -19,6 +19,7 @@ class MTextField extends StatelessWidget {
   final int? maxLines;
   final Iterable<String>? autofillHints;
   final MTextFieldAction? action;
+  final bool autofocus;
 
   const MTextField({
     super.key,
@@ -36,6 +37,7 @@ class MTextField extends StatelessWidget {
     this.maxLines = 1,
     this.autofillHints,
     this.action,
+    this.autofocus = false,
   });
 
   @override
@@ -58,6 +60,7 @@ class MTextField extends StatelessWidget {
       autocorrect: false,
       enabled: isEnabled,
       readOnly: !isEnabled,
+      autofocus: autofocus,
       keyboardType: inputType,
       textInputAction: textInputAction,
       canRequestFocus: isEnabled,

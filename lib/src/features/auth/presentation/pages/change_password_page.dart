@@ -103,6 +103,7 @@ class ChangePasswordPage extends HookConsumerWidget {
                       : LucideIcons.eye,
                 ),
                 isEnabled: !isLoading,
+                autofocus: true,
               ),
               const MGap.md(),
               MButton.primary(

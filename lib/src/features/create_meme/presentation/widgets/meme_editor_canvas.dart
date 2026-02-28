@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:memuno_app/l10n/app_localizations.dart';
 import 'package:memuno_app/src/app/widgets/m/m_center.dart';
@@ -24,6 +26,8 @@ final class MemeEditorCanvas extends StatelessWidget {
     super.key,
     required this.repaintBoundaryKey,
     required this.template,
+    required this.customTemplateImageBytes,
+    required this.customTemplateAspectRatio,
     required this.layers,
     required this.selectedLayerId,
     required this.showSelectionOverlay,
@@ -36,6 +40,12 @@ final class MemeEditorCanvas extends StatelessWidget {
 
   /// Currently selected meme template.
   final MemeTemplateEntity? template;
+
+  /// PNG bytes of selected custom gallery image, if any.
+  final Uint8List? customTemplateImageBytes;
+
+  /// Aspect ratio of selected custom gallery image.
+  final double? customTemplateAspectRatio;
 
   /// All text overlays rendered on top of the template.
   final List<MemeTextLayerEntity> layers;
@@ -56,7 +66,8 @@ final class MemeEditorCanvas extends StatelessWidget {
   Widget build(BuildContext context) {
     final AppLocalizations l10n = AppLocalizations.of(context);
     final MemeTemplateEntity? currentTemplate = template;
-    if (currentTemplate == null) {
+    final Uint8List? currentCustomTemplateBytes = customTemplateImageBytes;
+    if (currentTemplate == null && currentCustomTemplateBytes == null) {
       return ColoredBox(
         color: MColors.gray900,
         child: MCenter(
@@ -68,14 +79,20 @@ final class MemeEditorCanvas extends StatelessWidget {
       );
     }
 
-    final double safeAspectRatio = currentTemplate.aspectRatio <= 0
-        ? 1.0
-        : currentTemplate.aspectRatio;
+    final double selectedAspectRatio;
+    if (currentTemplate != null) {
+      selectedAspectRatio = currentTemplate.aspectRatio <= 0
+          ? 1.0
+          : currentTemplate.aspectRatio;
+    } else {
+      final double customAspectRatio = customTemplateAspectRatio ?? 1.0;
+      selectedAspectRatio = customAspectRatio <= 0 ? 1.0 : customAspectRatio;
+    }
 
     return ColoredBox(
       color: MColors.gray900,
       child: AspectRatio(
-        aspectRatio: safeAspectRatio,
+        aspectRatio: selectedAspectRatio,
         child: RepaintBoundary(
           key: repaintBoundaryKey,
           child: LayoutBuilder(
@@ -83,44 +100,64 @@ final class MemeEditorCanvas extends StatelessWidget {
               final Size canvasSize = constraints.biggest;
               final Rect imageRect = _resolveImageRect(
                 canvasSize: canvasSize,
-                imageAspectRatio: safeAspectRatio,
+                imageAspectRatio: selectedAspectRatio,
               );
 
               return Stack(
                 clipBehavior: Clip.hardEdge,
                 children: <Widget>[
                   Positioned.fill(
-                    child: Image.network(
-                      currentTemplate.signedImageUrl,
-                      fit: BoxFit.contain,
-                      loadingBuilder:
-                          (
-                            BuildContext context,
-                            Widget child,
-                            ImageChunkEvent? loadingProgress,
-                          ) {
-                            if (loadingProgress == null) {
-                              return child;
-                            }
+                    child: currentTemplate != null
+                        ? Image.network(
+                            currentTemplate.signedImageUrl,
+                            fit: BoxFit.contain,
+                            loadingBuilder:
+                                (
+                                  BuildContext context,
+                                  Widget child,
+                                  ImageChunkEvent? loadingProgress,
+                                ) {
+                                  if (loadingProgress == null) {
+                                    return child;
+                                  }
 
-                            return const MCenter(
-                              child: MCircularProgressIndicator(),
-                            );
-                          },
-                      errorBuilder:
-                          (
-                            BuildContext context,
-                            Object error,
-                            StackTrace? stackTrace,
-                          ) {
-                            return MCenter(
-                              child: MText.small(
-                                text: l10n.memeEditorCanvasImageLoadError,
-                                style: TextStyle(color: MColors.gray300),
-                              ),
-                            );
-                          },
-                    ),
+                                  return const MCenter(
+                                    child: MCircularProgressIndicator(),
+                                  );
+                                },
+                            errorBuilder:
+                                (
+                                  BuildContext context,
+                                  Object error,
+                                  StackTrace? stackTrace,
+                                ) {
+                                  return MCenter(
+                                    child: MText.small(
+                                      text: l10n.memeEditorCanvasImageLoadError,
+                                      style: TextStyle(color: MColors.gray300),
+                                    ),
+                                  );
+                                },
+                          )
+                        : Image.memory(
+                            currentCustomTemplateBytes!,
+                            fit: BoxFit.contain,
+                            filterQuality: FilterQuality.high,
+                            gaplessPlayback: true,
+                            errorBuilder:
+                                (
+                                  BuildContext context,
+                                  Object error,
+                                  StackTrace? stackTrace,
+                                ) {
+                                  return MCenter(
+                                    child: MText.small(
+                                      text: l10n.memeEditorCanvasImageLoadError,
+                                      style: TextStyle(color: MColors.gray300),
+                                    ),
+                                  );
+                                },
+                          ),
                   ),
                   for (final MemeTextLayerEntity layer in layers)
                     Builder(

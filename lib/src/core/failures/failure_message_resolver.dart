@@ -83,6 +83,8 @@ final class FailureMessageResolver {
       'min_length' => _withMinLength(l10n, params),
       'max_length' => _withMaxLength(l10n, params),
       'invalid_credentials' => l10n.validationInvalidCredentials,
+      'gallery_permission_denied' => l10n.permissionGalleryDeniedMessage,
+      'meme_payload_too_large' => l10n.validationMemePayloadTooLarge,
       _ => l10n.validationUnknown,
     };
   }

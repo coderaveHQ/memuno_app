@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'dart:typed_data';
 
+import 'package:image/image.dart' as img;
 import 'package:memuno_app/src/features/create_meme/data/datasources/meme_editor_datasource.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_state_entity.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_text_layer_entity.dart';
@@ -20,6 +21,8 @@ final class InMemoryMemeEditorDatasourceImpl implements MemeEditorDatasource {
   static const double _minStaggerY = 0.05;
   static const double _maxStaggerY = 0.85;
   static const double _initialFontSize = 34.0;
+  static const double _resizeStepFactor = 0.9;
+  static const int _minOptimizedDimension = 128;
 
   final Random _random;
   int _layerCounter = 0;
@@ -31,6 +34,25 @@ final class InMemoryMemeEditorDatasourceImpl implements MemeEditorDatasource {
   }) {
     return MemeEditorStateEntity(
       template: template,
+      customTemplateImageBytes: null,
+      customTemplateAspectRatio: null,
+      textLayers: const <MemeTextLayerEntity>[],
+      selectedTextLayerId: null,
+      selectedRecipientUserIds: const <String>{},
+      finalizedImageBytes: null,
+    );
+  }
+
+  @override
+  MemeEditorStateEntity setCustomTemplateImage({
+    required MemeEditorStateEntity state,
+    required Uint8List imageBytes,
+    required double aspectRatio,
+  }) {
+    return MemeEditorStateEntity(
+      template: null,
+      customTemplateImageBytes: imageBytes,
+      customTemplateAspectRatio: aspectRatio,
       textLayers: const <MemeTextLayerEntity>[],
       selectedTextLayerId: null,
       selectedRecipientUserIds: const <String>{},
@@ -217,6 +239,68 @@ final class InMemoryMemeEditorDatasourceImpl implements MemeEditorDatasource {
     }
 
     return state.copyWith(selectedRecipientUserIds: const <String>{});
+  }
+
+  @override
+  MemeEditorStateEntity optimizeCustomTemplateImageForUpload({
+    required MemeEditorStateEntity state,
+    required int maxImageBytes,
+  }) {
+    final Uint8List? selectedImageBytes = state.customTemplateImageBytes;
+    if (selectedImageBytes == null ||
+        selectedImageBytes.isEmpty ||
+        maxImageBytes <= 0 ||
+        selectedImageBytes.length <= maxImageBytes) {
+      return state;
+    }
+
+    final img.Image? decodedImage = img.decodeImage(selectedImageBytes);
+    if (decodedImage == null) {
+      return state;
+    }
+
+    img.Image currentImage = decodedImage;
+    Uint8List encodedBytes = Uint8List.fromList(img.encodePng(currentImage));
+
+    while (encodedBytes.length > maxImageBytes &&
+        currentImage.width > _minOptimizedDimension &&
+        currentImage.height > _minOptimizedDimension) {
+      final int nextWidth = max(
+        (currentImage.width * _resizeStepFactor).round(),
+        _minOptimizedDimension,
+      );
+      final int nextHeight = max(
+        (currentImage.height * _resizeStepFactor).round(),
+        _minOptimizedDimension,
+      );
+
+      if (nextWidth == currentImage.width &&
+          nextHeight == currentImage.height) {
+        break;
+      }
+
+      currentImage = img.copyResize(
+        currentImage,
+        width: nextWidth,
+        height: nextHeight,
+        interpolation: img.Interpolation.average,
+      );
+      encodedBytes = Uint8List.fromList(img.encodePng(currentImage));
+    }
+
+    if (encodedBytes.length > maxImageBytes) {
+      return state;
+    }
+
+    final double aspectRatio = currentImage.height == 0
+        ? (state.customTemplateAspectRatio ?? 1.0)
+        : currentImage.width / currentImage.height;
+
+    return state.copyWith(
+      customTemplateImageBytes: encodedBytes,
+      customTemplateAspectRatio: aspectRatio,
+      finalizedImageBytes: null,
+    );
   }
 
   String _nextLayerId() {
