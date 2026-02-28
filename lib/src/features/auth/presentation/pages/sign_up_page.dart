@@ -111,6 +111,7 @@ class SignUpPage extends HookConsumerWidget {
                 autofillHints: const <String>[AutofillHints.name],
                 label: l10n.signUpNameLabel,
                 isEnabled: !isLoading,
+                autofocus: true,
               ),
               const MGap.md(),
               MTextField(

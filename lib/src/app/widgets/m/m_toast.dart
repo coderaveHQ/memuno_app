@@ -51,11 +51,13 @@ enum MToastVariant {
 }
 
 void showMToast(BuildContext context, MToastVariant variant, String message) {
+  final String resolvedTitle = variant.title(context);
+
   Toast(
     category: ToastCategory.success,
     builder: (toast) => MToast(
       variant: variant,
-      title: variant.title(context),
+      title: resolvedTitle,
       message: message,
       height: toast.height,
       onClose: () => toast.hide(context),
@@ -124,6 +126,8 @@ class MToast extends StatelessWidget {
                 children: [
                   MText.p(
                     text: title.toUpperCase(),
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: variant.foregroundColor,
                       fontWeight: FontWeight.w800,
@@ -133,6 +137,8 @@ class MToast extends StatelessWidget {
                   const MGap.xxs(),
                   MText.small(
                     text: message,
+                    maxLines: 1,
+                    overflow: TextOverflow.ellipsis,
                     style: TextStyle(
                       color: variant.foregroundColor,
                       height: 1.2,

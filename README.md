@@ -29,13 +29,19 @@ supabase start
 supabase functions serve --env-file supabase/.env.local --no-verify-jwt
 ```
 
-##### 4. Run code generation
+##### 4. Get packages
+
+```sh
+flutter pub get
+```
+
+##### 5. Run code generation
 
 ```sh
 dart run build_runner build --delete-conflicting-outputs
 ```
 
-##### 5. Run the App
+##### 6. Run the App
 
 ```sh
 flutter run --flavor development --dart-define-from-file=.env.local
@@ -64,4 +70,3 @@ npm i
 ```sh
 npm run dev
 ```
-

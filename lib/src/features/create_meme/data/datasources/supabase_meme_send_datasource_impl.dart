@@ -19,7 +19,9 @@ final class SupabaseMemeSendDatasourceImpl implements MemeSendDatasource {
   /// Uploads bytes to storage and persists the meme via `meme_create` RPC.
   Future<void> sendMeme({
     required Uint8List memeBytes,
-    required String templateId,
+
+    /// Optional template id for built-in templates. Null for gallery images.
+    required String? templateId,
     required List<String> recipientUserIds,
   }) async {
     final String? userId = _supabaseClient.auth.currentUser?.id;

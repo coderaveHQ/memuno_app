@@ -46,6 +46,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get validationInvalidCredentials => 'E-Mail oder Passwort ist falsch.';
 
   @override
+  String get permissionGalleryDeniedMessage =>
+      'Bitte erlaube den Zugriff auf deine Fotos, um ein Bild von deinem Gerät auszuwählen.';
+
+  @override
+  String get validationMemePayloadTooLarge =>
+      'Bild und Text sind zusammen größer als 5 MB. Bitte verwende ein kleineres Bild.';
+
+  @override
   String get validationUnknown =>
       'Eingabe ungültig. Bitte prüfe deine Angaben.';
 
@@ -161,6 +169,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get memeTemplatePickerEmpty => 'Keine Meme-Vorlagen gefunden.';
 
   @override
+  String get memeTemplatePickerGalleryButton => 'Aus Galerie';
+
+  @override
   String get memeEditorTitle => 'Neues Meme';
 
   @override
@@ -168,7 +179,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get memeEditorCanvasSelectTemplateHint =>
-      'Wähle zuerst eine Meme-Vorlage aus.';
+      'Wähle eine Meme-Vorlage oder ein Bild aus deiner Galerie aus.';
 
   @override
   String get memeEditorCanvasImageLoadError =>
@@ -407,6 +418,14 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
   String get validationInvalidCredentials => 'E-Mail oder Passwort ist falsch.';
 
   @override
+  String get permissionGalleryDeniedMessage =>
+      'Bitte erlaube den Zugriff auf deine Fotos, um ein Bild von deinem Gerät auszuwählen.';
+
+  @override
+  String get validationMemePayloadTooLarge =>
+      'Bild und Text sind zusammen größer als 5 MB. Bitte verwende ein kleineres Bild.';
+
+  @override
   String get validationUnknown =>
       'Eingabe ungültig. Bitte prüfe deine Angaben.';
 
@@ -522,6 +541,9 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
   String get memeTemplatePickerEmpty => 'Keine Meme-Vorlagen gefunden.';
 
   @override
+  String get memeTemplatePickerGalleryButton => 'Aus Galerie';
+
+  @override
   String get memeEditorTitle => 'Neues Meme';
 
   @override
@@ -529,7 +551,7 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
 
   @override
   String get memeEditorCanvasSelectTemplateHint =>
-      'Wähle zuerst eine Meme-Vorlage aus.';
+      'Wähle eine Meme-Vorlage oder ein Bild aus deiner Galerie aus.';
 
   @override
   String get memeEditorCanvasImageLoadError =>

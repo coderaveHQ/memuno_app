@@ -11,6 +11,13 @@ abstract class MemeEditorDatasource {
     required MemeTemplateEntity template,
   });
 
+  /// Applies selected custom gallery image and resets draft state.
+  MemeEditorStateEntity setCustomTemplateImage({
+    required MemeEditorStateEntity state,
+    required Uint8List imageBytes,
+    required double aspectRatio,
+  });
+
   /// Adds a new text layer with [initialText] and selects it.
   MemeEditorStateEntity addTextLayer({
     required MemeEditorStateEntity state,
@@ -65,5 +72,11 @@ abstract class MemeEditorDatasource {
   /// Clears all selected recipients.
   MemeEditorStateEntity clearRecipientSelection({
     required MemeEditorStateEntity state,
+  });
+
+  /// Downscales selected custom image until its PNG bytes fit [maxImageBytes].
+  MemeEditorStateEntity optimizeCustomTemplateImageForUpload({
+    required MemeEditorStateEntity state,
+    required int maxImageBytes,
   });
 }

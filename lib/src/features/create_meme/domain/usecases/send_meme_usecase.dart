@@ -4,7 +4,6 @@ import 'package:memuno_app/src/core/failures/failure.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_state_entity.dart';
 import 'package:memuno_app/src/features/create_meme/domain/repositories/meme_send_repository.dart';
 import 'package:memuno_app/src/features/create_meme/domain/validators/meme_editor_validator.dart';
-import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_entity.dart';
 
 /// Usecase for sending one finalized meme to selected recipients.
 final class SendMemeUsecase {
@@ -23,7 +22,7 @@ final class SendMemeUsecase {
 
   /// Sends one finalized meme from [state] and [memeBytes].
   Future<void> call({
-    /// Current editor snapshot with template and recipient selection.
+    /// Current editor snapshot with selected background and recipient selection.
     required MemeEditorStateEntity state,
 
     /// Finalized PNG bytes to upload.
@@ -62,17 +61,19 @@ final class SendMemeUsecase {
       }
     }
 
-    final MemeTemplateEntity template = state.template!;
-    final Failure? templateIdValidation = _validator.validateTemplateId(
-      template.id,
-    );
-    if (templateIdValidation != null) {
-      throw templateIdValidation;
+    final String? templateId = state.template?.id;
+    if (templateId != null) {
+      final Failure? templateIdValidation = _validator.validateTemplateId(
+        templateId,
+      );
+      if (templateIdValidation != null) {
+        throw templateIdValidation;
+      }
     }
 
     await _repository.sendMeme(
       memeBytes: memeBytes,
-      templateId: template.id,
+      templateId: templateId,
       recipientUserIds: recipientUserIds,
     );
   }

@@ -7,8 +7,8 @@ abstract class MemeSendRepository {
     /// Finalized PNG bytes rendered from meme editor.
     required Uint8List memeBytes,
 
-    /// Template identifier selected in editor.
-    required String templateId,
+    /// Optional template identifier selected in editor.
+    required String? templateId,
 
     /// Target recipient user identifiers.
     required List<String> recipientUserIds,

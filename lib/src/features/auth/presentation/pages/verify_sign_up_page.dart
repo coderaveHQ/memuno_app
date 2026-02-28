@@ -126,6 +126,7 @@ class VerifySignUpPage extends HookConsumerWidget {
                 onCompleted: (String value) {
                   _submit(ref, email, value);
                 },
+                autofocus: true,
               ),
               const MGap.md(),
               MButton.primary(

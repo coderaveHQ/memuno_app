@@ -28,11 +28,11 @@ final class SetFinalizedMemeBytesUsecase {
     /// Finalized meme image bytes.
     required Uint8List bytes,
   }) {
-    final Failure? templateValidation = _validator.validateTemplateSelected(
+    final Failure? backgroundValidation = _validator.validateTemplateSelected(
       state,
     );
-    if (templateValidation != null) {
-      throw templateValidation;
+    if (backgroundValidation != null) {
+      throw backgroundValidation;
     }
 
     final Failure? bytesValidation = _validator.validateFinalizedBytes(bytes);
