@@ -154,6 +154,44 @@ class AppLocalizationsEn extends AppLocalizations {
   String get friendshipsRequestDirectionOutgoing => 'Outgoing';
 
   @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsSearchLabel => 'Search notifications';
+
+  @override
+  String get notificationsSearchHint => 'Search by name or friendship code';
+
+  @override
+  String get notificationsListEmpty => 'No notifications yet.';
+
+  @override
+  String get notificationsItemFriendshipRequestSentTitle =>
+      'New friendship request';
+
+  @override
+  String notificationsItemFriendshipRequestSent(Object sender_name) {
+    return '$sender_name sent you a friendship request.';
+  }
+
+  @override
+  String get notificationsItemFriendshipRequestAcceptedTitle =>
+      'Friendship request accepted';
+
+  @override
+  String notificationsItemFriendshipRequestAccepted(Object sender_name) {
+    return '$sender_name accepted your friendship request.';
+  }
+
+  @override
+  String get notificationsItemMemeReceivedTitle => 'New meme received';
+
+  @override
+  String notificationsItemMemeReceived(Object sender_name) {
+    return '$sender_name sent you a meme.';
+  }
+
+  @override
   String get memeTemplatePickerTitle => 'Meme templates';
 
   @override
@@ -518,6 +556,44 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
 
   @override
   String get friendshipsRequestDirectionOutgoing => 'Outgoing';
+
+  @override
+  String get notificationsTitle => 'Notifications';
+
+  @override
+  String get notificationsSearchLabel => 'Search notifications';
+
+  @override
+  String get notificationsSearchHint => 'Search by name or friendship code';
+
+  @override
+  String get notificationsListEmpty => 'No notifications yet.';
+
+  @override
+  String get notificationsItemFriendshipRequestSentTitle =>
+      'New friendship request';
+
+  @override
+  String notificationsItemFriendshipRequestSent(Object sender_name) {
+    return '$sender_name sent you a friendship request.';
+  }
+
+  @override
+  String get notificationsItemFriendshipRequestAcceptedTitle =>
+      'Friendship request accepted';
+
+  @override
+  String notificationsItemFriendshipRequestAccepted(Object sender_name) {
+    return '$sender_name accepted your friendship request.';
+  }
+
+  @override
+  String get notificationsItemMemeReceivedTitle => 'New meme received';
+
+  @override
+  String notificationsItemMemeReceived(Object sender_name) {
+    return '$sender_name sent you a meme.';
+  }
 
   @override
   String get memeTemplatePickerTitle => 'Meme templates';

@@ -364,6 +364,66 @@ abstract class AppLocalizations {
   /// **'Outgoing'**
   String get friendshipsRequestDirectionOutgoing;
 
+  /// No description provided for @notificationsTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Notifications'**
+  String get notificationsTitle;
+
+  /// No description provided for @notificationsSearchLabel.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Search notifications'**
+  String get notificationsSearchLabel;
+
+  /// No description provided for @notificationsSearchHint.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Search by name or friendship code'**
+  String get notificationsSearchHint;
+
+  /// No description provided for @notificationsListEmpty.
+  ///
+  /// In en_US, this message translates to:
+  /// **'No notifications yet.'**
+  String get notificationsListEmpty;
+
+  /// No description provided for @notificationsItemFriendshipRequestSentTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'New friendship request'**
+  String get notificationsItemFriendshipRequestSentTitle;
+
+  /// No description provided for @notificationsItemFriendshipRequestSent.
+  ///
+  /// In en_US, this message translates to:
+  /// **'{sender_name} sent you a friendship request.'**
+  String notificationsItemFriendshipRequestSent(Object sender_name);
+
+  /// No description provided for @notificationsItemFriendshipRequestAcceptedTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Friendship request accepted'**
+  String get notificationsItemFriendshipRequestAcceptedTitle;
+
+  /// No description provided for @notificationsItemFriendshipRequestAccepted.
+  ///
+  /// In en_US, this message translates to:
+  /// **'{sender_name} accepted your friendship request.'**
+  String notificationsItemFriendshipRequestAccepted(Object sender_name);
+
+  /// No description provided for @notificationsItemMemeReceivedTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'New meme received'**
+  String get notificationsItemMemeReceivedTitle;
+
+  /// No description provided for @notificationsItemMemeReceived.
+  ///
+  /// In en_US, this message translates to:
+  /// **'{sender_name} sent you a meme.'**
+  String notificationsItemMemeReceived(Object sender_name);
+
   /// No description provided for @memeTemplatePickerTitle.
   ///
   /// In en_US, this message translates to:

@@ -39,6 +39,7 @@ final Map<bool, _AuthRoutingPolicy> _authRoutingPolicies =
           CommunityRoute.routeName,
           CreateRoute.routeName,
           SendRoute.routeName,
+          NotificationsRoute.routeName,
           ProfileRoute.routeName,
           FriendshipsRoute.routeName,
           SettingsRoute.routeName,

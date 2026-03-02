@@ -1,13 +1,19 @@
+import 'dart:async';
+
 import 'package:flutter/widgets.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:memuno_app/l10n/app_localizations.dart';
 import 'package:memuno_app/src/app/feedback/app_feedback.dart';
 import 'package:memuno_app/src/app/feedback/app_feedback_provider.dart';
 import 'package:memuno_app/src/app/router/app_router.dart';
+import 'package:memuno_app/src/app/settings/language_resolution_provider.dart';
 import 'package:memuno_app/src/features/auth/application/providers/auth_state_provider.dart';
 import 'package:memuno_app/src/features/auth/domain/entities/auth_state_entity.dart';
 import 'package:memuno_app/src/features/deep_links/application/providers/incoming_deep_link_provider.dart';
 import 'package:memuno_app/src/features/deep_links/presentation/providers/deep_link_navigation_handler_provider.dart';
+import 'package:memuno_app/src/features/push_notifications/application/entities/push_auth_lifecycle_event.dart';
+import 'package:memuno_app/src/features/push_notifications/application/providers/push_notifications_lifecycle_service_provider.dart';
+import 'package:memuno_app/src/features/push_notifications/application/services/push_notifications_lifecycle_service.dart';
 
 /// App-level side effects that react to global state changes.
 final class AppEffects extends ConsumerStatefulWidget {
@@ -26,10 +32,53 @@ class _AppEffectsState extends ConsumerState<AppEffects> {
   // Holds the email that triggered an email-change toast so we can suppress
   // a follow-up signed-in toast for the same change.
   String? _pendingEmailChangeEmail;
+  AuthStateEntity? _lastHandledAuthState;
+
+  @override
+  void initState() {
+    super.initState();
+
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) {
+        return;
+      }
+      final PushNotificationsLifecycleService lifecycleService = ref.read(
+        pushNotificationsLifecycleServiceProvider,
+      );
+      unawaited(lifecycleService.initialize());
+
+      final LanguageResolution languageResolution = ref.read(
+        languageResolutionProvider,
+      );
+      lifecycleService.handleResolvedLocale(languageResolution.resolvedLocale);
+
+      final AuthStateEntity? initialAuthState = ref
+          .read(authStateProvider)
+          .asData
+          ?.value;
+      if (initialAuthState != null) {
+        _lastHandledAuthState = initialAuthState;
+        _emitPushAuthIntent(
+          lifecycleService: lifecycleService,
+          state: initialAuthState,
+        );
+      }
+    });
+  }
 
   @override
   /// Builds and returns the widget tree for this component.
   Widget build(BuildContext context) {
+    ref.listen<LanguageResolution>(languageResolutionProvider, (
+      LanguageResolution? previous,
+      LanguageResolution next,
+    ) {
+      final PushNotificationsLifecycleService lifecycleService = ref.read(
+        pushNotificationsLifecycleServiceProvider,
+      );
+      lifecycleService.handleResolvedLocale(next.resolvedLocale);
+    });
+
     // Listen to external deep links and route them through the central handler.
     ref.listen<AsyncValue<Uri>>(incomingDeepLinkProvider, (
       AsyncValue<Uri>? previous,
@@ -61,8 +110,31 @@ class _AppEffectsState extends ConsumerState<AppEffects> {
       if (nextState == null) {
         return;
       }
+
+      final PushNotificationsLifecycleService lifecycleService = ref.read(
+        pushNotificationsLifecycleServiceProvider,
+      );
+      _lastHandledAuthState = nextState;
+      _emitPushAuthIntent(lifecycleService: lifecycleService, state: nextState);
       _handleAuthState(context, previous?.asData?.value, nextState);
     });
+
+    // If auth state is already available from another subscriber, process it
+    // once to avoid missing startup/session-restore sync.
+    final AuthStateEntity? cachedAuthState = ref
+        .read(authStateProvider)
+        .asData
+        ?.value;
+    if (cachedAuthState != null && cachedAuthState != _lastHandledAuthState) {
+      final PushNotificationsLifecycleService lifecycleService = ref.read(
+        pushNotificationsLifecycleServiceProvider,
+      );
+      _lastHandledAuthState = cachedAuthState;
+      _emitPushAuthIntent(
+        lifecycleService: lifecycleService,
+        state: cachedAuthState,
+      );
+    }
 
     // Render the subtree unchanged; effects are handled via the listener.
     return widget.child;
@@ -168,6 +240,31 @@ class _AppEffectsState extends ConsumerState<AppEffects> {
       deepLinkNavigationHandlerProvider,
     );
     handler(uri);
+  }
+
+  void _emitPushAuthIntent({
+    required PushNotificationsLifecycleService lifecycleService,
+    required AuthStateEntity state,
+  }) {
+    final PushAuthLifecycleEvent? event = _toPushAuthLifecycleEvent(state);
+    if (event == null) {
+      return;
+    }
+
+    lifecycleService.handleAuthStateChange(
+      event: event,
+      userId: state.user?.id,
+    );
+  }
+
+  PushAuthLifecycleEvent? _toPushAuthLifecycleEvent(AuthStateEntity state) {
+    if (state.event == AuthEvent.signedOut) {
+      return PushAuthLifecycleEvent.sessionEnded;
+    }
+    if (state.user != null) {
+      return PushAuthLifecycleEvent.sessionAvailable;
+    }
+    return null;
   }
 
   /// Resolves an overlay context that can host toast notifications.
