@@ -157,6 +157,45 @@ class AppLocalizationsDe extends AppLocalizations {
   String get friendshipsRequestDirectionOutgoing => 'Ausgehend';
 
   @override
+  String get notificationsTitle => 'Benachrichtigungen';
+
+  @override
+  String get notificationsSearchLabel => 'Benachrichtigungen suchen';
+
+  @override
+  String get notificationsSearchHint =>
+      'Nach Name oder Freundschaftscode suchen';
+
+  @override
+  String get notificationsListEmpty => 'Noch keine Benachrichtigungen.';
+
+  @override
+  String get notificationsItemFriendshipRequestSentTitle =>
+      'Neue Freundschaftsanfrage';
+
+  @override
+  String notificationsItemFriendshipRequestSent(Object sender_name) {
+    return '$sender_name hat dir eine Freundschaftsanfrage gesendet.';
+  }
+
+  @override
+  String get notificationsItemFriendshipRequestAcceptedTitle =>
+      'Freundschaftsanfrage angenommen';
+
+  @override
+  String notificationsItemFriendshipRequestAccepted(Object sender_name) {
+    return '$sender_name hat deine Freundschaftsanfrage angenommen.';
+  }
+
+  @override
+  String get notificationsItemMemeReceivedTitle => 'Neues Meme erhalten';
+
+  @override
+  String notificationsItemMemeReceived(Object sender_name) {
+    return '$sender_name hat dir ein Meme gesendet.';
+  }
+
+  @override
   String get memeTemplatePickerTitle => 'Meme-Vorlagen';
 
   @override
@@ -527,6 +566,45 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
 
   @override
   String get friendshipsRequestDirectionOutgoing => 'Ausgehend';
+
+  @override
+  String get notificationsTitle => 'Benachrichtigungen';
+
+  @override
+  String get notificationsSearchLabel => 'Benachrichtigungen suchen';
+
+  @override
+  String get notificationsSearchHint =>
+      'Nach Name oder Freundschaftscode suchen';
+
+  @override
+  String get notificationsListEmpty => 'Noch keine Benachrichtigungen.';
+
+  @override
+  String get notificationsItemFriendshipRequestSentTitle =>
+      'Neue Freundschaftsanfrage';
+
+  @override
+  String notificationsItemFriendshipRequestSent(Object sender_name) {
+    return '$sender_name hat dir eine Freundschaftsanfrage gesendet.';
+  }
+
+  @override
+  String get notificationsItemFriendshipRequestAcceptedTitle =>
+      'Freundschaftsanfrage angenommen';
+
+  @override
+  String notificationsItemFriendshipRequestAccepted(Object sender_name) {
+    return '$sender_name hat deine Freundschaftsanfrage angenommen.';
+  }
+
+  @override
+  String get notificationsItemMemeReceivedTitle => 'Neues Meme erhalten';
+
+  @override
+  String notificationsItemMemeReceived(Object sender_name) {
+    return '$sender_name hat dir ein Meme gesendet.';
+  }
 
   @override
   String get memeTemplatePickerTitle => 'Meme-Vorlagen';

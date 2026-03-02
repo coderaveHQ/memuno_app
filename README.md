@@ -23,25 +23,48 @@ Make memes fast: pick a template, add your caption, and send it to friends insta
 supabase start
 ```
 
-##### 3. Serve the Edge Functions
+##### 3. Push Notifications Setup
 
-```sh
-supabase functions serve --env-file supabase/.env.local --no-verify-jwt
+Push delivery is triggered by a database webhook on `public.notifications` (`INSERT`) that calls the `send-notification-push` Edge Function.
+
+The webhook must send:
+- `Authorization: Bearer <service_role_key>`
+
+1. Get your local service-role key from `supabase status -o env | grep SERVICE_ROLE_KEY`.
+2. Provision the webhook trigger **once** (or after `supabase db reset`):
+
+```sql
+create trigger dbwebhook_notifications_insert_push
+after insert on public.notifications
+for each row
+execute function supabase_functions.http_request(
+  'http://host.docker.internal:54321/functions/v1/send-notification-push',
+  'POST',
+  '{"Content-Type":"application/json","Authorization":"Bearer <SERVICE_ROLE_KEY>"}',
+  '{}',
+  '10000'
+);
 ```
 
-##### 4. Get packages
+##### 4. Serve the Edge Functions
+
+```sh
+supabase functions serve --env-file supabase/.env.local
+```
+
+##### 5. Get packages
 
 ```sh
 flutter pub get
 ```
 
-##### 5. Run code generation
+##### 6. Run code generation
 
 ```sh
 dart run build_runner build --delete-conflicting-outputs
 ```
 
-##### 6. Run the App
+##### 7. Run the App
 
 ```sh
 flutter run --flavor development --dart-define-from-file=.env.local
@@ -70,3 +93,14 @@ npm i
 ```sh
 npm run dev
 ```
+
+### Postrequisites
+
+#### Push Notifications Setup
+
+1. In each remote branch, create a Database Webhook:
+- Table: `public.notifications`
+- Events: `INSERT`
+- Type: Supabase Edge Functions
+- Function: `send-notification-push`
+- Add Auth Header: enabled, using that branch's `service_role` key

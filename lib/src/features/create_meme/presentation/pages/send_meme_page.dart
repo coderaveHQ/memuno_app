@@ -13,6 +13,7 @@ import 'package:memuno_app/src/app/extensions/date_time_x.dart';
 import 'package:memuno_app/src/app/extensions/mutation_x.dart';
 import 'package:memuno_app/src/app/feedback/app_feedback.dart';
 import 'package:memuno_app/src/app/feedback/app_feedback_provider.dart';
+import 'package:memuno_app/src/app/providers/friendships_list_provider.dart';
 import 'package:memuno_app/src/app/router/app_router.dart';
 import 'package:memuno_app/src/app/widgets/m/m_app_bar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_async_list.dart';
@@ -27,7 +28,6 @@ import 'package:memuno_app/src/features/create_meme/application/providers/meme_e
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/send_meme_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_state_entity.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/send_meme_usecase.dart';
-import 'package:memuno_app/src/features/friendships/application/providers/friendships_list_provider.dart';
 import 'package:memuno_app/src/features/friendships/domain/entities/friendship_cursor_entity.dart';
 import 'package:memuno_app/src/features/friendships/domain/entities/friendship_entity.dart';
 

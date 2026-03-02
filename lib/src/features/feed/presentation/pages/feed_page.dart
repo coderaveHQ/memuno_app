@@ -4,11 +4,11 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:memuno_app/l10n/app_localizations.dart';
 import 'package:memuno_app/src/app/extensions/build_context_x.dart';
 import 'package:memuno_app/src/app/extensions/string_x.dart';
+import 'package:memuno_app/src/app/providers/current_user_profile_provider.dart';
 import 'package:memuno_app/src/app/router/app_router.dart';
 import 'package:memuno_app/src/app/widgets/m/m_app_bar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_refresh_indicator.dart';
 import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
-import 'package:memuno_app/src/features/profile/application/providers/current_user_profile_provider.dart';
 import 'package:memuno_app/src/features/profile/domain/entities/user_profile_entity.dart';
 
 /// Feed page shown after successful authentication.
@@ -18,6 +18,10 @@ class FeedPage extends ConsumerWidget {
 
   Future<void> _onProfile(BuildContext context) async {
     await const ProfileRoute().push<void>(context);
+  }
+
+  Future<void> _onNotifications(BuildContext context) async {
+    await const NotificationsRoute().push<void>(context);
   }
 
   Future<void> _onSettings(BuildContext context) async {
@@ -61,7 +65,10 @@ class FeedPage extends ConsumerWidget {
           isLoading: profileState.isLoading,
         ),
         trailing: <MAppBarButton>[
-          MAppBarButton(icon: LucideIcons.bell),
+          MAppBarButton(
+            onPressed: () => _onNotifications(context),
+            icon: LucideIcons.bell,
+          ),
           MAppBarButton(
             onPressed: () => _onSettings(context),
             icon: LucideIcons.settings,
