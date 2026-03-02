@@ -1,0 +1,167 @@
+import 'dart:async';
+
+import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
+import 'package:flutter_lucide/flutter_lucide.dart';
+import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/experimental/mutation.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:memuno_app/l10n/app_localizations.dart';
+import 'package:memuno_app/src/app/extensions/build_context_x.dart';
+import 'package:memuno_app/src/app/extensions/mutation_x.dart';
+import 'package:memuno_app/src/app/router/app_router.dart';
+import 'package:memuno_app/src/app/widgets/m/m_app_bar.dart';
+import 'package:memuno_app/src/app/widgets/m/m_async_list.dart';
+import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
+import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
+import 'package:memuno_app/src/app/widgets/m/m_text_field.dart';
+import 'package:memuno_app/src/core/state/pagination/paginated_list_state.dart';
+import 'package:memuno_app/src/features/notifications/application/mutations/mark_all_notifications_read_mutation.dart';
+import 'package:memuno_app/src/features/notifications/application/mutations/mark_notification_read_mutation.dart';
+import 'package:memuno_app/src/features/notifications/application/providers/notifications_list_provider.dart';
+import 'package:memuno_app/src/features/notifications/domain/entities/notification_cursor_entity.dart';
+import 'package:memuno_app/src/features/notifications/domain/entities/notification_entity.dart';
+import 'package:memuno_app/src/features/notifications/presentation/widgets/notification_list_item.dart';
+
+/// Notifications overview page with search, pagination, and read actions.
+class NotificationsPage extends HookConsumerWidget {
+  /// Creates the notifications page.
+  const NotificationsPage({super.key});
+
+  void _onBack(BuildContext context) {
+    context.pop();
+  }
+
+  Future<void> _onMarkAllRead(WidgetRef ref) async {
+    final Mutation<void> mutation = ref.read(
+      markAllNotificationsReadMutationProvider,
+    );
+
+    await mutation.runSafely(ref, (MutationTransaction tx) async {
+      await ref.read(notificationsListProvider.notifier).markAllAsRead();
+    });
+  }
+
+  Future<void> _onOpenNotification(
+    BuildContext context,
+    WidgetRef ref,
+    NotificationEntity notification,
+  ) async {
+    final Mutation<void> mutation = ref.read(
+      markNotificationReadMutationProvider(notification.notificationId),
+    );
+
+    await mutation.runSafely(ref, (MutationTransaction tx) async {
+      await ref
+          .read(notificationsListProvider.notifier)
+          .markAsRead(notification);
+    });
+
+    if (!context.mounted) {
+      return;
+    }
+
+    switch (notification) {
+      case FriendshipRequestSentNotificationEntity(:final routeTab):
+        await FriendshipsRoute(tab: routeTab).push<void>(context);
+      case FriendshipRequestAcceptedNotificationEntity(:final routeTab):
+        await FriendshipsRoute(tab: routeTab).push<void>(context);
+      case MemeReceivedNotificationEntity():
+        break;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final AppLocalizations l10n = AppLocalizations.of(context);
+    final TextEditingController searchController = useTextEditingController();
+
+    useEffect(() {
+      final NotificationsList notifier = ref.read(
+        notificationsListProvider.notifier,
+      );
+
+      unawaited(notifier.clearSearch());
+
+      void listener() {
+        notifier.applySearchDebounced(searchController.text);
+      }
+
+      searchController.addListener(listener);
+      return () {
+        notifier.cancelPendingSearch();
+        searchController.removeListener(listener);
+      };
+    }, <Object?>[searchController]);
+
+    final AsyncValue<
+      PaginatedListState<NotificationEntity, NotificationCursorEntity>
+    >
+    notificationsState = ref.watch(notificationsListProvider);
+
+    final Mutation<void> markAllMutation = ref.watch(
+      markAllNotificationsReadMutationProvider,
+    );
+    final MutationState<void> markAllState = ref.watch(markAllMutation);
+
+    final bool hasUnread =
+        notificationsState.asData?.value.items.any(
+          (NotificationEntity item) => !item.notificationIsRead,
+        ) ??
+        false;
+
+    return MScaffold(
+      appBar: MAppBar(
+        context: context,
+        title: MAppBarTitle(text: l10n.notificationsTitle),
+        leading: <MAppBarButton>[
+          MAppBarButton(
+            onPressed: () => _onBack(context),
+            icon: LucideIcons.arrow_left,
+          ),
+        ],
+        trailing: <MAppBarButton>[
+          MAppBarButton(
+            isEnabled: hasUnread && !markAllState.isPending,
+            onPressed: () => _onMarkAllRead(ref),
+            icon: LucideIcons.check_check,
+          ),
+        ],
+      ),
+      body: Column(
+        children: <Widget>[
+          Padding(
+            padding: EdgeInsets.only(
+              top: MSpacing.md,
+              left: context.leftPadding + MSpacing.md,
+              right: context.rightPadding + MSpacing.md,
+              bottom: MSpacing.md,
+            ),
+            child: MTextField(
+              controller: searchController,
+              icon: LucideIcons.search,
+              label: l10n.notificationsSearchLabel,
+              hint: l10n.notificationsSearchHint,
+            ),
+          ),
+          Expanded(
+            child: MAsyncList<NotificationEntity, NotificationCursorEntity>(
+              provider: notificationsListProvider,
+              emptyText: l10n.notificationsListEmpty,
+              loadMoreExtent: 220.0,
+              itemBuilder:
+                  (BuildContext context, NotificationEntity notification) {
+                    return NotificationListItem(
+                      notification: notification,
+                      onPressed: (NotificationEntity item) {
+                        unawaited(_onOpenNotification(context, ref, item));
+                      },
+                    );
+                  },
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

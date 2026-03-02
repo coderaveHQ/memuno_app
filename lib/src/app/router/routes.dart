@@ -302,6 +302,35 @@ class SendRoute extends GoRouteData with $SendRoute {
   }
 }
 
+@TypedGoRoute<NotificationsRoute>(
+  path: '/notifications',
+  name: NotificationsRoute.routeName,
+)
+class NotificationsRoute extends GoRouteData with $NotificationsRoute {
+  /// Creates the notifications route.
+  const NotificationsRoute();
+
+  /// Route name used in navigation.
+  static const String routeName = 'notifications';
+
+  /// Returns true if this route is the top-most leaf in the stack.
+  static bool isLeaf(BuildContext context) =>
+      RouteUtils.isLeaf(context, routeName);
+
+  /// Returns true if this route exists anywhere in the stack.
+  static bool isInStack(BuildContext context) =>
+      RouteUtils.isInStack(context, routeName);
+
+  /// Parent navigator used by this route.
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+
+  @override
+  /// Builds the page for this route.
+  Widget build(BuildContext context, GoRouterState state) {
+    return const NotificationsPage();
+  }
+}
+
 @TypedGoRoute<ProfileRoute>(path: '/profile', name: ProfileRoute.routeName)
 class ProfileRoute extends GoRouteData with $ProfileRoute {
   /// Creates the profile route.
@@ -334,7 +363,10 @@ class ProfileRoute extends GoRouteData with $ProfileRoute {
 )
 class FriendshipsRoute extends GoRouteData with $FriendshipsRoute {
   /// Creates the friendships route.
-  const FriendshipsRoute();
+  const FriendshipsRoute({this.tab});
+
+  /// Optional initial tab query value (`friendships` or `requests`).
+  final String? tab;
 
   /// Route name used in navigation.
   static const String routeName = 'friendships';
@@ -353,7 +385,7 @@ class FriendshipsRoute extends GoRouteData with $FriendshipsRoute {
   @override
   /// Builds the page for this route.
   Widget build(BuildContext context, GoRouterState state) {
-    return const FriendshipsPage();
+    return FriendshipsPage(initialTab: FriendshipsPageTab.fromRouteValue(tab));
   }
 }
 

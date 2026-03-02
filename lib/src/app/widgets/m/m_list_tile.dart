@@ -9,6 +9,7 @@ class MListTile extends StatelessWidget {
   final void Function()? onPressed;
   final String? title;
   final String? description;
+  final String? details;
   final bool isEnabled;
   final Widget? trailing;
   final Widget? leading;
@@ -19,6 +20,7 @@ class MListTile extends StatelessWidget {
     this.onPressed,
     this.title,
     this.description,
+    this.details,
     this.isEnabled = true,
     this.trailing,
     this.leading,
@@ -58,6 +60,17 @@ class MListTile extends StatelessWidget {
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(color: MColors.gray400),
+                    ),
+                  if (description != null && details != null) const MGap.xxs(),
+                  if (details != null)
+                    MText.small(
+                      text: description,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: MColors.gray400,
+                        fontStyle: FontStyle.italic,
+                      ),
                     ),
                 ],
               ),

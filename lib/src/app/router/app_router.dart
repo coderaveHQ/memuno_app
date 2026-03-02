@@ -20,6 +20,7 @@ import 'package:memuno_app/src/features/create_meme/presentation/pages/meme_edit
 import 'package:memuno_app/src/features/create_meme/presentation/pages/send_meme_page.dart';
 import 'package:memuno_app/src/features/feed/presentation/pages/feed_page.dart';
 import 'package:memuno_app/src/features/friendships/presentation/pages/friendships_page.dart';
+import 'package:memuno_app/src/features/notifications/presentation/pages/notifications_page.dart';
 import 'package:memuno_app/src/features/profile/presentation/pages/profile_page.dart';
 import 'package:memuno_app/src/features/settings/presentation/pages/language_mode_page.dart';
 import 'package:memuno_app/src/features/settings/presentation/pages/settings_page.dart';

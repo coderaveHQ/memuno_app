@@ -12,7 +12,7 @@ import 'package:memuno_app/src/app/widgets/m/m_list_tile.dart';
 import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/app/widgets/m/m_text.dart';
-import 'package:memuno_app/src/features/auth/presentation/widgets/sign_out_button.dart';
+import 'package:memuno_app/src/app/widgets/sign_out_button.dart';
 import 'package:memuno_app/src/features/settings/application/providers/language_preference_provider.dart';
 import 'package:memuno_app/src/features/settings/domain/entities/app_language.dart';
 

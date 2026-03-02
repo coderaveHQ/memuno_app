@@ -12,7 +12,7 @@ final class SignOutUsecase {
   final AuthRepository _authRepository;
 
   /// Signs the current user out.
-  Future<void> call() {
-    return _authRepository.signOut();
+  Future<void> call() async {
+    await _authRepository.signOut();
   }
 }

@@ -1,6 +1,4 @@
 -- Seed data for local/dev environments.
--- Creates two users and one accepted friendship request (Florian -> Stefan).
--- Friendship rows are created automatically by the trigger on friendship_requests.
 
 DO $$
 DECLARE
@@ -10,7 +8,8 @@ DECLARE
     v_request_id uuid := 'a3bb189e-7c1d-4b2e-9f6b-1234567890ad';
     user_list jsonb[] := ARRAY[
         '{"id": "a3bb189e-7c1d-4b2e-9f6b-1234567890ab", "email": "fleeser@coderave.dev", "password": "password", "name": "Florian Leeser"}',
-        '{"id": "a3bb189e-7c1d-4b2e-9f6b-1234567890ac", "email": "sroepges@coderave.dev", "password": "password", "name": "Stefan Röpges"}'
+        '{"id": "a3bb189e-7c1d-4b2e-9f6b-1234567890ac", "email": "sroepges@coderave.dev", "password": "password", "name": "Stefan Röpges"}',
+        '{"id": "22977b2d-d84f-4a0d-8f8b-3e6d3a6a4d3c", "email": "ssiegmund@coderave.dev", "password": "password", "name": "Angelique Siegmund"}'
     ];
 BEGIN
     FOREACH user_data IN ARRAY user_list
@@ -80,29 +79,4 @@ BEGIN
         FROM auth.users
         WHERE email = user_data->>'email';
     END LOOP;
-
-    -- Florian sends a friendship request to Stefan.
-    INSERT INTO public.friendship_requests (
-        id,
-        requester_id,
-        addressee_id,
-        status,
-        created_at,
-        updated_at
-    )
-    VALUES (
-        v_request_id,
-        v_florian_id,
-        v_stefan_id,
-        'pending',
-        current_timestamp - interval '5 minutes',
-        current_timestamp - interval '5 minutes'
-    );
-
-    -- Stefan accepts the friendship request.
-    -- The trigger creates friendship rows in both directions.
-    UPDATE public.friendship_requests
-    SET status = 'accepted',
-        updated_at = current_timestamp
-    WHERE id = v_request_id;
 END $$;

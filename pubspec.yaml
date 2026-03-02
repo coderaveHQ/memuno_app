@@ -65,6 +65,7 @@ dependencies:
 
   # --- Helpers --------------------------------------------------------------
   image: ^4.8.0
+  uuid: ^4.5.1
 
   # --- Codegen annotations (runtime deps) ------------------------------------
   json_annotation: ^4.9.0

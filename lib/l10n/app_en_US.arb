@@ -59,6 +59,31 @@
   "friendshipsFriendsSincePrefix": "Friends since",
   "friendshipsRequestDirectionIncoming": "Incoming",
   "friendshipsRequestDirectionOutgoing": "Outgoing",
+  "notificationsTitle": "Notifications",
+  "notificationsSearchLabel": "Search notifications",
+  "notificationsSearchHint": "Search by name or friendship code",
+  "notificationsListEmpty": "No notifications yet.",
+  "notificationsItemFriendshipRequestSentTitle": "New friendship request",
+  "notificationsItemFriendshipRequestSent": "{sender_name} sent you a friendship request.",
+  "@notificationsItemFriendshipRequestSent": {
+    "placeholders": {
+      "sender_name": {}
+    }
+  },
+  "notificationsItemFriendshipRequestAcceptedTitle": "Friendship request accepted",
+  "notificationsItemFriendshipRequestAccepted": "{sender_name} accepted your friendship request.",
+  "@notificationsItemFriendshipRequestAccepted": {
+    "placeholders": {
+      "sender_name": {}
+    }
+  },
+  "notificationsItemMemeReceivedTitle": "New meme received",
+  "notificationsItemMemeReceived": "{sender_name} sent you a meme.",
+  "@notificationsItemMemeReceived": {
+    "placeholders": {
+      "sender_name": {}
+    }
+  },
   "memeTemplatePickerTitle": "Meme templates",
   "memeTemplatePickerSearchLabel": "Search template",
   "memeTemplatePickerSearchHint": "e.g. drake, distracted, doge",

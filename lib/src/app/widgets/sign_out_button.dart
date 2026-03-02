@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/experimental/mutation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:memuno_app/l10n/app_localizations.dart';
+import 'package:memuno_app/src/app/application/providers/sign_out_with_push_cleanup_usecase_provider.dart';
+import 'package:memuno_app/src/app/application/usecases/sign_out_with_push_cleanup_usecase.dart';
 import 'package:memuno_app/src/app/extensions/mutation_x.dart';
 import 'package:memuno_app/src/app/feedback/app_feedback.dart';
 import 'package:memuno_app/src/app/feedback/app_feedback_provider.dart';
 import 'package:memuno_app/src/app/widgets/m/m_button.dart';
 import 'package:memuno_app/src/features/auth/application/mutations/sign_out_mutation.dart';
-import 'package:memuno_app/src/features/auth/application/providers/usecases/sign_out_usecase_provider.dart';
-import 'package:memuno_app/src/features/auth/domain/usecases/sign_out_usecase.dart';
 
 /// Button that signs the current user out.
 class SignOutButton extends ConsumerWidget {
@@ -19,7 +19,9 @@ class SignOutButton extends ConsumerWidget {
   Future<void> _submit(WidgetRef ref) async {
     final Mutation<void> mutation = ref.read(signOutMutationProvider);
     await mutation.runSafely(ref, (MutationTransaction tx) async {
-      final SignOutUsecase usecase = tx.get(signOutUsecaseProvider);
+      final SignOutWithPushCleanupUsecase usecase = tx.get(
+        signOutWithPushCleanupUsecaseProvider,
+      );
       await usecase();
     });
   }
