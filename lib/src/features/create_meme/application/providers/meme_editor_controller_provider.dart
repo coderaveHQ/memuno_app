@@ -25,7 +25,7 @@ import 'package:memuno_app/src/features/create_meme/domain/usecases/set_meme_tem
 import 'package:memuno_app/src/features/create_meme/domain/usecases/toggle_meme_recipient_selection_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/update_selected_meme_text_font_size_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/update_selected_meme_text_usecase.dart';
-import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_entity.dart';
+import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_list_page_item_entity.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'meme_editor_controller_provider.g.dart';
@@ -40,7 +40,7 @@ class MemeEditorController extends _$MemeEditorController {
   }
 
   /// Applies a selected [template] and resets draft state.
-  void setTemplate(MemeTemplateEntity template) {
+  void setTemplate(MemeTemplateListPageItemEntity template) {
     final SetMemeTemplateUsecase usecase = ref.read(
       setMemeTemplateUsecaseProvider,
     );

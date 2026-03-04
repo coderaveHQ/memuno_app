@@ -8,10 +8,10 @@ import 'package:memuno_app/src/app/feedback/app_feedback_provider.dart';
 import 'package:memuno_app/src/app/widgets/m/m_icon_button.dart';
 import 'package:memuno_app/src/features/friendships/application/mutations/cancel_friendship_request_mutation.dart';
 import 'package:memuno_app/src/features/friendships/application/providers/friendship_requests_list_provider.dart';
-import 'package:memuno_app/src/features/friendships/domain/entities/friendship_request_entity.dart';
+import 'package:memuno_app/src/features/friendships/domain/entities/friendship_request_list_page_item_entity.dart';
 
 class CancelFriendshipRequestButton extends ConsumerWidget {
-  final FriendshipRequestEntity friendshipRequest;
+  final FriendshipRequestListPageItemEntity friendshipRequest;
   const CancelFriendshipRequestButton({
     super.key,
     required this.friendshipRequest,

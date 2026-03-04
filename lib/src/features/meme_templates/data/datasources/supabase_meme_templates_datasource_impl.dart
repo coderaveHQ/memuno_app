@@ -1,6 +1,6 @@
 import 'package:memuno_app/src/features/meme_templates/data/datasources/meme_templates_datasource.dart';
-import 'package:memuno_app/src/features/meme_templates/data/dto/meme_template_dto.dart';
-import 'package:memuno_app/src/features/meme_templates/data/dto/meme_templates_page_dto.dart';
+import 'package:memuno_app/src/features/meme_templates/data/dto/meme_template_list_page_dto.dart';
+import 'package:memuno_app/src/features/meme_templates/data/dto/meme_template_list_page_item_dto.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Supabase-backed implementation of [MemeTemplatesDatasource].
@@ -23,7 +23,7 @@ final class SupabaseMemeTemplatesDatasourceImpl
 
   @override
   /// Loads one page from `meme_templates_list` RPC and signs image URLs.
-  Future<MemeTemplatesPageDto> listMemeTemplates({
+  Future<MemeTemplateListPageDto> listMemeTemplates({
     String? search,
     required int limit,
     DateTime? cursorCreatedAt,
@@ -44,24 +44,23 @@ final class SupabaseMemeTemplatesDatasourceImpl
       rpcName: 'meme_templates_list',
     );
 
-    final MemeTemplatesPageDto page = MemeTemplatesPageDto.fromJson(json);
-    final List<MemeTemplateDto> signedItems = await _attachSignedUrls(
-      page.items,
-    );
+    final MemeTemplateListPageDto page = MemeTemplateListPageDto.fromJson(json);
+    final List<MemeTemplateListPageItemDto> signedItems =
+        await _attachSignedUrls(page.items);
 
     return page.copyWith(items: signedItems);
   }
 
   /// Creates signed URLs for every template in [items].
-  Future<List<MemeTemplateDto>> _attachSignedUrls(
-    List<MemeTemplateDto> items,
+  Future<List<MemeTemplateListPageItemDto>> _attachSignedUrls(
+    List<MemeTemplateListPageItemDto> items,
   ) async {
     if (items.isEmpty) {
       return items;
     }
 
     final List<String> imagePaths = items
-        .map((MemeTemplateDto item) => item.imagePath)
+        .map((MemeTemplateListPageItemDto item) => item.imagePath)
         .toSet()
         .toList(growable: false);
 
@@ -82,7 +81,7 @@ final class SupabaseMemeTemplatesDatasourceImpl
     }
 
     return items
-        .map((MemeTemplateDto item) {
+        .map((MemeTemplateListPageItemDto item) {
           return item.copyWith(signedImageUrl: signedUrlByPath[item.imagePath]);
         })
         .toList(growable: false);

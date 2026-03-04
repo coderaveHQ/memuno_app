@@ -11,7 +11,7 @@ import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/features/friendships/application/providers/friendship_requests_list_provider.dart';
 import 'package:memuno_app/src/features/friendships/domain/entities/friendship_request_cursor_entity.dart';
 import 'package:memuno_app/src/features/friendships/domain/entities/friendship_request_direction.dart';
-import 'package:memuno_app/src/features/friendships/domain/entities/friendship_request_entity.dart';
+import 'package:memuno_app/src/features/friendships/domain/entities/friendship_request_list_page_item_entity.dart';
 import 'package:memuno_app/src/features/friendships/presentation/widgets/accept_friendship_request_button.dart';
 import 'package:memuno_app/src/features/friendships/presentation/widgets/cancel_friendship_request_button.dart';
 import 'package:memuno_app/src/features/friendships/presentation/widgets/decline_friendship_request_button.dart';
@@ -23,42 +23,56 @@ class FriendshipRequestsList extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final AppLocalizations l10n = AppLocalizations.of(context);
 
-    return MAsyncList<FriendshipRequestEntity, FriendshipRequestCursorEntity>(
+    return MAsyncList<
+      FriendshipRequestListPageItemEntity,
+      FriendshipRequestCursorEntity
+    >(
       provider: friendshipRequestsListProvider,
       emptyText: l10n.friendshipsRequestsListEmpty,
       loadMoreExtent: 220.0,
-      itemBuilder: (BuildContext context, FriendshipRequestEntity friendshipRequest) {
-        return MListTile(
-          leading: MAvatar(name: friendshipRequest.user.name, dimension: 48.0),
-          title: friendshipRequest.user.name,
-          description:
-              friendshipRequest.direction == FriendshipRequestDirection.incoming
-              ? '${l10n.friendshipsRequestDirectionIncoming}: ${friendshipRequest.createdAt.formatDateOnly(fullDate: true)}'
-              : '${l10n.friendshipsRequestDirectionOutgoing}: ${friendshipRequest.createdAt.formatDateOnly(fullDate: true)}',
-          trailing:
-              friendshipRequest.direction == FriendshipRequestDirection.incoming
-              ? Row(
-                  children: <Widget>[
-                    AcceptFriendshipRequestButton(
+      itemBuilder:
+          (
+            BuildContext context,
+            FriendshipRequestListPageItemEntity friendshipRequest,
+          ) {
+            return MListTile(
+              leading: MAvatar(
+                name: friendshipRequest.user.name,
+                dimension: 48.0,
+              ),
+              title: friendshipRequest.user.name,
+              description:
+                  '${l10n.profileFriendshipCodeLabel} ${friendshipRequest.user.friendshipCode}',
+              details:
+                  friendshipRequest.direction ==
+                      FriendshipRequestDirection.incoming
+                  ? '${l10n.friendshipsRequestDirectionIncoming}: ${friendshipRequest.createdAt.formatDateOnly(fullDate: true)}'
+                  : '${l10n.friendshipsRequestDirectionOutgoing}: ${friendshipRequest.createdAt.formatDateOnly(fullDate: true)}',
+              trailing:
+                  friendshipRequest.direction ==
+                      FriendshipRequestDirection.incoming
+                  ? Row(
+                      children: <Widget>[
+                        AcceptFriendshipRequestButton(
+                          friendshipRequest: friendshipRequest,
+                        ),
+                        const MGap.sm(),
+                        DeclineFriendshipRequestButton(
+                          friendshipRequest: friendshipRequest,
+                        ),
+                      ],
+                    )
+                  : CancelFriendshipRequestButton(
                       friendshipRequest: friendshipRequest,
                     ),
-                    const MGap.sm(),
-                    DeclineFriendshipRequestButton(
-                      friendshipRequest: friendshipRequest,
-                    ),
-                  ],
-                )
-              : CancelFriendshipRequestButton(
-                  friendshipRequest: friendshipRequest,
-                ),
-          padding: EdgeInsets.only(
-            top: MSpacing.md,
-            left: context.leftPadding + MSpacing.md,
-            right: context.rightPadding + MSpacing.md,
-            bottom: MSpacing.md,
-          ),
-        );
-      },
+              padding: EdgeInsets.only(
+                top: MSpacing.md,
+                left: context.leftPadding + MSpacing.md,
+                right: context.rightPadding + MSpacing.md,
+                bottom: MSpacing.md,
+              ),
+            );
+          },
     );
   }
 }

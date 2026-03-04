@@ -1,5 +1,5 @@
 import 'package:memuno_app/src/features/notifications/data/datasources/notifications_datasource.dart';
-import 'package:memuno_app/src/features/notifications/data/dto/notifications_page_dto.dart';
+import 'package:memuno_app/src/features/notifications/data/dto/notification_list_page_dto.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Supabase-backed implementation of [NotificationsDatasource].
@@ -14,7 +14,7 @@ final class SupabaseNotificationsDatasourceImpl
 
   @override
   /// Loads one page from `notifications_list` RPC.
-  Future<NotificationsPageDto> listNotifications({
+  Future<NotificationListPageDto> listNotifications({
     String? search,
     required int limit,
     DateTime? cursorCreatedAt,
@@ -35,7 +35,7 @@ final class SupabaseNotificationsDatasourceImpl
       rpcName: 'notifications_list',
     );
 
-    return NotificationsPageDto.fromJson(json);
+    return NotificationListPageDto.fromJson(json);
   }
 
   @override

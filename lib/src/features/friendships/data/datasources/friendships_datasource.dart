@@ -1,12 +1,12 @@
-import 'package:memuno_app/src/features/friendships/data/dto/friendship_dto.dart';
-import 'package:memuno_app/src/features/friendships/data/dto/friendship_request_dto.dart';
-import 'package:memuno_app/src/features/friendships/data/dto/friendship_requests_page_dto.dart';
-import 'package:memuno_app/src/features/friendships/data/dto/friendships_page_dto.dart';
+import 'package:memuno_app/src/features/friendships/data/dto/friendship_list_page_dto.dart';
+import 'package:memuno_app/src/features/friendships/data/dto/friendship_list_page_item_dto.dart';
+import 'package:memuno_app/src/features/friendships/data/dto/friendship_request_list_page_dto.dart';
+import 'package:memuno_app/src/features/friendships/data/dto/friendship_request_list_page_item_dto.dart';
 
 /// Low-level datasource for friendships and friendship-request RPC calls.
 abstract interface class FriendshipsDatasource {
   /// Loads one page of friendships.
-  Future<FriendshipsPageDto> listFriendships({
+  Future<FriendshipListPageDto> listFriendships({
     /// Optional search term applied server-side.
     String? search,
 
@@ -21,7 +21,7 @@ abstract interface class FriendshipsDatasource {
   });
 
   /// Loads one page of friendship requests.
-  Future<FriendshipRequestsPageDto> listFriendshipRequests({
+  Future<FriendshipRequestListPageDto> listFriendshipRequests({
     /// Optional search term applied server-side.
     String? search,
 
@@ -36,13 +36,13 @@ abstract interface class FriendshipsDatasource {
   });
 
   /// Creates a new friendship request by addressee friendship code.
-  Future<FriendshipRequestDto> createFriendshipRequest({
+  Future<FriendshipRequestListPageItemDto> createFriendshipRequest({
     /// Friendship code entered by the requester.
     required String addresseeFriendshipCode,
   });
 
   /// Accepts an incoming friendship request.
-  Future<FriendshipDto> acceptFriendshipRequest({
+  Future<FriendshipListPageItemDto> acceptFriendshipRequest({
     /// Pending friendship-request row identifier.
     required String requestId,
   });

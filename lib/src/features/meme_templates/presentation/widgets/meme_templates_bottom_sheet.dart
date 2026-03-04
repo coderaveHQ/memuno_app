@@ -24,7 +24,7 @@ import 'package:memuno_app/src/core/state/pagination/paginated_list_state.dart';
 import 'package:memuno_app/src/features/meme_templates/application/providers/meme_templates_list_provider.dart';
 import 'package:memuno_app/src/features/meme_templates/application/providers/usecases/pick_and_crop_meme_template_image_usecase_provider.dart';
 import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_cursor_entity.dart';
-import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_entity.dart';
+import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_list_page_item_entity.dart';
 import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_picker_selection_entity.dart';
 import 'package:memuno_app/src/features/meme_templates/domain/entities/picked_meme_template_image_entity.dart';
 import 'package:memuno_app/src/features/meme_templates/domain/usecases/pick_and_crop_meme_template_image_usecase.dart';
@@ -118,7 +118,8 @@ class MemeTemplatesBottomSheet extends HookConsumerWidget {
 
   /// Returns the total number of grid cells for current [state].
   int _itemCount(
-    PaginatedListState<MemeTemplateEntity, MemeTemplateCursorEntity> state,
+    PaginatedListState<MemeTemplateListPageItemEntity, MemeTemplateCursorEntity>
+    state,
   ) {
     if (state.items.isEmpty) {
       return 0;
@@ -155,7 +156,10 @@ class MemeTemplatesBottomSheet extends HookConsumerWidget {
     }, <Object?>[searchController]);
 
     final AsyncValue<
-      PaginatedListState<MemeTemplateEntity, MemeTemplateCursorEntity>
+      PaginatedListState<
+        MemeTemplateListPageItemEntity,
+        MemeTemplateCursorEntity
+      >
     >
     asyncTemplates = ref.watch(memeTemplatesListProvider);
 
@@ -190,12 +194,12 @@ class MemeTemplatesBottomSheet extends HookConsumerWidget {
                   data:
                       (
                         PaginatedListState<
-                          MemeTemplateEntity,
+                          MemeTemplateListPageItemEntity,
                           MemeTemplateCursorEntity
                         >
                         templatesState,
                       ) {
-                        final List<MemeTemplateEntity> templates =
+                        final List<MemeTemplateListPageItemEntity> templates =
                             templatesState.items;
                         return NotificationListener<ScrollNotification>(
                           onNotification: (ScrollNotification notification) {
@@ -242,7 +246,7 @@ class MemeTemplatesBottomSheet extends HookConsumerWidget {
                                   );
                                 }
 
-                                final MemeTemplateEntity template =
+                                final MemeTemplateListPageItemEntity template =
                                     templates[index];
                                 return _MemeTemplateGridItem(
                                   template: template,
@@ -303,7 +307,7 @@ final class _MemeTemplateGridItem extends StatelessWidget {
   });
 
   /// Domain model returned to the caller when selected.
-  final MemeTemplateEntity template;
+  final MemeTemplateListPageItemEntity template;
 
   /// Whether the tile is currently interactive.
   final bool isEnabled;

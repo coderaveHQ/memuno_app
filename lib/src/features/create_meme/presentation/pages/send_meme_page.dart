@@ -29,7 +29,7 @@ import 'package:memuno_app/src/features/create_meme/application/providers/usecas
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_state_entity.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/send_meme_usecase.dart';
 import 'package:memuno_app/src/features/friendships/domain/entities/friendship_cursor_entity.dart';
-import 'package:memuno_app/src/features/friendships/domain/entities/friendship_entity.dart';
+import 'package:memuno_app/src/features/friendships/domain/entities/friendship_list_page_item_entity.dart';
 
 /// Page for selecting friendship recipients for one finalized meme.
 class SendMemePage extends HookConsumerWidget {
@@ -137,7 +137,7 @@ class SendMemePage extends HookConsumerWidget {
       body: Column(
         children: <Widget>[
           Expanded(
-            child: MAsyncList<FriendshipEntity, FriendshipCursorEntity>(
+            child: MAsyncList<FriendshipListPageItemEntity, FriendshipCursorEntity>(
               provider: friendshipsListProvider,
               emptyText: l10n.friendshipsListEmpty,
               loadMoreExtent: 220.0,
@@ -154,33 +154,40 @@ class SendMemePage extends HookConsumerWidget {
                 right: context.rightPadding + MSpacing.md,
                 bottom: MSpacing.md,
               ),
-              itemBuilder: (BuildContext context, FriendshipEntity friendship) {
-                final bool isSelected = editorState.isRecipientSelected(
-                  friendship.user.id,
-                );
-                return MListTile(
-                  onPressed: () {
-                    _onToggleRecipient(
-                      ref,
-                      context,
-                      feedback,
+              itemBuilder:
+                  (
+                    BuildContext context,
+                    FriendshipListPageItemEntity friendship,
+                  ) {
+                    final bool isSelected = editorState.isRecipientSelected(
                       friendship.user.id,
                     );
+                    return MListTile(
+                      onPressed: () {
+                        _onToggleRecipient(
+                          ref,
+                          context,
+                          feedback,
+                          friendship.user.id,
+                        );
+                      },
+                      isEnabled: !isSending,
+                      leading: MAvatar(
+                        name: friendship.user.name,
+                        dimension: 48.0,
+                      ),
+                      title: friendship.user.name,
+                      description:
+                          '${l10n.friendshipsFriendsSincePrefix}: ${friendship.createdAt.formatDateOnly(fullDate: true)}',
+                      trailing: MRadioIndicator(isSelected: isSelected),
+                      padding: EdgeInsets.only(
+                        top: MSpacing.md,
+                        left: context.leftPadding + MSpacing.md,
+                        right: context.rightPadding + MSpacing.md,
+                        bottom: MSpacing.md,
+                      ),
+                    );
                   },
-                  isEnabled: !isSending,
-                  leading: MAvatar(name: friendship.user.name, dimension: 48.0),
-                  title: friendship.user.name,
-                  description:
-                      '${l10n.friendshipsFriendsSincePrefix}: ${friendship.createdAt.formatDateOnly(fullDate: true)}',
-                  trailing: MRadioIndicator(isSelected: isSelected),
-                  padding: EdgeInsets.only(
-                    top: MSpacing.md,
-                    left: context.leftPadding + MSpacing.md,
-                    right: context.rightPadding + MSpacing.md,
-                    bottom: MSpacing.md,
-                  ),
-                );
-              },
             ),
           ),
           Padding(

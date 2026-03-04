@@ -38,45 +38,68 @@ create type public.user_profile as (
   "updated_at" timestamptz
 );
 
-create type public.friendship_request_status
-  as enum ('pending', 'accepted', 'declined', 'canceled');
-
-create type public.friendship_request_list_item as (
-  "user" jsonb,
-  "status" public.friendship_request_status,
+create type public.friendship_list_page_item_user as (
+  "id" uuid,
+  "name" text,
+  "friendship_code" text,
   "created_at" timestamptz,
-  "updated_at" timestamptz,
-  "direction" text,
-  "id" uuid
+  "updated_at" timestamptz
 );
 
-create type public.friendship_list_item as (
-  "user" jsonb,
+create type public.friendship_list_page_item as (
+  "user" public.friendship_list_page_item_user,
   "created_at" timestamptz,
   "updated_at" timestamptz
 );
 
 create type public.friendship_list_page as (
-  "items" jsonb,
+  "items" public.friendship_list_page_item[],
   "next_cursor_name" text,
   "next_cursor_id" uuid
 );
 
+create type public.friendship_request_status
+  as enum ('pending', 'accepted', 'declined', 'canceled');
+
+create type public.friendship_request_direction
+  as enum (
+    'outgoing',
+    'incoming'
+  );
+
+create type public.friendship_request_list_page_item_user as (
+  "id" uuid,
+  "name" text,
+  "friendship_code" text,
+  "created_at" timestamptz,
+  "updated_at" timestamptz
+);
+
+create type public.friendship_request_list_page_item as (
+  "id" uuid,
+  "status" public.friendship_request_status,
+  "created_at" timestamptz,
+  "updated_at" timestamptz,
+  "direction" public.friendship_request_direction,
+  "user" public.friendship_request_list_page_item_user
+);
+
 create type public.friendship_request_list_page as (
-  "items" jsonb,
+  "items" public.friendship_request_list_page_item[],
   "next_cursor_created_at" timestamptz,
   "next_cursor_id" uuid
 );
 
-create type public.meme_template_list_item as (
+create type public.meme_template_list_page_item as (
   "id" uuid,
   "image_path" text,
   "aspect_ratio" double precision,
-  "created_at" timestamptz
+  "created_at" timestamptz,
+  "updated_at" timestamptz
 );
 
 create type public.meme_template_list_page as (
-  "items" jsonb,
+  "items" public.meme_template_list_page_item[],
   "next_cursor_created_at" timestamptz,
   "next_cursor_id" uuid
 );
@@ -88,16 +111,17 @@ create type public.notification_type
     'meme_received'
   );
 
-create type public.notification_list_item as (
+create type public.notification_list_page_item as (
   "id" uuid,
   "type" public.notification_type,
   "data" jsonb,
   "is_read" boolean,
-  "created_at" timestamptz
+  "created_at" timestamptz,
+  "updated_at" timestamptz
 );
 
 create type public.notification_list_page as (
-  "items" jsonb,
+  "items" public.notification_list_page_item[],
   "next_cursor_created_at" timestamptz,
   "next_cursor_id" uuid
 );
@@ -1184,6 +1208,7 @@ as $$
       n."data",
       n."is_read",
       n."created_at",
+      n."updated_at",
       lower(coalesce(n."data"->>'actor_name', '')) as "actor_name",
       coalesce(n."data"->>'actor_friendship_code', '') as "actor_friendship_code"
     from public.notifications n
@@ -1203,8 +1228,9 @@ as $$
         "type",
         "data",
         "is_read",
-        "created_at"
-      )::public.notification_list_item as "item",
+        "created_at",
+        "updated_at"
+      )::public.notification_list_page_item as "item",
       "created_at" as "sort_created_at",
       "id" as "sort_id"
     from filtered
@@ -1229,7 +1255,10 @@ as $$
     limit 1
   )
   select
-    coalesce(jsonb_agg(to_jsonb(paged."item")), '[]'::jsonb) as "items",
+    coalesce(
+      array_agg(paged."item"),
+      '{}'::public.notification_list_page_item[]
+    ) as "items",
     (select "next_created_at" from next_cursor) as "next_cursor_created_at",
     (select "next_id" from next_cursor) as "next_cursor_id"
   from paged;
@@ -1263,8 +1292,8 @@ as $$
       r."updated_at",
       case
         when r."requester_id" = (select "user_id" from params)
-          then 'outgoing'
-        else 'incoming'
+          then 'outgoing'::public.friendship_request_direction
+        else 'incoming'::public.friendship_request_direction
       end as "direction",
       case
         when r."requester_id" = (select "user_id" from params)
@@ -1280,7 +1309,17 @@ as $$
         when r."requester_id" = (select "user_id" from params)
           then ua."friendship_code"
         else ur."friendship_code"
-      end as "other_user_friendship_code"
+      end as "other_user_friendship_code",
+      case
+        when r."requester_id" = (select "user_id" from params)
+          then ua."created_at"
+        else ur."created_at"
+      end as "other_user_created_at",
+      case
+        when r."requester_id" = (select "user_id" from params)
+          then ua."updated_at"
+        else ur."updated_at"
+      end as "other_user_updated_at"
     from public.friendship_requests r
     join public.users ur on ur."id" = r."requester_id"
     join public.users ua on ua."id" = r."addressee_id"
@@ -1300,20 +1339,19 @@ as $$
   ordered as (
     select
       row(
-        jsonb_build_object(
-          'id',
-          "other_user_id",
-          'name',
-          "other_user_name",
-          'friendship_code',
-          "other_user_friendship_code"
-        ),
+        "request_id",
         "status",
         "created_at",
         "updated_at",
         "direction",
-        "request_id"
-      )::public.friendship_request_list_item as "item",
+        row(
+          "other_user_id",
+          "other_user_name",
+          "other_user_friendship_code",
+          "other_user_created_at",
+          "other_user_updated_at"
+        )::public.friendship_request_list_page_item_user
+      )::public.friendship_request_list_page_item as "item",
       "created_at" as "sort_created_at",
       "request_id" as "sort_id"
     from filtered
@@ -1338,7 +1376,10 @@ as $$
     limit 1
   )
   select
-    coalesce(jsonb_agg(to_jsonb(paged."item")), '[]'::jsonb) as "items",
+    coalesce(
+      array_agg(paged."item"),
+      '{}'::public.friendship_request_list_page_item[]
+    ) as "items",
     (select "next_created_at" from next_cursor) as "next_cursor_created_at",
     (select "next_id" from next_cursor) as "next_cursor_id"
   from paged;
@@ -1365,6 +1406,8 @@ as $$
       f."friend_id",
       u."name" as "friend_name",
       u."friendship_code" as "friendship_code",
+      u."created_at" as "friend_created_at",
+      u."updated_at" as "friend_updated_at",
       f."created_at",
       f."updated_at"
     from public.friendships f
@@ -1381,17 +1424,16 @@ as $$
   ordered as (
     select
       row(
-        jsonb_build_object(
-          'id',
+        row(
           "friend_id",
-          'name',
           "friend_name",
-          'friendship_code',
-          "friendship_code"
-        ),
+          "friendship_code",
+          "friend_created_at",
+          "friend_updated_at"
+        )::public.friendship_list_page_item_user,
         "created_at",
         "updated_at"
-      )::public.friendship_list_item as "item",
+      )::public.friendship_list_page_item as "item",
       lower("friend_name") as "sort_name",
       "friend_id" as "sort_id"
     from filtered
@@ -1416,7 +1458,10 @@ as $$
     limit 1
   )
   select
-    coalesce(jsonb_agg(to_jsonb(paged."item")), '[]'::jsonb) as "items",
+    coalesce(
+      array_agg(paged."item"),
+      '{}'::public.friendship_list_page_item[]
+    ) as "items",
     (select "next_name" from next_cursor) as "next_cursor_name",
     (select "next_id" from next_cursor) as "next_cursor_id"
   from paged;
@@ -1445,7 +1490,8 @@ as $$
       t."id",
       t."image_path",
       t."aspect_ratio",
-      t."created_at"
+      t."created_at",
+      t."updated_at"
     from public.meme_templates t
     where t."is_active" = true
       and (
@@ -1463,8 +1509,9 @@ as $$
         "id",
         "image_path",
         "aspect_ratio",
-        "created_at"
-      )::public.meme_template_list_item as "item",
+        "created_at",
+        "updated_at"
+      )::public.meme_template_list_page_item as "item",
       "created_at" as "sort_created_at",
       "id" as "sort_id"
     from base
@@ -1489,7 +1536,10 @@ as $$
     limit 1
   )
   select
-    coalesce(jsonb_agg(to_jsonb(paged."item")), '[]'::jsonb) as "items",
+    coalesce(
+      array_agg(paged."item"),
+      '{}'::public.meme_template_list_page_item[]
+    ) as "items",
     (select "next_created_at" from next_cursor) as "next_cursor_created_at",
     (select "next_id" from next_cursor) as "next_cursor_id"
   from paged;
@@ -1565,7 +1615,7 @@ create extension if not exists pg_net with schema extensions;
 create function public.friendship_request_create(
   p_addressee_friendship_code text
 )
-returns public.friendship_request_list_item
+returns public.friendship_request_list_page_item
 language plpgsql
 security definer
 set search_path = public
@@ -1574,7 +1624,7 @@ declare
   v_requester_id uuid := (select auth.uid());
   v_addressee_id uuid;
   v_req public.friendship_requests;
-  v_result public.friendship_request_list_item;
+  v_result public.friendship_request_list_page_item;
 begin
   if v_requester_id is null then
     raise exception 'not authenticated';
@@ -1625,31 +1675,37 @@ begin
   returning * into v_req;
 
   select
-    jsonb_build_object(
-      'id',
-      case
-        when r."requester_id" = v_requester_id then r."addressee_id"
-        else r."requester_id"
-      end,
-      'name',
-      case
-        when r."requester_id" = v_requester_id then ua."name"
-        else ur."name"
-      end,
-      'friendship_code',
-      case
-        when r."requester_id" = v_requester_id then ua."friendship_code"
-        else ur."friendship_code"
-      end
-    ) as "user",
+    r."id",
     r."status",
     r."created_at",
     r."updated_at",
     case
-      when r."requester_id" = v_requester_id then 'outgoing'
-      else 'incoming'
+      when r."requester_id" = v_requester_id
+        then 'outgoing'::public.friendship_request_direction
+      else 'incoming'::public.friendship_request_direction
     end,
-    r."id"
+    row(
+      case
+        when r."requester_id" = v_requester_id then r."addressee_id"
+        else r."requester_id"
+      end,
+      case
+        when r."requester_id" = v_requester_id then ua."name"
+        else ur."name"
+      end,
+      case
+        when r."requester_id" = v_requester_id then ua."friendship_code"
+        else ur."friendship_code"
+      end,
+      case
+        when r."requester_id" = v_requester_id then ua."created_at"
+        else ur."created_at"
+      end,
+      case
+        when r."requester_id" = v_requester_id then ua."updated_at"
+        else ur."updated_at"
+      end
+    )::public.friendship_request_list_page_item_user
   into v_result
   from public.friendship_requests r
   join public.users ur on ur."id" = r."requester_id"
@@ -1667,7 +1723,7 @@ $$;
 create function public.friendship_request_accept(
   p_request_id uuid
 )
-returns public.friendship_list_item
+returns public.friendship_list_page_item
 language plpgsql
 security definer
 set search_path = public
@@ -1675,9 +1731,7 @@ as $$
 declare
   v_addressee_id uuid := (select auth.uid());
   v_requester_id uuid;
-  v_result_user jsonb;
-  v_result_created_at timestamptz;
-  v_result_updated_at timestamptz;
+  v_result public.friendship_list_page_item;
 begin
   if v_addressee_id is null then
     raise exception 'not authenticated';
@@ -1700,20 +1754,18 @@ begin
   end if;
 
   select
-    jsonb_build_object(
-      'id',
-      u."id",
-      'name',
-      u."name",
-      'friendship_code',
-      u."friendship_code"
-    ),
-    f."created_at",
-    f."updated_at"
-  into
-    v_result_user,
-    v_result_created_at,
-    v_result_updated_at
+    row(
+      row(
+        u."id",
+        u."name",
+        u."friendship_code",
+        u."created_at",
+        u."updated_at"
+      )::public.friendship_list_page_item_user,
+      f."created_at",
+      f."updated_at"
+    )::public.friendship_list_page_item
+  into v_result
   from public.users u
   join public.friendships f
     on f."user_id" = v_addressee_id
@@ -1721,17 +1773,11 @@ begin
   where u."id" = v_requester_id
   limit 1;
 
-  if v_result_user is null
-    or v_result_created_at is null
-    or v_result_updated_at is null then
+  if v_result is null then
     raise exception 'failed to load accepted friendship payload';
   end if;
 
-  return (
-    v_result_user,
-    v_result_created_at,
-    v_result_updated_at
-  )::public.friendship_list_item;
+  return v_result;
 end;
 $$;
 

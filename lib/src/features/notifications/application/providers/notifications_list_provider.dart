@@ -9,7 +9,8 @@ import 'package:memuno_app/src/features/notifications/application/providers/usec
 import 'package:memuno_app/src/features/notifications/application/providers/usecases/mark_all_notifications_read_usecase_provider.dart';
 import 'package:memuno_app/src/features/notifications/application/providers/usecases/mark_notification_read_usecase_provider.dart';
 import 'package:memuno_app/src/features/notifications/domain/entities/notification_cursor_entity.dart';
-import 'package:memuno_app/src/features/notifications/domain/entities/notification_entity.dart';
+import 'package:memuno_app/src/features/notifications/domain/entities/notification_list_page_entity.dart';
+import 'package:memuno_app/src/features/notifications/domain/entities/notification_list_page_item_entity.dart';
 import 'package:memuno_app/src/features/notifications/domain/usecases/list_notifications_usecase.dart';
 import 'package:memuno_app/src/features/notifications/domain/usecases/mark_all_notifications_read_usecase.dart';
 import 'package:memuno_app/src/features/notifications/domain/usecases/mark_notification_read_usecase.dart';
@@ -21,33 +22,49 @@ part 'notifications_list_provider.g.dart';
 @Riverpod(keepAlive: true)
 class NotificationsList extends _$NotificationsList
     with
-        AsyncPaginationMixin<NotificationEntity, NotificationCursorEntity>,
+        AsyncPaginationMixin<
+          NotificationListPageItemEntity,
+          NotificationCursorEntity
+        >,
         AsyncPaginationSearchMixin<
-          NotificationEntity,
+          NotificationListPageItemEntity,
           NotificationCursorEntity
         >,
         OptimisticAsyncStateMixin<
-          PaginatedListState<NotificationEntity, NotificationCursorEntity>
+          PaginatedListState<
+            NotificationListPageItemEntity,
+            NotificationCursorEntity
+          >
         > {
   Logger get _logger => ref.read(loggerProvider);
 
   @override
   /// Builds the initial notifications page.
-  Future<PaginatedListState<NotificationEntity, NotificationCursorEntity>>
+  Future<
+    PaginatedListState<NotificationListPageItemEntity, NotificationCursorEntity>
+  >
   build() {
     return buildSearchPaginatedState();
   }
 
   @override
   /// Loads one notifications page from the list usecase.
-  Future<PaginatedPage<NotificationEntity, NotificationCursorEntity>> loadPage({
-    required int limit,
-    NotificationCursorEntity? cursor,
-  }) async {
+  Future<
+    PaginatedPage<NotificationListPageItemEntity, NotificationCursorEntity>
+  >
+  loadPage({required int limit, NotificationCursorEntity? cursor}) async {
     final ListNotificationsUsecase usecase = ref.watch(
       listNotificationsUsecaseProvider,
     );
-    return usecase(search: searchQuery, limit: limit, cursor: cursor);
+    final NotificationListPageEntity page = await usecase(
+      search: searchQuery,
+      limit: limit,
+      cursor: cursor,
+    );
+    return PaginatedPage<
+      NotificationListPageItemEntity,
+      NotificationCursorEntity
+    >(items: page.items, nextCursor: _cursorFromPage(page));
   }
 
   /// Refreshes the notifications list from page 1.
@@ -61,12 +78,15 @@ class NotificationsList extends _$NotificationsList
   }
 
   /// Marks one notification as read with optimistic rollback and silent failure.
-  Future<void> markAsRead(NotificationEntity notification) async {
+  Future<void> markAsRead(NotificationListPageItemEntity notification) async {
     if (notification.notificationIsRead) {
       return;
     }
 
-    final PaginatedListState<NotificationEntity, NotificationCursorEntity>?
+    final PaginatedListState<
+      NotificationListPageItemEntity,
+      NotificationCursorEntity
+    >?
     current = state.asData?.value;
     if (current == null) {
       return;
@@ -76,7 +96,8 @@ class NotificationsList extends _$NotificationsList
     final bool wasRead = notification.notificationIsRead;
 
     final int index = current.items.indexWhere(
-      (NotificationEntity item) => item.notificationId == notificationId,
+      (NotificationListPageItemEntity item) =>
+          item.notificationId == notificationId,
     );
     if (index < 0) {
       return;
@@ -86,7 +107,10 @@ class NotificationsList extends _$NotificationsList
       await runOptimisticUpdate<void>(
         apply:
             (
-              PaginatedListState<NotificationEntity, NotificationCursorEntity>
+              PaginatedListState<
+                NotificationListPageItemEntity,
+                NotificationCursorEntity
+              >
               state,
             ) {
               return _setNotificationReadState(
@@ -97,7 +121,10 @@ class NotificationsList extends _$NotificationsList
             },
         rollback:
             (
-              PaginatedListState<NotificationEntity, NotificationCursorEntity>
+              PaginatedListState<
+                NotificationListPageItemEntity,
+                NotificationCursorEntity
+              >
               state,
             ) {
               return _setNotificationReadState(
@@ -124,15 +151,20 @@ class NotificationsList extends _$NotificationsList
 
   /// Marks all unread notifications as read with optimistic rollback.
   Future<void> markAllAsRead() async {
-    final PaginatedListState<NotificationEntity, NotificationCursorEntity>?
+    final PaginatedListState<
+      NotificationListPageItemEntity,
+      NotificationCursorEntity
+    >?
     current = state.asData?.value;
     if (current == null) {
       return;
     }
 
     final List<String> unreadIds = current.items
-        .where((NotificationEntity item) => !item.notificationIsRead)
-        .map((NotificationEntity item) => item.notificationId)
+        .where(
+          (NotificationListPageItemEntity item) => !item.notificationIsRead,
+        )
+        .map((NotificationListPageItemEntity item) => item.notificationId)
         .toList(growable: false);
 
     if (unreadIds.isEmpty) {
@@ -143,7 +175,10 @@ class NotificationsList extends _$NotificationsList
       await runOptimisticUpdate<int>(
         apply:
             (
-              PaginatedListState<NotificationEntity, NotificationCursorEntity>
+              PaginatedListState<
+                NotificationListPageItemEntity,
+                NotificationCursorEntity
+              >
               state,
             ) {
               return _setManyNotificationsReadState(
@@ -154,7 +189,10 @@ class NotificationsList extends _$NotificationsList
             },
         rollback:
             (
-              PaginatedListState<NotificationEntity, NotificationCursorEntity>
+              PaginatedListState<
+                NotificationListPageItemEntity,
+                NotificationCursorEntity
+              >
               state,
             ) {
               return _setManyNotificationsReadState(
@@ -179,14 +217,15 @@ class NotificationsList extends _$NotificationsList
     }
   }
 
-  PaginatedListState<NotificationEntity, NotificationCursorEntity>
+  PaginatedListState<NotificationListPageItemEntity, NotificationCursorEntity>
   _setNotificationReadState(
-    PaginatedListState<NotificationEntity, NotificationCursorEntity> state, {
+    PaginatedListState<NotificationListPageItemEntity, NotificationCursorEntity>
+    state, {
     required String notificationId,
     required bool isRead,
   }) {
-    final List<NotificationEntity> nextItems = state.items
-        .map((NotificationEntity item) {
+    final List<NotificationListPageItemEntity> nextItems = state.items
+        .map((NotificationListPageItemEntity item) {
           if (item.notificationId != notificationId) {
             return item;
           }
@@ -196,20 +235,21 @@ class NotificationsList extends _$NotificationsList
         .toList(growable: false);
 
     return state.copyWith(
-      items: List<NotificationEntity>.unmodifiable(nextItems),
+      items: List<NotificationListPageItemEntity>.unmodifiable(nextItems),
     );
   }
 
-  PaginatedListState<NotificationEntity, NotificationCursorEntity>
+  PaginatedListState<NotificationListPageItemEntity, NotificationCursorEntity>
   _setManyNotificationsReadState(
-    PaginatedListState<NotificationEntity, NotificationCursorEntity> state, {
+    PaginatedListState<NotificationListPageItemEntity, NotificationCursorEntity>
+    state, {
     required List<String> notificationIds,
     required bool isRead,
   }) {
     final Set<String> ids = notificationIds.toSet();
 
-    final List<NotificationEntity> nextItems = state.items
-        .map((NotificationEntity item) {
+    final List<NotificationListPageItemEntity> nextItems = state.items
+        .map((NotificationListPageItemEntity item) {
           if (!ids.contains(item.notificationId)) {
             return item;
           }
@@ -219,7 +259,17 @@ class NotificationsList extends _$NotificationsList
         .toList(growable: false);
 
     return state.copyWith(
-      items: List<NotificationEntity>.unmodifiable(nextItems),
+      items: List<NotificationListPageItemEntity>.unmodifiable(nextItems),
     );
+  }
+
+  NotificationCursorEntity? _cursorFromPage(NotificationListPageEntity page) {
+    final DateTime? createdAt = page.nextCursorCreatedAt;
+    final String? id = page.nextCursorId;
+    if (createdAt == null || id == null) {
+      return null;
+    }
+
+    return NotificationCursorEntity(createdAt: createdAt, id: id);
   }
 }

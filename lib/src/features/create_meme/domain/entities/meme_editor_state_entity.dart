@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_text_layer_entity.dart';
-import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_entity.dart';
+import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_list_page_item_entity.dart';
 
 /// Immutable editor state for composing one meme.
 final class MemeEditorStateEntity {
@@ -33,7 +33,7 @@ final class MemeEditorStateEntity {
   }
 
   /// Currently selected meme template.
-  final MemeTemplateEntity? template;
+  final MemeTemplateListPageItemEntity? template;
 
   /// PNG bytes for one custom gallery image used as meme background.
   final Uint8List? customTemplateImageBytes;
@@ -102,7 +102,7 @@ final class MemeEditorStateEntity {
     return MemeEditorStateEntity(
       template: template == _sentinel
           ? this.template
-          : template as MemeTemplateEntity?,
+          : template as MemeTemplateListPageItemEntity?,
       customTemplateImageBytes: customTemplateImageBytes == _sentinel
           ? this.customTemplateImageBytes
           : customTemplateImageBytes as Uint8List?,

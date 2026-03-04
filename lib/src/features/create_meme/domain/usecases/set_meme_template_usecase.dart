@@ -1,6 +1,6 @@
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_state_entity.dart';
 import 'package:memuno_app/src/features/create_meme/domain/repositories/meme_editor_repository.dart';
-import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_entity.dart';
+import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_list_page_item_entity.dart';
 
 /// Usecase for selecting a meme template for editing.
 final class SetMemeTemplateUsecase {
@@ -17,7 +17,7 @@ final class SetMemeTemplateUsecase {
     required MemeEditorStateEntity state,
 
     /// Template selected by the user.
-    required MemeTemplateEntity template,
+    required MemeTemplateListPageItemEntity template,
   }) {
     return _repository.setTemplate(state: state, template: template);
   }

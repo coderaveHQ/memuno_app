@@ -15,7 +15,7 @@ import 'package:memuno_app/src/app/widgets/m/m_text_field.dart';
 import 'package:memuno_app/src/features/friendships/application/mutations/create_friendship_request_mutation.dart';
 import 'package:memuno_app/src/features/friendships/application/providers/friendship_requests_list_provider.dart';
 import 'package:memuno_app/src/features/friendships/application/providers/usecases/create_friendship_request_usecase_provider.dart';
-import 'package:memuno_app/src/features/friendships/domain/entities/friendship_request_entity.dart';
+import 'package:memuno_app/src/features/friendships/domain/entities/friendship_request_list_page_item_entity.dart';
 import 'package:memuno_app/src/features/friendships/domain/usecases/create_friendship_request_usecase.dart';
 
 Future<void> showFriendshipRequestDialog(BuildContext context) async {
@@ -32,7 +32,7 @@ class FriendshipRequestDialog extends HookConsumerWidget {
 
   /// Submits the friendship-request create operation.
   Future<void> _submit(WidgetRef ref, String friendshipCode) async {
-    final Mutation<FriendshipRequestEntity> mutation = ref.read(
+    final Mutation<FriendshipRequestListPageItemEntity> mutation = ref.read(
       createFriendshipRequestMutationProvider,
     );
 
@@ -40,7 +40,7 @@ class FriendshipRequestDialog extends HookConsumerWidget {
       final CreateFriendshipRequestUsecase usecase = tx.get(
         createFriendshipRequestUsecaseProvider,
       );
-      final FriendshipRequestEntity created = await usecase(
+      final FriendshipRequestListPageItemEntity created = await usecase(
         addresseeFriendshipCode: friendshipCode,
       );
       ref.read(friendshipRequestsListProvider.notifier).prependRequest(created);
@@ -55,16 +55,18 @@ class FriendshipRequestDialog extends HookConsumerWidget {
 
     final TextEditingController controller = useTextEditingController();
 
-    final Mutation<FriendshipRequestEntity> mutation = ref.watch(
+    final Mutation<FriendshipRequestListPageItemEntity> mutation = ref.watch(
       createFriendshipRequestMutationProvider,
     );
-    final MutationState<FriendshipRequestEntity> mutationState = ref.watch(
-      mutation,
-    );
-    ref.listen<MutationState<FriendshipRequestEntity>>(mutation, (prev, next) {
-      if (next is MutationError<FriendshipRequestEntity>) {
+    final MutationState<FriendshipRequestListPageItemEntity> mutationState = ref
+        .watch(mutation);
+    ref.listen<MutationState<FriendshipRequestListPageItemEntity>>(mutation, (
+      prev,
+      next,
+    ) {
+      if (next is MutationError<FriendshipRequestListPageItemEntity>) {
         feedback.resolveAndShowError(context, next.error);
-      } else if (next is MutationSuccess<FriendshipRequestEntity>) {
+      } else if (next is MutationSuccess<FriendshipRequestListPageItemEntity>) {
         feedback.showSuccess(
           context,
           message: l10n.friendshipsRequestCreateSuccessMessage,

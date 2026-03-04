@@ -1,7 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_state_entity.dart';
-import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_entity.dart';
+import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_list_page_item_entity.dart';
 
 /// Repository contract for local meme-editor state transitions.
 abstract class MemeEditorRepository {
@@ -11,7 +11,7 @@ abstract class MemeEditorRepository {
     required MemeEditorStateEntity state,
 
     /// Template selected by the user.
-    required MemeTemplateEntity template,
+    required MemeTemplateListPageItemEntity template,
   });
 
   /// Applies a selected custom gallery image and resets the editing draft.

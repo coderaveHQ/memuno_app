@@ -34,6 +34,6 @@ class MTypography {
   );
 
   static TextStyle small = baseTextStyle.merge(
-    const TextStyle(fontSize: 12.0, height: 1.2, fontWeight: FontWeight.w400),
+    const TextStyle(fontSize: 12.0, height: 1.3, fontWeight: FontWeight.w400),
   );
 }
