@@ -6,7 +6,7 @@ import 'package:memuno_app/src/features/create_meme/data/datasources/meme_editor
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_state_entity.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_text_layer_entity.dart';
 import 'package:memuno_app/src/features/create_meme/domain/validators/meme_editor_validator.dart';
-import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_entity.dart';
+import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_list_page_item_entity.dart';
 
 /// In-memory implementation for local meme-editor state operations.
 final class InMemoryMemeEditorDatasourceImpl implements MemeEditorDatasource {
@@ -30,7 +30,7 @@ final class InMemoryMemeEditorDatasourceImpl implements MemeEditorDatasource {
   @override
   MemeEditorStateEntity setTemplate({
     required MemeEditorStateEntity state,
-    required MemeTemplateEntity template,
+    required MemeTemplateListPageItemEntity template,
   }) {
     return MemeEditorStateEntity(
       template: template,

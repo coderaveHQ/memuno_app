@@ -1,6 +1,5 @@
-import 'package:memuno_app/src/core/state/pagination/paginated_page.dart';
 import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_cursor_entity.dart';
-import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_entity.dart';
+import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_list_page_entity.dart';
 import 'package:memuno_app/src/features/meme_templates/domain/repositories/meme_templates_repository.dart';
 
 /// Usecase for loading paginated meme templates.
@@ -13,7 +12,7 @@ final class ListMemeTemplatesUsecase {
   final MemeTemplatesRepository _repository;
 
   /// Executes a paginated meme-templates query.
-  Future<PaginatedPage<MemeTemplateEntity, MemeTemplateCursorEntity>> call({
+  Future<MemeTemplateListPageEntity> call({
     /// Optional search term applied to template tags.
     String? search,
 

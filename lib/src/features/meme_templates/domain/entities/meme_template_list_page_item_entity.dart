@@ -1,12 +1,13 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'meme_template_entity.freezed.dart';
+part 'meme_template_list_page_item_entity.freezed.dart';
 
-/// Domain entity representing an active meme template.
+/// Domain entity matching `public.meme_template_list_page_item`.
 @freezed
-sealed class MemeTemplateEntity with _$MemeTemplateEntity {
-  /// Creates a meme-template entity.
-  const factory MemeTemplateEntity({
+sealed class MemeTemplateListPageItemEntity
+    with _$MemeTemplateListPageItemEntity {
+  /// Creates a meme-template-list item entity.
+  const factory MemeTemplateListPageItemEntity({
     /// Stable template identifier.
     required String id,
 
@@ -21,7 +22,10 @@ sealed class MemeTemplateEntity with _$MemeTemplateEntity {
 
     /// Template creation timestamp used by pagination ordering.
     required DateTime createdAt,
-  }) = _MemeTemplateEntity;
 
-  const MemeTemplateEntity._();
+    /// Template update timestamp.
+    required DateTime updatedAt,
+  }) = _MemeTemplateListPageItemEntity;
+
+  const MemeTemplateListPageItemEntity._();
 }

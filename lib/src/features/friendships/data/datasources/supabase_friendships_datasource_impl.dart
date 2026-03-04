@@ -1,8 +1,8 @@
 import 'package:memuno_app/src/features/friendships/data/datasources/friendships_datasource.dart';
-import 'package:memuno_app/src/features/friendships/data/dto/friendship_dto.dart';
-import 'package:memuno_app/src/features/friendships/data/dto/friendship_request_dto.dart';
-import 'package:memuno_app/src/features/friendships/data/dto/friendship_requests_page_dto.dart';
-import 'package:memuno_app/src/features/friendships/data/dto/friendships_page_dto.dart';
+import 'package:memuno_app/src/features/friendships/data/dto/friendship_list_page_dto.dart';
+import 'package:memuno_app/src/features/friendships/data/dto/friendship_list_page_item_dto.dart';
+import 'package:memuno_app/src/features/friendships/data/dto/friendship_request_list_page_dto.dart';
+import 'package:memuno_app/src/features/friendships/data/dto/friendship_request_list_page_item_dto.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Supabase-backed implementation of [FriendshipsDatasource].
@@ -18,7 +18,7 @@ final class SupabaseFriendshipsDatasourceImpl implements FriendshipsDatasource {
 
   @override
   /// Loads one page from `friendships_list` RPC.
-  Future<FriendshipsPageDto> listFriendships({
+  Future<FriendshipListPageDto> listFriendships({
     String? search,
     required int limit,
     String? cursorName,
@@ -39,12 +39,12 @@ final class SupabaseFriendshipsDatasourceImpl implements FriendshipsDatasource {
       rpcName: 'friendships_list',
     );
 
-    return FriendshipsPageDto.fromJson(json);
+    return FriendshipListPageDto.fromJson(json);
   }
 
   @override
   /// Loads one page from `friendship_requests_list` RPC.
-  Future<FriendshipRequestsPageDto> listFriendshipRequests({
+  Future<FriendshipRequestListPageDto> listFriendshipRequests({
     String? search,
     required int limit,
     DateTime? cursorCreatedAt,
@@ -65,12 +65,12 @@ final class SupabaseFriendshipsDatasourceImpl implements FriendshipsDatasource {
       rpcName: 'friendship_requests_list',
     );
 
-    return FriendshipRequestsPageDto.fromJson(json);
+    return FriendshipRequestListPageDto.fromJson(json);
   }
 
   @override
   /// Calls `friendship_request_create` and maps its item payload.
-  Future<FriendshipRequestDto> createFriendshipRequest({
+  Future<FriendshipRequestListPageItemDto> createFriendshipRequest({
     required String addresseeFriendshipCode,
   }) async {
     final Object? payload = await _supabaseClient.rpc<Object?>(
@@ -85,12 +85,12 @@ final class SupabaseFriendshipsDatasourceImpl implements FriendshipsDatasource {
       rpcName: 'friendship_request_create',
     );
 
-    return FriendshipRequestDto.fromJson(json);
+    return FriendshipRequestListPageItemDto.fromJson(json);
   }
 
   @override
   /// Calls `friendship_request_accept` and maps the created friendship payload.
-  Future<FriendshipDto> acceptFriendshipRequest({
+  Future<FriendshipListPageItemDto> acceptFriendshipRequest({
     required String requestId,
   }) async {
     final Object? payload = await _supabaseClient.rpc<Object?>(
@@ -103,7 +103,7 @@ final class SupabaseFriendshipsDatasourceImpl implements FriendshipsDatasource {
       rpcName: 'friendship_request_accept',
     );
 
-    return FriendshipDto.fromJson(json);
+    return FriendshipListPageItemDto.fromJson(json);
   }
 
   @override

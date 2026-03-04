@@ -1,11 +1,11 @@
-import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_entity.dart';
+import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_list_page_item_entity.dart';
 import 'package:memuno_app/src/features/meme_templates/domain/entities/picked_meme_template_image_entity.dart';
 
 /// Selection payload returned by the meme-template picker bottom sheet.
 final class MemeTemplatePickerSelectionEntity {
   /// Creates a selection for a built-in [template].
   const MemeTemplatePickerSelectionEntity.template({
-    required MemeTemplateEntity template,
+    required MemeTemplateListPageItemEntity template,
   }) : _template = template,
        _pickedImage = null;
 
@@ -16,13 +16,13 @@ final class MemeTemplatePickerSelectionEntity {
        _pickedImage = pickedImage;
 
   /// Selected built-in template payload.
-  final MemeTemplateEntity? _template;
+  final MemeTemplateListPageItemEntity? _template;
 
   /// Selected gallery-image payload.
   final PickedMemeTemplateImageEntity? _pickedImage;
 
   /// Returns selected built-in meme template, if any.
-  MemeTemplateEntity? get template => _template;
+  MemeTemplateListPageItemEntity? get template => _template;
 
   /// Returns selected picked gallery image, if any.
   PickedMemeTemplateImageEntity? get pickedImage => _pickedImage;

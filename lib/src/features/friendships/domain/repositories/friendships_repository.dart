@@ -1,14 +1,14 @@
-import 'package:memuno_app/src/core/state/pagination/paginated_page.dart';
 import 'package:memuno_app/src/features/friendships/domain/entities/friendship_cursor_entity.dart';
-import 'package:memuno_app/src/features/friendships/domain/entities/friendship_entity.dart';
+import 'package:memuno_app/src/features/friendships/domain/entities/friendship_list_page_entity.dart';
+import 'package:memuno_app/src/features/friendships/domain/entities/friendship_list_page_item_entity.dart';
 import 'package:memuno_app/src/features/friendships/domain/entities/friendship_request_cursor_entity.dart';
-import 'package:memuno_app/src/features/friendships/domain/entities/friendship_request_entity.dart';
+import 'package:memuno_app/src/features/friendships/domain/entities/friendship_request_list_page_entity.dart';
+import 'package:memuno_app/src/features/friendships/domain/entities/friendship_request_list_page_item_entity.dart';
 
 /// Repository contract for friendship and friendship-request operations.
 abstract interface class FriendshipsRepository {
-  /// Loads one paginated friendships page.
-  Future<PaginatedPage<FriendshipEntity, FriendshipCursorEntity>>
-  listFriendships({
+  /// Loads one friendship-list page.
+  Future<FriendshipListPageEntity> listFriendships({
     /// Optional search term applied to friend name/code.
     String? search,
 
@@ -19,9 +19,8 @@ abstract interface class FriendshipsRepository {
     FriendshipCursorEntity? cursor,
   });
 
-  /// Loads one paginated friendship-requests page.
-  Future<PaginatedPage<FriendshipRequestEntity, FriendshipRequestCursorEntity>>
-  listFriendshipRequests({
+  /// Loads one friendship-request-list page.
+  Future<FriendshipRequestListPageEntity> listFriendshipRequests({
     /// Optional search term applied to name/code.
     String? search,
 
@@ -33,13 +32,13 @@ abstract interface class FriendshipsRepository {
   });
 
   /// Creates a pending friendship request targeting a friendship code.
-  Future<FriendshipRequestEntity> createFriendshipRequest({
+  Future<FriendshipRequestListPageItemEntity> createFriendshipRequest({
     /// Friendship code entered by the requester.
     required String addresseeFriendshipCode,
   });
 
   /// Accepts an incoming friendship request and returns the created friendship.
-  Future<FriendshipEntity> acceptFriendshipRequest({
+  Future<FriendshipListPageItemEntity> acceptFriendshipRequest({
     /// Pending friendship-request row identifier.
     required String requestId,
   });

@@ -8,7 +8,7 @@ import 'package:memuno_app/src/app/widgets/m/m_colors.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/app/widgets/m/m_text.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_text_layer_entity.dart';
-import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_entity.dart';
+import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_list_page_item_entity.dart';
 
 /// Callback invoked when one text layer should move by drag delta.
 typedef MemeEditorLayerMoveCallback =
@@ -39,7 +39,7 @@ final class MemeEditorCanvas extends StatelessWidget {
   final GlobalKey repaintBoundaryKey;
 
   /// Currently selected meme template.
-  final MemeTemplateEntity? template;
+  final MemeTemplateListPageItemEntity? template;
 
   /// PNG bytes of selected custom gallery image, if any.
   final Uint8List? customTemplateImageBytes;
@@ -65,7 +65,7 @@ final class MemeEditorCanvas extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final AppLocalizations l10n = AppLocalizations.of(context);
-    final MemeTemplateEntity? currentTemplate = template;
+    final MemeTemplateListPageItemEntity? currentTemplate = template;
     final Uint8List? currentCustomTemplateBytes = customTemplateImageBytes;
     if (currentTemplate == null && currentCustomTemplateBytes == null) {
       return ColoredBox(

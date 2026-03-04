@@ -1,14 +1,14 @@
 import 'dart:typed_data';
 
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_state_entity.dart';
-import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_entity.dart';
+import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_list_page_item_entity.dart';
 
 /// Datasource contract for local meme-editor state operations.
 abstract class MemeEditorDatasource {
   /// Applies selected [template] and resets draft state.
   MemeEditorStateEntity setTemplate({
     required MemeEditorStateEntity state,
-    required MemeTemplateEntity template,
+    required MemeTemplateListPageItemEntity template,
   });
 
   /// Applies selected custom gallery image and resets draft state.
