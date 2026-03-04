@@ -23,12 +23,14 @@ final class MemeSendRepositoryImpl implements MemeSendRepository {
   Future<void> sendMeme({
     required Uint8List memeBytes,
     required String? templateId,
+    required double aspectRatio,
     required List<String> recipientUserIds,
   }) async {
     try {
       await _memeSendDatasource.sendMeme(
         memeBytes: memeBytes,
         templateId: templateId,
+        aspectRatio: aspectRatio,
         recipientUserIds: recipientUserIds,
       );
     } catch (error) {

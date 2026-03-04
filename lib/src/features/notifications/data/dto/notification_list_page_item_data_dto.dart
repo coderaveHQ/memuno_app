@@ -102,6 +102,9 @@ final class MemeReceivedNotificationDataDto
     required this.actorId,
     required this.actorName,
     required this.memeId,
+    required this.memeImagePath,
+    required this.memeAspectRatio,
+    required this.signedMemeImageUrl,
     required this.routeTab,
   });
 
@@ -115,6 +118,9 @@ final class MemeReceivedNotificationDataDto
       actorId: _readRequiredString(json, 'actor_id'),
       actorName: _readRequiredString(json, 'actor_name'),
       memeId: _readRequiredString(json, 'meme_id'),
+      memeImagePath: _readRequiredString(json, 'image_path'),
+      memeAspectRatio: _readRequiredPositiveDouble(json, 'aspect_ratio'),
+      signedMemeImageUrl: null,
       routeTab: null,
     );
   }
@@ -122,6 +128,9 @@ final class MemeReceivedNotificationDataDto
   final String actorId;
   final String actorName;
   final String memeId;
+  final String memeImagePath;
+  final double memeAspectRatio;
+  final String? signedMemeImageUrl;
   final String? routeTab;
 }
 
@@ -131,4 +140,18 @@ String _readRequiredString(Map<String, Object?> payload, String key) {
     throw FormatException('Expected non-empty string field `$key`.');
   }
   return value;
+}
+
+double _readRequiredPositiveDouble(Map<String, Object?> payload, String key) {
+  final Object? value = payload[key];
+  if (value is! num) {
+    throw FormatException('Expected numeric field `$key`.');
+  }
+
+  final double parsed = value.toDouble();
+  if (parsed <= 0) {
+    throw FormatException('Expected positive numeric field `$key`.');
+  }
+
+  return parsed;
 }

@@ -56,6 +56,9 @@ final class NotificationMapper {
           actorId: data.actorId,
           actorName: data.actorName,
           memeId: data.memeId,
+          memeImagePath: data.memeImagePath,
+          memeAspectRatio: data.memeAspectRatio,
+          signedMemeImageUrl: data.signedMemeImageUrl,
           routeTab: data.routeTab,
         ),
     };

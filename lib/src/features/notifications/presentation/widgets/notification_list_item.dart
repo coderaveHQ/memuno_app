@@ -4,6 +4,8 @@ import 'package:memuno_app/src/app/extensions/build_context_x.dart';
 import 'package:memuno_app/src/app/extensions/date_time_x.dart';
 import 'package:memuno_app/src/app/widgets/m/m_avatar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_colors.dart';
+import 'package:memuno_app/src/app/widgets/m/m_gap.dart';
+import 'package:memuno_app/src/app/widgets/m/m_image.dart';
 import 'package:memuno_app/src/app/widgets/m/m_list_tile.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/features/notifications/domain/entities/notification_list_page_item_entity.dart';
@@ -23,6 +25,9 @@ class NotificationListItem extends StatelessWidget {
 
   /// Callback invoked when this tile is tapped.
   final void Function(NotificationListPageItemEntity notification) onPressed;
+  static const double _memePreviewHeight = 56.0;
+  static const double _minPreviewAspectRatio = 0.35;
+  static const double _maxPreviewAspectRatio = 2.5;
 
   @override
   Widget build(BuildContext context) {
@@ -43,9 +48,7 @@ class NotificationListItem extends StatelessWidget {
         notification.notificationActorName,
       ),
       details: relativeTime,
-      trailing: notification.notificationIsRead
-          ? null
-          : const _UnreadIndicator(),
+      trailing: _buildTrailing(),
       padding: EdgeInsets.only(
         top: MSpacing.md,
         left: context.leftPadding + MSpacing.md,
@@ -79,6 +82,54 @@ class NotificationListItem extends StatelessWidget {
         actorName,
       ),
     };
+  }
+
+  Widget? _buildTrailing() {
+    final List<Widget> trailingChildren = <Widget>[];
+
+    final Widget? memePreview = _buildMemePreview();
+    if (memePreview != null) {
+      trailingChildren.add(memePreview);
+    }
+
+    if (!notification.notificationIsRead) {
+      if (trailingChildren.isNotEmpty) {
+        trailingChildren.add(const MGap.sm());
+      }
+      trailingChildren.add(const _UnreadIndicator());
+    }
+
+    if (trailingChildren.isEmpty) {
+      return null;
+    }
+
+    return Row(mainAxisSize: MainAxisSize.min, children: trailingChildren);
+  }
+
+  Widget? _buildMemePreview() {
+    if (notification.notificationType != NotificationType.memeReceived) {
+      return null;
+    }
+
+    final String? signedImageUrl = notification.notificationMemeSignedImageUrl;
+    final double? rawAspectRatio = notification.notificationMemeAspectRatio;
+    if (signedImageUrl == null ||
+        signedImageUrl.isEmpty ||
+        rawAspectRatio == null ||
+        rawAspectRatio <= 0) {
+      return null;
+    }
+
+    final double safeAspectRatio = rawAspectRatio
+        .clamp(_minPreviewAspectRatio, _maxPreviewAspectRatio)
+        .toDouble();
+
+    return MImage.url(
+      signedImageUrl,
+      height: _memePreviewHeight,
+      aspectRatio: safeAspectRatio,
+      borderRadius: BorderRadius.circular(8.0),
+    );
   }
 }
 

@@ -26,9 +26,25 @@ sealed class NotificationListPageItemDataEntity
 
   /// Data payload for `meme_received`.
   const factory NotificationListPageItemDataEntity.memeReceived({
+    /// Actor user id of the meme sender.
     required String actorId,
+
+    /// Actor display name of the meme sender.
     required String actorName,
+
+    /// Meme id from `public.memes.id`.
     required String memeId,
+
+    /// Storage path from `public.memes.image_path`.
+    required String memeImagePath,
+
+    /// Persisted aspect ratio (`width / height`) from `public.memes`.
+    required double memeAspectRatio,
+
+    /// Frontend-signed URL for rendering private meme image previews.
+    required String? signedMemeImageUrl,
+
+    /// Optional deep-link route tab (currently always null for memes).
     required String? routeTab,
   }) = MemeReceivedNotificationListPageItemDataEntity;
 }
