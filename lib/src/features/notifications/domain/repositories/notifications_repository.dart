@@ -1,12 +1,10 @@
-import 'package:memuno_app/src/core/state/pagination/paginated_page.dart';
 import 'package:memuno_app/src/features/notifications/domain/entities/notification_cursor_entity.dart';
-import 'package:memuno_app/src/features/notifications/domain/entities/notification_entity.dart';
+import 'package:memuno_app/src/features/notifications/domain/entities/notification_list_page_entity.dart';
 
 /// Repository contract for notifications read/update operations.
 abstract interface class NotificationsRepository {
   /// Loads one paginated notifications page.
-  Future<PaginatedPage<NotificationEntity, NotificationCursorEntity>>
-  listNotifications({
+  Future<NotificationListPageEntity> listNotifications({
     /// Optional search term applied to actor name/friendship code.
     String? search,
 

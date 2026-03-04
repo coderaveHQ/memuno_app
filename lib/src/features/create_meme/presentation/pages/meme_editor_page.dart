@@ -30,7 +30,7 @@ import 'package:memuno_app/src/features/create_meme/domain/usecases/optimize_cus
 import 'package:memuno_app/src/features/create_meme/domain/usecases/set_finalized_meme_bytes_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/presentation/widgets/meme_editor_canvas.dart';
 import 'package:memuno_app/src/features/create_meme/presentation/widgets/meme_editor_controls.dart';
-import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_entity.dart';
+import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_list_page_item_entity.dart';
 import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_picker_selection_entity.dart';
 import 'package:memuno_app/src/features/meme_templates/domain/entities/picked_meme_template_image_entity.dart';
 import 'package:memuno_app/src/features/meme_templates/presentation/widgets/meme_templates_bottom_sheet.dart';
@@ -372,7 +372,7 @@ class MemeEditorPage extends HookConsumerWidget {
       return;
     }
 
-    final MemeTemplateEntity? template = selection.template;
+    final MemeTemplateListPageItemEntity? template = selection.template;
     if (template != null) {
       controller.setTemplate(template);
       return;

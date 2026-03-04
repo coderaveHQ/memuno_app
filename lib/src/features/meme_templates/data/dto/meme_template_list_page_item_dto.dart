@@ -2,14 +2,14 @@
 
 import 'package:freezed_annotation/freezed_annotation.dart';
 
-part 'meme_template_dto.freezed.dart';
-part 'meme_template_dto.g.dart';
+part 'meme_template_list_page_item_dto.freezed.dart';
+part 'meme_template_list_page_item_dto.g.dart';
 
-/// DTO representing one meme-template list item.
+/// DTO matching `public.meme_template_list_page_item`.
 @freezed
-sealed class MemeTemplateDto with _$MemeTemplateDto {
-  /// Creates a meme-template DTO.
-  const factory MemeTemplateDto({
+sealed class MemeTemplateListPageItemDto with _$MemeTemplateListPageItemDto {
+  /// Creates a meme-template-list item DTO.
+  const factory MemeTemplateListPageItemDto({
     /// Stable template identifier.
     required String id,
 
@@ -22,12 +22,15 @@ sealed class MemeTemplateDto with _$MemeTemplateDto {
     /// Template creation timestamp.
     @JsonKey(name: 'created_at') required DateTime createdAt,
 
+    /// Template update timestamp.
+    @JsonKey(name: 'updated_at') required DateTime updatedAt,
+
     /// Signed URL generated client-side for private template access.
     @JsonKey(includeFromJson: false, includeToJson: false)
     String? signedImageUrl,
-  }) = _MemeTemplateDto;
+  }) = _MemeTemplateListPageItemDto;
 
-  /// Creates a meme-template DTO from JSON.
-  factory MemeTemplateDto.fromJson(Map<String, Object?> json) =>
-      _$MemeTemplateDtoFromJson(json);
+  /// Creates a meme-template-list item DTO from JSON.
+  factory MemeTemplateListPageItemDto.fromJson(Map<String, Object?> json) =>
+      _$MemeTemplateListPageItemDtoFromJson(json);
 }

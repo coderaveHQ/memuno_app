@@ -6,11 +6,12 @@ import 'package:memuno_app/src/app/widgets/m/m_avatar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_colors.dart';
 import 'package:memuno_app/src/app/widgets/m/m_list_tile.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
-import 'package:memuno_app/src/features/notifications/domain/entities/notification_entity.dart';
+import 'package:memuno_app/src/features/notifications/domain/entities/notification_list_page_item_entity.dart';
+import 'package:memuno_app/src/features/notifications/domain/entities/notification_type.dart';
 
-/// Polymorphic entry widget for rendering one [NotificationEntity].
+/// Tile widget for rendering one [NotificationListPageItemEntity].
 class NotificationListItem extends StatelessWidget {
-  /// Creates a polymorphic notification list item.
+  /// Creates one notification list item tile.
   const NotificationListItem({
     super.key,
     required this.notification,
@@ -18,55 +19,10 @@ class NotificationListItem extends StatelessWidget {
   });
 
   /// Notification payload to render.
-  final NotificationEntity notification;
+  final NotificationListPageItemEntity notification;
 
   /// Callback invoked when this tile is tapped.
-  final void Function(NotificationEntity notification) onPressed;
-
-  @override
-  Widget build(BuildContext context) {
-    return switch (notification) {
-      FriendshipRequestSentNotificationEntity value =>
-        FriendshipRequestSentNotificationListItem(
-          notification: value,
-          onPressed: onPressed,
-        ),
-      FriendshipRequestAcceptedNotificationEntity value =>
-        FriendshipRequestAcceptedNotificationListItem(
-          notification: value,
-          onPressed: onPressed,
-        ),
-      MemeReceivedNotificationEntity value => MemeReceivedNotificationListItem(
-        notification: value,
-        onPressed: onPressed,
-      ),
-    };
-  }
-}
-
-/// Base tile used by all concrete notification item variants.
-abstract class _BaseNotificationListItem<
-  TNotification extends NotificationEntity
->
-    extends StatelessWidget {
-  /// Creates a base notification tile.
-  const _BaseNotificationListItem({
-    super.key,
-    required this.notification,
-    required this.onPressed,
-  });
-
-  /// Concrete notification payload.
-  final TNotification notification;
-
-  /// Callback invoked when this tile is tapped.
-  final void Function(NotificationEntity notification) onPressed;
-
-  /// Returns localized title text for this notification type.
-  String titleText(AppLocalizations l10n);
-
-  /// Returns localized action text for this notification type.
-  String descriptionText(AppLocalizations l10n);
+  final void Function(NotificationListPageItemEntity notification) onPressed;
 
   @override
   Widget build(BuildContext context) {
@@ -76,9 +32,16 @@ abstract class _BaseNotificationListItem<
 
     return MListTile(
       onPressed: () => onPressed(notification),
-      leading: MAvatar(name: notification.actorName, dimension: 48.0),
-      title: titleText(l10n),
-      description: descriptionText(l10n),
+      leading: MAvatar(
+        name: notification.notificationActorName,
+        dimension: 48.0,
+      ),
+      title: _titleText(l10n, notification.notificationType),
+      description: _descriptionText(
+        l10n,
+        notification.notificationType,
+        notification.notificationActorName,
+      ),
       details: relativeTime,
       trailing: notification.notificationIsRead
           ? null
@@ -91,71 +54,31 @@ abstract class _BaseNotificationListItem<
       ),
     );
   }
-}
 
-/// Concrete tile for `friendship_request_sent` notifications.
-final class FriendshipRequestSentNotificationListItem
-    extends _BaseNotificationListItem<FriendshipRequestSentNotificationEntity> {
-  /// Creates the concrete tile.
-  const FriendshipRequestSentNotificationListItem({
-    super.key,
-    required super.notification,
-    required super.onPressed,
-  });
-
-  @override
-  String titleText(AppLocalizations l10n) {
-    return l10n.notificationsItemFriendshipRequestSentTitle;
+  String _titleText(AppLocalizations l10n, NotificationType type) {
+    return switch (type) {
+      NotificationType.friendshipRequestSent =>
+        l10n.notificationsItemFriendshipRequestSentTitle,
+      NotificationType.friendshipRequestAccepted =>
+        l10n.notificationsItemFriendshipRequestAcceptedTitle,
+      NotificationType.memeReceived => l10n.notificationsItemMemeReceivedTitle,
+    };
   }
 
-  @override
-  String descriptionText(AppLocalizations l10n) {
-    return l10n.notificationsItemFriendshipRequestSent(notification.actorName);
-  }
-}
-
-/// Concrete tile for `friendship_request_accepted` notifications.
-final class FriendshipRequestAcceptedNotificationListItem
-    extends
-        _BaseNotificationListItem<FriendshipRequestAcceptedNotificationEntity> {
-  /// Creates the concrete tile.
-  const FriendshipRequestAcceptedNotificationListItem({
-    super.key,
-    required super.notification,
-    required super.onPressed,
-  });
-
-  @override
-  String titleText(AppLocalizations l10n) {
-    return l10n.notificationsItemFriendshipRequestAcceptedTitle;
-  }
-
-  @override
-  String descriptionText(AppLocalizations l10n) {
-    return l10n.notificationsItemFriendshipRequestAccepted(
-      notification.actorName,
-    );
-  }
-}
-
-/// Concrete tile for `meme_received` notifications.
-final class MemeReceivedNotificationListItem
-    extends _BaseNotificationListItem<MemeReceivedNotificationEntity> {
-  /// Creates the concrete tile.
-  const MemeReceivedNotificationListItem({
-    super.key,
-    required super.notification,
-    required super.onPressed,
-  });
-
-  @override
-  String titleText(AppLocalizations l10n) {
-    return l10n.notificationsItemMemeReceivedTitle;
-  }
-
-  @override
-  String descriptionText(AppLocalizations l10n) {
-    return l10n.notificationsItemMemeReceived(notification.actorName);
+  String _descriptionText(
+    AppLocalizations l10n,
+    NotificationType type,
+    String actorName,
+  ) {
+    return switch (type) {
+      NotificationType.friendshipRequestSent =>
+        l10n.notificationsItemFriendshipRequestSent(actorName),
+      NotificationType.friendshipRequestAccepted =>
+        l10n.notificationsItemFriendshipRequestAccepted(actorName),
+      NotificationType.memeReceived => l10n.notificationsItemMemeReceived(
+        actorName,
+      ),
+    };
   }
 }
 

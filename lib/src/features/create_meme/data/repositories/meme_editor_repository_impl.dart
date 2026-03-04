@@ -4,7 +4,7 @@ import 'package:memuno_app/src/core/failures/failure_mapper.dart';
 import 'package:memuno_app/src/features/create_meme/data/datasources/meme_editor_datasource.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_state_entity.dart';
 import 'package:memuno_app/src/features/create_meme/domain/repositories/meme_editor_repository.dart';
-import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_entity.dart';
+import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_list_page_item_entity.dart';
 
 /// Repository implementation for local meme-editor operations.
 final class MemeEditorRepositoryImpl implements MemeEditorRepository {
@@ -24,7 +24,7 @@ final class MemeEditorRepositoryImpl implements MemeEditorRepository {
   @override
   MemeEditorStateEntity setTemplate({
     required MemeEditorStateEntity state,
-    required MemeTemplateEntity template,
+    required MemeTemplateListPageItemEntity template,
   }) {
     try {
       return _memeEditorDatasource.setTemplate(

@@ -1,9 +1,9 @@
-import 'package:memuno_app/src/features/meme_templates/data/dto/meme_templates_page_dto.dart';
+import 'package:memuno_app/src/features/meme_templates/data/dto/meme_template_list_page_dto.dart';
 
 /// Datasource contract for meme-template RPC and storage operations.
 abstract interface class MemeTemplatesDatasource {
   /// Loads one page from `meme_templates_list` RPC.
-  Future<MemeTemplatesPageDto> listMemeTemplates({
+  Future<MemeTemplateListPageDto> listMemeTemplates({
     /// Optional search term applied server-side.
     String? search,
 

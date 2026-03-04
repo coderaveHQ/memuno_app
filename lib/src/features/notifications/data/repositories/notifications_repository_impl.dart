@@ -1,10 +1,9 @@
 import 'package:memuno_app/src/core/failures/failure_mapper.dart';
-import 'package:memuno_app/src/core/state/pagination/paginated_page.dart';
 import 'package:memuno_app/src/features/notifications/data/datasources/notifications_datasource.dart';
-import 'package:memuno_app/src/features/notifications/data/dto/notifications_page_dto.dart';
+import 'package:memuno_app/src/features/notifications/data/dto/notification_list_page_dto.dart';
 import 'package:memuno_app/src/features/notifications/data/mappers/notification_mapper.dart';
 import 'package:memuno_app/src/features/notifications/domain/entities/notification_cursor_entity.dart';
-import 'package:memuno_app/src/features/notifications/domain/entities/notification_entity.dart';
+import 'package:memuno_app/src/features/notifications/domain/entities/notification_list_page_entity.dart';
 import 'package:memuno_app/src/features/notifications/domain/repositories/notifications_repository.dart';
 
 /// Repository implementation for notification feature operations.
@@ -23,28 +22,21 @@ final class NotificationsRepositoryImpl implements NotificationsRepository {
   final FailureMapper _failureMapper;
 
   @override
-  /// Loads one paginated notifications page and maps to domain entities.
-  Future<PaginatedPage<NotificationEntity, NotificationCursorEntity>>
-  listNotifications({
+  /// Loads one notification-list page and maps to domain entities.
+  Future<NotificationListPageEntity> listNotifications({
     String? search,
     required int limit,
     NotificationCursorEntity? cursor,
   }) async {
     try {
-      final NotificationsPageDto dto = await _notificationsDatasource
+      final NotificationListPageDto dto = await _notificationsDatasource
           .listNotifications(
             search: search,
             limit: limit,
             cursorCreatedAt: cursor?.createdAt,
             cursorId: cursor?.id,
           );
-
-      return PaginatedPage<NotificationEntity, NotificationCursorEntity>(
-        items: dto.items
-            .map(_notificationMapper.toDomain)
-            .toList(growable: false),
-        nextCursor: _cursorFrom(dto),
-      );
+      return _notificationMapper.pageToDomain(dto);
     } catch (error) {
       throw _failureMapper.map(error);
     }
@@ -70,15 +62,5 @@ final class NotificationsRepositoryImpl implements NotificationsRepository {
     } catch (error) {
       throw _failureMapper.map(error);
     }
-  }
-
-  NotificationCursorEntity? _cursorFrom(NotificationsPageDto dto) {
-    final DateTime? createdAt = dto.nextCursorCreatedAt;
-    final String? id = dto.nextCursorId;
-    if (createdAt == null || id == null) {
-      return null;
-    }
-
-    return NotificationCursorEntity(createdAt: createdAt, id: id);
   }
 }

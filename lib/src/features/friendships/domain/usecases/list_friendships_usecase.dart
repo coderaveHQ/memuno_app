@@ -1,6 +1,5 @@
-import 'package:memuno_app/src/core/state/pagination/paginated_page.dart';
 import 'package:memuno_app/src/features/friendships/domain/entities/friendship_cursor_entity.dart';
-import 'package:memuno_app/src/features/friendships/domain/entities/friendship_entity.dart';
+import 'package:memuno_app/src/features/friendships/domain/entities/friendship_list_page_entity.dart';
 import 'package:memuno_app/src/features/friendships/domain/repositories/friendships_repository.dart';
 
 /// Usecase for loading paginated friendships.
@@ -12,8 +11,8 @@ final class ListFriendshipsUsecase {
   /// Repository used to execute friendship reads.
   final FriendshipsRepository _repository;
 
-  /// Executes a paginated friendships query.
-  Future<PaginatedPage<FriendshipEntity, FriendshipCursorEntity>> call({
+  /// Executes one friendship-list page query.
+  Future<FriendshipListPageEntity> call({
     /// Optional search term applied to friend name/code.
     String? search,
 

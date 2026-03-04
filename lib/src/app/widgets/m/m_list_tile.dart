@@ -64,7 +64,7 @@ class MListTile extends StatelessWidget {
                   if (description != null && details != null) const MGap.xxs(),
                   if (details != null)
                     MText.small(
-                      text: description,
+                      text: details,
                       maxLines: 1,
                       overflow: TextOverflow.ellipsis,
                       style: TextStyle(

@@ -1,9 +1,9 @@
-import 'package:memuno_app/src/features/notifications/data/dto/notifications_page_dto.dart';
+import 'package:memuno_app/src/features/notifications/data/dto/notification_list_page_dto.dart';
 
 /// Low-level datasource for notification RPC calls.
 abstract interface class NotificationsDatasource {
   /// Loads one page of notifications.
-  Future<NotificationsPageDto> listNotifications({
+  Future<NotificationListPageDto> listNotifications({
     /// Optional search term applied server-side.
     String? search,
 

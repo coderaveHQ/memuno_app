@@ -8,14 +8,14 @@ import 'package:memuno_app/src/app/feedback/app_feedback_provider.dart';
 import 'package:memuno_app/src/app/widgets/m/m_icon_button.dart';
 import 'package:memuno_app/src/features/friendships/application/mutations/delete_friendship_mutation.dart';
 import 'package:memuno_app/src/features/friendships/application/providers/friendships_list_provider.dart';
-import 'package:memuno_app/src/features/friendships/domain/entities/friendship_entity.dart';
+import 'package:memuno_app/src/features/friendships/domain/entities/friendship_list_page_item_entity.dart';
 
 class DeleteFriendshipButton extends ConsumerWidget {
   /// Creates a delete action button.
   const DeleteFriendshipButton({super.key, required this.friendship});
 
   /// Friendship row payload.
-  final FriendshipEntity friendship;
+  final FriendshipListPageItemEntity friendship;
 
   /// Runs an optimistic friendship deletion through the notifier.
   Future<void> _submit(WidgetRef ref) async {

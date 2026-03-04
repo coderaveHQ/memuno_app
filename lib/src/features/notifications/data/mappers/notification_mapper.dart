@@ -1,96 +1,63 @@
-import 'package:memuno_app/src/features/notifications/data/dto/notification_dto.dart';
-import 'package:memuno_app/src/features/notifications/domain/entities/notification_entity.dart';
-import 'package:memuno_app/src/features/notifications/domain/entities/notification_type.dart';
+import 'package:memuno_app/src/features/notifications/data/dto/notification_list_page_dto.dart';
+import 'package:memuno_app/src/features/notifications/data/dto/notification_list_page_item_data_dto.dart';
+import 'package:memuno_app/src/features/notifications/data/dto/notification_list_page_item_dto.dart';
+import 'package:memuno_app/src/features/notifications/domain/entities/notification_list_page_entity.dart';
+import 'package:memuno_app/src/features/notifications/domain/entities/notification_list_page_item_data_entity.dart';
+import 'package:memuno_app/src/features/notifications/domain/entities/notification_list_page_item_entity.dart';
 
-/// Maps [NotificationDto] values into polymorphic [NotificationEntity] values.
+/// Maps notification DTOs into domain entities.
 final class NotificationMapper {
   /// Creates a mapper.
   const NotificationMapper();
 
-  /// Maps one notification DTO to its concrete domain entity variant.
-  NotificationEntity toDomain(NotificationDto dto) {
-    final NotificationType type = NotificationType.fromDatabaseValue(dto.type);
+  /// Maps one notification-list item DTO to the domain entity.
+  NotificationListPageItemEntity toDomain(NotificationListPageItemDto dto) {
+    return NotificationListPageItemEntity(
+      id: dto.id,
+      type: dto.type,
+      data: _mapData(dto.data),
+      isRead: dto.isRead,
+      createdAt: dto.createdAt,
+      updatedAt: dto.updatedAt,
+    );
+  }
 
-    return switch (type) {
-      NotificationType.friendshipRequestSent => _mapFriendshipRequestSent(dto),
-      NotificationType.friendshipRequestAccepted =>
-        _mapFriendshipRequestAccepted(dto),
-      NotificationType.memeReceived => _mapMemeReceived(dto),
+  /// Maps one notification-list page DTO to the domain entity.
+  NotificationListPageEntity pageToDomain(NotificationListPageDto dto) {
+    return NotificationListPageEntity(
+      items: dto.items.map(toDomain).toList(growable: false),
+      nextCursorCreatedAt: dto.nextCursorCreatedAt,
+      nextCursorId: dto.nextCursorId,
+    );
+  }
+
+  NotificationListPageItemDataEntity _mapData(
+    NotificationListPageItemDataDto dto,
+  ) {
+    return switch (dto) {
+      FriendshipRequestSentNotificationDataDto data =>
+        NotificationListPageItemDataEntity.friendshipRequestSent(
+          actorId: data.actorId,
+          actorName: data.actorName,
+          actorFriendshipCode: data.actorFriendshipCode,
+          requestId: data.requestId,
+          routeTab: data.routeTab,
+        ),
+      FriendshipRequestAcceptedNotificationDataDto data =>
+        NotificationListPageItemDataEntity.friendshipRequestAccepted(
+          actorId: data.actorId,
+          actorName: data.actorName,
+          actorFriendshipCode: data.actorFriendshipCode,
+          requestId: data.requestId,
+          routeTab: data.routeTab,
+        ),
+      MemeReceivedNotificationDataDto data =>
+        NotificationListPageItemDataEntity.memeReceived(
+          actorId: data.actorId,
+          actorName: data.actorName,
+          memeId: data.memeId,
+          routeTab: data.routeTab,
+        ),
     };
-  }
-
-  NotificationEntity _mapFriendshipRequestSent(NotificationDto dto) {
-    final Map<String, Object?> payload = dto.data;
-    final String routeTab = _readRequiredString(payload, 'route_tab');
-
-    if (routeTab != 'requests') {
-      throw FormatException(
-        'Expected route_tab=requests for friendship_request_sent.',
-      );
-    }
-
-    return NotificationEntity.friendshipRequestSent(
-      id: dto.id,
-      isRead: dto.isRead,
-      createdAt: dto.createdAt,
-      actorId: _readRequiredString(payload, 'actor_id'),
-      actorName: _readRequiredString(payload, 'actor_name'),
-      actorFriendshipCode: _readRequiredString(
-        payload,
-        'actor_friendship_code',
-      ),
-      requestId: _readRequiredString(payload, 'request_id'),
-      routeTab: routeTab,
-    );
-  }
-
-  NotificationEntity _mapFriendshipRequestAccepted(NotificationDto dto) {
-    final Map<String, Object?> payload = dto.data;
-    final String routeTab = _readRequiredString(payload, 'route_tab');
-
-    if (routeTab != 'friendships') {
-      throw FormatException(
-        'Expected route_tab=friendships for friendship_request_accepted.',
-      );
-    }
-
-    return NotificationEntity.friendshipRequestAccepted(
-      id: dto.id,
-      isRead: dto.isRead,
-      createdAt: dto.createdAt,
-      actorId: _readRequiredString(payload, 'actor_id'),
-      actorName: _readRequiredString(payload, 'actor_name'),
-      actorFriendshipCode: _readRequiredString(
-        payload,
-        'actor_friendship_code',
-      ),
-      requestId: _readRequiredString(payload, 'request_id'),
-      routeTab: routeTab,
-    );
-  }
-
-  NotificationEntity _mapMemeReceived(NotificationDto dto) {
-    final Map<String, Object?> payload = dto.data;
-    if (!payload.containsKey('route_tab') || payload['route_tab'] != null) {
-      throw FormatException('Expected route_tab=null for meme_received.');
-    }
-
-    return NotificationEntity.memeReceived(
-      id: dto.id,
-      isRead: dto.isRead,
-      createdAt: dto.createdAt,
-      actorId: _readRequiredString(payload, 'actor_id'),
-      actorName: _readRequiredString(payload, 'actor_name'),
-      memeId: _readRequiredString(payload, 'meme_id'),
-      routeTab: null,
-    );
-  }
-
-  String _readRequiredString(Map<String, Object?> payload, String key) {
-    final Object? value = payload[key];
-    if (value is! String || value.trim().isEmpty) {
-      throw FormatException('Expected non-empty string field `$key`.');
-    }
-    return value;
   }
 }

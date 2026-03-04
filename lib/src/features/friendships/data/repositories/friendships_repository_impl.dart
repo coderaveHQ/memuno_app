@@ -1,16 +1,17 @@
 import 'package:memuno_app/src/core/failures/failure_mapper.dart';
-import 'package:memuno_app/src/core/state/pagination/paginated_page.dart';
 import 'package:memuno_app/src/features/friendships/data/datasources/friendships_datasource.dart';
-import 'package:memuno_app/src/features/friendships/data/dto/friendship_dto.dart';
-import 'package:memuno_app/src/features/friendships/data/dto/friendship_request_dto.dart';
-import 'package:memuno_app/src/features/friendships/data/dto/friendship_requests_page_dto.dart';
-import 'package:memuno_app/src/features/friendships/data/dto/friendships_page_dto.dart';
+import 'package:memuno_app/src/features/friendships/data/dto/friendship_list_page_dto.dart';
+import 'package:memuno_app/src/features/friendships/data/dto/friendship_list_page_item_dto.dart';
+import 'package:memuno_app/src/features/friendships/data/dto/friendship_request_list_page_dto.dart';
+import 'package:memuno_app/src/features/friendships/data/dto/friendship_request_list_page_item_dto.dart';
 import 'package:memuno_app/src/features/friendships/data/mappers/friendship_mapper.dart';
 import 'package:memuno_app/src/features/friendships/data/mappers/friendship_request_mapper.dart';
 import 'package:memuno_app/src/features/friendships/domain/entities/friendship_cursor_entity.dart';
-import 'package:memuno_app/src/features/friendships/domain/entities/friendship_entity.dart';
+import 'package:memuno_app/src/features/friendships/domain/entities/friendship_list_page_entity.dart';
+import 'package:memuno_app/src/features/friendships/domain/entities/friendship_list_page_item_entity.dart';
 import 'package:memuno_app/src/features/friendships/domain/entities/friendship_request_cursor_entity.dart';
-import 'package:memuno_app/src/features/friendships/domain/entities/friendship_request_entity.dart';
+import 'package:memuno_app/src/features/friendships/domain/entities/friendship_request_list_page_entity.dart';
+import 'package:memuno_app/src/features/friendships/domain/entities/friendship_request_list_page_item_entity.dart';
 import 'package:memuno_app/src/features/friendships/domain/repositories/friendships_repository.dart';
 
 /// Repository implementation for friendship feature operations.
@@ -39,59 +40,42 @@ final class FriendshipsRepositoryImpl implements FriendshipsRepository {
   final FailureMapper _failureMapper;
 
   @override
-  /// Loads one paginated friendships page and maps it to domain entities.
-  Future<PaginatedPage<FriendshipEntity, FriendshipCursorEntity>>
-  listFriendships({
+  /// Loads one friendship-list page and maps it to domain entities.
+  Future<FriendshipListPageEntity> listFriendships({
     String? search,
     required int limit,
     FriendshipCursorEntity? cursor,
   }) async {
     try {
-      final FriendshipsPageDto dto = await _friendshipsDatasource
+      final FriendshipListPageDto dto = await _friendshipsDatasource
           .listFriendships(
             search: search,
             limit: limit,
             cursorName: cursor?.name,
             cursorId: cursor?.id,
           );
-
-      return PaginatedPage<FriendshipEntity, FriendshipCursorEntity>(
-        items: dto.items
-            .map(_friendshipMapper.toDomain)
-            .toList(growable: false),
-        nextCursor: _friendshipCursorFrom(dto),
-      );
+      return _friendshipMapper.pageToDomain(dto);
     } catch (error) {
       throw _failureMapper.map(error);
     }
   }
 
   @override
-  /// Loads one paginated friendship-requests page and maps to domain entities.
-  Future<PaginatedPage<FriendshipRequestEntity, FriendshipRequestCursorEntity>>
-  listFriendshipRequests({
+  /// Loads one friendship-request-list page and maps to domain entities.
+  Future<FriendshipRequestListPageEntity> listFriendshipRequests({
     String? search,
     required int limit,
     FriendshipRequestCursorEntity? cursor,
   }) async {
     try {
-      final FriendshipRequestsPageDto dto = await _friendshipsDatasource
+      final FriendshipRequestListPageDto dto = await _friendshipsDatasource
           .listFriendshipRequests(
             search: search,
             limit: limit,
             cursorCreatedAt: cursor?.createdAt,
             cursorId: cursor?.id,
           );
-
-      return PaginatedPage<
-        FriendshipRequestEntity,
-        FriendshipRequestCursorEntity
-      >(
-        items: dto.items
-            .map(_friendshipRequestMapper.toDomain)
-            .toList(growable: false),
-        nextCursor: _friendshipRequestCursorFrom(dto),
-      );
+      return _friendshipRequestMapper.pageToDomain(dto);
     } catch (error) {
       throw _failureMapper.map(error);
     }
@@ -99,11 +83,11 @@ final class FriendshipsRepositoryImpl implements FriendshipsRepository {
 
   @override
   /// Creates a new friendship request and maps it to a domain entity.
-  Future<FriendshipRequestEntity> createFriendshipRequest({
+  Future<FriendshipRequestListPageItemEntity> createFriendshipRequest({
     required String addresseeFriendshipCode,
   }) async {
     try {
-      final FriendshipRequestDto dto = await _friendshipsDatasource
+      final FriendshipRequestListPageItemDto dto = await _friendshipsDatasource
           .createFriendshipRequest(
             addresseeFriendshipCode: addresseeFriendshipCode,
           );
@@ -116,11 +100,11 @@ final class FriendshipsRepositoryImpl implements FriendshipsRepository {
 
   @override
   /// Accepts an incoming request and maps returned friendship entity.
-  Future<FriendshipEntity> acceptFriendshipRequest({
+  Future<FriendshipListPageItemEntity> acceptFriendshipRequest({
     required String requestId,
   }) async {
     try {
-      final FriendshipDto dto = await _friendshipsDatasource
+      final FriendshipListPageItemDto dto = await _friendshipsDatasource
           .acceptFriendshipRequest(requestId: requestId);
 
       return _friendshipMapper.toDomain(dto);
@@ -161,34 +145,5 @@ final class FriendshipsRepositoryImpl implements FriendshipsRepository {
     } catch (error) {
       throw _failureMapper.map(error);
     }
-  }
-
-  /// Maps friendships page cursor fields into a cursor entity.
-  FriendshipCursorEntity? _friendshipCursorFrom(FriendshipsPageDto dto) {
-    final String? nextCursorName = dto.nextCursorName;
-    final String? nextCursorId = dto.nextCursorId;
-
-    if (nextCursorName == null || nextCursorId == null) {
-      return null;
-    }
-
-    return FriendshipCursorEntity(name: nextCursorName, id: nextCursorId);
-  }
-
-  /// Maps friendship-requests page cursor fields into a cursor entity.
-  FriendshipRequestCursorEntity? _friendshipRequestCursorFrom(
-    FriendshipRequestsPageDto dto,
-  ) {
-    final DateTime? nextCursorCreatedAt = dto.nextCursorCreatedAt;
-    final String? nextCursorId = dto.nextCursorId;
-
-    if (nextCursorCreatedAt == null || nextCursorId == null) {
-      return null;
-    }
-
-    return FriendshipRequestCursorEntity(
-      createdAt: nextCursorCreatedAt,
-      id: nextCursorId,
-    );
   }
 }

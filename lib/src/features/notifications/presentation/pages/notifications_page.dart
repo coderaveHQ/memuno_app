@@ -20,7 +20,8 @@ import 'package:memuno_app/src/features/notifications/application/mutations/mark
 import 'package:memuno_app/src/features/notifications/application/mutations/mark_notification_read_mutation.dart';
 import 'package:memuno_app/src/features/notifications/application/providers/notifications_list_provider.dart';
 import 'package:memuno_app/src/features/notifications/domain/entities/notification_cursor_entity.dart';
-import 'package:memuno_app/src/features/notifications/domain/entities/notification_entity.dart';
+import 'package:memuno_app/src/features/notifications/domain/entities/notification_list_page_item_data_entity.dart';
+import 'package:memuno_app/src/features/notifications/domain/entities/notification_list_page_item_entity.dart';
 import 'package:memuno_app/src/features/notifications/presentation/widgets/notification_list_item.dart';
 
 /// Notifications overview page with search, pagination, and read actions.
@@ -45,7 +46,7 @@ class NotificationsPage extends HookConsumerWidget {
   Future<void> _onOpenNotification(
     BuildContext context,
     WidgetRef ref,
-    NotificationEntity notification,
+    NotificationListPageItemEntity notification,
   ) async {
     final Mutation<void> mutation = ref.read(
       markNotificationReadMutationProvider(notification.notificationId),
@@ -61,12 +62,16 @@ class NotificationsPage extends HookConsumerWidget {
       return;
     }
 
-    switch (notification) {
-      case FriendshipRequestSentNotificationEntity(:final routeTab):
+    switch (notification.data) {
+      case FriendshipRequestSentNotificationListPageItemDataEntity(
+        :final routeTab,
+      ):
         await FriendshipsRoute(tab: routeTab).push<void>(context);
-      case FriendshipRequestAcceptedNotificationEntity(:final routeTab):
+      case FriendshipRequestAcceptedNotificationListPageItemDataEntity(
+        :final routeTab,
+      ):
         await FriendshipsRoute(tab: routeTab).push<void>(context);
-      case MemeReceivedNotificationEntity():
+      case MemeReceivedNotificationListPageItemDataEntity():
         break;
     }
   }
@@ -95,7 +100,10 @@ class NotificationsPage extends HookConsumerWidget {
     }, <Object?>[searchController]);
 
     final AsyncValue<
-      PaginatedListState<NotificationEntity, NotificationCursorEntity>
+      PaginatedListState<
+        NotificationListPageItemEntity,
+        NotificationCursorEntity
+      >
     >
     notificationsState = ref.watch(notificationsListProvider);
 
@@ -106,7 +114,7 @@ class NotificationsPage extends HookConsumerWidget {
 
     final bool hasUnread =
         notificationsState.asData?.value.items.any(
-          (NotificationEntity item) => !item.notificationIsRead,
+          (NotificationListPageItemEntity item) => !item.notificationIsRead,
         ) ??
         false;
 
@@ -145,20 +153,27 @@ class NotificationsPage extends HookConsumerWidget {
             ),
           ),
           Expanded(
-            child: MAsyncList<NotificationEntity, NotificationCursorEntity>(
-              provider: notificationsListProvider,
-              emptyText: l10n.notificationsListEmpty,
-              loadMoreExtent: 220.0,
-              itemBuilder:
-                  (BuildContext context, NotificationEntity notification) {
-                    return NotificationListItem(
-                      notification: notification,
-                      onPressed: (NotificationEntity item) {
-                        unawaited(_onOpenNotification(context, ref, item));
+            child:
+                MAsyncList<
+                  NotificationListPageItemEntity,
+                  NotificationCursorEntity
+                >(
+                  provider: notificationsListProvider,
+                  emptyText: l10n.notificationsListEmpty,
+                  loadMoreExtent: 220.0,
+                  itemBuilder:
+                      (
+                        BuildContext context,
+                        NotificationListPageItemEntity notification,
+                      ) {
+                        return NotificationListItem(
+                          notification: notification,
+                          onPressed: (NotificationListPageItemEntity item) {
+                            unawaited(_onOpenNotification(context, ref, item));
+                          },
+                        );
                       },
-                    );
-                  },
-            ),
+                ),
           ),
         ],
       ),
