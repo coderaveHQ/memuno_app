@@ -10,6 +10,9 @@ abstract class MemeSendRepository {
     /// Optional template identifier selected in editor.
     required String? templateId,
 
+    /// Aspect ratio (`width / height`) for the uploaded meme image.
+    required double aspectRatio,
+
     /// Target recipient user identifiers.
     required List<String> recipientUserIds,
   });

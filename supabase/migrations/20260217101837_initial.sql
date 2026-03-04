@@ -215,6 +215,7 @@ create table public.memes (
   "user_id" uuid not null,
   "template_id" uuid,
   "image_path" text not null,
+  "aspect_ratio" double precision not null,
   "created_at" timestamptz not null default now(),
   "updated_at" timestamptz not null default now(),
   constraint pk_memes primary key ("id"),
@@ -226,7 +227,9 @@ create table public.memes (
     foreign key ("template_id") references public.meme_templates ("id")
     on update cascade on delete restrict,
   constraint ck_memes__image_path_not_empty
-    check (length(trim("image_path")) > 0)
+    check (length(trim("image_path")) > 0),
+  constraint ck_memes__positive_aspect_ratio
+    check ("aspect_ratio" > 0)
 );
 
 create table public.meme_recipients (
@@ -315,6 +318,10 @@ create table public.notifications (
           and jsonb_typeof("data"->'actor_id') = 'string'
           and jsonb_typeof("data"->'actor_name') = 'string'
           and jsonb_typeof("data"->'meme_id') = 'string'
+          and jsonb_typeof("data"->'image_path') = 'string'
+          and length(trim("data"->>'image_path')) > 0
+          and jsonb_typeof("data"->'aspect_ratio') = 'number'
+          and ("data"->>'aspect_ratio')::double precision > 0
           and "data" ? 'route_tab'
           and ("data"->'route_tab') = 'null'::jsonb
         else false
@@ -614,19 +621,33 @@ as $$
 declare
   v_actor_id uuid;
   v_actor_name text;
+  v_image_path text;
+  v_aspect_ratio double precision;
 begin
   select
     m."user_id",
-    u."name"
+    u."name",
+    m."image_path",
+    m."aspect_ratio"
   into
     v_actor_id,
-    v_actor_name
+    v_actor_name,
+    v_image_path,
+    v_aspect_ratio
   from public.memes m
   join public.users u on u."id" = m."user_id"
   where m."id" = new."meme_id";
 
   if v_actor_id is null then
     raise exception 'meme creator profile not found for meme notification';
+  end if;
+
+  if v_image_path is null or length(trim(v_image_path)) = 0 then
+    raise exception 'meme image_path not found for meme notification';
+  end if;
+
+  if v_aspect_ratio is null or v_aspect_ratio <= 0 then
+    raise exception 'meme aspect_ratio not found for meme notification';
   end if;
 
   insert into public.notifications (
@@ -644,6 +665,10 @@ begin
       v_actor_name,
       'meme_id',
       new."meme_id",
+      'image_path',
+      v_image_path,
+      'aspect_ratio',
+      v_aspect_ratio,
       'route_tab',
       to_jsonb(null::text)
     )
@@ -1755,16 +1780,14 @@ begin
 
   select
     row(
-      row(
-        u."id",
-        u."name",
-        u."friendship_code",
-        u."created_at",
-        u."updated_at"
-      )::public.friendship_list_page_item_user,
-      f."created_at",
-      f."updated_at"
-    )::public.friendship_list_page_item
+      u."id",
+      u."name",
+      u."friendship_code",
+      u."created_at",
+      u."updated_at"
+    )::public.friendship_list_page_item_user,
+    f."created_at",
+    f."updated_at"
   into v_result
   from public.users u
   join public.friendships f
@@ -1889,7 +1912,8 @@ $$;
 create function public.meme_create(
   p_image_path text,
   p_template_id uuid,
-  p_recipient_ids uuid[]
+  p_recipient_ids uuid[],
+  p_aspect_ratio double precision
 )
 returns void
 language plpgsql
@@ -1907,6 +1931,10 @@ begin
 
   if p_image_path is null or length(trim(p_image_path)) = 0 then
     raise exception 'image_path is required';
+  end if;
+
+  if p_aspect_ratio is null or p_aspect_ratio <= 0 then
+    raise exception 'aspect_ratio must be positive';
   end if;
 
   if p_recipient_ids is null or array_length(p_recipient_ids, 1) is null then
@@ -1939,8 +1967,8 @@ begin
     raise exception 'all recipients must be friends';
   end if;
 
-  insert into public.memes ("user_id", "template_id", "image_path")
-  values (v_user_id, p_template_id, p_image_path)
+  insert into public.memes ("user_id", "template_id", "image_path", "aspect_ratio")
+  values (v_user_id, p_template_id, p_image_path, p_aspect_ratio)
   returning *
   into v_meme;
 
@@ -1991,8 +2019,8 @@ comment on function public.friendship_request_cancel(uuid) is
 comment on function public.friendship_delete(uuid) is
 'Deletes both directional friendship edges for auth.uid() and the provided friend id.';
 
-comment on function public.meme_create(text, uuid, uuid[]) is
-'Creates one meme for auth.uid(), supports optional template_id, validates friend recipients, and inserts recipient edges.';
+comment on function public.meme_create(text, uuid, uuid[], double precision) is
+'Creates one meme for auth.uid(), persists image_path + aspect_ratio, supports optional template_id, validates friend recipients, and inserts recipient edges.';
 
 comment on function public.notifications_list(text, integer, timestamptz, uuid) is
 'Returns one cursor-paginated page of notifications for auth.uid(), optionally filtered by actor name/code.';
@@ -2045,7 +2073,7 @@ revoke all on function public.friendship_request_accept(uuid) from public;
 revoke all on function public.friendship_request_decline(uuid) from public;
 revoke all on function public.friendship_request_cancel(uuid) from public;
 revoke all on function public.friendship_delete(uuid) from public;
-revoke all on function public.meme_create(text, uuid, uuid[]) from public;
+revoke all on function public.meme_create(text, uuid, uuid[], double precision) from public;
 revoke all on function public.notifications_list(text, integer, timestamptz, uuid) from public;
 revoke all on function public.notification_mark_read(uuid) from public;
 revoke all on function public.notifications_mark_all_read() from public;
@@ -2066,7 +2094,7 @@ grant execute on function public.friendship_request_accept(uuid) to authenticate
 grant execute on function public.friendship_request_decline(uuid) to authenticated;
 grant execute on function public.friendship_request_cancel(uuid) to authenticated;
 grant execute on function public.friendship_delete(uuid) to authenticated;
-grant execute on function public.meme_create(text, uuid, uuid[]) to authenticated;
+grant execute on function public.meme_create(text, uuid, uuid[], double precision) to authenticated;
 grant execute on function public.notifications_list(text, integer, timestamptz, uuid) to authenticated;
 grant execute on function public.notification_mark_read(uuid) to authenticated;
 grant execute on function public.notifications_mark_all_read() to authenticated;

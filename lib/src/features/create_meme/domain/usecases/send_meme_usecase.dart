@@ -71,9 +71,26 @@ final class SendMemeUsecase {
       }
     }
 
+    final double? aspectRatio =
+        state.template?.aspectRatio ?? state.customTemplateAspectRatio;
+    if (aspectRatio == null) {
+      throw const Failure.validation(
+        code: 'invalid_format',
+        field: 'image_aspect_ratio',
+      );
+    }
+
+    final Failure? aspectRatioValidation = _validator.validateAspectRatio(
+      aspectRatio,
+    );
+    if (aspectRatioValidation != null) {
+      throw aspectRatioValidation;
+    }
+
     await _repository.sendMeme(
       memeBytes: memeBytes,
       templateId: templateId,
+      aspectRatio: aspectRatio,
       recipientUserIds: recipientUserIds,
     );
   }

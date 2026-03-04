@@ -3,8 +3,8 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:memuno_app/l10n/app_localizations.dart';
 import 'package:memuno_app/src/app/widgets/m/m_center.dart';
-import 'package:memuno_app/src/app/widgets/m/m_circular_progress_indicator.dart';
 import 'package:memuno_app/src/app/widgets/m/m_colors.dart';
+import 'package:memuno_app/src/app/widgets/m/m_image.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/app/widgets/m/m_text.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_text_layer_entity.dart';
@@ -107,57 +107,25 @@ final class MemeEditorCanvas extends StatelessWidget {
                 clipBehavior: Clip.hardEdge,
                 children: <Widget>[
                   Positioned.fill(
-                    child: currentTemplate != null
-                        ? Image.network(
-                            currentTemplate.signedImageUrl,
-                            fit: BoxFit.contain,
-                            loadingBuilder:
-                                (
-                                  BuildContext context,
-                                  Widget child,
-                                  ImageChunkEvent? loadingProgress,
-                                ) {
-                                  if (loadingProgress == null) {
-                                    return child;
-                                  }
-
-                                  return const MCenter(
-                                    child: MCircularProgressIndicator(),
-                                  );
-                                },
-                            errorBuilder:
-                                (
-                                  BuildContext context,
-                                  Object error,
-                                  StackTrace? stackTrace,
-                                ) {
-                                  return MCenter(
-                                    child: MText.small(
-                                      text: l10n.memeEditorCanvasImageLoadError,
-                                      style: TextStyle(color: MColors.gray300),
-                                    ),
-                                  );
-                                },
-                          )
-                        : Image.memory(
-                            currentCustomTemplateBytes!,
-                            fit: BoxFit.contain,
-                            filterQuality: FilterQuality.high,
-                            gaplessPlayback: true,
-                            errorBuilder:
-                                (
-                                  BuildContext context,
-                                  Object error,
-                                  StackTrace? stackTrace,
-                                ) {
-                                  return MCenter(
-                                    child: MText.small(
-                                      text: l10n.memeEditorCanvasImageLoadError,
-                                      style: TextStyle(color: MColors.gray300),
-                                    ),
-                                  );
-                                },
-                          ),
+                    child: Center(
+                      child: currentTemplate != null
+                          ? MImage.url(
+                              currentTemplate.signedImageUrl,
+                              fit: BoxFit.contain,
+                              filterQuality: FilterQuality.high,
+                              backgroundColor: MColors.gray900,
+                              iconColor: MColors.gray300,
+                              borderRadius: BorderRadius.circular(8.0),
+                            )
+                          : MImage.bytes(
+                              currentCustomTemplateBytes,
+                              fit: BoxFit.contain,
+                              filterQuality: FilterQuality.high,
+                              backgroundColor: MColors.gray900,
+                              iconColor: MColors.gray300,
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                    ),
                   ),
                   for (final MemeTextLayerEntity layer in layers)
                     Builder(
