@@ -62,6 +62,26 @@ extension NotificationListPageItemEntityX on NotificationListPageItemEntity {
   /// Notification category.
   NotificationType get notificationType => type;
 
+  /// Signed meme preview URL for `meme_received` notifications.
+  String? get notificationMemeSignedImageUrl {
+    return switch (data) {
+      MemeReceivedNotificationListPageItemDataEntity(
+        :final signedMemeImageUrl,
+      ) =>
+        signedMemeImageUrl,
+      _ => null,
+    };
+  }
+
+  /// Persisted meme aspect ratio for `meme_received` notifications.
+  double? get notificationMemeAspectRatio {
+    return switch (data) {
+      MemeReceivedNotificationListPageItemDataEntity(:final memeAspectRatio) =>
+        memeAspectRatio,
+      _ => null,
+    };
+  }
+
   /// Returns a copy marked as read.
   NotificationListPageItemEntity markRead() => copyWith(isRead: true);
 

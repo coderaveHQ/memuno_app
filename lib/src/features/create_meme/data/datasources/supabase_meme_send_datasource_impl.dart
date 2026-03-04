@@ -22,6 +22,7 @@ final class SupabaseMemeSendDatasourceImpl implements MemeSendDatasource {
 
     /// Optional template id for built-in templates. Null for gallery images.
     required String? templateId,
+    required double aspectRatio,
     required List<String> recipientUserIds,
   }) async {
     final String? userId = _supabaseClient.auth.currentUser?.id;
@@ -50,6 +51,7 @@ final class SupabaseMemeSendDatasourceImpl implements MemeSendDatasource {
         params: <String, dynamic>{
           'p_image_path': imagePath,
           'p_template_id': templateId,
+          'p_aspect_ratio': aspectRatio,
           'p_recipient_ids': recipientUserIds,
         },
       );

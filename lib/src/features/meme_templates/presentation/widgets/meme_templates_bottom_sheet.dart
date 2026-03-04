@@ -13,7 +13,7 @@ import 'package:memuno_app/src/app/feedback/app_feedback_provider.dart';
 import 'package:memuno_app/src/app/widgets/m/m_button.dart';
 import 'package:memuno_app/src/app/widgets/m/m_center.dart';
 import 'package:memuno_app/src/app/widgets/m/m_circular_progress_indicator.dart';
-import 'package:memuno_app/src/app/widgets/m/m_colors.dart';
+import 'package:memuno_app/src/app/widgets/m/m_image.dart';
 import 'package:memuno_app/src/app/widgets/m/m_modal_bottom_sheet.dart';
 import 'package:memuno_app/src/app/widgets/m/m_refresh_indicator.dart';
 import 'package:memuno_app/src/app/widgets/m/m_reload.dart';
@@ -325,38 +325,10 @@ final class _MemeTemplateGridItem extends StatelessWidget {
         );
       },
       isEnabled: isEnabled,
-      child: Container(
-        color: MColors.gray800,
-        child: AspectRatio(
-          aspectRatio: safeAspectRatio,
-          child: Image.network(
-            template.signedImageUrl,
-            fit: BoxFit.cover,
-            filterQuality: FilterQuality.medium,
-            loadingBuilder:
-                (
-                  BuildContext context,
-                  Widget child,
-                  ImageChunkEvent? loadingProgress,
-                ) {
-                  if (loadingProgress == null) {
-                    return child;
-                  }
-
-                  return const Center(child: MCircularProgressIndicator());
-                },
-            errorBuilder:
-                (BuildContext context, Object error, StackTrace? stackTrace) {
-                  return const Center(
-                    child: Icon(
-                      LucideIcons.image_off,
-                      color: MColors.gray400,
-                      size: 20.0,
-                    ),
-                  );
-                },
-          ),
-        ),
+      child: MImage.url(
+        template.signedImageUrl,
+        aspectRatio: safeAspectRatio,
+        borderRadius: BorderRadius.circular(8.0),
       ),
     );
   }
