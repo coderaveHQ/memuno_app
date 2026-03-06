@@ -9,7 +9,7 @@ DECLARE
     user_list jsonb[] := ARRAY[
         '{"id": "a3bb189e-7c1d-4b2e-9f6b-1234567890ab", "email": "fleeser@coderave.dev", "password": "password", "name": "Florian Leeser"}',
         '{"id": "a3bb189e-7c1d-4b2e-9f6b-1234567890ac", "email": "sroepges@coderave.dev", "password": "password", "name": "Stefan Röpges"}',
-        '{"id": "22977b2d-d84f-4a0d-8f8b-3e6d3a6a4d3c", "email": "ssiegmund@coderave.dev", "password": "password", "name": "Angelique Siegmund"}'
+        '{"id": "22977b2d-d84f-4a0d-8f8b-3e6d3a6a4d3c", "email": "asiegmund@coderave.dev", "password": "password", "name": "Angelique Siegmund"}'
     ];
 BEGIN
     FOREACH user_data IN ARRAY user_list

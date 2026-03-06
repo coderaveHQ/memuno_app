@@ -325,11 +325,7 @@ final class _MemeTemplateGridItem extends StatelessWidget {
         );
       },
       isEnabled: isEnabled,
-      child: MImage.url(
-        template.signedImageUrl,
-        aspectRatio: safeAspectRatio,
-        borderRadius: BorderRadius.circular(8.0),
-      ),
+      child: MImage.url(template.signedImageUrl, aspectRatio: safeAspectRatio),
     );
   }
 }

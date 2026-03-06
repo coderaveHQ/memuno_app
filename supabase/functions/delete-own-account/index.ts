@@ -1,137 +1,116 @@
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+import type { SupabaseClient } from "https://esm.sh/@supabase/supabase-js@2";
+import { requireBearerAuth } from "../_shared/auth.ts";
+import { getEnvByName, type EnvReader } from "../_shared/env.ts";
+import {
+  createEdgeHandler,
+  errorResponse,
+  jsonResponse,
+  requirePostMethod,
+} from "../_shared/http.ts";
+import { logEvent } from "../_shared/logger.ts";
+import {
+  createSupabaseAdminClient,
+  createSupabasePublishableClient,
+  resolveSupabaseAdminSecrets,
+  resolveSupabasePublishableSecrets,
+} from "../_shared/supabase.ts";
 
-// CORS headers returned for preflight and JSON responses.
-const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type",
+type HandlerDependencies = {
+  getEnv: EnvReader;
+  createSupabaseAdminClient: (
+    supabaseUrl: string,
+    secretKey: string,
+  ) => SupabaseClient;
+  createSupabasePublishableClient: (
+    supabaseUrl: string,
+    publishableKey: string,
+    authorizationHeader?: string,
+  ) => SupabaseClient;
 };
 
-// Standardized JSON error shape returned by this function.
-type ErrorPayload = {
-  code: string;
-  message: string;
+const defaultDependencies: HandlerDependencies = {
+  getEnv: getEnvByName,
+  createSupabaseAdminClient,
+  createSupabasePublishableClient,
 };
 
-// Helper for consistent JSON responses across all code paths.
-const response = (status: number, body: object) =>
-  new Response(JSON.stringify(body), {
-    status,
-    headers: { ...corsHeaders, "Content-Type": "application/json" },
+export function createDeleteOwnAccountHandler(
+  overrides: Partial<HandlerDependencies> = {},
+): (request: Request) => Promise<Response> {
+  const deps: HandlerDependencies = {
+    ...defaultDependencies,
+    ...overrides,
+  };
+
+  return createEdgeHandler("delete_own_account", async (request: Request) => {
+    const methodError = requirePostMethod(request);
+    if (methodError != null) {
+      return methodError;
+    }
+
+    const authResult = requireBearerAuth(request);
+    if ("error" in authResult) {
+      return authResult.error;
+    }
+
+    let adminSecrets: { supabaseUrl: string; secretKey: string };
+    let publishableSecrets: { supabaseUrl: string; publishableKey: string };
+    try {
+      adminSecrets = resolveSupabaseAdminSecrets(deps.getEnv);
+      publishableSecrets = resolveSupabasePublishableSecrets(deps.getEnv);
+    } catch (_error) {
+      return errorResponse(
+        500,
+        "missing_env",
+        "SUPABASE_URL, SB_PUBLISHABLE_KEY, and SB_SECRET_KEY are required.",
+      );
+    }
+
+    const authedClient = deps.createSupabasePublishableClient(
+      publishableSecrets.supabaseUrl,
+      publishableSecrets.publishableKey,
+      authResult.value.authorizationHeader,
+    );
+
+    const adminClient = deps.createSupabaseAdminClient(
+      adminSecrets.supabaseUrl,
+      adminSecrets.secretKey,
+    );
+
+    const { data: userData, error: userError } = await authedClient.auth.getUser(
+      authResult.value.token,
+    );
+
+    if (userError != null) {
+      return errorResponse(
+        401,
+        "unauthorized",
+        "Could not resolve authenticated user.",
+      );
+    }
+
+    const userId = userData.user?.id ?? null;
+    if (userId == null) {
+      return errorResponse(401, "unauthorized", "No authenticated user found.");
+    }
+
+    const { error: deleteError } = await adminClient.auth.admin.deleteUser(userId);
+    if (deleteError != null) {
+      logEvent("error", "delete_own_account.delete_failed", {
+        user_id: userId,
+        error: deleteError.message,
+      });
+      return errorResponse(500, "delete_failed", "Could not delete account.");
+    }
+
+    logEvent("success", "delete_own_account.deleted", {
+      user_id: userId,
+    });
+
+    return jsonResponse(200, { success: true });
   });
+}
 
-Deno.serve(async (request) => {
-  // CORS preflight is answered early without auth checks.
-  if (request.method === "OPTIONS") {
-    return new Response("ok", { headers: corsHeaders });
-  }
-
-  // This endpoint is intentionally POST-only to avoid accidental invocation.
-  if (request.method !== "POST") {
-    return response(
-      405,
-      <ErrorPayload> {
-        code: "method_not_allowed",
-        message: "Only POST requests are supported.",
-      },
-    );
-  }
-
-  const supabaseUrl = Deno.env.get("SUPABASE_URL");
-  const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY");
-  const supabaseServiceRoleKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-  const authorization = request.headers.get("Authorization");
-
-  // All required environment variables must be present in function config.
-  if (
-    supabaseUrl == null ||
-    supabaseAnonKey == null ||
-    supabaseServiceRoleKey == null
-  ) {
-    return response(
-      500,
-      <ErrorPayload> {
-        code: "missing_env",
-        message: "Function environment is not configured correctly.",
-      },
-    );
-  }
-
-  // Caller must provide a bearer token we can validate.
-  if (authorization == null || authorization.length === 0) {
-    return response(
-      401,
-      <ErrorPayload> {
-        code: "unauthorized",
-        message: "Missing authorization header.",
-      },
-    );
-  }
-
-  // Normalize "Bearer <token>" input and reject empty tokens.
-  const token = authorization.replace(/^Bearer\s+/i, "").trim();
-  if (token.length === 0) {
-    return response(
-      401,
-      <ErrorPayload> {
-        code: "unauthorized",
-        message: "Missing bearer token.",
-      },
-    );
-  }
-
-  // User-scoped client validates the supplied token against Supabase Auth.
-  const authedClient = createClient(supabaseUrl, supabaseAnonKey, {
-    auth: { autoRefreshToken: false, persistSession: false },
-    global: { headers: { Authorization: authorization } },
-  });
-
-  // Service-role client performs privileged delete operations.
-  const adminClient = createClient(supabaseUrl, supabaseServiceRoleKey, {
-    auth: { autoRefreshToken: false, persistSession: false },
-  });
-
-  // Resolve the authenticated user from the bearer token.
-  const { data: userData, error: userError } = await authedClient.auth.getUser(
-    token,
-  );
-
-  if (userError != null) {
-    return response(
-      401,
-      <ErrorPayload> {
-        code: "unauthorized",
-        message: "Could not resolve authenticated user.",
-      },
-    );
-  }
-
-  // No user means the token did not map to an active authenticated identity.
-  const userId = userData.user?.id ?? null;
-  if (userId == null) {
-    return response(
-      401,
-      <ErrorPayload> {
-        code: "unauthorized",
-        message: "No authenticated user found.",
-      },
-    );
-  }
-
-  // Permanently delete the auth user; profile rows cascade via FK/trigger rules.
-  const { error: deleteError } = await adminClient.auth.admin.deleteUser(
-    userId,
-  );
-  if (deleteError != null) {
-    return response(
-      500,
-      <ErrorPayload> {
-        code: "delete_failed",
-        message: "Could not delete account.",
-      },
-    );
-  }
-
-  // Client treats this as a successful account deletion.
-  return response(200, { success: true });
-});
+if (import.meta.main) {
+  Deno.serve(createDeleteOwnAccountHandler());
+}

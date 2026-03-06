@@ -128,7 +128,6 @@ class NotificationListItem extends StatelessWidget {
       signedImageUrl,
       height: _memePreviewHeight,
       aspectRatio: safeAspectRatio,
-      borderRadius: BorderRadius.circular(8.0),
     );
   }
 }
