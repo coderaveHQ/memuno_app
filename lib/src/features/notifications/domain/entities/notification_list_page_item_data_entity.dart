@@ -35,8 +35,8 @@ sealed class NotificationListPageItemDataEntity
     /// Meme id from `public.memes.id`.
     required String memeId,
 
-    /// Storage path from `public.memes.image_path`.
-    required String memeImagePath,
+    /// Storage path from `public.memes.push_image_path`.
+    required String? memePushImagePath,
 
     /// Persisted aspect ratio (`width / height`) from `public.memes`.
     required double memeAspectRatio,

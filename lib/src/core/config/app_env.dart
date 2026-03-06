@@ -42,15 +42,18 @@ enum AppEnvironment {
 /// - Use `--dart-define` or build-time injection in CI.
 final class AppSecrets {
   /// Creates a secrets bundle for the current environment.
-  const AppSecrets({required this.supabaseUrl, required this.supabaseAnonKey});
+  const AppSecrets({
+    required this.supabaseUrl,
+    required this.supabasePublishableKey,
+  });
 
   /// Supabase project URL (e.g. https://xxxx.supabase.co).
   final String supabaseUrl;
 
-  /// Supabase anon/public key for the project.
+  /// Supabase public key for the project.
   ///
   /// Note: This is safe to ship in the app, but must match your RLS policies.
-  final String supabaseAnonKey;
+  final String supabasePublishableKey;
 
   /// Validates that required secrets are present.
   ///
@@ -61,8 +64,8 @@ final class AppSecrets {
       if (supabaseUrl.isEmpty) {
         throw FlutterError('Missing dart-define: SUPABASE_URL');
       }
-      if (supabaseAnonKey.isEmpty) {
-        throw FlutterError('Missing dart-define: SUPABASE_ANON_KEY');
+      if (supabasePublishableKey.isEmpty) {
+        throw FlutterError('Missing dart-define: SUPABASE_PUBLISHABLE_KEY');
       }
       return true;
     }());
@@ -173,11 +176,13 @@ final class AppEnv {
   static final AppSecrets _secrets = (() {
     // `String.fromEnvironment` is compile-time injected by Flutter tooling.
     const String supabaseUrl = String.fromEnvironment('SUPABASE_URL');
-    const String supabaseAnonKey = String.fromEnvironment('SUPABASE_ANON_KEY');
+    const String supabasePublishableKey = String.fromEnvironment(
+      'SUPABASE_PUBLISHABLE_KEY',
+    );
 
     final AppSecrets result = AppSecrets(
       supabaseUrl: supabaseUrl,
-      supabaseAnonKey: supabaseAnonKey,
+      supabasePublishableKey: supabasePublishableKey,
     );
 
     // Fail fast for developers. In release, your CI/build should guarantee this.

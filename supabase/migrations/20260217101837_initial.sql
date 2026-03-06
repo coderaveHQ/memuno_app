@@ -139,6 +139,9 @@ create type public.push_token_deactivation_reason
 create type public.push_platform
   as enum ('ios', 'android');
 
+create type public.push_preview_status
+  as enum ('pending', 'ready', 'failed');
+
 -- -----------------------------------------------------------------------------
 -- Core tables
 -- -----------------------------------------------------------------------------
@@ -215,11 +218,14 @@ create table public.memes (
   "user_id" uuid not null,
   "template_id" uuid,
   "image_path" text not null,
+  "push_image_path" text,
+  "push_preview_status" public.push_preview_status not null default 'pending',
   "aspect_ratio" double precision not null,
   "created_at" timestamptz not null default now(),
   "updated_at" timestamptz not null default now(),
   constraint pk_memes primary key ("id"),
   constraint uq_memes__image_path unique ("image_path"),
+  constraint uq_memes__push_image_path unique ("push_image_path"),
   constraint fk_memes__user_id__auth_users__id
     foreign key ("user_id") references auth.users ("id")
     on update cascade on delete cascade,
@@ -228,6 +234,8 @@ create table public.memes (
     on update cascade on delete restrict,
   constraint ck_memes__image_path_not_empty
     check (length(trim("image_path")) > 0),
+  constraint ck_memes__push_image_path_not_empty
+    check ("push_image_path" is null or length(trim("push_image_path")) > 0),
   constraint ck_memes__positive_aspect_ratio
     check ("aspect_ratio" > 0)
 );
@@ -318,8 +326,14 @@ create table public.notifications (
           and jsonb_typeof("data"->'actor_id') = 'string'
           and jsonb_typeof("data"->'actor_name') = 'string'
           and jsonb_typeof("data"->'meme_id') = 'string'
-          and jsonb_typeof("data"->'image_path') = 'string'
-          and length(trim("data"->>'image_path')) > 0
+          and "data" ? 'push_image_path'
+          and (
+            ("data"->'push_image_path') = 'null'::jsonb
+            or (
+              jsonb_typeof("data"->'push_image_path') = 'string'
+              and length(trim("data"->>'push_image_path')) > 0
+            )
+          )
           and jsonb_typeof("data"->'aspect_ratio') = 'number'
           and ("data"->>'aspect_ratio')::double precision > 0
           and "data" ? 'route_tab'
@@ -493,6 +507,10 @@ create index notifications_recipient_unread_created_at_id_idx
 on public.notifications ("recipient_id", "created_at" desc, "id" desc)
 where "is_read" = false;
 
+create unique index notifications_meme_received_recipient_meme_id_uidx
+on public.notifications ("recipient_id", ("data"->>'meme_id'))
+where "type" = 'meme_received';
+
 -- -----------------------------------------------------------------------------
 -- Friendship synchronization trigger function
 -- -----------------------------------------------------------------------------
@@ -613,40 +631,46 @@ begin
 end;
 $$;
 
-create function public.create_notification_on_meme_recipient_insert()
+create function public.create_notifications_on_meme_preview_resolved()
 returns trigger
 language plpgsql
 set search_path = public
 as $$
 declare
-  v_actor_id uuid;
   v_actor_name text;
-  v_image_path text;
-  v_aspect_ratio double precision;
+  v_push_image_path text;
 begin
-  select
-    m."user_id",
-    u."name",
-    m."image_path",
-    m."aspect_ratio"
-  into
-    v_actor_id,
-    v_actor_name,
-    v_image_path,
-    v_aspect_ratio
-  from public.memes m
-  join public.users u on u."id" = m."user_id"
-  where m."id" = new."meme_id";
+  if old."push_preview_status" <> 'pending' then
+    return new;
+  end if;
 
-  if v_actor_id is null then
+  if new."push_preview_status" = old."push_preview_status" then
+    return new;
+  end if;
+
+  if new."push_preview_status" not in ('ready', 'failed') then
+    return new;
+  end if;
+
+  select u."name"
+  into v_actor_name
+  from public.users u
+  where u."id" = new."user_id";
+
+  if v_actor_name is null then
     raise exception 'meme creator profile not found for meme notification';
   end if;
 
-  if v_image_path is null or length(trim(v_image_path)) = 0 then
-    raise exception 'meme image_path not found for meme notification';
+  if new."push_preview_status" = 'ready' then
+    v_push_image_path := nullif(trim(new."push_image_path"), '');
+    if v_push_image_path is null then
+      raise exception 'meme push_image_path not found for ready meme notification';
+    end if;
+  else
+    v_push_image_path := null;
   end if;
 
-  if v_aspect_ratio is null or v_aspect_ratio <= 0 then
+  if new."aspect_ratio" is null or new."aspect_ratio" <= 0 then
     raise exception 'meme aspect_ratio not found for meme notification';
   end if;
 
@@ -655,24 +679,26 @@ begin
     "type",
     "data"
   )
-  values (
-    new."user_id",
+  select
+    mr."user_id",
     'meme_received',
     jsonb_build_object(
       'actor_id',
-      v_actor_id,
+      new."user_id",
       'actor_name',
       v_actor_name,
       'meme_id',
-      new."meme_id",
-      'image_path',
-      v_image_path,
+      new."id",
+      'push_image_path',
+      v_push_image_path,
       'aspect_ratio',
-      v_aspect_ratio,
+      new."aspect_ratio",
       'route_tab',
       to_jsonb(null::text)
     )
-  );
+  from public.meme_recipients mr
+  where mr."meme_id" = new."id"
+  on conflict do nothing;
 
   return new;
 end;
@@ -742,10 +768,10 @@ after update of "status" on public.friendship_requests
 for each row
 execute function public.create_notification_on_friendship_request_accepted();
 
-create trigger trg_meme_recipients__create_notification_on_insert
-after insert on public.meme_recipients
+create trigger trg_memes__create_notifications_on_preview_resolved
+after update of "push_preview_status" on public.memes
 for each row
-execute function public.create_notification_on_meme_recipient_insert();
+execute function public.create_notifications_on_meme_preview_resolved();
 
 -- -----------------------------------------------------------------------------
 -- Meme access helper functions
@@ -1632,6 +1658,159 @@ $$;
 -- -----------------------------------------------------------------------------
 
 create extension if not exists pg_net with schema extensions;
+create extension if not exists supabase_vault with schema vault;
+
+create function public.get_required_vault_secret(
+  p_secret_name text
+)
+returns text
+language plpgsql
+security definer
+set search_path = public, vault
+as $$
+declare
+  v_secret_value text;
+begin
+  select ds.decrypted_secret
+  into v_secret_value
+  from vault.decrypted_secrets ds
+  where ds.name = p_secret_name
+  order by ds.created_at desc
+  limit 1;
+
+  if v_secret_value is null then
+    raise exception 'Vault secret "%" is required.', p_secret_name;
+  end if;
+
+  return v_secret_value;
+end;
+$$;
+
+create function public.upsert_vault_secret(
+  p_secret_name text,
+  p_secret_value text,
+  p_secret_description text default null
+)
+returns uuid
+language plpgsql
+security definer
+set search_path = public, vault
+as $$
+declare
+  v_secret_id uuid;
+begin
+  select s.id
+  into v_secret_id
+  from vault.secrets s
+  where s.name = p_secret_name
+  limit 1;
+
+  if v_secret_id is null then
+    select vault.create_secret(
+      p_secret_value,
+      p_secret_name,
+      p_secret_description,
+      null
+    )
+    into v_secret_id;
+  else
+    perform vault.update_secret(
+      v_secret_id,
+      p_secret_value,
+      p_secret_name,
+      p_secret_description,
+      null
+    );
+  end if;
+
+  return v_secret_id;
+end;
+$$;
+
+create function public.invoke_internal_edge_function(
+  p_function_name text,
+  p_payload jsonb default '{}'::jsonb,
+  p_timeout_milliseconds integer default 10000
+)
+returns bigint
+language plpgsql
+security definer
+set search_path = public, extensions, vault
+as $$
+declare
+  v_base_url text;
+  v_apikey text;
+  v_request_id bigint;
+begin
+  v_base_url := public.get_required_vault_secret('edge_functions_base_url');
+  v_apikey := public.get_required_vault_secret('edge_functions_apikey');
+
+  select net.http_post(
+    url := rtrim(v_base_url, '/') || '/functions/v1/' || p_function_name,
+    headers := jsonb_build_object(
+      'Content-Type', 'application/json',
+      'apikey', v_apikey
+    ),
+    body := coalesce(p_payload, '{}'::jsonb),
+    timeout_milliseconds := p_timeout_milliseconds
+  )
+  into v_request_id;
+
+  return v_request_id;
+end;
+$$;
+
+create function public.enqueue_generate_meme_push_preview()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  perform public.invoke_internal_edge_function(
+    'generate-meme-push-preview',
+    jsonb_build_object(
+      'type', tg_op,
+      'table', tg_table_name,
+      'schema', tg_table_schema,
+      'record', to_jsonb(new)
+    )
+  );
+
+  return new;
+end;
+$$;
+
+create function public.enqueue_send_notification_push()
+returns trigger
+language plpgsql
+security definer
+set search_path = public
+as $$
+begin
+  perform public.invoke_internal_edge_function(
+    'send-notification-push',
+    jsonb_build_object(
+      'type', tg_op,
+      'table', tg_table_name,
+      'schema', tg_table_schema,
+      'record', to_jsonb(new)
+    )
+  );
+
+  return new;
+end;
+$$;
+
+create trigger dbwebhook_memes_insert_generate_push_preview
+after insert on public.memes
+for each row
+execute function public.enqueue_generate_meme_push_preview();
+
+create trigger dbwebhook_notifications_insert_send_push
+after insert on public.notifications
+for each row
+execute function public.enqueue_send_notification_push();
 
 -- -----------------------------------------------------------------------------
 -- Friendship mutation RPCs
@@ -2037,8 +2216,8 @@ comment on function public.create_notification_on_friendship_request_sent() is
 comment on function public.create_notification_on_friendship_request_accepted() is
 'Creates a friendship_request_accepted notification row when a friendship request becomes accepted.';
 
-comment on function public.create_notification_on_meme_recipient_insert() is
-'Creates a meme_received notification row when a meme recipient edge is inserted.';
+comment on function public.create_notifications_on_meme_preview_resolved() is
+'Creates meme_received notifications once a meme preview status resolves from pending to ready or failed.';
 
 comment on function public.is_meme_creator(uuid, uuid) is
 'Returns whether the given user id created the given meme id.';
@@ -2083,6 +2262,11 @@ revoke all on function public.can_view_meme(uuid, uuid) from public;
 revoke all on function public.push_token_upsert(text, text, public.push_platform, text, text) from public;
 revoke all on function public.push_token_deactivate_current_device(text, public.push_token_deactivation_reason) from public;
 revoke all on function public.push_tokens_cleanup_inactive(interval) from public;
+revoke all on function public.get_required_vault_secret(text) from public;
+revoke all on function public.upsert_vault_secret(text, text, text) from public;
+revoke all on function public.invoke_internal_edge_function(text, jsonb, integer) from public;
+revoke all on function public.enqueue_generate_meme_push_preview() from public;
+revoke all on function public.enqueue_send_notification_push() from public;
 grant execute on function public.update_current_user_name(text) to authenticated;
 grant execute on function public.get_users_profile(uuid) to authenticated;
 grant execute on function public.get_current_users_profile() to authenticated;
@@ -2110,27 +2294,29 @@ grant execute on function public.push_token_deactivate_current_device(text, publ
 
 create extension if not exists pg_cron with schema extensions;
 
-do $job$
-declare
-  v_job_id bigint;
-begin
-  select j.jobid
-  into v_job_id
-  from cron.job j
-  where j.jobname = 'push_tokens_cleanup_inactive_daily'
-  limit 1;
+select cron.schedule(
+  'push_tokens_cleanup_inactive_daily',
+  '15 3 * * *',
+  $cron$
+    select public.invoke_internal_edge_function('cron-push-tokens-cleanup');
+  $cron$
+);
 
-  if v_job_id is not null then
-    perform cron.unschedule(v_job_id);
-  end if;
+select cron.schedule(
+  'memes_storage_cleanup_orphans_daily',
+  '20 3 * * *',
+  $cron$
+    select public.invoke_internal_edge_function('cron-memes-storage-orphans-cleanup');
+  $cron$
+);
 
-  perform cron.schedule(
-    'push_tokens_cleanup_inactive_daily',
-    '15 3 * * *',
-    $sql$select public.push_tokens_cleanup_inactive(interval '90 days');$sql$
-  );
-end;
-$job$;
+select cron.schedule(
+  'memes_push_storage_cleanup_orphans_daily',
+  '35 3 * * *',
+  $cron$
+    select public.invoke_internal_edge_function('cron-memes-push-storage-orphans-cleanup');
+  $cron$
+);
 
 -- -----------------------------------------------------------------------------
 -- Storage buckets and policies
@@ -2158,6 +2344,10 @@ insert into storage.buckets ("id", "name", "public")
 values ('memes', 'memes', false)
 on conflict do nothing;
 
+insert into storage.buckets ("id", "name", "public")
+values ('memes_push', 'memes_push', false)
+on conflict do nothing;
+
 create policy "storage.objects:memes:insert:authenticated"
 on storage.objects
 for insert
@@ -2177,6 +2367,20 @@ using (
     select 1
     from public.memes m
     where m."image_path" = storage.objects."name"
+      and public.can_view_meme(m."id", (select auth.uid()))
+  )
+);
+
+create policy "storage.objects:memes_push:select:owner_or_recip:authenticated"
+on storage.objects
+for select
+to authenticated
+using (
+  "bucket_id" = 'memes_push'
+  and exists (
+    select 1
+    from public.memes m
+    where m."push_image_path" = storage.objects."name"
       and public.can_view_meme(m."id", (select auth.uid()))
   )
 );

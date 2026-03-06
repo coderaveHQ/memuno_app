@@ -8,6 +8,6 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 Future<void> bootstrapSupabase() async {
   await Supabase.initialize(
     url: AppEnv.secrets.supabaseUrl,
-    anonKey: AppEnv.secrets.supabaseAnonKey,
+    anonKey: AppEnv.secrets.supabasePublishableKey,
   );
 }

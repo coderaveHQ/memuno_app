@@ -417,10 +417,22 @@ deno_version = 2
 # secret_key = "env(SECRET_VALUE)"
 
 [functions.delete-own-account]
-verify_jwt = true
+verify_jwt = false
+
+[functions.generate-meme-push-preview]
+verify_jwt = false
 
 [functions.send-notification-push]
-verify_jwt = true
+verify_jwt = false
+
+[functions.cron-push-tokens-cleanup]
+verify_jwt = false
+
+[functions.cron-memes-storage-orphans-cleanup]
+verify_jwt = false
+
+[functions.cron-memes-push-storage-orphans-cleanup]
+verify_jwt = false
 
 [analytics]
 enabled = true

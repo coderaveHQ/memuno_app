@@ -91,107 +91,111 @@ final class MemeEditorCanvas extends StatelessWidget {
 
     return ColoredBox(
       color: MColors.gray900,
-      child: AspectRatio(
-        aspectRatio: selectedAspectRatio,
-        child: RepaintBoundary(
-          key: repaintBoundaryKey,
-          child: LayoutBuilder(
-            builder: (BuildContext context, BoxConstraints constraints) {
-              final Size canvasSize = constraints.biggest;
-              final Rect imageRect = _resolveImageRect(
-                canvasSize: canvasSize,
-                imageAspectRatio: selectedAspectRatio,
-              );
+      child: Center(
+        child: AspectRatio(
+          aspectRatio: selectedAspectRatio,
+          child: RepaintBoundary(
+            key: repaintBoundaryKey,
+            child: LayoutBuilder(
+              builder: (BuildContext context, BoxConstraints constraints) {
+                final Size canvasSize = constraints.biggest;
+                final Rect imageRect = _resolveImageRect(
+                  canvasSize: canvasSize,
+                  imageAspectRatio: selectedAspectRatio,
+                );
 
-              return Stack(
-                clipBehavior: Clip.hardEdge,
-                children: <Widget>[
-                  Positioned.fill(
-                    child: Center(
-                      child: currentTemplate != null
-                          ? MImage.url(
-                              currentTemplate.signedImageUrl,
-                              fit: BoxFit.contain,
-                              filterQuality: FilterQuality.high,
-                              backgroundColor: MColors.gray900,
-                              iconColor: MColors.gray300,
-                              borderRadius: BorderRadius.circular(8.0),
-                            )
-                          : MImage.bytes(
-                              currentCustomTemplateBytes,
-                              fit: BoxFit.contain,
-                              filterQuality: FilterQuality.high,
-                              backgroundColor: MColors.gray900,
-                              iconColor: MColors.gray300,
-                              borderRadius: BorderRadius.circular(8.0),
-                            ),
+                return Stack(
+                  clipBehavior: Clip.hardEdge,
+                  children: <Widget>[
+                    Positioned.fill(
+                      child: Center(
+                        child: currentTemplate != null
+                            ? MImage.url(
+                                currentTemplate.signedImageUrl,
+                                fit: BoxFit.contain,
+                                filterQuality: FilterQuality.high,
+                                backgroundColor: MColors.gray900,
+                                iconColor: MColors.gray300,
+                              )
+                            : MImage.bytes(
+                                currentCustomTemplateBytes,
+                                fit: BoxFit.contain,
+                                filterQuality: FilterQuality.high,
+                                backgroundColor: MColors.gray900,
+                                iconColor: MColors.gray300,
+                              ),
+                      ),
                     ),
-                  ),
-                  for (final MemeTextLayerEntity layer in layers)
-                    Builder(
-                      builder: (BuildContext context) {
-                        final double layerLeft =
-                            imageRect.left + layer.positionX * imageRect.width;
-                        final double layerTop =
-                            imageRect.top + layer.positionY * imageRect.height;
-                        final Size layerSize = _measureLayerSize(
-                          context,
-                          layer: layer,
-                        );
+                    for (final MemeTextLayerEntity layer in layers)
+                      Builder(
+                        builder: (BuildContext context) {
+                          final double layerLeft =
+                              imageRect.left +
+                              layer.positionX * imageRect.width;
+                          final double layerTop =
+                              imageRect.top +
+                              layer.positionY * imageRect.height;
+                          final Size layerSize = _measureLayerSize(
+                            context,
+                            layer: layer,
+                          );
 
-                        return Positioned(
-                          left: layerLeft,
-                          top: layerTop,
-                          child: GestureDetector(
-                            onTap: () => onSelectLayer(layer.id),
-                            onPanStart: (_) => onSelectLayer(layer.id),
-                            onPanUpdate: (DragUpdateDetails details) {
-                              if (imageRect.width <= 0.0 ||
-                                  imageRect.height <= 0.0) {
-                                return;
-                              }
+                          return Positioned(
+                            left: layerLeft,
+                            top: layerTop,
+                            child: GestureDetector(
+                              onTap: () => onSelectLayer(layer.id),
+                              onPanStart: (_) => onSelectLayer(layer.id),
+                              onPanUpdate: (DragUpdateDetails details) {
+                                if (imageRect.width <= 0.0 ||
+                                    imageRect.height <= 0.0) {
+                                  return;
+                                }
 
-                              final double minLeft = imageRect.left;
-                              final double maxLeft =
-                                  (imageRect.right - layerSize.width) < minLeft
-                                  ? minLeft
-                                  : imageRect.right - layerSize.width;
-                              final double minTop = imageRect.top;
-                              final double maxTop =
-                                  (imageRect.bottom - layerSize.height) < minTop
-                                  ? minTop
-                                  : imageRect.bottom - layerSize.height;
+                                final double minLeft = imageRect.left;
+                                final double maxLeft =
+                                    (imageRect.right - layerSize.width) <
+                                        minLeft
+                                    ? minLeft
+                                    : imageRect.right - layerSize.width;
+                                final double minTop = imageRect.top;
+                                final double maxTop =
+                                    (imageRect.bottom - layerSize.height) <
+                                        minTop
+                                    ? minTop
+                                    : imageRect.bottom - layerSize.height;
 
-                              final double nextLeft =
-                                  (layerLeft + details.delta.dx).clamp(
-                                    minLeft,
-                                    maxLeft,
-                                  );
-                              final double nextTop =
-                                  (layerTop + details.delta.dy).clamp(
-                                    minTop,
-                                    maxTop,
-                                  );
+                                final double nextLeft =
+                                    (layerLeft + details.delta.dx).clamp(
+                                      minLeft,
+                                      maxLeft,
+                                    );
+                                final double nextTop =
+                                    (layerTop + details.delta.dy).clamp(
+                                      minTop,
+                                      maxTop,
+                                    );
 
-                              onMoveLayer(
-                                layer.id,
-                                nextLeft - layerLeft,
-                                nextTop - layerTop,
-                                imageRect.size,
-                              );
-                            },
-                            child: _MemeEditorTextLayer(
-                              layer: layer,
-                              isSelected: selectedLayerId == layer.id,
-                              showSelectionOverlay: showSelectionOverlay,
+                                onMoveLayer(
+                                  layer.id,
+                                  nextLeft - layerLeft,
+                                  nextTop - layerTop,
+                                  imageRect.size,
+                                );
+                              },
+                              child: _MemeEditorTextLayer(
+                                layer: layer,
+                                isSelected: selectedLayerId == layer.id,
+                                showSelectionOverlay: showSelectionOverlay,
+                              ),
                             ),
-                          ),
-                        );
-                      },
-                    ),
-                ],
-              );
-            },
+                          );
+                        },
+                      ),
+                  ],
+                );
+              },
+            ),
           ),
         ),
       ),
