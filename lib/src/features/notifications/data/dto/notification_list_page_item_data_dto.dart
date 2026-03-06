@@ -102,7 +102,7 @@ final class MemeReceivedNotificationDataDto
     required this.actorId,
     required this.actorName,
     required this.memeId,
-    required this.memeImagePath,
+    required this.memePushImagePath,
     required this.memeAspectRatio,
     required this.signedMemeImageUrl,
     required this.routeTab,
@@ -118,7 +118,7 @@ final class MemeReceivedNotificationDataDto
       actorId: _readRequiredString(json, 'actor_id'),
       actorName: _readRequiredString(json, 'actor_name'),
       memeId: _readRequiredString(json, 'meme_id'),
-      memeImagePath: _readRequiredString(json, 'image_path'),
+      memePushImagePath: _readNullableString(json, 'push_image_path'),
       memeAspectRatio: _readRequiredPositiveDouble(json, 'aspect_ratio'),
       signedMemeImageUrl: null,
       routeTab: null,
@@ -128,7 +128,7 @@ final class MemeReceivedNotificationDataDto
   final String actorId;
   final String actorName;
   final String memeId;
-  final String memeImagePath;
+  final String? memePushImagePath;
   final double memeAspectRatio;
   final String? signedMemeImageUrl;
   final String? routeTab;
@@ -154,4 +154,21 @@ double _readRequiredPositiveDouble(Map<String, Object?> payload, String key) {
   }
 
   return parsed;
+}
+
+String? _readNullableString(Map<String, Object?> payload, String key) {
+  if (!payload.containsKey(key)) {
+    throw FormatException('Expected nullable string field `$key`.');
+  }
+
+  final Object? value = payload[key];
+  if (value == null) {
+    return null;
+  }
+
+  if (value is! String || value.trim().isEmpty) {
+    throw FormatException('Expected nullable string field `$key`.');
+  }
+
+  return value;
 }

@@ -13,7 +13,7 @@ final class SupabaseNotificationsDatasourceImpl
   }) : _supabaseClient = supabaseClient;
 
   final SupabaseClient _supabaseClient;
-  static const String _memesBucket = 'memes';
+  static const String _memesPushBucket = 'memes_push';
   static const int _signedUrlExpiresInSeconds = 60 * 60;
 
   @override
@@ -89,19 +89,20 @@ final class SupabaseNotificationsDatasourceImpl
   Future<NotificationListPageDto> _attachSignedMemeUrls(
     NotificationListPageDto page,
   ) async {
-    final List<String> memeImagePaths = page.items
+    final List<String> memePushImagePaths = page.items
         .map((NotificationListPageItemDto item) => item.data)
         .whereType<MemeReceivedNotificationDataDto>()
-        .map((MemeReceivedNotificationDataDto item) => item.memeImagePath)
+        .map((MemeReceivedNotificationDataDto item) => item.memePushImagePath)
+        .whereType<String>()
         .toSet()
         .toList(growable: false);
 
-    if (memeImagePaths.isEmpty) {
+    if (memePushImagePaths.isEmpty) {
       return page;
     }
 
     final Map<String, String> signedUrlByPath = await _createSignedUrlMap(
-      memeImagePaths,
+      memePushImagePaths,
     );
     if (signedUrlByPath.isEmpty) {
       return page;
@@ -121,9 +122,11 @@ final class SupabaseNotificationsDatasourceImpl
               actorId: data.actorId,
               actorName: data.actorName,
               memeId: data.memeId,
-              memeImagePath: data.memeImagePath,
+              memePushImagePath: data.memePushImagePath,
               memeAspectRatio: data.memeAspectRatio,
-              signedMemeImageUrl: signedUrlByPath[data.memeImagePath],
+              signedMemeImageUrl: data.memePushImagePath == null
+                  ? null
+                  : signedUrlByPath[data.memePushImagePath],
               routeTab: data.routeTab,
             ),
             isRead: item.isRead,
@@ -144,7 +147,7 @@ final class SupabaseNotificationsDatasourceImpl
   Future<Map<String, String>> _createSignedUrlMap(List<String> paths) async {
     try {
       final List<dynamic> signedUrls = await _supabaseClient.storage
-          .from(_memesBucket)
+          .from(_memesPushBucket)
           .createSignedUrls(paths, _signedUrlExpiresInSeconds);
 
       final Map<String, String> signedUrlByPath = <String, String>{};

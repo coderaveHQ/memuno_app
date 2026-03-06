@@ -21,7 +21,10 @@ class MPinPut extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double dimension = 56.0;
     final PinTheme defaultPinTheme = PinTheme(
+      width: dimension,
+      height: dimension,
       textStyle: MTypography.baseTextStyle.copyWith(
         fontWeight: FontWeight.w400,
         color: MColors.gray100,

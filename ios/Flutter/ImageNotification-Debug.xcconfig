@@ -1,0 +1,5 @@
+#include? "Pods/Target Support Files/Pods-ImageNotification/Pods-ImageNotification.debug.xcconfig"
+#include? "Pods/Target Support Files/Pods-ImageNotification/Pods-ImageNotification.debug-development.xcconfig"
+#include? "Pods/Target Support Files/Pods-ImageNotification/Pods-ImageNotification.debug-staging.xcconfig"
+#include? "Pods/Target Support Files/Pods-ImageNotification/Pods-ImageNotification.debug-production.xcconfig"
+#include "Generated.xcconfig"
