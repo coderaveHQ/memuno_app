@@ -61,6 +61,16 @@ final class NotificationMapper {
           signedMemeImageUrl: data.signedMemeImageUrl,
           routeTab: data.routeTab,
         ),
+      MemeLaughedNotificationDataDto data =>
+        NotificationListPageItemDataEntity.memeLaughed(
+          actorId: data.actorId,
+          actorName: data.actorName,
+          memeId: data.memeId,
+          memePushImagePath: data.memePushImagePath,
+          memeAspectRatio: data.memeAspectRatio,
+          signedMemeImageUrl: data.signedMemeImageUrl,
+          routeTab: data.routeTab,
+        ),
     };
   }
 }

@@ -7,8 +7,13 @@ import 'package:memuno_app/src/app/extensions/string_x.dart';
 import 'package:memuno_app/src/app/providers/current_user_profile_provider.dart';
 import 'package:memuno_app/src/app/router/app_router.dart';
 import 'package:memuno_app/src/app/widgets/m/m_app_bar.dart';
-import 'package:memuno_app/src/app/widgets/m/m_refresh_indicator.dart';
+import 'package:memuno_app/src/app/widgets/m/m_async_list.dart';
 import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
+import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
+import 'package:memuno_app/src/features/feed/application/providers/feed_list_provider.dart';
+import 'package:memuno_app/src/features/feed/domain/entities/feed_cursor_entity.dart';
+import 'package:memuno_app/src/features/feed/domain/entities/feed_list_page_item_entity.dart';
+import 'package:memuno_app/src/features/feed/presentation/widgets/feed_list_item.dart';
 import 'package:memuno_app/src/features/profile/domain/entities/user_profile_entity.dart';
 
 /// Feed page shown after successful authentication.
@@ -28,11 +33,12 @@ class FeedPage extends ConsumerWidget {
     await const SettingsRoute().push<void>(context);
   }
 
-  Future<void> _onRefresh(WidgetRef ref) async {
+  // TODO: When feed refreshes we also need to refresh profile provider
+  /*Future<void> _onRefresh(WidgetRef ref) async {
     final AsyncValue<UserProfileEntity> _ = ref.refresh(
       currentUserProfileProvider,
     );
-  }
+  }*/
 
   @override
   /// Builds the page UI.
@@ -75,23 +81,18 @@ class FeedPage extends ConsumerWidget {
           ),
         ],
       ),
-      body: MRefreshIndicator(
-        onRefresh: () => _onRefresh(ref),
-        child: ListView(
-          physics: const AlwaysScrollableScrollPhysics(),
-          children: <Widget>[
-            SizedBox(
-              height: context.screenHeight * 0.55,
-              child: Center(
-                child: Text(
-                  l10n.homePullToRefreshHint,
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  textAlign: TextAlign.center,
-                ),
-              ),
-            ),
-          ],
+      body: MAsyncList<FeedListPageItemEntity, FeedCursorEntity>(
+        provider: feedListProvider,
+        emptyText: l10n.feedListEmpty,
+        loadMoreExtent: 220.0,
+        listPadding: EdgeInsets.only(
+          top: MSpacing.md,
+          bottom:
+              context.bottomPadding + kBottomNavigationBarHeight + MSpacing.md,
         ),
+        itemBuilder: (BuildContext context, FeedListPageItemEntity feedItem) {
+          return FeedListItem(feedItem: feedItem);
+        },
       ),
     );
   }

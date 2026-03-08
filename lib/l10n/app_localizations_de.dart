@@ -170,6 +170,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notificationsListEmpty => 'Noch keine Benachrichtigungen.';
 
   @override
+  String get feedListEmpty => 'Noch keine Memes in deinem Feed.';
+
+  @override
   String get notificationsItemFriendshipRequestSentTitle =>
       'Neue Freundschaftsanfrage';
 
@@ -193,6 +196,15 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String notificationsItemMemeReceived(Object sender_name) {
     return '$sender_name hat dir ein Meme gesendet.';
+  }
+
+  @override
+  String get notificationsItemMemeLaughedTitle =>
+      'Dein Meme brachte jemanden zum Lachen';
+
+  @override
+  String notificationsItemMemeLaughed(Object sender_name) {
+    return '$sender_name hat ueber dein Meme gelacht.';
   }
 
   @override
@@ -581,6 +593,9 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
   String get notificationsListEmpty => 'Noch keine Benachrichtigungen.';
 
   @override
+  String get feedListEmpty => 'Noch keine Memes in deinem Feed.';
+
+  @override
   String get notificationsItemFriendshipRequestSentTitle =>
       'Neue Freundschaftsanfrage';
 
@@ -604,6 +619,15 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
   @override
   String notificationsItemMemeReceived(Object sender_name) {
     return '$sender_name hat dir ein Meme gesendet.';
+  }
+
+  @override
+  String get notificationsItemMemeLaughedTitle =>
+      'Dein Meme brachte jemanden zum Lachen';
+
+  @override
+  String notificationsItemMemeLaughed(Object sender_name) {
+    return '$sender_name hat ueber dein Meme gelacht.';
   }
 
   @override

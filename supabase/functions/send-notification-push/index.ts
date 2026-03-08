@@ -19,7 +19,8 @@ import { createSupabaseAdminClient } from "../_shared/supabase.ts";
 type NotificationType =
   | "friendship_request_sent"
   | "friendship_request_accepted"
-  | "meme_received";
+  | "meme_received"
+  | "meme_laughed";
 
 type NotificationRecord = {
   id: string;
@@ -105,7 +106,8 @@ function parseNotificationType(raw: string): NotificationType {
   if (
     raw !== "friendship_request_sent" &&
     raw !== "friendship_request_accepted" &&
-    raw !== "meme_received"
+    raw !== "meme_received" &&
+    raw !== "meme_laughed"
   ) {
     throw new Error(`Unsupported notification type: ${raw}`);
   }
@@ -806,7 +808,10 @@ export function createSendNotificationPushHandler(
       );
 
       let pushImageUrl: string | null = null;
-      if (notification.type === "meme_received") {
+      if (
+        notification.type === "meme_received" ||
+        notification.type === "meme_laughed"
+      ) {
         const pushImagePath = asString(notification.data["push_image_path"]);
 
         if (pushImagePath == null) {

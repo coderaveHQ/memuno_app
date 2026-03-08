@@ -63,6 +63,7 @@
   "notificationsSearchLabel": "Benachrichtigungen suchen",
   "notificationsSearchHint": "Nach Name oder Freundschaftscode suchen",
   "notificationsListEmpty": "Noch keine Benachrichtigungen.",
+  "feedListEmpty": "Noch keine Memes in deinem Feed.",
   "notificationsItemFriendshipRequestSentTitle": "Neue Freundschaftsanfrage",
   "notificationsItemFriendshipRequestSent": "{sender_name} hat dir eine Freundschaftsanfrage gesendet.",
   "@notificationsItemFriendshipRequestSent": {
@@ -80,6 +81,13 @@
   "notificationsItemMemeReceivedTitle": "Neues Meme erhalten",
   "notificationsItemMemeReceived": "{sender_name} hat dir ein Meme gesendet.",
   "@notificationsItemMemeReceived": {
+    "placeholders": {
+      "sender_name": {}
+    }
+  },
+  "notificationsItemMemeLaughedTitle": "Dein Meme brachte jemanden zum Lachen",
+  "notificationsItemMemeLaughed": "{sender_name} hat ueber dein Meme gelacht.",
+  "@notificationsItemMemeLaughed": {
     "placeholders": {
       "sender_name": {}
     }
