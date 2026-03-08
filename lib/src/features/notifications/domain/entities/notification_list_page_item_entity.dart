@@ -56,16 +56,22 @@ extension NotificationListPageItemEntityX on NotificationListPageItemEntity {
         actorName,
       MemeReceivedNotificationListPageItemDataEntity(:final actorName) =>
         actorName,
+      MemeLaughedNotificationListPageItemDataEntity(:final actorName) =>
+        actorName,
     };
   }
 
   /// Notification category.
   NotificationType get notificationType => type;
 
-  /// Signed meme preview URL for `meme_received` notifications.
+  /// Signed meme preview URL for meme media notifications.
   String? get notificationMemeSignedImageUrl {
     return switch (data) {
       MemeReceivedNotificationListPageItemDataEntity(
+        :final signedMemeImageUrl,
+      ) =>
+        signedMemeImageUrl,
+      MemeLaughedNotificationListPageItemDataEntity(
         :final signedMemeImageUrl,
       ) =>
         signedMemeImageUrl,
@@ -73,10 +79,12 @@ extension NotificationListPageItemEntityX on NotificationListPageItemEntity {
     };
   }
 
-  /// Persisted meme aspect ratio for `meme_received` notifications.
+  /// Persisted meme aspect ratio for meme media notifications.
   double? get notificationMemeAspectRatio {
     return switch (data) {
       MemeReceivedNotificationListPageItemDataEntity(:final memeAspectRatio) =>
+        memeAspectRatio,
+      MemeLaughedNotificationListPageItemDataEntity(:final memeAspectRatio) =>
         memeAspectRatio,
       _ => null,
     };

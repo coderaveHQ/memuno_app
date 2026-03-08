@@ -7,7 +7,10 @@ enum NotificationType {
   friendshipRequestAccepted('friendship_request_accepted'),
 
   /// A friend sent a meme to the recipient.
-  memeReceived('meme_received');
+  memeReceived('meme_received'),
+
+  /// A user laughed at one of the recipient's memes.
+  memeLaughed('meme_laughed');
 
   const NotificationType(this.databaseValue);
 
@@ -21,6 +24,7 @@ enum NotificationType {
       'friendship_request_accepted' =>
         NotificationType.friendshipRequestAccepted,
       'meme_received' => NotificationType.memeReceived,
+      'meme_laughed' => NotificationType.memeLaughed,
       _ => throw FormatException('Unknown notification type value: $rawValue'),
     };
   }

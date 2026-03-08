@@ -72,6 +72,7 @@ class NotificationsPage extends HookConsumerWidget {
       ):
         await FriendshipsRoute(tab: routeTab).push<void>(context);
       case MemeReceivedNotificationListPageItemDataEntity():
+      case MemeLaughedNotificationListPageItemDataEntity():
         break;
     }
   }

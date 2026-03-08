@@ -17,6 +17,9 @@ sealed class NotificationListPageItemDataDto {
       NotificationType.memeReceived => MemeReceivedNotificationDataDto.fromJson(
         json,
       ),
+      NotificationType.memeLaughed => MemeLaughedNotificationDataDto.fromJson(
+        json,
+      ),
     };
   }
 }
@@ -115,6 +118,45 @@ final class MemeReceivedNotificationDataDto
     }
 
     return MemeReceivedNotificationDataDto(
+      actorId: _readRequiredString(json, 'actor_id'),
+      actorName: _readRequiredString(json, 'actor_name'),
+      memeId: _readRequiredString(json, 'meme_id'),
+      memePushImagePath: _readNullableString(json, 'push_image_path'),
+      memeAspectRatio: _readRequiredPositiveDouble(json, 'aspect_ratio'),
+      signedMemeImageUrl: null,
+      routeTab: null,
+    );
+  }
+
+  final String actorId;
+  final String actorName;
+  final String memeId;
+  final String? memePushImagePath;
+  final double memeAspectRatio;
+  final String? signedMemeImageUrl;
+  final String? routeTab;
+}
+
+/// DTO for `meme_laughed` notification data.
+final class MemeLaughedNotificationDataDto
+    extends NotificationListPageItemDataDto {
+  const MemeLaughedNotificationDataDto({
+    required this.actorId,
+    required this.actorName,
+    required this.memeId,
+    required this.memePushImagePath,
+    required this.memeAspectRatio,
+    required this.signedMemeImageUrl,
+    required this.routeTab,
+  });
+
+  factory MemeLaughedNotificationDataDto.fromJson(Map<String, Object?> json) {
+    final Object? routeTab = json['route_tab'];
+    if (routeTab != null) {
+      throw const FormatException('Expected route_tab=null for meme_laughed.');
+    }
+
+    return MemeLaughedNotificationDataDto(
       actorId: _readRequiredString(json, 'actor_id'),
       actorName: _readRequiredString(json, 'actor_name'),
       memeId: _readRequiredString(json, 'meme_id'),

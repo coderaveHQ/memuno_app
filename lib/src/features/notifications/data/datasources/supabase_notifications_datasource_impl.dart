@@ -85,14 +85,21 @@ final class SupabaseNotificationsDatasourceImpl
     return Map<String, Object?>.from(payload);
   }
 
-  /// Attaches signed meme image URLs for `meme_received` notifications.
+  /// Attaches signed meme image URLs for meme media notifications.
   Future<NotificationListPageDto> _attachSignedMemeUrls(
     NotificationListPageDto page,
   ) async {
     final List<String> memePushImagePaths = page.items
         .map((NotificationListPageItemDto item) => item.data)
-        .whereType<MemeReceivedNotificationDataDto>()
-        .map((MemeReceivedNotificationDataDto item) => item.memePushImagePath)
+        .map((NotificationListPageItemDataDto data) {
+          return switch (data) {
+            MemeReceivedNotificationDataDto(:final memePushImagePath) =>
+              memePushImagePath,
+            MemeLaughedNotificationDataDto(:final memePushImagePath) =>
+              memePushImagePath,
+            _ => null,
+          };
+        })
         .whereType<String>()
         .toSet()
         .toList(growable: false);
@@ -111,28 +118,49 @@ final class SupabaseNotificationsDatasourceImpl
     final List<NotificationListPageItemDto> signedItems = page.items
         .map((NotificationListPageItemDto item) {
           final NotificationListPageItemDataDto data = item.data;
-          if (data is! MemeReceivedNotificationDataDto) {
-            return item;
+          if (data is MemeReceivedNotificationDataDto) {
+            return NotificationListPageItemDto(
+              id: item.id,
+              type: item.type,
+              data: MemeReceivedNotificationDataDto(
+                actorId: data.actorId,
+                actorName: data.actorName,
+                memeId: data.memeId,
+                memePushImagePath: data.memePushImagePath,
+                memeAspectRatio: data.memeAspectRatio,
+                signedMemeImageUrl: data.memePushImagePath == null
+                    ? null
+                    : signedUrlByPath[data.memePushImagePath],
+                routeTab: data.routeTab,
+              ),
+              isRead: item.isRead,
+              createdAt: item.createdAt,
+              updatedAt: item.updatedAt,
+            );
           }
 
-          return NotificationListPageItemDto(
-            id: item.id,
-            type: item.type,
-            data: MemeReceivedNotificationDataDto(
-              actorId: data.actorId,
-              actorName: data.actorName,
-              memeId: data.memeId,
-              memePushImagePath: data.memePushImagePath,
-              memeAspectRatio: data.memeAspectRatio,
-              signedMemeImageUrl: data.memePushImagePath == null
-                  ? null
-                  : signedUrlByPath[data.memePushImagePath],
-              routeTab: data.routeTab,
-            ),
-            isRead: item.isRead,
-            createdAt: item.createdAt,
-            updatedAt: item.updatedAt,
-          );
+          if (data is MemeLaughedNotificationDataDto) {
+            return NotificationListPageItemDto(
+              id: item.id,
+              type: item.type,
+              data: MemeLaughedNotificationDataDto(
+                actorId: data.actorId,
+                actorName: data.actorName,
+                memeId: data.memeId,
+                memePushImagePath: data.memePushImagePath,
+                memeAspectRatio: data.memeAspectRatio,
+                signedMemeImageUrl: data.memePushImagePath == null
+                    ? null
+                    : signedUrlByPath[data.memePushImagePath],
+                routeTab: data.routeTab,
+              ),
+              isRead: item.isRead,
+              createdAt: item.createdAt,
+              updatedAt: item.updatedAt,
+            );
+          }
+
+          return item;
         })
         .toList(growable: false);
 
