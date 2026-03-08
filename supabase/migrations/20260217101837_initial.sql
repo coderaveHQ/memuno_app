@@ -108,7 +108,8 @@ create type public.notification_type
   as enum (
     'friendship_request_sent',
     'friendship_request_accepted',
-    'meme_received'
+    'meme_received',
+    'meme_laughed'
   );
 
 create type public.notification_list_page_item as (
@@ -122,6 +123,35 @@ create type public.notification_list_page_item as (
 
 create type public.notification_list_page as (
   "items" public.notification_list_page_item[],
+  "next_cursor_created_at" timestamptz,
+  "next_cursor_id" uuid
+);
+
+create type public.feed_list_page_item_meme as (
+  "id" uuid,
+  "created_at" timestamptz,
+  "updated_at" timestamptz,
+  "image_path" text,
+  "aspect_ratio" double precision,
+  "laugh_count" integer,
+  "is_laughed" boolean
+);
+
+create type public.feed_list_page_item_user as (
+  "id" uuid,
+  "name" text,
+  "friendship_code" text,
+  "created_at" timestamptz,
+  "updated_at" timestamptz
+);
+
+create type public.feed_list_page_item as (
+  "meme" public.feed_list_page_item_meme,
+  "user" public.feed_list_page_item_user
+);
+
+create type public.feed_list_page as (
+  "items" public.feed_list_page_item[],
   "next_cursor_created_at" timestamptz,
   "next_cursor_id" uuid
 );
@@ -254,6 +284,20 @@ create table public.meme_recipients (
     on update cascade on delete cascade
 );
 
+create table public.meme_laughs (
+  "meme_id" uuid not null,
+  "user_id" uuid not null,
+  "created_at" timestamptz not null default now(),
+  "updated_at" timestamptz not null default now(),
+  constraint pk_meme_laughs primary key ("meme_id", "user_id"),
+  constraint fk_meme_laughs__meme_id__memes__id
+    foreign key ("meme_id") references public.memes ("id")
+    on update cascade on delete cascade,
+  constraint fk_meme_laughs__user_id__auth_users__id
+    foreign key ("user_id") references auth.users ("id")
+    on update cascade on delete cascade
+);
+
 create table public.push_device_tokens (
   "id" uuid not null default gen_random_uuid(),
   "user_id" uuid not null,
@@ -338,6 +382,23 @@ create table public.notifications (
           and ("data"->>'aspect_ratio')::double precision > 0
           and "data" ? 'route_tab'
           and ("data"->'route_tab') = 'null'::jsonb
+        when 'meme_laughed' then
+          jsonb_typeof("data") = 'object'
+          and jsonb_typeof("data"->'actor_id') = 'string'
+          and jsonb_typeof("data"->'actor_name') = 'string'
+          and jsonb_typeof("data"->'meme_id') = 'string'
+          and "data" ? 'push_image_path'
+          and (
+            ("data"->'push_image_path') = 'null'::jsonb
+            or (
+              jsonb_typeof("data"->'push_image_path') = 'string'
+              and length(trim("data"->>'push_image_path')) > 0
+            )
+          )
+          and jsonb_typeof("data"->'aspect_ratio') = 'number'
+          and ("data"->>'aspect_ratio')::double precision > 0
+          and "data" ? 'route_tab'
+          and ("data"->'route_tab') = 'null'::jsonb
         else false
       end
     )
@@ -393,6 +454,13 @@ values
     '{sender_name} sent you a meme.'
   ),
   (
+    'meme_laughed',
+    'en',
+    null,
+    'Your meme got a laugh',
+    '{sender_name} laughed at your meme.'
+  ),
+  (
     'friendship_request_sent',
     'en',
     'US',
@@ -414,6 +482,13 @@ values
     '{sender_name} sent you a meme.'
   ),
   (
+    'meme_laughed',
+    'en',
+    'US',
+    'Your meme got a laugh',
+    '{sender_name} laughed at your meme.'
+  ),
+  (
     'friendship_request_sent',
     'de',
     null,
@@ -435,6 +510,13 @@ values
     '{sender_name} hat dir ein Meme gesendet.'
   ),
   (
+    'meme_laughed',
+    'de',
+    null,
+    'Dein Meme brachte jemanden zum Lachen',
+    '{sender_name} hat ueber dein Meme gelacht.'
+  ),
+  (
     'friendship_request_sent',
     'de',
     'DE',
@@ -454,6 +536,13 @@ values
     'DE',
     'Neues Meme erhalten',
     '{sender_name} hat dir ein Meme gesendet.'
+  ),
+  (
+    'meme_laughed',
+    'de',
+    'DE',
+    'Dein Meme brachte jemanden zum Lachen',
+    '{sender_name} hat ueber dein Meme gelacht.'
   );
 
 -- -----------------------------------------------------------------------------
@@ -488,6 +577,9 @@ on public.memes ("created_at" desc, "id" desc);
 
 create index meme_recipients_user_id_meme_id_idx
 on public.meme_recipients ("user_id", "meme_id");
+
+create index meme_laughs_user_id_meme_id_idx
+on public.meme_laughs ("user_id", "meme_id");
 
 create unique index push_device_tokens_one_active_per_installation_idx
 on public.push_device_tokens ("installation_id")
@@ -704,6 +796,77 @@ begin
 end;
 $$;
 
+create function public.create_notification_on_meme_laughed()
+returns trigger
+language plpgsql
+set search_path = public
+as $$
+declare
+  v_actor_name text;
+  v_meme_owner_id uuid;
+  v_push_image_path text;
+  v_meme_aspect_ratio double precision;
+begin
+  select u."name"
+  into v_actor_name
+  from public.users u
+  where u."id" = new."user_id";
+
+  if v_actor_name is null then
+    raise exception 'meme laugh actor profile not found for meme_laughed notification';
+  end if;
+
+  select
+    m."user_id",
+    nullif(trim(m."push_image_path"), ''),
+    m."aspect_ratio"
+  into
+    v_meme_owner_id,
+    v_push_image_path,
+    v_meme_aspect_ratio
+  from public.memes m
+  where m."id" = new."meme_id";
+
+  if v_meme_owner_id is null then
+    raise exception 'meme not found for meme_laughed notification';
+  end if;
+
+  if v_meme_aspect_ratio is null or v_meme_aspect_ratio <= 0 then
+    raise exception 'meme aspect_ratio not found for meme_laughed notification';
+  end if;
+
+  if v_meme_owner_id = new."user_id" then
+    return new;
+  end if;
+
+  insert into public.notifications (
+    "recipient_id",
+    "type",
+    "data"
+  )
+  values (
+    v_meme_owner_id,
+    'meme_laughed',
+    jsonb_build_object(
+      'actor_id',
+      new."user_id",
+      'actor_name',
+      v_actor_name,
+      'meme_id',
+      new."meme_id",
+      'push_image_path',
+      v_push_image_path,
+      'aspect_ratio',
+      v_meme_aspect_ratio,
+      'route_tab',
+      to_jsonb(null::text)
+    )
+  );
+
+  return new;
+end;
+$$;
+
 -- -----------------------------------------------------------------------------
 -- Timestamp maintenance triggers
 -- -----------------------------------------------------------------------------
@@ -735,6 +898,11 @@ execute function public.touch_updated_at();
 
 create trigger trg_meme_recipients__touch_updated_at
 before update on public.meme_recipients
+for each row
+execute function public.touch_updated_at();
+
+create trigger trg_meme_laughs__touch_updated_at
+before update on public.meme_laughs
 for each row
 execute function public.touch_updated_at();
 
@@ -772,6 +940,11 @@ create trigger trg_memes__create_notifications_on_preview_resolved
 after update of "push_preview_status" on public.memes
 for each row
 execute function public.create_notifications_on_meme_preview_resolved();
+
+create trigger trg_meme_laughs__create_notification_on_insert
+after insert on public.meme_laughs
+for each row
+execute function public.create_notification_on_meme_laughed();
 
 -- -----------------------------------------------------------------------------
 -- Meme access helper functions
@@ -837,6 +1010,7 @@ alter table public.friendship_requests enable row level security;
 alter table public.meme_templates enable row level security;
 alter table public.memes enable row level security;
 alter table public.meme_recipients enable row level security;
+alter table public.meme_laughs enable row level security;
 alter table public.push_device_tokens enable row level security;
 alter table public.notifications enable row level security;
 alter table public.notification_push_templates enable row level security;
@@ -939,6 +1113,31 @@ with check (
       and m."user_id" = (select auth.uid())
   )
 );
+
+create policy "meme_laughs:select:viewable_meme:authenticated"
+on public.meme_laughs
+for select
+to authenticated
+using (public.can_view_meme(public.meme_laughs."meme_id", (select auth.uid())));
+
+create policy "meme_laughs:insert:self_viewable_meme:authenticated"
+on public.meme_laughs
+for insert
+to authenticated
+with check (
+  "user_id" = (select auth.uid())
+  and public.can_view_meme(public.meme_laughs."meme_id", (select auth.uid()))
+  and not public.is_meme_creator(
+    public.meme_laughs."meme_id",
+    (select auth.uid())
+  )
+);
+
+create policy "meme_laughs:delete:self:authenticated"
+on public.meme_laughs
+for delete
+to authenticated
+using ("user_id" = (select auth.uid()));
 
 create policy "push_device_tokens:select:self:authenticated"
 on public.push_device_tokens
@@ -1597,6 +1796,117 @@ as $$
 $$;
 
 -- -----------------------------------------------------------------------------
+-- Feed list RPC
+-- -----------------------------------------------------------------------------
+
+create function public.feed_list(
+  p_limit integer default 30,
+  p_cursor_created_at timestamptz default null,
+  p_cursor_id uuid default null
+)
+returns public.feed_list_page
+language sql
+security definer
+set search_path = public
+as $$
+  with params as (
+    select (select auth.uid()) as "user_id"
+  ),
+  base as (
+    select
+      m."id" as "meme_id",
+      m."created_at" as "meme_created_at",
+      m."updated_at" as "meme_updated_at",
+      m."image_path",
+      m."aspect_ratio",
+      coalesce(lc."laugh_count", 0)::integer as "laugh_count",
+      case
+        when m."user_id" = (select "user_id" from params) then false
+        else exists (
+          select 1
+          from public.meme_laughs ml
+          where ml."meme_id" = m."id"
+            and ml."user_id" = (select "user_id" from params)
+        )
+      end as "is_laughed",
+      u."id" as "creator_user_id",
+      u."name" as "creator_user_name",
+      u."friendship_code" as "creator_user_friendship_code",
+      u."created_at" as "creator_user_created_at",
+      u."updated_at" as "creator_user_updated_at"
+    from public.memes m
+    join public.users u on u."id" = m."user_id"
+    left join (
+      select
+        ml."meme_id",
+        count(*) as "laugh_count"
+      from public.meme_laughs ml
+      group by ml."meme_id"
+    ) lc on lc."meme_id" = m."id"
+    where (
+      m."user_id" = (select "user_id" from params)
+      or exists (
+        select 1
+        from public.meme_recipients mr
+        where mr."meme_id" = m."id"
+          and mr."user_id" = (select "user_id" from params)
+      )
+    )
+  ),
+  ordered as (
+    select
+      row(
+        row(
+          "meme_id",
+          "meme_created_at",
+          "meme_updated_at",
+          "image_path",
+          "aspect_ratio",
+          "laugh_count",
+          "is_laughed"
+        )::public.feed_list_page_item_meme,
+        row(
+          "creator_user_id",
+          "creator_user_name",
+          "creator_user_friendship_code",
+          "creator_user_created_at",
+          "creator_user_updated_at"
+        )::public.feed_list_page_item_user
+      )::public.feed_list_page_item as "item",
+      "meme_created_at" as "sort_created_at",
+      "meme_id" as "sort_id"
+    from base
+  ),
+  paged as (
+    select *
+    from ordered
+    where (
+      p_cursor_created_at is null
+      or p_cursor_id is null
+      or ("sort_created_at", "sort_id") < (p_cursor_created_at, p_cursor_id)
+    )
+    order by "sort_created_at" desc, "sort_id" desc
+    limit coalesce(p_limit, 30)
+  ),
+  next_cursor as (
+    select
+      "sort_created_at" as "next_created_at",
+      "sort_id" as "next_id"
+    from paged
+    order by "sort_created_at" asc, "sort_id" asc
+    limit 1
+  )
+  select
+    coalesce(
+      array_agg(paged."item"),
+      '{}'::public.feed_list_page_item[]
+    ) as "items",
+    (select "next_created_at" from next_cursor) as "next_cursor_created_at",
+    (select "next_id" from next_cursor) as "next_cursor_id"
+  from paged;
+$$;
+
+-- -----------------------------------------------------------------------------
 -- Notification mutation RPCs
 -- -----------------------------------------------------------------------------
 
@@ -2158,6 +2468,54 @@ begin
 end;
 $$;
 
+create function public.meme_laugh_toggle(
+  p_meme_id uuid
+)
+returns boolean
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_user_id uuid := (select auth.uid());
+begin
+  if v_user_id is null then
+    raise exception 'not authenticated';
+  end if;
+
+  if p_meme_id is null then
+    raise exception 'meme_id is required';
+  end if;
+
+  if public.is_meme_creator(p_meme_id, v_user_id) then
+    raise exception 'cannot laugh own meme';
+  end if;
+
+  if not public.can_view_meme(p_meme_id, v_user_id) then
+    raise exception 'meme not visible';
+  end if;
+
+  if exists (
+    select 1
+    from public.meme_laughs ml
+    where ml."meme_id" = p_meme_id
+      and ml."user_id" = v_user_id
+  ) then
+    delete from public.meme_laughs
+    where "meme_id" = p_meme_id
+      and "user_id" = v_user_id;
+
+    return false;
+  end if;
+
+  insert into public.meme_laughs ("meme_id", "user_id")
+  values (p_meme_id, v_user_id)
+  on conflict do nothing;
+
+  return true;
+end;
+$$;
+
 -- -----------------------------------------------------------------------------
 -- Function metadata
 -- -----------------------------------------------------------------------------
@@ -2180,6 +2538,9 @@ comment on function public.friendship_requests_list(text, integer, timestamptz, 
 comment on function public.meme_templates_list(text, integer, timestamptz, uuid) is
 'Returns one cursor-paginated page of active meme templates, optionally filtered by tag search.';
 
+comment on function public.feed_list(integer, timestamptz, uuid) is
+'Returns one cursor-paginated page of memes created by auth.uid() or received by auth.uid().';
+
 comment on function public.friendship_request_create(text) is
 'Creates one pending friendship request by addressee friendship code and returns the new request id.';
 
@@ -2201,6 +2562,9 @@ comment on function public.friendship_delete(uuid) is
 comment on function public.meme_create(text, uuid, uuid[], double precision) is
 'Creates one meme for auth.uid(), persists image_path + aspect_ratio, supports optional template_id, validates friend recipients, and inserts recipient edges.';
 
+comment on function public.meme_laugh_toggle(uuid) is
+'Toggles one meme laugh for auth.uid() on the provided meme id and returns the resulting liked-state.';
+
 comment on function public.notifications_list(text, integer, timestamptz, uuid) is
 'Returns one cursor-paginated page of notifications for auth.uid(), optionally filtered by actor name/code.';
 
@@ -2218,6 +2582,9 @@ comment on function public.create_notification_on_friendship_request_accepted() 
 
 comment on function public.create_notifications_on_meme_preview_resolved() is
 'Creates meme_received notifications once a meme preview status resolves from pending to ready or failed.';
+
+comment on function public.create_notification_on_meme_laughed() is
+'Creates one meme_laughed notification row when a user inserts a meme_laughs edge.';
 
 comment on function public.is_meme_creator(uuid, uuid) is
 'Returns whether the given user id created the given meme id.';
@@ -2247,12 +2614,14 @@ revoke all on function public.get_current_users_profile() from public;
 revoke all on function public.friendships_list(text, integer, text, uuid) from public;
 revoke all on function public.friendship_requests_list(text, integer, timestamptz, uuid) from public;
 revoke all on function public.meme_templates_list(text, integer, timestamptz, uuid) from public;
+revoke all on function public.feed_list(integer, timestamptz, uuid) from public;
 revoke all on function public.friendship_request_create(text) from public;
 revoke all on function public.friendship_request_accept(uuid) from public;
 revoke all on function public.friendship_request_decline(uuid) from public;
 revoke all on function public.friendship_request_cancel(uuid) from public;
 revoke all on function public.friendship_delete(uuid) from public;
 revoke all on function public.meme_create(text, uuid, uuid[], double precision) from public;
+revoke all on function public.meme_laugh_toggle(uuid) from public;
 revoke all on function public.notifications_list(text, integer, timestamptz, uuid) from public;
 revoke all on function public.notification_mark_read(uuid) from public;
 revoke all on function public.notifications_mark_all_read() from public;
@@ -2273,12 +2642,14 @@ grant execute on function public.get_current_users_profile() to authenticated;
 grant execute on function public.friendships_list(text, integer, text, uuid) to authenticated;
 grant execute on function public.friendship_requests_list(text, integer, timestamptz, uuid) to authenticated;
 grant execute on function public.meme_templates_list(text, integer, timestamptz, uuid) to authenticated;
+grant execute on function public.feed_list(integer, timestamptz, uuid) to authenticated;
 grant execute on function public.friendship_request_create(text) to authenticated;
 grant execute on function public.friendship_request_accept(uuid) to authenticated;
 grant execute on function public.friendship_request_decline(uuid) to authenticated;
 grant execute on function public.friendship_request_cancel(uuid) to authenticated;
 grant execute on function public.friendship_delete(uuid) to authenticated;
 grant execute on function public.meme_create(text, uuid, uuid[], double precision) to authenticated;
+grant execute on function public.meme_laugh_toggle(uuid) to authenticated;
 grant execute on function public.notifications_list(text, integer, timestamptz, uuid) to authenticated;
 grant execute on function public.notification_mark_read(uuid) to authenticated;
 grant execute on function public.notifications_mark_all_read() to authenticated;

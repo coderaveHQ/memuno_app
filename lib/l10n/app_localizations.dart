@@ -388,6 +388,12 @@ abstract class AppLocalizations {
   /// **'No notifications yet.'**
   String get notificationsListEmpty;
 
+  /// No description provided for @feedListEmpty.
+  ///
+  /// In en_US, this message translates to:
+  /// **'No memes in your feed yet.'**
+  String get feedListEmpty;
+
   /// No description provided for @notificationsItemFriendshipRequestSentTitle.
   ///
   /// In en_US, this message translates to:
@@ -423,6 +429,18 @@ abstract class AppLocalizations {
   /// In en_US, this message translates to:
   /// **'{sender_name} sent you a meme.'**
   String notificationsItemMemeReceived(Object sender_name);
+
+  /// No description provided for @notificationsItemMemeLaughedTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Your meme got a laugh'**
+  String get notificationsItemMemeLaughedTitle;
+
+  /// No description provided for @notificationsItemMemeLaughed.
+  ///
+  /// In en_US, this message translates to:
+  /// **'{sender_name} laughed at your meme.'**
+  String notificationsItemMemeLaughed(Object sender_name);
 
   /// No description provided for @memeTemplatePickerTitle.
   ///

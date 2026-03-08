@@ -47,4 +47,28 @@ sealed class NotificationListPageItemDataEntity
     /// Optional deep-link route tab (currently always null for memes).
     required String? routeTab,
   }) = MemeReceivedNotificationListPageItemDataEntity;
+
+  /// Data payload for `meme_laughed`.
+  const factory NotificationListPageItemDataEntity.memeLaughed({
+    /// Actor user id of the user who laughed at the meme.
+    required String actorId,
+
+    /// Actor display name of the user who laughed at the meme.
+    required String actorName,
+
+    /// Meme id from `public.memes.id`.
+    required String memeId,
+
+    /// Storage path from `public.memes.push_image_path`.
+    required String? memePushImagePath,
+
+    /// Persisted aspect ratio (`width / height`) from `public.memes`.
+    required double memeAspectRatio,
+
+    /// Frontend-signed URL for rendering private meme image previews.
+    required String? signedMemeImageUrl,
+
+    /// Optional deep-link route tab (currently always null for laughs).
+    required String? routeTab,
+  }) = MemeLaughedNotificationListPageItemDataEntity;
 }

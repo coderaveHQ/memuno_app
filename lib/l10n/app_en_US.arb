@@ -63,6 +63,7 @@
   "notificationsSearchLabel": "Search notifications",
   "notificationsSearchHint": "Search by name or friendship code",
   "notificationsListEmpty": "No notifications yet.",
+  "feedListEmpty": "No memes in your feed yet.",
   "notificationsItemFriendshipRequestSentTitle": "New friendship request",
   "notificationsItemFriendshipRequestSent": "{sender_name} sent you a friendship request.",
   "@notificationsItemFriendshipRequestSent": {
@@ -80,6 +81,13 @@
   "notificationsItemMemeReceivedTitle": "New meme received",
   "notificationsItemMemeReceived": "{sender_name} sent you a meme.",
   "@notificationsItemMemeReceived": {
+    "placeholders": {
+      "sender_name": {}
+    }
+  },
+  "notificationsItemMemeLaughedTitle": "Your meme got a laugh",
+  "notificationsItemMemeLaughed": "{sender_name} laughed at your meme.",
+  "@notificationsItemMemeLaughed": {
     "placeholders": {
       "sender_name": {}
     }

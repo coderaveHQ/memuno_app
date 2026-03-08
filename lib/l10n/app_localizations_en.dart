@@ -166,6 +166,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationsListEmpty => 'No notifications yet.';
 
   @override
+  String get feedListEmpty => 'No memes in your feed yet.';
+
+  @override
   String get notificationsItemFriendshipRequestSentTitle =>
       'New friendship request';
 
@@ -189,6 +192,14 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String notificationsItemMemeReceived(Object sender_name) {
     return '$sender_name sent you a meme.';
+  }
+
+  @override
+  String get notificationsItemMemeLaughedTitle => 'Your meme got a laugh';
+
+  @override
+  String notificationsItemMemeLaughed(Object sender_name) {
+    return '$sender_name laughed at your meme.';
   }
 
   @override
@@ -570,6 +581,9 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   String get notificationsListEmpty => 'No notifications yet.';
 
   @override
+  String get feedListEmpty => 'No memes in your feed yet.';
+
+  @override
   String get notificationsItemFriendshipRequestSentTitle =>
       'New friendship request';
 
@@ -593,6 +607,14 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   @override
   String notificationsItemMemeReceived(Object sender_name) {
     return '$sender_name sent you a meme.';
+  }
+
+  @override
+  String get notificationsItemMemeLaughedTitle => 'Your meme got a laugh';
+
+  @override
+  String notificationsItemMemeLaughed(Object sender_name) {
+    return '$sender_name laughed at your meme.';
   }
 
   @override

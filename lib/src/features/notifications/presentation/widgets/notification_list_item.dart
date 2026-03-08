@@ -65,6 +65,7 @@ class NotificationListItem extends StatelessWidget {
       NotificationType.friendshipRequestAccepted =>
         l10n.notificationsItemFriendshipRequestAcceptedTitle,
       NotificationType.memeReceived => l10n.notificationsItemMemeReceivedTitle,
+      NotificationType.memeLaughed => l10n.notificationsItemMemeLaughedTitle,
     };
   }
 
@@ -79,6 +80,9 @@ class NotificationListItem extends StatelessWidget {
       NotificationType.friendshipRequestAccepted =>
         l10n.notificationsItemFriendshipRequestAccepted(actorName),
       NotificationType.memeReceived => l10n.notificationsItemMemeReceived(
+        actorName,
+      ),
+      NotificationType.memeLaughed => l10n.notificationsItemMemeLaughed(
         actorName,
       ),
     };
@@ -107,7 +111,8 @@ class NotificationListItem extends StatelessWidget {
   }
 
   Widget? _buildMemePreview() {
-    if (notification.notificationType != NotificationType.memeReceived) {
+    if (notification.notificationType != NotificationType.memeReceived &&
+        notification.notificationType != NotificationType.memeLaughed) {
       return null;
     }
 
