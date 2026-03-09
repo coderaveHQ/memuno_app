@@ -7,6 +7,7 @@ import 'package:memuno_app/src/app/extensions/date_time_x.dart';
 import 'package:memuno_app/src/app/extensions/mutation_x.dart';
 import 'package:memuno_app/src/app/feedback/app_feedback.dart';
 import 'package:memuno_app/src/app/feedback/app_feedback_provider.dart';
+import 'package:memuno_app/src/app/router/app_router.dart';
 import 'package:memuno_app/src/app/widgets/m/m_avatar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_colors.dart';
 import 'package:memuno_app/src/app/widgets/m/m_gap.dart';
@@ -95,7 +96,7 @@ class FeedListItem extends ConsumerWidget {
                 ),
                 const MGap.md(),
                 MIconButton.primary(
-                  onPressed: null, // TODO navigate to meme details
+                  onPressed: () => _onOpenMemeDetails(context),
                   dimension: kToolbarHeight - 4.0,
                   icon: LucideIcons.arrow_right,
                 ),
@@ -161,5 +162,10 @@ class FeedListItem extends ConsumerWidget {
     await mutation.runSafely(ref, (MutationTransaction tx) async {
       await ref.read(feedListProvider.notifier).toggleMemeLaugh(feedItem);
     });
+  }
+
+  /// Opens the meme-details page for this feed meme.
+  Future<void> _onOpenMemeDetails(BuildContext context) async {
+    await MemeDetailsRoute(memeId: feedItem.meme.id).push<void>(context);
   }
 }

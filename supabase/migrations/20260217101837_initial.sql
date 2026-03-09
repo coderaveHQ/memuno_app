@@ -156,6 +156,45 @@ create type public.feed_list_page as (
   "next_cursor_id" uuid
 );
 
+create type public.meme_details_user as (
+  "id" uuid,
+  "name" text,
+  "friendship_code" text,
+  "created_at" timestamptz,
+  "updated_at" timestamptz
+);
+
+create type public.meme_details as (
+  "id" uuid,
+  "created_at" timestamptz,
+  "updated_at" timestamptz,
+  "image_path" text,
+  "aspect_ratio" double precision,
+  "laugh_count" integer,
+  "is_laughed" boolean,
+  "user" public.meme_details_user
+);
+
+create type public.meme_laugh_list_page_item_user as (
+  "id" uuid,
+  "name" text,
+  "friendship_code" text,
+  "created_at" timestamptz,
+  "updated_at" timestamptz
+);
+
+create type public.meme_laugh_list_page_item as (
+  "user" public.meme_laugh_list_page_item_user,
+  "created_at" timestamptz,
+  "updated_at" timestamptz
+);
+
+create type public.meme_laugh_list_page as (
+  "items" public.meme_laugh_list_page_item[],
+  "next_cursor_created_at" timestamptz,
+  "next_cursor_user_id" uuid
+);
+
 create type public.push_token_deactivation_reason
   as enum (
     'signed_out',
@@ -580,6 +619,9 @@ on public.meme_recipients ("user_id", "meme_id");
 
 create index meme_laughs_user_id_meme_id_idx
 on public.meme_laughs ("user_id", "meme_id");
+
+create index meme_laughs_meme_id_created_at_user_id_idx
+on public.meme_laughs ("meme_id", "created_at" desc, "user_id" desc);
 
 create unique index push_device_tokens_one_active_per_installation_idx
 on public.push_device_tokens ("installation_id")
@@ -1907,6 +1949,169 @@ as $$
 $$;
 
 -- -----------------------------------------------------------------------------
+-- Meme details RPCs
+-- -----------------------------------------------------------------------------
+
+create function public.meme_details_get(
+  p_meme_id uuid
+)
+returns public.meme_details
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_user_id uuid := (select auth.uid());
+  v_details public.meme_details;
+begin
+  if v_user_id is null then
+    raise exception 'not authenticated';
+  end if;
+
+  if p_meme_id is null then
+    raise exception 'meme_id is required';
+  end if;
+
+  if not public.can_view_meme(p_meme_id, v_user_id) then
+    raise exception 'meme not visible';
+  end if;
+
+  select
+    m."id",
+    m."created_at",
+    m."updated_at",
+    m."image_path",
+    m."aspect_ratio",
+    coalesce(lc."laugh_count", 0)::integer,
+    case
+      when m."user_id" = v_user_id then false
+      else exists (
+        select 1
+        from public.meme_laughs ml
+        where ml."meme_id" = m."id"
+          and ml."user_id" = v_user_id
+      )
+    end,
+    row(
+      u."id",
+      u."name",
+      u."friendship_code",
+      u."created_at",
+      u."updated_at"
+    )::public.meme_details_user
+  into v_details
+  from public.memes m
+  join public.users u on u."id" = m."user_id"
+  left join (
+    select
+      ml."meme_id",
+      count(*) as "laugh_count"
+    from public.meme_laughs ml
+    group by ml."meme_id"
+  ) lc on lc."meme_id" = m."id"
+  where m."id" = p_meme_id
+  limit 1;
+
+  if v_details is null then
+    raise exception 'meme not found';
+  end if;
+
+  return v_details;
+end;
+$$;
+
+create function public.meme_laughs_list(
+  p_meme_id uuid,
+  p_limit integer default 30,
+  p_cursor_created_at timestamptz default null,
+  p_cursor_user_id uuid default null
+)
+returns public.meme_laugh_list_page
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_user_id uuid := (select auth.uid());
+begin
+  if v_user_id is null then
+    raise exception 'not authenticated';
+  end if;
+
+  if p_meme_id is null then
+    raise exception 'meme_id is required';
+  end if;
+
+  if not public.can_view_meme(p_meme_id, v_user_id) then
+    raise exception 'meme not visible';
+  end if;
+
+  return (
+    with base as (
+      select
+        ml."user_id",
+        ml."created_at" as "laugh_created_at",
+        ml."updated_at" as "laugh_updated_at",
+        u."name" as "user_name",
+        u."friendship_code" as "user_friendship_code",
+        u."created_at" as "user_created_at",
+        u."updated_at" as "user_updated_at"
+      from public.meme_laughs ml
+      join public.users u on u."id" = ml."user_id"
+      where ml."meme_id" = p_meme_id
+    ),
+    ordered as (
+      select
+        row(
+          row(
+            "user_id",
+            "user_name",
+            "user_friendship_code",
+            "user_created_at",
+            "user_updated_at"
+          )::public.meme_laugh_list_page_item_user,
+          "laugh_created_at",
+          "laugh_updated_at"
+        )::public.meme_laugh_list_page_item as "item",
+        "laugh_created_at" as "sort_created_at",
+        "user_id" as "sort_user_id"
+      from base
+    ),
+    paged as (
+      select *
+      from ordered
+      where (
+        p_cursor_created_at is null
+        or p_cursor_user_id is null
+        or ("sort_created_at", "sort_user_id")
+          < (p_cursor_created_at, p_cursor_user_id)
+      )
+      order by "sort_created_at" desc, "sort_user_id" desc
+      limit coalesce(p_limit, 30)
+    ),
+    next_cursor as (
+      select
+        "sort_created_at" as "next_created_at",
+        "sort_user_id" as "next_user_id"
+      from paged
+      order by "sort_created_at" asc, "sort_user_id" asc
+      limit 1
+    )
+    select
+      row(
+        coalesce(
+          array_agg(paged."item"),
+          '{}'::public.meme_laugh_list_page_item[]
+        ),
+        (select "next_created_at" from next_cursor),
+        (select "next_user_id" from next_cursor)
+      )::public.meme_laugh_list_page
+    from paged
+  );
+end;
+$$;
+
+-- -----------------------------------------------------------------------------
 -- Notification mutation RPCs
 -- -----------------------------------------------------------------------------
 
@@ -2541,6 +2746,12 @@ comment on function public.meme_templates_list(text, integer, timestamptz, uuid)
 comment on function public.feed_list(integer, timestamptz, uuid) is
 'Returns one cursor-paginated page of memes created by auth.uid() or received by auth.uid().';
 
+comment on function public.meme_details_get(uuid) is
+'Returns one meme details payload for a meme visible to auth.uid(), including creator metadata and current laugh state.';
+
+comment on function public.meme_laughs_list(uuid, integer, timestamptz, uuid) is
+'Returns one cursor-paginated page of users who laughed at the specified meme visible to auth.uid().';
+
 comment on function public.friendship_request_create(text) is
 'Creates one pending friendship request by addressee friendship code and returns the new request id.';
 
@@ -2615,6 +2826,8 @@ revoke all on function public.friendships_list(text, integer, text, uuid) from p
 revoke all on function public.friendship_requests_list(text, integer, timestamptz, uuid) from public;
 revoke all on function public.meme_templates_list(text, integer, timestamptz, uuid) from public;
 revoke all on function public.feed_list(integer, timestamptz, uuid) from public;
+revoke all on function public.meme_details_get(uuid) from public;
+revoke all on function public.meme_laughs_list(uuid, integer, timestamptz, uuid) from public;
 revoke all on function public.friendship_request_create(text) from public;
 revoke all on function public.friendship_request_accept(uuid) from public;
 revoke all on function public.friendship_request_decline(uuid) from public;
@@ -2643,6 +2856,8 @@ grant execute on function public.friendships_list(text, integer, text, uuid) to 
 grant execute on function public.friendship_requests_list(text, integer, timestamptz, uuid) to authenticated;
 grant execute on function public.meme_templates_list(text, integer, timestamptz, uuid) to authenticated;
 grant execute on function public.feed_list(integer, timestamptz, uuid) to authenticated;
+grant execute on function public.meme_details_get(uuid) to authenticated;
+grant execute on function public.meme_laughs_list(uuid, integer, timestamptz, uuid) to authenticated;
 grant execute on function public.friendship_request_create(text) to authenticated;
 grant execute on function public.friendship_request_accept(uuid) to authenticated;
 grant execute on function public.friendship_request_decline(uuid) to authenticated;

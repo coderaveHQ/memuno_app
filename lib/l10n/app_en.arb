@@ -64,6 +64,9 @@
   "notificationsSearchHint": "Search by name or friendship code",
   "notificationsListEmpty": "No notifications yet.",
   "feedListEmpty": "No memes in your feed yet.",
+  "memeDetailsTitle": "Meme details",
+  "memeDetailsLaughsTitle": "Who laughed?",
+  "memeDetailsLaughsEmpty": "No laughs yet.",
   "notificationsItemFriendshipRequestSentTitle": "New friendship request",
   "notificationsItemFriendshipRequestSent": "{sender_name} sent you a friendship request.",
   "@notificationsItemFriendshipRequestSent": {
