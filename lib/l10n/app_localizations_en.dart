@@ -169,6 +169,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedListEmpty => 'No memes in your feed yet.';
 
   @override
+  String get memeDetailsTitle => 'Meme details';
+
+  @override
+  String get memeDetailsLaughsTitle => 'Who laughed?';
+
+  @override
+  String get memeDetailsLaughsEmpty => 'No laughs yet.';
+
+  @override
   String get notificationsItemFriendshipRequestSentTitle =>
       'New friendship request';
 
@@ -582,6 +591,15 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
 
   @override
   String get feedListEmpty => 'No memes in your feed yet.';
+
+  @override
+  String get memeDetailsTitle => 'Meme details';
+
+  @override
+  String get memeDetailsLaughsTitle => 'Who laughed?';
+
+  @override
+  String get memeDetailsLaughsEmpty => 'No laughs yet.';
 
   @override
   String get notificationsItemFriendshipRequestSentTitle =>

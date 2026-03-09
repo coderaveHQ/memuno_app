@@ -4,10 +4,12 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:memuno_app/l10n/app_localizations.dart';
 import 'package:memuno_app/src/app/extensions/build_context_x.dart';
 import 'package:memuno_app/src/app/extensions/string_x.dart';
+import 'package:memuno_app/src/app/feedback/app_feedback.dart';
 import 'package:memuno_app/src/app/providers/current_user_profile_provider.dart';
 import 'package:memuno_app/src/app/router/app_router.dart';
 import 'package:memuno_app/src/app/widgets/m/m_app_bar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_async_list.dart';
+import 'package:memuno_app/src/app/widgets/m/m_gap.dart';
 import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/features/feed/application/providers/feed_list_provider.dart';
@@ -33,12 +35,27 @@ class FeedPage extends ConsumerWidget {
     await const SettingsRoute().push<void>(context);
   }
 
-  // TODO: When feed refreshes we also need to refresh profile provider
-  /*Future<void> _onRefresh(WidgetRef ref) async {
-    final AsyncValue<UserProfileEntity> _ = ref.refresh(
-      currentUserProfileProvider,
-    );
-  }*/
+  Future<void> _onRefresh(
+    WidgetRef ref,
+    BuildContext context,
+    AppFeedback feedback,
+  ) async {
+    try {
+      final AsyncValue<UserProfileEntity> _ = ref.refresh(
+        currentUserProfileProvider,
+      );
+    } catch (error) {
+      if (!context.mounted) return;
+      feedback.resolveAndShowError(context, error);
+    }
+
+    try {
+      await ref.read(feedListProvider.notifier).refresh();
+    } catch (error) {
+      if (!context.mounted) return;
+      feedback.resolveAndShowError(context, error);
+    }
+  }
 
   @override
   /// Builds the page UI.
@@ -85,11 +102,15 @@ class FeedPage extends ConsumerWidget {
         provider: feedListProvider,
         emptyText: l10n.feedListEmpty,
         loadMoreExtent: 220.0,
+        onRefresh: _onRefresh,
         listPadding: EdgeInsets.only(
           top: MSpacing.md,
           bottom:
               context.bottomPadding + kBottomNavigationBarHeight + MSpacing.md,
         ),
+        separatorBuilder: (BuildContext _, int _) {
+          return const MGap.sm();
+        },
         itemBuilder: (BuildContext context, FeedListPageItemEntity feedItem) {
           return FeedListItem(feedItem: feedItem);
         },
