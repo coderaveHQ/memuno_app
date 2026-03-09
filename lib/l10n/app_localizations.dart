@@ -394,6 +394,24 @@ abstract class AppLocalizations {
   /// **'No memes in your feed yet.'**
   String get feedListEmpty;
 
+  /// No description provided for @memeDetailsTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Meme details'**
+  String get memeDetailsTitle;
+
+  /// No description provided for @memeDetailsLaughsTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Who laughed?'**
+  String get memeDetailsLaughsTitle;
+
+  /// No description provided for @memeDetailsLaughsEmpty.
+  ///
+  /// In en_US, this message translates to:
+  /// **'No laughs yet.'**
+  String get memeDetailsLaughsEmpty;
+
   /// No description provided for @notificationsItemFriendshipRequestSentTitle.
   ///
   /// In en_US, this message translates to:

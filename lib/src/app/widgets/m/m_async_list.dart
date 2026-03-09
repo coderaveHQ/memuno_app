@@ -23,6 +23,13 @@ class MAsyncList<TItem, TCursor> extends ConsumerWidget {
   final EdgeInsetsGeometry? childPadding;
   final EdgeInsetsGeometry? listChildPadding;
   final Widget Function(BuildContext, TItem) itemBuilder;
+  final Future<void> Function(
+    WidgetRef ref,
+    BuildContext context,
+    AppFeedback feedback,
+  )?
+  onRefresh;
+  final Widget Function(BuildContext, int)? separatorBuilder;
 
   const MAsyncList({
     super.key,
@@ -33,6 +40,8 @@ class MAsyncList<TItem, TCursor> extends ConsumerWidget {
     this.childPadding,
     this.listChildPadding,
     required this.itemBuilder,
+    this.onRefresh,
+    this.separatorBuilder,
   });
 
   Future<void> _onRefresh(
@@ -110,13 +119,16 @@ class MAsyncList<TItem, TCursor> extends ConsumerWidget {
             return false;
           },
           child: MRefreshIndicator(
-            onRefresh: () => _onRefresh(ref, context, feedback),
+            onRefresh: () =>
+                onRefresh?.call(ref, context, feedback) ??
+                _onRefresh(ref, context, feedback),
             child: ListView.separated(
               physics: const AlwaysScrollableScrollPhysics(),
               itemCount: _itemCount(itemsState),
               padding: safeListPadding,
               separatorBuilder: (BuildContext context, int index) {
-                return const MDivider();
+                return separatorBuilder?.call(context, index) ??
+                    const MDivider();
               },
               itemBuilder: (BuildContext context, int index) {
                 if (items.isEmpty) {
