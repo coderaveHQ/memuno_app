@@ -363,10 +363,14 @@ class MemeDetailsRoute extends GoRouteData with $MemeDetailsRoute {
   }
 }
 
-@TypedGoRoute<ProfileRoute>(path: '/profile', name: ProfileRoute.routeName)
-class ProfileRoute extends GoRouteData with $ProfileRoute {
-  /// Creates the profile route.
-  const ProfileRoute();
+@TypedGoRoute<CurrentUserDetailsRoute>(
+  path: '/profile',
+  name: CurrentUserDetailsRoute.routeName,
+)
+class CurrentUserDetailsRoute extends GoRouteData
+    with $CurrentUserDetailsRoute {
+  /// Creates the current-user details route.
+  const CurrentUserDetailsRoute();
 
   /// Route name used in navigation.
   static const String routeName = 'profile';
@@ -385,7 +389,52 @@ class ProfileRoute extends GoRouteData with $ProfileRoute {
   @override
   /// Builds the page for this route.
   Widget build(BuildContext context, GoRouterState state) {
-    return const ProfilePage();
+    final ProviderContainer container = ProviderScope.containerOf(
+      context,
+      listen: false,
+    );
+    final AsyncValue<AuthStateEntity> authState = container.read(
+      authStateProvider,
+    );
+    final String? userId = authState.asData?.value.user?.id;
+
+    if (userId == null) {
+      throw StateError('Expected authenticated user id for /profile route.');
+    }
+
+    return UserDetailsPage(userId: userId);
+  }
+}
+
+@TypedGoRoute<UserDetailsRoute>(
+  path: '/users/:userId',
+  name: UserDetailsRoute.routeName,
+)
+class UserDetailsRoute extends GoRouteData with $UserDetailsRoute {
+  /// Creates the user-details route.
+  const UserDetailsRoute({required this.userId});
+
+  /// User id path parameter.
+  final String userId;
+
+  /// Route name used in navigation.
+  static const String routeName = 'userDetails';
+
+  /// Returns true if this route is the top-most leaf in the stack.
+  static bool isLeaf(BuildContext context) =>
+      RouteUtils.isLeaf(context, routeName);
+
+  /// Returns true if this route exists anywhere in the stack.
+  static bool isInStack(BuildContext context) =>
+      RouteUtils.isInStack(context, routeName);
+
+  /// Parent navigator used by this route.
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+
+  @override
+  /// Builds the page for this route.
+  Widget build(BuildContext context, GoRouterState state) {
+    return UserDetailsPage(userId: userId);
   }
 }
 

@@ -30,7 +30,7 @@ $$;
 -- API payload and domain types
 -- -----------------------------------------------------------------------------
 
-create type public.user_profile as (
+create type public.user_details as (
   "id" uuid,
   "name" text,
   "friendship_code" text,
@@ -1254,7 +1254,7 @@ for each row
 execute function public.handle_new_user();
 
 -- -----------------------------------------------------------------------------
--- User/profile RPCs
+-- User/details RPCs
 -- -----------------------------------------------------------------------------
 
 create function public.update_current_user_name(
@@ -1279,7 +1279,7 @@ begin
   where "id" = v_user_id;
 
   if not found then
-    raise exception 'current user profile not found';
+    raise exception 'current user details not found';
   end if;
 end;
 $$;
@@ -1287,7 +1287,7 @@ $$;
 create function public.get_users_profile(
   p_user_id uuid
 )
-returns public.user_profile
+returns public.user_details
 language sql
 stable
 security invoker
@@ -1299,20 +1299,10 @@ as $$
     u."friendship_code",
     u."created_at",
     u."updated_at"
-  )::public.user_profile
+  )::public.user_details
   from public.users u
   where u."id" = p_user_id
   limit 1;
-$$;
-
-create function public.get_current_users_profile()
-returns public.user_profile
-language sql
-stable
-security invoker
-set search_path = public
-as $$
-  select public.get_users_profile((select auth.uid()));
 $$;
 
 -- -----------------------------------------------------------------------------
@@ -2729,10 +2719,7 @@ comment on function public.update_current_user_name(text) is
 'Sets public.users.name for the currently authenticated user.';
 
 comment on function public.get_users_profile(uuid) is
-'Returns one user profile payload for the provided users.id value.';
-
-comment on function public.get_current_users_profile() is
-'Returns the user profile payload for auth.uid().';
+'Returns one user details payload for the provided users.id value.';
 
 comment on function public.friendships_list(text, integer, text, uuid) is
 'Returns one cursor-paginated page of active friendships for auth.uid().';
@@ -2821,7 +2808,6 @@ comment on function public.push_tokens_cleanup_inactive(interval) is
 
 revoke all on function public.update_current_user_name(text) from public;
 revoke all on function public.get_users_profile(uuid) from public;
-revoke all on function public.get_current_users_profile() from public;
 revoke all on function public.friendships_list(text, integer, text, uuid) from public;
 revoke all on function public.friendship_requests_list(text, integer, timestamptz, uuid) from public;
 revoke all on function public.meme_templates_list(text, integer, timestamptz, uuid) from public;
@@ -2851,7 +2837,6 @@ revoke all on function public.enqueue_generate_meme_push_preview() from public;
 revoke all on function public.enqueue_send_notification_push() from public;
 grant execute on function public.update_current_user_name(text) to authenticated;
 grant execute on function public.get_users_profile(uuid) to authenticated;
-grant execute on function public.get_current_users_profile() to authenticated;
 grant execute on function public.friendships_list(text, integer, text, uuid) to authenticated;
 grant execute on function public.friendship_requests_list(text, integer, timestamptz, uuid) to authenticated;
 grant execute on function public.meme_templates_list(text, integer, timestamptz, uuid) to authenticated;

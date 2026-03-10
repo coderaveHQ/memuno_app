@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:memuno_app/src/app/extensions/build_context_x.dart';
 import 'package:memuno_app/src/app/extensions/date_time_x.dart';
+import 'package:memuno_app/src/app/router/app_router.dart';
 import 'package:memuno_app/src/app/widgets/m/m_avatar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_list_tile.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
@@ -17,6 +18,9 @@ class MemeLaughListItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MListTile(
+      onPressed: () {
+        UserDetailsRoute(userId: item.user.id).push<void>(context);
+      },
       leading: MAvatar(name: item.user.name, dimension: 48.0),
       title: item.user.name,
       details: item.createdAt.formatHumanReadable(),

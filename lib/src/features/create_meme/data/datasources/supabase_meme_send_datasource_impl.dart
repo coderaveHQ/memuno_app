@@ -31,11 +31,16 @@ final class SupabaseMemeSendDatasourceImpl implements MemeSendDatasource {
     }
 
     final String imagePath = _buildImagePath(userId);
-    await _supabaseClient.storage.from(_memesBucket).uploadBinary(
-      imagePath,
-      memeBytes,
-      fileOptions: const FileOptions(contentType: 'image/png', upsert: false),
-    );
+    await _supabaseClient.storage
+        .from(_memesBucket)
+        .uploadBinary(
+          imagePath,
+          memeBytes,
+          fileOptions: const FileOptions(
+            contentType: 'image/png',
+            upsert: false,
+          ),
+        );
 
     await _supabaseClient.rpc<void>(
       'meme_create',
