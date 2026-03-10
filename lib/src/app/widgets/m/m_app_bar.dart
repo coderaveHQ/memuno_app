@@ -177,6 +177,7 @@ class MAppBarButton extends StatelessWidget {
   final IconData? icon;
   final bool isEnabled;
   final bool isLoading;
+  final int? badgeCount;
 
   const MAppBarButton({
     super.key,
@@ -184,18 +185,54 @@ class MAppBarButton extends StatelessWidget {
     this.icon,
     this.isLoading = false,
     this.isEnabled = true,
+    this.badgeCount,
   });
 
   @override
   Widget build(BuildContext context) {
-    return MIconButton.secondary(
-      onPressed: onPressed,
-      isLoading: isLoading,
-      isEnabled: isEnabled,
-      icon: icon,
-      background: MColors.gray200,
-      foreground: MColors.gray900,
-      dimension: kToolbarHeight - 4.0,
+    final int effectiveBadgeCount = badgeCount ?? 0;
+
+    return Stack(
+      clipBehavior: Clip.none,
+      children: <Widget>[
+        MIconButton.secondary(
+          onPressed: onPressed,
+          isLoading: isLoading,
+          isEnabled: isEnabled,
+          icon: icon,
+          background: MColors.gray200,
+          foreground: MColors.gray900,
+          dimension: kToolbarHeight - 4.0,
+        ),
+        if (effectiveBadgeCount > 0)
+          Positioned(
+            top: -4.0,
+            right: -4.0,
+            child: Container(
+              constraints: const BoxConstraints(
+                minWidth: 18.0,
+                minHeight: 18.0,
+              ),
+              padding: const EdgeInsets.symmetric(horizontal: 4.0),
+              decoration: BoxDecoration(
+                color: MColors.red600,
+                borderRadius: BorderRadius.circular(9.0),
+              ),
+              alignment: Alignment.center,
+              child: MText.small(
+                text: '$effectiveBadgeCount',
+                maxLines: 1,
+                overflow: TextOverflow.fade,
+                alignment: TextAlign.center,
+                style: const TextStyle(
+                  color: MColors.gray100,
+                  fontWeight: FontWeight.w700,
+                  height: 1.0,
+                ),
+              ),
+            ),
+          ),
+      ],
     );
   }
 }

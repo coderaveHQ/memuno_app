@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
+import 'package:memuno_app/src/app/extensions/build_context_x.dart';
+import 'package:memuno_app/src/app/widgets/m/m_center.dart';
+import 'package:memuno_app/src/app/widgets/m/m_colors.dart';
+import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
+import 'package:memuno_app/src/app/widgets/m/m_text.dart';
 import 'package:memuno_app/src/core/failures/failure.dart';
 import 'package:memuno_app/src/core/failures/failure_mapper.dart';
 import 'package:memuno_app/src/core/providers/failure_mapper_provider.dart';
@@ -23,10 +28,17 @@ final class ErrorPage extends ConsumerWidget {
     // Resolve a user-facing message from the error.
     final String message = _resolveMessage(context, ref, error);
     return Scaffold(
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Text(message, textAlign: TextAlign.center),
+      body: MCenter(
+        padding: EdgeInsets.only(
+          left: context.leftPadding + MSpacing.md,
+          right: context.rightPadding + MSpacing.md,
+          top: context.topPadding + MSpacing.md,
+          bottom: context.bottomPadding + MSpacing.md,
+        ),
+        child: MText.p(
+          text: message,
+          alignment: TextAlign.center,
+          style: TextStyle(color: MColors.gray100),
         ),
       ),
     );

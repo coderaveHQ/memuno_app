@@ -16,6 +16,7 @@ import 'package:memuno_app/src/features/feed/application/providers/feed_list_pro
 import 'package:memuno_app/src/features/feed/domain/entities/feed_cursor_entity.dart';
 import 'package:memuno_app/src/features/feed/domain/entities/feed_list_page_item_entity.dart';
 import 'package:memuno_app/src/features/feed/presentation/widgets/feed_list_item.dart';
+import 'package:memuno_app/src/features/notifications/application/providers/notifications_unread_count_provider.dart';
 import 'package:memuno_app/src/features/user_details/application/providers/user_details_provider.dart';
 import 'package:memuno_app/src/features/user_details/domain/entities/user_details_entity.dart';
 
@@ -69,6 +70,8 @@ class FeedPage extends ConsumerWidget {
     final AsyncValue<UserDetailsEntity> userDetailsState = currentUserId == null
         ? const AsyncValue<UserDetailsEntity>.loading()
         : ref.watch(userDetailsProvider(currentUserId));
+    final int unreadNotificationsCount =
+        ref.watch(notificationsUnreadCountProvider).asData?.value ?? 0;
 
     return MScaffold(
       appBar: MAppBar(
@@ -96,6 +99,7 @@ class FeedPage extends ConsumerWidget {
           MAppBarButton(
             onPressed: () => _onNotifications(context),
             icon: LucideIcons.bell,
+            badgeCount: unreadNotificationsCount,
           ),
           MAppBarButton(
             onPressed: () => _onSettings(context),

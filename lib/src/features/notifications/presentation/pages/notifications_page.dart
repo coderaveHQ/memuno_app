@@ -9,7 +9,6 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:memuno_app/l10n/app_localizations.dart';
 import 'package:memuno_app/src/app/extensions/build_context_x.dart';
 import 'package:memuno_app/src/app/extensions/mutation_x.dart';
-import 'package:memuno_app/src/app/router/app_router.dart';
 import 'package:memuno_app/src/app/widgets/m/m_app_bar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_async_list.dart';
 import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
@@ -18,10 +17,14 @@ import 'package:memuno_app/src/app/widgets/m/m_text_field.dart';
 import 'package:memuno_app/src/core/state/pagination/paginated_list_state.dart';
 import 'package:memuno_app/src/features/notifications/application/mutations/mark_all_notifications_read_mutation.dart';
 import 'package:memuno_app/src/features/notifications/application/mutations/mark_notification_read_mutation.dart';
+import 'package:memuno_app/src/features/notifications/application/providers/notification_target_route_mapper_provider.dart';
 import 'package:memuno_app/src/features/notifications/application/providers/notifications_list_provider.dart';
+import 'package:memuno_app/src/features/notifications/application/providers/usecases/resolve_notification_push_intent_usecase_provider.dart';
+import 'package:memuno_app/src/features/notifications/application/services/notification_target_route_mapper.dart';
 import 'package:memuno_app/src/features/notifications/domain/entities/notification_cursor_entity.dart';
-import 'package:memuno_app/src/features/notifications/domain/entities/notification_list_page_item_data_entity.dart';
 import 'package:memuno_app/src/features/notifications/domain/entities/notification_list_page_item_entity.dart';
+import 'package:memuno_app/src/features/notifications/domain/entities/notification_navigation_target.dart';
+import 'package:memuno_app/src/features/notifications/domain/usecases/resolve_notification_push_intent_usecase.dart';
 import 'package:memuno_app/src/features/notifications/presentation/widgets/notification_list_item.dart';
 
 /// Notifications overview page with search, pagination, and read actions.
@@ -62,19 +65,32 @@ class NotificationsPage extends HookConsumerWidget {
       return;
     }
 
-    switch (notification.data) {
-      case FriendshipRequestSentNotificationListPageItemDataEntity(
-        :final routeTab,
-      ):
-        await FriendshipsRoute(tab: routeTab).push<void>(context);
-      case FriendshipRequestAcceptedNotificationListPageItemDataEntity():
-        await UserDetailsRoute(
-          userId: notification.notificationActorId,
-        ).push<void>(context);
-      case MemeReceivedNotificationListPageItemDataEntity(:final memeId):
-        await MemeDetailsRoute(memeId: memeId).push<void>(context);
-      case MemeLaughedNotificationListPageItemDataEntity(:final memeId):
-        await MemeDetailsRoute(memeId: memeId).push<void>(context);
+    final ResolveNotificationPushIntentUsecase intentResolver = ref.read(
+      resolveNotificationPushIntentUsecaseProvider,
+    );
+    final NotificationTargetRouteMapper routeMapper = ref.read(
+      notificationTargetRouteMapperProvider,
+    );
+    final NotificationNavigationTarget target = intentResolver.fromNotification(
+      notification,
+    );
+
+    await _pushWithFallback(context, routeMapper, target);
+  }
+
+  Future<void> _pushWithFallback(
+    BuildContext context,
+    NotificationTargetRouteMapper routeMapper,
+    NotificationNavigationTarget target,
+  ) async {
+    final GoRouter router = GoRouter.of(context);
+    try {
+      await router.push(routeMapper.toLocation(target));
+    } catch (_) {
+      if (!context.mounted) {
+        return;
+      }
+      await router.push(routeMapper.notificationsLocation());
     }
   }
 
