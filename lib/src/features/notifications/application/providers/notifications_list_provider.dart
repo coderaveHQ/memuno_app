@@ -8,6 +8,7 @@ import 'package:memuno_app/src/core/utils/logger.dart';
 import 'package:memuno_app/src/features/notifications/application/providers/usecases/list_notifications_usecase_provider.dart';
 import 'package:memuno_app/src/features/notifications/application/providers/usecases/mark_all_notifications_read_usecase_provider.dart';
 import 'package:memuno_app/src/features/notifications/application/providers/usecases/mark_notification_read_usecase_provider.dart';
+import 'package:memuno_app/src/features/notifications/application/providers/notifications_unread_count_provider.dart';
 import 'package:memuno_app/src/features/notifications/domain/entities/notification_cursor_entity.dart';
 import 'package:memuno_app/src/features/notifications/domain/entities/notification_list_page_entity.dart';
 import 'package:memuno_app/src/features/notifications/domain/entities/notification_list_page_item_entity.dart';
@@ -138,6 +139,7 @@ class NotificationsList extends _$NotificationsList
             markNotificationReadUsecaseProvider,
           );
           await usecase(notificationId: notificationId);
+          ref.invalidate(notificationsUnreadCountProvider);
         },
       );
     } catch (error, stackTrace) {
@@ -201,11 +203,13 @@ class NotificationsList extends _$NotificationsList
                 isRead: false,
               );
             },
-        operation: () {
+        operation: () async {
           final MarkAllNotificationsReadUsecase usecase = ref.read(
             markAllNotificationsReadUsecaseProvider,
           );
-          return usecase();
+          final int updated = await usecase();
+          ref.invalidate(notificationsUnreadCountProvider);
+          return updated;
         },
       );
     } catch (error, stackTrace) {

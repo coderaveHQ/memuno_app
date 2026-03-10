@@ -2158,6 +2158,18 @@ begin
 end;
 $$;
 
+create function public.notifications_unread_count()
+returns integer
+language sql
+security definer
+set search_path = public
+as $$
+  select count(*)::integer
+  from public.notifications n
+  where n."recipient_id" = (select auth.uid())
+    and n."is_read" = false;
+$$;
+
 -- -----------------------------------------------------------------------------
 -- Notification push dispatch webhook provisioning
 -- -----------------------------------------------------------------------------
@@ -2772,6 +2784,9 @@ comment on function public.notification_mark_read(uuid) is
 comment on function public.notifications_mark_all_read() is
 'Marks all unread notifications as read for auth.uid() and returns the number of updated rows.';
 
+comment on function public.notifications_unread_count() is
+'Returns unread notifications count for auth.uid().';
+
 comment on function public.create_notification_on_friendship_request_sent() is
 'Creates a friendship_request_sent notification row after a pending friendship request is inserted.';
 
@@ -2824,6 +2839,7 @@ revoke all on function public.meme_laugh_toggle(uuid) from public;
 revoke all on function public.notifications_list(text, integer, timestamptz, uuid) from public;
 revoke all on function public.notification_mark_read(uuid) from public;
 revoke all on function public.notifications_mark_all_read() from public;
+revoke all on function public.notifications_unread_count() from public;
 revoke all on function public.is_meme_creator(uuid, uuid) from public;
 revoke all on function public.is_meme_recipient(uuid, uuid) from public;
 revoke all on function public.can_view_meme(uuid, uuid) from public;
@@ -2853,11 +2869,33 @@ grant execute on function public.meme_laugh_toggle(uuid) to authenticated;
 grant execute on function public.notifications_list(text, integer, timestamptz, uuid) to authenticated;
 grant execute on function public.notification_mark_read(uuid) to authenticated;
 grant execute on function public.notifications_mark_all_read() to authenticated;
+grant execute on function public.notifications_unread_count() to authenticated;
 grant execute on function public.is_meme_creator(uuid, uuid) to authenticated;
 grant execute on function public.is_meme_recipient(uuid, uuid) to authenticated;
 grant execute on function public.can_view_meme(uuid, uuid) to authenticated;
 grant execute on function public.push_token_upsert(text, text, public.push_platform, text, text) to authenticated;
 grant execute on function public.push_token_deactivate_current_device(text, public.push_token_deactivation_reason) to authenticated;
+
+-- -----------------------------------------------------------------------------
+-- Realtime publication setup
+-- -----------------------------------------------------------------------------
+
+do $$
+begin
+  if exists (
+    select 1
+    from pg_catalog.pg_publication p
+    where p.pubname = 'supabase_realtime'
+  ) then
+    begin
+      execute 'alter publication supabase_realtime add table public.notifications';
+    exception
+      when duplicate_object then
+        null;
+    end;
+  end if;
+end;
+$$;
 
 -- -----------------------------------------------------------------------------
 -- Cron jobs

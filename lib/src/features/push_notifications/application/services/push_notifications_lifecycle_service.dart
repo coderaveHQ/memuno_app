@@ -66,7 +66,11 @@ final class PushNotificationsLifecycleService {
       }
 
       if (_pushPlatformGateway.isIOS) {
-        await _pushMessagingGateway.configureForegroundPresentationOptions();
+        await _pushMessagingGateway.configureForegroundPresentationOptions(
+          alert: false,
+          badge: false,
+          sound: false,
+        );
       }
 
       _tokenRefreshSubscription = _pushMessagingGateway.onTokenRefresh.listen(

@@ -11,7 +11,11 @@ import 'package:memuno_app/src/features/auth/application/providers/auth_state_pr
 import 'package:memuno_app/src/features/auth/domain/entities/auth_state_entity.dart';
 import 'package:memuno_app/src/features/deep_links/application/providers/incoming_deep_link_provider.dart';
 import 'package:memuno_app/src/features/deep_links/presentation/providers/deep_link_navigation_handler_provider.dart';
+import 'package:memuno_app/src/features/notifications/application/providers/notifications_badge_sync_provider.dart';
+import 'package:memuno_app/src/features/notifications/application/providers/notifications_realtime_sync_provider.dart';
 import 'package:memuno_app/src/features/push_notifications/application/entities/push_auth_lifecycle_event.dart';
+import 'package:memuno_app/src/features/push_notifications/application/providers/push_notifications_intent_service_provider.dart';
+import 'package:memuno_app/src/features/push_notifications/application/services/push_notifications_intent_service.dart';
 import 'package:memuno_app/src/features/push_notifications/application/providers/push_notifications_lifecycle_service_provider.dart';
 import 'package:memuno_app/src/features/push_notifications/application/services/push_notifications_lifecycle_service.dart';
 
@@ -45,7 +49,15 @@ class _AppEffectsState extends ConsumerState<AppEffects> {
       final PushNotificationsLifecycleService lifecycleService = ref.read(
         pushNotificationsLifecycleServiceProvider,
       );
+      final PushNotificationsIntentService intentService = ref.read(
+        pushNotificationsIntentServiceProvider,
+      );
       unawaited(lifecycleService.initialize());
+      unawaited(intentService.initialize());
+
+      // App-global listeners that keep unread count + app-icon badge in sync.
+      ref.read(notificationsRealtimeSyncProvider);
+      ref.read(notificationsBadgeSyncProvider);
 
       final LanguageResolution languageResolution = ref.read(
         languageResolutionProvider,
@@ -60,6 +72,10 @@ class _AppEffectsState extends ConsumerState<AppEffects> {
         _lastHandledAuthState = initialAuthState;
         _emitPushAuthIntent(
           lifecycleService: lifecycleService,
+          state: initialAuthState,
+        );
+        _emitPushIntentAuthState(
+          intentService: intentService,
           state: initialAuthState,
         );
       }
@@ -114,8 +130,12 @@ class _AppEffectsState extends ConsumerState<AppEffects> {
       final PushNotificationsLifecycleService lifecycleService = ref.read(
         pushNotificationsLifecycleServiceProvider,
       );
+      final PushNotificationsIntentService intentService = ref.read(
+        pushNotificationsIntentServiceProvider,
+      );
       _lastHandledAuthState = nextState;
       _emitPushAuthIntent(lifecycleService: lifecycleService, state: nextState);
+      _emitPushIntentAuthState(intentService: intentService, state: nextState);
       _handleAuthState(context, previous?.asData?.value, nextState);
     });
 
@@ -129,9 +149,16 @@ class _AppEffectsState extends ConsumerState<AppEffects> {
       final PushNotificationsLifecycleService lifecycleService = ref.read(
         pushNotificationsLifecycleServiceProvider,
       );
+      final PushNotificationsIntentService intentService = ref.read(
+        pushNotificationsIntentServiceProvider,
+      );
       _lastHandledAuthState = cachedAuthState;
       _emitPushAuthIntent(
         lifecycleService: lifecycleService,
+        state: cachedAuthState,
+      );
+      _emitPushIntentAuthState(
+        intentService: intentService,
         state: cachedAuthState,
       );
     }
@@ -255,6 +282,13 @@ class _AppEffectsState extends ConsumerState<AppEffects> {
       event: event,
       userId: state.user?.id,
     );
+  }
+
+  void _emitPushIntentAuthState({
+    required PushNotificationsIntentService intentService,
+    required AuthStateEntity state,
+  }) {
+    intentService.handleAuthStateChange(userId: state.user?.id);
   }
 
   PushAuthLifecycleEvent? _toPushAuthLifecycleEvent(AuthStateEntity state) {
