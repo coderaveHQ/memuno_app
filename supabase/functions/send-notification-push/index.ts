@@ -321,6 +321,8 @@ export async function resolveNotificationPushTemplate(
 
 export function buildNotificationDataPayload(
   notification: NotificationRecord,
+  unreadCount?: number,
+  pushImageUrl?: string | null,
 ): Record<string, string> {
   const payload: Record<string, string> = {
     notification_id: notification.id,
@@ -336,6 +338,15 @@ export function buildNotificationDataPayload(
     if (typeof value === "number" || typeof value === "boolean") {
       payload[key] = String(value);
     }
+  }
+
+  if (typeof unreadCount === "number" && Number.isFinite(unreadCount)) {
+    payload["unread_count"] = String(Math.max(0, Math.trunc(unreadCount)));
+  }
+
+  const normalizedPushImageUrl = asString(pushImageUrl);
+  if (normalizedPushImageUrl != null) {
+    payload["push_image_url"] = normalizedPushImageUrl;
   }
 
   return payload;
@@ -443,6 +454,7 @@ export function buildFirebaseMessagePayload(
   notificationPayload: Record<string, string>,
   dataPayload: Record<string, string>,
   pushImageUrl: string | null,
+  unreadCount: number,
 ): Record<string, unknown> {
   const messagePayload: Record<string, unknown> = {
     token,
@@ -450,27 +462,42 @@ export function buildFirebaseMessagePayload(
     data: dataPayload,
   };
 
-  if (pushImageUrl == null) {
-    return messagePayload;
-  }
+  const normalizedUnreadCount = Math.max(0, Math.trunc(unreadCount));
 
   messagePayload.android = {
     notification: {
-      image: pushImageUrl,
+      notification_count: normalizedUnreadCount,
+      ...(pushImageUrl == null ? {} : { image: pushImageUrl }),
     },
   };
   messagePayload.apns = {
     payload: {
       aps: {
+        badge: normalizedUnreadCount,
         "mutable-content": 1,
       },
     },
-    fcm_options: {
-      image: pushImageUrl,
-    },
+    ...(pushImageUrl == null ? {} : { fcm_options: { image: pushImageUrl } }),
   };
 
   return messagePayload;
+}
+
+async function fetchUnreadNotificationCount(
+  supabase: SupabaseClient,
+  recipientId: string,
+): Promise<number> {
+  const { count, error } = await supabase
+    .from("notifications")
+    .select("id", { count: "exact", head: true })
+    .eq("recipient_id", recipientId)
+    .eq("is_read", false);
+
+  if (error != null) {
+    throw error;
+  }
+
+  return Math.max(0, count ?? 0);
 }
 
 export function isInvalidFirebaseTokenError(payload: unknown): boolean {
@@ -851,6 +878,20 @@ export function createSendNotificationPushHandler(
         }
       }
 
+      let unreadCount = 0;
+      try {
+        unreadCount = await fetchUnreadNotificationCount(
+          supabase,
+          notification.recipientId,
+        );
+      } catch (error) {
+        logEvent("warn", "send_notification_push.unread_count_failed", {
+          notification_id: notification.id,
+          recipient_id: notification.recipientId,
+          error: error instanceof Error ? error.message : "unknown_error",
+        });
+      }
+
       const { data: tokenRows, error: tokenLookupError } = await supabase
         .from("push_device_tokens")
         .select("id, fcm_token, language_code, country_code")
@@ -974,7 +1015,11 @@ export function createSendNotificationPushHandler(
           continue;
         }
 
-        const dataPayload = buildNotificationDataPayload(notification);
+        const dataPayload = buildNotificationDataPayload(
+          notification,
+          unreadCount,
+          pushImageUrl,
+        );
         const templateVariables = buildNotificationTemplateVariables(
           notification,
           template.languageCode,
@@ -1011,6 +1056,7 @@ export function createSendNotificationPushHandler(
           notificationPayload,
           dataPayload,
           pushImageUrl,
+          unreadCount,
         );
 
         const pushResponse = await deps.fetchFn(firebaseSendUrl, {

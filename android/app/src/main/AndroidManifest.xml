@@ -1,5 +1,35 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <!-- OEM badge compatibility (app_badge_plus + legacy shortcut badger launchers). -->
+    <!-- Samsung -->
+    <uses-permission android:name="com.sec.android.provider.badge.permission.READ" />
+    <uses-permission android:name="com.sec.android.provider.badge.permission.WRITE" />
+    <!-- HTC -->
+    <uses-permission android:name="com.htc.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.htc.launcher.permission.UPDATE_SHORTCUT" />
+    <!-- Sony -->
+    <uses-permission android:name="com.sonyericsson.home.permission.BROADCAST_BADGE" />
+    <uses-permission android:name="com.sonymobile.home.permission.PROVIDER_INSERT_BADGE" />
+    <!-- Huawei -->
+    <uses-permission android:name="com.huawei.android.launcher.permission.CHANGE_BADGE" />
+    <uses-permission android:name="com.huawei.android.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.huawei.android.launcher.permission.WRITE_SETTINGS" />
+    <!-- Honor -->
+    <uses-permission android:name="com.hihonor.android.launcher.permission.CHANGE_BADGE" />
+    <uses-permission android:name="com.hihonor.android.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.hihonor.android.launcher.permission.WRITE_SETTINGS" />
+    <!-- Vivo -->
+    <uses-permission android:name="com.vivo.notification.permission.BADGE_ICON" />
+    <!-- Oppo -->
+    <uses-permission android:name="com.oppo.launcher.permission.READ_SETTINGS" />
+    <uses-permission android:name="com.oppo.launcher.permission.WRITE_SETTINGS" />
+    <!-- Xiaomi / generic shortcut badger compatibility -->
+    <uses-permission android:name="android.permission.READ_APP_BADGE" />
+    <uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_READ" />
+    <uses-permission android:name="me.everything.badger.permission.BADGE_COUNT_WRITE" />
+    <!-- Additional launcher support -->
+    <uses-permission android:name="com.anddoes.launcher.permission.UPDATE_COUNT" />
+    <uses-permission android:name="com.majeur.launcher.permission.UPDATE_BADGE" />
 
     <application
         android:label="@string/app_name"

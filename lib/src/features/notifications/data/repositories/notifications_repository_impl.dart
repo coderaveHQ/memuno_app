@@ -63,4 +63,14 @@ final class NotificationsRepositoryImpl implements NotificationsRepository {
       throw _failureMapper.map(error);
     }
   }
+
+  @override
+  /// Returns unread notifications count for the current user.
+  Future<int> unreadNotificationsCount() async {
+    try {
+      return _notificationsDatasource.unreadNotificationsCount();
+    } catch (error) {
+      throw _failureMapper.map(error);
+    }
+  }
 }

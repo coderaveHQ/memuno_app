@@ -25,4 +25,7 @@ abstract interface class NotificationsDatasource {
 
   /// Marks all unread notifications as read and returns affected row count.
   Future<int> markAllNotificationsRead();
+
+  /// Returns unread notifications count for the current user.
+  Future<int> unreadNotificationsCount();
 }

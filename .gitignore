@@ -84,8 +84,9 @@ app.*.map.json
 # -----------------------------------------------------------------------------
 # Environment / secrets
 # -----------------------------------------------------------------------------
-# Local env files
-.env.local
+.env.development
+.env.staging
+.env.production
 
 # l10n
 untranslated_messages.txt

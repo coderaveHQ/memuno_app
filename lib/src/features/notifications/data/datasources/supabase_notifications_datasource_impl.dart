@@ -72,6 +72,26 @@ final class SupabaseNotificationsDatasourceImpl
     );
   }
 
+  @override
+  /// Calls `notifications_unread_count` and returns unread count.
+  Future<int> unreadNotificationsCount() async {
+    final Object? payload = await _supabaseClient.rpc<Object?>(
+      'notifications_unread_count',
+    );
+
+    if (payload is int) {
+      return payload;
+    }
+
+    if (payload is num) {
+      return payload.toInt();
+    }
+
+    throw FormatException(
+      'Expected `notifications_unread_count` to return an integer payload.',
+    );
+  }
+
   Map<String, Object?> _asObjectMap(
     Object? payload, {
     required String rpcName,
