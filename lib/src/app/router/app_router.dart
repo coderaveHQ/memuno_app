@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:memuno_app/src/app/navigation/presentation/pages/main_shell_page.dart';
 import 'package:memuno_app/src/app/router/extras_codec.dart';
 import 'package:memuno_app/src/app/router/route_utils.dart';
@@ -22,9 +23,9 @@ import 'package:memuno_app/src/features/feed/presentation/pages/feed_page.dart';
 import 'package:memuno_app/src/features/friendships/presentation/pages/friendships_page.dart';
 import 'package:memuno_app/src/features/meme_details/presentation/pages/meme_details_page.dart';
 import 'package:memuno_app/src/features/notifications/presentation/pages/notifications_page.dart';
-import 'package:memuno_app/src/features/profile/presentation/pages/profile_page.dart';
 import 'package:memuno_app/src/features/settings/presentation/pages/language_mode_page.dart';
 import 'package:memuno_app/src/features/settings/presentation/pages/settings_page.dart';
+import 'package:memuno_app/src/features/user_details/presentation/pages/user_details_page.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'app_router.g.dart';

@@ -38,15 +38,15 @@
   "signInSignUpButton": "Registrieren",
   "signOutButton": "Abmelden",
   "homePullToRefreshHint": "Zum Aktualisieren nach unten ziehen.",
-  "profileTitle": "Profil",
-  "profileFriendshipCodeLabel": "Freundschaftscode:",
-  "profileFriendshipCodeShareText": "Lass uns bei Memuno befreundet sein: {code}",
-  "@profileFriendshipCodeShareText": {
+  "userDetailsTitle": "Nutzer-Details",
+  "userDetailsFriendshipCodeLabel": "Freundschaftscode:",
+  "userDetailsFriendshipCodeShareText": "Lass uns bei Memuno befreundet sein: {code}",
+  "@userDetailsFriendshipCodeShareText": {
     "placeholders": {
       "code": {}
     }
   },
-  "profileJoinedAtLabel": "Beigetreten am:",
+  "userDetailsJoinedAtLabel": "Beigetreten am:",
   "friendshipsTitle": "Freundschaften",
   "friendshipsTabFriendships": "Freunde",
   "friendshipsTabRequests": "Anfragen",

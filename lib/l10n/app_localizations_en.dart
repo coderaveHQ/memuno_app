@@ -103,18 +103,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get homePullToRefreshHint => 'Pull down to refresh.';
 
   @override
-  String get profileTitle => 'Profile';
+  String get userDetailsTitle => 'User details';
 
   @override
-  String get profileFriendshipCodeLabel => 'Friendship code:';
+  String get userDetailsFriendshipCodeLabel => 'Friendship code:';
 
   @override
-  String profileFriendshipCodeShareText(Object code) {
+  String userDetailsFriendshipCodeShareText(Object code) {
     return 'Let\'s be friends on Memuno: $code';
   }
 
   @override
-  String get profileJoinedAtLabel => 'Joined on:';
+  String get userDetailsJoinedAtLabel => 'Joined on:';
 
   @override
   String get friendshipsTitle => 'Friendships';
@@ -527,18 +527,18 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   String get homePullToRefreshHint => 'Pull down to refresh.';
 
   @override
-  String get profileTitle => 'Profile';
+  String get userDetailsTitle => 'User details';
 
   @override
-  String get profileFriendshipCodeLabel => 'Friendship code:';
+  String get userDetailsFriendshipCodeLabel => 'Friendship code:';
 
   @override
-  String profileFriendshipCodeShareText(Object code) {
+  String userDetailsFriendshipCodeShareText(Object code) {
     return 'Let\'s be friends on Memuno: $code';
   }
 
   @override
-  String get profileJoinedAtLabel => 'Joined on:';
+  String get userDetailsJoinedAtLabel => 'Joined on:';
 
   @override
   String get friendshipsTitle => 'Friendships';

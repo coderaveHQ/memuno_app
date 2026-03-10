@@ -1,5 +1,6 @@
 // ignore: unused_import
 import 'package:intl/intl.dart' as intl;
+
 import 'app_localizations.dart';
 
 // ignore_for_file: type=lint
@@ -105,18 +106,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get homePullToRefreshHint => 'Zum Aktualisieren nach unten ziehen.';
 
   @override
-  String get profileTitle => 'Profil';
+  String get userDetailsTitle => 'Nutzer-Details';
 
   @override
-  String get profileFriendshipCodeLabel => 'Freundschaftscode:';
+  String get userDetailsFriendshipCodeLabel => 'Freundschaftscode:';
 
   @override
-  String profileFriendshipCodeShareText(Object code) {
+  String userDetailsFriendshipCodeShareText(Object code) {
     return 'Lass uns bei Memuno befreundet sein: $code';
   }
 
   @override
-  String get profileJoinedAtLabel => 'Beigetreten am:';
+  String get userDetailsJoinedAtLabel => 'Beigetreten am:';
 
   @override
   String get friendshipsTitle => 'Freundschaften';
@@ -537,18 +538,18 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
   String get homePullToRefreshHint => 'Zum Aktualisieren nach unten ziehen.';
 
   @override
-  String get profileTitle => 'Profil';
+  String get userDetailsTitle => 'Nutzer-Details';
 
   @override
-  String get profileFriendshipCodeLabel => 'Freundschaftscode:';
+  String get userDetailsFriendshipCodeLabel => 'Freundschaftscode:';
 
   @override
-  String profileFriendshipCodeShareText(Object code) {
+  String userDetailsFriendshipCodeShareText(Object code) {
     return 'Lass uns bei Memuno befreundet sein: $code';
   }
 
   @override
-  String get profileJoinedAtLabel => 'Beigetreten am:';
+  String get userDetailsJoinedAtLabel => 'Beigetreten am:';
 
   @override
   String get friendshipsTitle => 'Freundschaften';
