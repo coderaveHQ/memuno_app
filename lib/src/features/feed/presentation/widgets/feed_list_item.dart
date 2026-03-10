@@ -63,7 +63,11 @@ class FeedListItem extends ConsumerWidget {
             child: Row(
               children: <Widget>[
                 MAvatar(
-                  onPressed: null,
+                  onPressed: () {
+                    UserDetailsRoute(
+                      userId: feedItem.user.id,
+                    ).push<void>(context);
+                  },
                   name: feedItem.user.name,
                   dimension: kToolbarHeight - 4.0,
                 ),
@@ -74,7 +78,11 @@ class FeedListItem extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       MTappable(
-                        onPressed: null,
+                        onPressed: () {
+                          UserDetailsRoute(
+                            userId: feedItem.user.id,
+                          ).push<void>(context);
+                        },
                         child: MText.h4(
                           text: feedItem.user.name,
                           maxLines: 1,

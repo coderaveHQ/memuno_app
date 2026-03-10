@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:memuno_app/l10n/app_localizations.dart';
 import 'package:memuno_app/src/app/extensions/build_context_x.dart';
 import 'package:memuno_app/src/app/extensions/date_time_x.dart';
+import 'package:memuno_app/src/app/router/app_router.dart';
 import 'package:memuno_app/src/app/widgets/m/m_avatar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_colors.dart';
 import 'package:memuno_app/src/app/widgets/m/m_gap.dart';
@@ -38,6 +39,11 @@ class NotificationListItem extends StatelessWidget {
     return MListTile(
       onPressed: () => onPressed(notification),
       leading: MAvatar(
+        onPressed: () {
+          UserDetailsRoute(
+            userId: notification.notificationActorId,
+          ).push<void>(context);
+        },
         name: notification.notificationActorName,
         dimension: 48.0,
       ),

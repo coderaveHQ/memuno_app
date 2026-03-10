@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:memuno_app/l10n/app_localizations.dart';
 import 'package:memuno_app/src/app/extensions/build_context_x.dart';
 import 'package:memuno_app/src/app/extensions/date_time_x.dart';
+import 'package:memuno_app/src/app/router/app_router.dart';
 import 'package:memuno_app/src/app/widgets/m/m_async_list.dart';
 import 'package:memuno_app/src/app/widgets/m/m_avatar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_list_tile.dart';
@@ -24,10 +25,13 @@ class FriendshipsList extends StatelessWidget {
       loadMoreExtent: 220.0,
       itemBuilder: (BuildContext context, FriendshipListPageItemEntity friendship) {
         return MListTile(
+          onPressed: () {
+            UserDetailsRoute(userId: friendship.user.id).push<void>(context);
+          },
           leading: MAvatar(name: friendship.user.name, dimension: 48.0),
           title: friendship.user.name,
           description:
-              '${l10n.profileFriendshipCodeLabel} ${friendship.user.friendshipCode}',
+              '${l10n.userDetailsFriendshipCodeLabel} ${friendship.user.friendshipCode}',
           details:
               '${l10n.friendshipsFriendsSincePrefix}: ${friendship.createdAt.formatDateOnly(fullDate: true)}',
           trailing: DeleteFriendshipButton(friendship: friendship),

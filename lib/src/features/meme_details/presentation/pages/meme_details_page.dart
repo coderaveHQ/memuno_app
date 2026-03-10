@@ -11,6 +11,7 @@ import 'package:memuno_app/src/app/extensions/date_time_x.dart';
 import 'package:memuno_app/src/app/extensions/mutation_x.dart';
 import 'package:memuno_app/src/app/feedback/app_feedback.dart';
 import 'package:memuno_app/src/app/feedback/app_feedback_provider.dart';
+import 'package:memuno_app/src/app/router/app_router.dart';
 import 'package:memuno_app/src/app/widgets/m/m_app_bar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_avatar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_center.dart';
@@ -178,7 +179,11 @@ class MemeDetailsPage extends ConsumerWidget {
                       child: Row(
                         children: <Widget>[
                           MAvatar(
-                            onPressed: null,
+                            onPressed: () {
+                              UserDetailsRoute(
+                                userId: details.user.id,
+                              ).push<void>(context);
+                            },
                             name: details.user.name,
                             dimension: kToolbarHeight - 4.0,
                           ),
@@ -189,7 +194,11 @@ class MemeDetailsPage extends ConsumerWidget {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: <Widget>[
                                 MTappable(
-                                  onPressed: null,
+                                  onPressed: () {
+                                    UserDetailsRoute(
+                                      userId: details.user.id,
+                                    ).push<void>(context);
+                                  },
                                   child: MText.h4(
                                     text: details.user.name,
                                     maxLines: 1,

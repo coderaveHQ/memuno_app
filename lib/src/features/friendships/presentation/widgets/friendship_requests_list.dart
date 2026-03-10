@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:memuno_app/l10n/app_localizations.dart';
 import 'package:memuno_app/src/app/extensions/build_context_x.dart';
 import 'package:memuno_app/src/app/extensions/date_time_x.dart';
+import 'package:memuno_app/src/app/router/app_router.dart';
 import 'package:memuno_app/src/app/widgets/m/m_async_list.dart';
 import 'package:memuno_app/src/app/widgets/m/m_avatar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_gap.dart';
@@ -36,13 +37,18 @@ class FriendshipRequestsList extends ConsumerWidget {
             FriendshipRequestListPageItemEntity friendshipRequest,
           ) {
             return MListTile(
+              onPressed: () {
+                UserDetailsRoute(
+                  userId: friendshipRequest.user.id,
+                ).push<void>(context);
+              },
               leading: MAvatar(
                 name: friendshipRequest.user.name,
                 dimension: 48.0,
               ),
               title: friendshipRequest.user.name,
               description:
-                  '${l10n.profileFriendshipCodeLabel} ${friendshipRequest.user.friendshipCode}',
+                  '${l10n.userDetailsFriendshipCodeLabel} ${friendshipRequest.user.friendshipCode}',
               details:
                   friendshipRequest.direction ==
                       FriendshipRequestDirection.incoming

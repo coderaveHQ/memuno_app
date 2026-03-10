@@ -38,15 +38,15 @@
   "signInSignUpButton": "Sign up",
   "signOutButton": "Sign out",
   "homePullToRefreshHint": "Pull down to refresh.",
-  "profileTitle": "Profile",
-  "profileFriendshipCodeLabel": "Friendship code:",
-  "profileFriendshipCodeShareText": "Let''s be friends on Memuno: {code}",
-  "@profileFriendshipCodeShareText": {
+  "userDetailsTitle": "User details",
+  "userDetailsFriendshipCodeLabel": "Friendship code:",
+  "userDetailsFriendshipCodeShareText": "Let''s be friends on Memuno: {code}",
+  "@userDetailsFriendshipCodeShareText": {
     "placeholders": {
       "code": {}
     }
   },
-  "profileJoinedAtLabel": "Joined on:",
+  "userDetailsJoinedAtLabel": "Joined on:",
   "friendshipsTitle": "Friendships",
   "friendshipsTabFriendships": "Friendships",
   "friendshipsTabRequests": "Requests",

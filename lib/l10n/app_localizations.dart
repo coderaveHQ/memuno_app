@@ -268,29 +268,29 @@ abstract class AppLocalizations {
   /// **'Pull down to refresh.'**
   String get homePullToRefreshHint;
 
-  /// No description provided for @profileTitle.
+  /// No description provided for @userDetailsTitle.
   ///
   /// In en_US, this message translates to:
-  /// **'Profile'**
-  String get profileTitle;
+  /// **'User details'**
+  String get userDetailsTitle;
 
-  /// No description provided for @profileFriendshipCodeLabel.
+  /// No description provided for @userDetailsFriendshipCodeLabel.
   ///
   /// In en_US, this message translates to:
   /// **'Friendship code:'**
-  String get profileFriendshipCodeLabel;
+  String get userDetailsFriendshipCodeLabel;
 
-  /// No description provided for @profileFriendshipCodeShareText.
+  /// No description provided for @userDetailsFriendshipCodeShareText.
   ///
   /// In en_US, this message translates to:
   /// **'Let\'\'s be friends on Memuno: {code}'**
-  String profileFriendshipCodeShareText(Object code);
+  String userDetailsFriendshipCodeShareText(Object code);
 
-  /// No description provided for @profileJoinedAtLabel.
+  /// No description provided for @userDetailsJoinedAtLabel.
   ///
   /// In en_US, this message translates to:
   /// **'Joined on:'**
-  String get profileJoinedAtLabel;
+  String get userDetailsJoinedAtLabel;
 
   /// No description provided for @friendshipsTitle.
   ///

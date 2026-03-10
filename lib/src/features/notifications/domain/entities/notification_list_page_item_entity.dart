@@ -34,6 +34,20 @@ sealed class NotificationListPageItemEntity
 
 /// Convenience helpers used by list rendering and optimistic updates.
 extension NotificationListPageItemEntityX on NotificationListPageItemEntity {
+  /// Actor user id used by profile navigation.
+  String get notificationActorId {
+    return switch (data) {
+      FriendshipRequestSentNotificationListPageItemDataEntity(:final actorId) =>
+        actorId,
+      FriendshipRequestAcceptedNotificationListPageItemDataEntity(
+        :final actorId,
+      ) =>
+        actorId,
+      MemeReceivedNotificationListPageItemDataEntity(:final actorId) => actorId,
+      MemeLaughedNotificationListPageItemDataEntity(:final actorId) => actorId,
+    };
+  }
+
   /// Stable notification id.
   String get notificationId => id;
 
