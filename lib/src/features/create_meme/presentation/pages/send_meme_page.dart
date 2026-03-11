@@ -30,6 +30,8 @@ import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_
 import 'package:memuno_app/src/features/create_meme/domain/usecases/send_meme_usecase.dart';
 import 'package:memuno_app/src/features/friendships/domain/entities/friendship_cursor_entity.dart';
 import 'package:memuno_app/src/features/friendships/domain/entities/friendship_list_page_item_entity.dart';
+import 'package:memuno_app/src/features/meme_widget/application/providers/services/meme_widget_sync_service_provider.dart';
+import 'package:memuno_app/src/features/meme_widget/application/services/meme_widget_sync_service.dart';
 
 /// Page for selecting friendship recipients for one finalized meme.
 class SendMemePage extends HookConsumerWidget {
@@ -95,6 +97,12 @@ class SendMemePage extends HookConsumerWidget {
       if (next is MutationError<void>) {
         feedback.resolveAndShowError(context, next.error);
       } else if (next is MutationSuccess<void>) {
+        final MemeWidgetSyncService memeWidgetSyncService = ref.read(
+          memeWidgetSyncServiceProvider,
+        );
+        unawaited(
+          memeWidgetSyncService.sync(locale: Localizations.localeOf(context)),
+        );
         feedback.showSuccess(context, message: l10n.sendMemeSuccessMessage);
         if (!context.mounted) {
           return;

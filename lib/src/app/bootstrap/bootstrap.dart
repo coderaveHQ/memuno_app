@@ -10,7 +10,6 @@ import 'package:memuno_app/src/app/bootstrap/firebase/firebase_bootstrap.dart';
 import 'package:memuno_app/src/app/bootstrap/supabase/supabase_bootstrap.dart';
 import 'package:memuno_app/src/core/utils/logger.dart';
 import 'package:memuno_app/src/infrastructure/shared_preferences/shared_preferences_provider.dart';
-import 'package:riverpod_annotation/riverpod_annotation.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:zentoast/zentoast.dart';
 
@@ -78,7 +77,7 @@ Future<void> bootstrap() async {
       // Start the app with Riverpod.
       runApp(
         ProviderScope(
-          overrides: <Override>[
+          overrides: [
             sharedPreferencesProvider.overrideWithValue(sharedPreferences),
           ],
           child: ToastProvider.create(child: const App()),

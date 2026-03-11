@@ -173,6 +173,22 @@ class AppLocalizationsDe extends AppLocalizations {
   String get feedListEmpty => 'Noch keine Memes in deinem Feed.';
 
   @override
+  String get widgetNoMemesYet => 'Noch keine Memes.';
+
+  @override
+  String get widgetSignInToDisplayMemes =>
+      'Melde dich an, um Memes anzuzeigen.';
+
+  @override
+  String get widgetLaughAction => 'Lachen';
+
+  @override
+  String get widgetUnlaughAction => 'Nicht mehr';
+
+  @override
+  String get widgetOwnerAction => 'Eigener';
+
+  @override
   String get memeDetailsTitle => 'Meme-Details';
 
   @override
@@ -213,7 +229,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String notificationsItemMemeLaughed(Object sender_name) {
-    return '$sender_name hat ueber dein Meme gelacht.';
+    return '$sender_name hat über dein Meme gelacht.';
   }
 
   @override
@@ -605,6 +621,22 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
   String get feedListEmpty => 'Noch keine Memes in deinem Feed.';
 
   @override
+  String get widgetNoMemesYet => 'Noch keine Memes.';
+
+  @override
+  String get widgetSignInToDisplayMemes =>
+      'Melde dich an, um Memes anzuzeigen.';
+
+  @override
+  String get widgetLaughAction => 'Lachen';
+
+  @override
+  String get widgetUnlaughAction => 'Nicht mehr';
+
+  @override
+  String get widgetOwnerAction => 'Eigener';
+
+  @override
   String get memeDetailsTitle => 'Meme-Details';
 
   @override
@@ -645,7 +677,7 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
 
   @override
   String notificationsItemMemeLaughed(Object sender_name) {
-    return '$sender_name hat ueber dein Meme gelacht.';
+    return '$sender_name hat über dein Meme gelacht.';
   }
 
   @override

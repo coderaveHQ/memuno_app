@@ -1,6 +1,7 @@
 plugins {
     id("com.android.application")
     id("kotlin-android")
+    id("org.jetbrains.kotlin.plugin.compose")
     // The Flutter Gradle Plugin must be applied after the Android and Kotlin Gradle plugins.
     id("dev.flutter.flutter-gradle-plugin")
     id("com.google.gms.google-services")
@@ -19,6 +20,10 @@ android {
 
     kotlinOptions {
         jvmTarget = JavaVersion.VERSION_17.toString()
+    }
+
+    buildFeatures {
+        compose = true
     }
 
     defaultConfig {
@@ -68,6 +73,7 @@ dependencies {
     // image_cropper -> uCrop references OkHttp classes in release/R8 builds.
     coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
     implementation("com.squareup.okhttp3:okhttp:4.12.0")
+    implementation("androidx.glance:glance-appwidget:1.1.1")
     // flutter_local_notifications -> There have been reports that enabling desugaring may result in a Flutter apps crashing on Android 12L and above. This would be an issue with Flutter itself, not the plugin. One possible fix is adding the WindowManager library as a dependency.
     implementation("androidx.window:window:1.0.0")
     implementation("androidx.window:window-java:1.0.0")

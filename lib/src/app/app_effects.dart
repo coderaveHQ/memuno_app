@@ -11,6 +11,10 @@ import 'package:memuno_app/src/features/auth/application/providers/auth_state_pr
 import 'package:memuno_app/src/features/auth/domain/entities/auth_state_entity.dart';
 import 'package:memuno_app/src/features/deep_links/application/providers/incoming_deep_link_provider.dart';
 import 'package:memuno_app/src/features/deep_links/presentation/providers/deep_link_navigation_handler_provider.dart';
+import 'package:memuno_app/src/features/meme_widget/application/providers/services/meme_widget_intent_service_provider.dart';
+import 'package:memuno_app/src/features/meme_widget/application/providers/services/meme_widget_sync_service_provider.dart';
+import 'package:memuno_app/src/features/meme_widget/application/services/meme_widget_intent_service.dart';
+import 'package:memuno_app/src/features/meme_widget/application/services/meme_widget_sync_service.dart';
 import 'package:memuno_app/src/features/notifications/application/providers/notifications_badge_sync_provider.dart';
 import 'package:memuno_app/src/features/notifications/application/providers/notifications_realtime_sync_provider.dart';
 import 'package:memuno_app/src/features/push_notifications/application/entities/push_auth_lifecycle_event.dart';
@@ -52,8 +56,16 @@ class _AppEffectsState extends ConsumerState<AppEffects> {
       final PushNotificationsIntentService intentService = ref.read(
         pushNotificationsIntentServiceProvider,
       );
+      final MemeWidgetSyncService memeWidgetSyncService = ref.read(
+        memeWidgetSyncServiceProvider,
+      );
+      final MemeWidgetIntentService memeWidgetIntentService = ref.read(
+        memeWidgetIntentServiceProvider,
+      );
       unawaited(lifecycleService.initialize());
       unawaited(intentService.initialize());
+      unawaited(memeWidgetSyncService.initialize());
+      unawaited(memeWidgetIntentService.initialize());
 
       // App-global listeners that keep unread count + app-icon badge in sync.
       ref.read(notificationsRealtimeSyncProvider);
@@ -78,6 +90,21 @@ class _AppEffectsState extends ConsumerState<AppEffects> {
           intentService: intentService,
           state: initialAuthState,
         );
+        memeWidgetIntentService.handleAuthStateChange(
+          userId: initialAuthState.user?.id,
+        );
+        unawaited(
+          memeWidgetSyncService.syncForAuthState(
+            userId: initialAuthState.user?.id,
+            locale: languageResolution.resolvedLocale,
+          ),
+        );
+        unawaited(
+          _drainPendingMemeWidgetAction(
+            syncService: memeWidgetSyncService,
+            intentService: memeWidgetIntentService,
+          ),
+        );
       }
     });
   }
@@ -93,6 +120,19 @@ class _AppEffectsState extends ConsumerState<AppEffects> {
         pushNotificationsLifecycleServiceProvider,
       );
       lifecycleService.handleResolvedLocale(next.resolvedLocale);
+
+      final MemeWidgetSyncService memeWidgetSyncService = ref.read(
+        memeWidgetSyncServiceProvider,
+      );
+      final AuthStateEntity? state = ref.read(authStateProvider).asData?.value;
+      if (state != null) {
+        unawaited(
+          memeWidgetSyncService.syncForAuthState(
+            userId: state.user?.id,
+            locale: next.resolvedLocale,
+          ),
+        );
+      }
     });
 
     // Listen to external deep links and route them through the central handler.
@@ -133,9 +173,31 @@ class _AppEffectsState extends ConsumerState<AppEffects> {
       final PushNotificationsIntentService intentService = ref.read(
         pushNotificationsIntentServiceProvider,
       );
+      final MemeWidgetSyncService memeWidgetSyncService = ref.read(
+        memeWidgetSyncServiceProvider,
+      );
+      final MemeWidgetIntentService memeWidgetIntentService = ref.read(
+        memeWidgetIntentServiceProvider,
+      );
       _lastHandledAuthState = nextState;
       _emitPushAuthIntent(lifecycleService: lifecycleService, state: nextState);
       _emitPushIntentAuthState(intentService: intentService, state: nextState);
+      memeWidgetIntentService.handleAuthStateChange(userId: nextState.user?.id);
+      final LanguageResolution languageResolution = ref.read(
+        languageResolutionProvider,
+      );
+      unawaited(
+        memeWidgetSyncService.syncForAuthState(
+          userId: nextState.user?.id,
+          locale: languageResolution.resolvedLocale,
+        ),
+      );
+      unawaited(
+        _drainPendingMemeWidgetAction(
+          syncService: memeWidgetSyncService,
+          intentService: memeWidgetIntentService,
+        ),
+      );
       _handleAuthState(context, previous?.asData?.value, nextState);
     });
 
@@ -152,6 +214,12 @@ class _AppEffectsState extends ConsumerState<AppEffects> {
       final PushNotificationsIntentService intentService = ref.read(
         pushNotificationsIntentServiceProvider,
       );
+      final MemeWidgetIntentService memeWidgetIntentService = ref.read(
+        memeWidgetIntentServiceProvider,
+      );
+      final MemeWidgetSyncService memeWidgetSyncService = ref.read(
+        memeWidgetSyncServiceProvider,
+      );
       _lastHandledAuthState = cachedAuthState;
       _emitPushAuthIntent(
         lifecycleService: lifecycleService,
@@ -160,6 +228,24 @@ class _AppEffectsState extends ConsumerState<AppEffects> {
       _emitPushIntentAuthState(
         intentService: intentService,
         state: cachedAuthState,
+      );
+      memeWidgetIntentService.handleAuthStateChange(
+        userId: cachedAuthState.user?.id,
+      );
+      final LanguageResolution languageResolution = ref.read(
+        languageResolutionProvider,
+      );
+      unawaited(
+        memeWidgetSyncService.syncForAuthState(
+          userId: cachedAuthState.user?.id,
+          locale: languageResolution.resolvedLocale,
+        ),
+      );
+      unawaited(
+        _drainPendingMemeWidgetAction(
+          syncService: memeWidgetSyncService,
+          intentService: memeWidgetIntentService,
+        ),
       );
     }
 
@@ -312,5 +398,17 @@ class _AppEffectsState extends ConsumerState<AppEffects> {
       return null;
     }
     return overlay.context;
+  }
+
+  Future<void> _drainPendingMemeWidgetAction({
+    required MemeWidgetSyncService syncService,
+    required MemeWidgetIntentService intentService,
+  }) async {
+    final String? actionUri = await syncService.takePendingActionUri();
+    if (actionUri == null || actionUri.trim().isEmpty) {
+      return;
+    }
+
+    await intentService.handlePendingActionUri(actionUri);
   }
 }
