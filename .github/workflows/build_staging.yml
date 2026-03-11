@@ -67,7 +67,7 @@ jobs:
     # - secrets.* are sensitive values
     env:
       SUPABASE_URL: ${{ vars.SUPABASE_URL }}
-      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
 
       # Optional (recommended) for later store tooling:
       # ANDROID_PACKAGE_NAME: dev.coderave.memunoapp.stg
@@ -144,7 +144,7 @@ jobs:
           --build-name=$VERSION_NAME
           --build-number=$BUILD_NUMBER
           --dart-define=SUPABASE_URL=$SUPABASE_URL
-          --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
+          --dart-define=SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY
 
       # Build an AAB (Android App Bundle) for Play Store distribution.
       - name: Build AppBundle (staging)
@@ -154,7 +154,7 @@ jobs:
           --build-name=$VERSION_NAME
           --build-number=$BUILD_NUMBER
           --dart-define=SUPABASE_URL=$SUPABASE_URL
-          --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
+          --dart-define=SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY
 
       # Upload build outputs as workflow artifacts for download.
       - name: Upload Android artifacts
@@ -204,7 +204,7 @@ jobs:
 
     env:
       SUPABASE_URL: ${{ vars.SUPABASE_URL }}
-      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
 
       # Optional (recommended) for later store tooling:
       # IOS_BUNDLE_ID: dev.coderave.memunoapp.stg
@@ -278,7 +278,7 @@ jobs:
           --build-name=$VERSION_NAME
           --build-number=$BUILD_NUMBER
           --dart-define=SUPABASE_URL=$SUPABASE_URL
-          --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
+          --dart-define=SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY
 
       # Upload iOS build products as artifacts (compile validation output).
       - name: Upload iOS artifacts (no codesign)
@@ -322,7 +322,7 @@ jobs:
       #     --build-name=$VERSION_NAME
       #     --build-number=$BUILD_NUMBER
       #     --dart-define=SUPABASE_URL=$SUPABASE_URL
-      #     --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
+      #     --dart-define=SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY
       #
       # - name: Upload to TestFlight (Fastlane) [requires setup]
       #   run: |
