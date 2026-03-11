@@ -67,7 +67,7 @@ jobs:
     # - secrets.* are sensitive values
     env:
       SUPABASE_URL: ${{ vars.SUPABASE_URL }}
-      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
 
       # Optional (recommended) for later Play tooling:
       # ANDROID_PACKAGE_NAME: dev.coderave.memunoapp
@@ -134,7 +134,7 @@ jobs:
           --build-name=$VERSION_NAME
           --build-number=$BUILD_NUMBER
           --dart-define=SUPABASE_URL=$SUPABASE_URL
-          --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
+          --dart-define=SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY
 
       # AAB is the required format for Google Play releases.
       - name: Build AppBundle (production)
@@ -144,7 +144,7 @@ jobs:
           --build-name=$VERSION_NAME
           --build-number=$BUILD_NUMBER
           --dart-define=SUPABASE_URL=$SUPABASE_URL
-          --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
+          --dart-define=SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY
 
       - name: Upload Android artifacts
         uses: actions/upload-artifact@v4
@@ -186,7 +186,7 @@ jobs:
 
     env:
       SUPABASE_URL: ${{ vars.SUPABASE_URL }}
-      SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+      SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
 
       # Optional (recommended) for later ASC tooling:
       # IOS_BUNDLE_ID: dev.coderave.memunoapp
@@ -256,7 +256,7 @@ jobs:
           --build-name=$VERSION_NAME
           --build-number=$BUILD_NUMBER
           --dart-define=SUPABASE_URL=$SUPABASE_URL
-          --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
+          --dart-define=SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY
 
       - name: Upload iOS artifacts (no codesign)
         uses: actions/upload-artifact@v4
@@ -294,7 +294,7 @@ jobs:
       #     --build-name=$VERSION_NAME
       #     --build-number=$BUILD_NUMBER
       #     --dart-define=SUPABASE_URL=$SUPABASE_URL
-      #     --dart-define=SUPABASE_ANON_KEY=$SUPABASE_ANON_KEY
+      #     --dart-define=SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY
       #
       # - name: Upload to App Store Connect [requires setup]
       #   run: |
