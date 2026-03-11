@@ -245,6 +245,11 @@ jobs:
           pod install
           cd ..
 
+      - name: Select Xcode 26.x
+        uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: "26.x"
+
       # Build iOS without code signing:
       # - validates compilation in CI
       # - does NOT produce an installable IPA
