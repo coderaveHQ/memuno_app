@@ -34,7 +34,7 @@ dependencies:
   firebase_core: ^4.4.0
   firebase_messaging: ^16.1.1
   firebase_crashlytics: ^5.0.7
-  flutter_local_notifications: ^19.4.2
+  flutter_local_notifications: ^21.0.0
   app_badge_plus: ^1.2.7
 
   # --- State management / DI -------------------------------------------------
@@ -92,6 +92,11 @@ dev_dependencies:
   freezed: ^3.2.4
 
 flutter:
+
+  # Disable UIScene lifecycle support warning
+  config:
+    enable-uiscene-migration: false
+
   # Enable translation generation
   generate: true
 

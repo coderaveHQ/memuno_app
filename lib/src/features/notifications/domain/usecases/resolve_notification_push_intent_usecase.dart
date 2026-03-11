@@ -14,10 +14,12 @@ final class ResolveNotificationPushIntentUsecase {
     return switch (notification.data) {
       FriendshipRequestSentNotificationListPageItemDataEntity(
         :final routeTab,
-      ) => NotificationNavigationTarget.friendships(tab: routeTab),
+      ) =>
+        NotificationNavigationTarget.friendships(tab: routeTab),
       FriendshipRequestAcceptedNotificationListPageItemDataEntity(
         :final actorId,
-      ) => NotificationNavigationTarget.userDetails(userId: actorId),
+      ) =>
+        NotificationNavigationTarget.userDetails(userId: actorId),
       MemeReceivedNotificationListPageItemDataEntity(:final memeId) =>
         NotificationNavigationTarget.memeDetails(memeId: memeId),
       MemeLaughedNotificationListPageItemDataEntity(:final memeId) =>

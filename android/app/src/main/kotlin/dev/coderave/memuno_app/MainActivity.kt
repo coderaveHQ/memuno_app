@@ -21,7 +21,7 @@ class MainActivity : FlutterActivity() {
     val channel = NotificationChannel(
       DEFAULT_NOTIFICATION_CHANNEL_ID,
       "Memuno notifications",
-      NotificationManager.IMPORTANCE_DEFAULT
+      NotificationManager.IMPORTANCE_HIGH
     ).apply {
       description = "General notifications for the Memuno app."
     }
