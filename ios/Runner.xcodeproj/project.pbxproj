@@ -7,19 +7,25 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		03C75E77BDA85C15C7B1321A /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = D2C1947F3A935231BD9D96E7 /* Foundation.framework */; };
 		095EBBBCE2149921FDEADA14 /* Pods_Runner.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 639B09146B6409A5FF7304A2 /* Pods_Runner.framework */; };
 		1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */ = {isa = PBXBuildFile; fileRef = 1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */; };
 		1BCF74CE2F5652CA00D95749 /* logo.icon in Resources */ = {isa = PBXBuildFile; fileRef = 1BCF74CD2F5652CA00D95749 /* logo.icon */; };
 		331C808B294A63AB00263BE5 /* RunnerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 331C807B294A618700263BE5 /* RunnerTests.swift */; };
 		3B3967161E833CAA004F5970 /* AppFrameworkInfo.plist in Resources */ = {isa = PBXBuildFile; fileRef = 3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */; };
 		46FE360D09285187093C2476 /* ImageNotification.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = 5CF8807E0658E90EB4665EBC /* ImageNotification.appex */; };
+		4DB164324F1B8C1F04381B83 /* MemeWidgetActionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DD94881AE5680DB146209BE /* MemeWidgetActionIntent.swift */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		5422A8B6472C31DA68354168 /* MemeWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5EF3EFE2A390AC317CD45A50 /* MemeWidget.swift */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
+		5E4FE9E90B03400A8B0FC0A4 /* MemeWidgetActionIntent.swift in Sources */ = {isa = PBXBuildFile; fileRef = 0DD94881AE5680DB146209BE /* MemeWidgetActionIntent.swift */; settings = {COMPILER_FLAGS = "-fobjc-arc"; }; };
 		5B113B725BC95716122FE653 /* Pods_RunnerTests.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = EB1EAB5BA24D25B7B916BEBD /* Pods_RunnerTests.framework */; };
 		635A13F04AF399522373562A /* Pods_ImageNotification.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 3427E42B3B19A3AF44C977AC /* Pods_ImageNotification.framework */; };
 		74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 74858FAE1ED2DC5600515810 /* AppDelegate.swift */; };
+		7FFCA39F3FA74FD4E467A1BD /* MemeWidgetExtension.appex in Embed App Extensions */ = {isa = PBXBuildFile; fileRef = E32DD811FFB7D0A18068703C /* MemeWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		97C146FC1CF9000F007C117D /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FA1CF9000F007C117D /* Main.storyboard */; };
 		97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FD1CF9000F007C117D /* Assets.xcassets */; };
 		97C147011CF9000F007C117D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 97C146FF1CF9000F007C117D /* LaunchScreen.storyboard */; };
 		9D81E7C2A5B34F1EBB3D6C89 /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = A1F2D3C4E5F60718293A4B5C /* InfoPlist.strings */; };
+		A5E19258ED7C715B90DB25CF /* Pods_MemeWidgetExtension.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 170911EEE7CC110CA5DFDBAF /* Pods_MemeWidgetExtension.framework */; };
 		D02DADE592C05AC05267DEBA /* NotificationService.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6CA1853339040ECE10F6557 /* NotificationService.swift */; };
 /* End PBXBuildFile section */
 
@@ -37,6 +43,13 @@
 			proxyType = 1;
 			remoteGlobalIDString = 356D747719926DA003C88D09;
 			remoteInfo = ImageNotification;
+		};
+		AB754CDC4B80B7A265F77B39 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 97C146E61CF9000F007C117D /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = EEF5DD18C91EF0A315CDBADF;
+			remoteInfo = MemeWidgetExtension;
 		};
 /* End PBXContainerItemProxy section */
 
@@ -58,6 +71,7 @@
 			dstSubfolderSpec = 13;
 			files = (
 				46FE360D09285187093C2476 /* ImageNotification.appex in Embed App Extensions */,
+				7FFCA39F3FA74FD4E467A1BD /* MemeWidgetExtension.appex in Embed App Extensions */,
 			);
 			name = "Embed App Extensions";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -65,30 +79,44 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		022A2A382D26A9113C9CB122 /* Pods-MemeWidgetExtension.release-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemeWidgetExtension.release-development.xcconfig"; path = "Target Support Files/Pods-MemeWidgetExtension/Pods-MemeWidgetExtension.release-development.xcconfig"; sourceTree = "<group>"; };
 		04FB913CD6B9094865B5D3E3 /* Pods-Runner.release-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-development.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-development.xcconfig"; sourceTree = "<group>"; };
 		0C7C4737976E4D28FA0E9F4B /* ImageNotification-Release-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/ImageNotification-Release-staging.xcconfig"; sourceTree = "<group>"; };
 		0CC891C35AEBD11B2B6F8334 /* Pods-ImageNotification.profile-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageNotification.profile-production.xcconfig"; path = "Target Support Files/Pods-ImageNotification/Pods-ImageNotification.profile-production.xcconfig"; sourceTree = "<group>"; };
+		0DD94881AE5680DB146209BE /* MemeWidgetActionIntent.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MemeWidgetActionIntent.swift; path = MemeWidgetExtension/MemeWidgetActionIntent.swift; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
 		15A3250DB6F3D87F76207449 /* Pods-Runner.profile-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-development.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile-development.xcconfig"; sourceTree = "<group>"; };
+		170911EEE7CC110CA5DFDBAF /* Pods_MemeWidgetExtension.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_MemeWidgetExtension.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		18A5E8756C745AAAB6EB8F56 /* MemeWidgetExtension.entitlements */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.entitlements; name = MemeWidgetExtension.entitlements; path = MemeWidgetExtension/MemeWidgetExtension.entitlements; sourceTree = "<group>"; };
 		1BCF74CD2F5652CA00D95749 /* logo.icon */ = {isa = PBXFileReference; lastKnownFileType = folder.iconcomposer.icon; path = logo.icon; sourceTree = "<group>"; };
+		1CE43111BC4F4836E03B888A /* Info-Production.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "Info-Production.plist"; path = "MemeWidgetExtension/Info-Production.plist"; sourceTree = "<group>"; };
 		1EF0FCB3783AFFA450A01BE4 /* Pods-RunnerTests.debug-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-production.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-production.xcconfig"; sourceTree = "<group>"; };
 		23D2E6D480B5D2CD81CE0100 /* Pods-RunnerTests.profile-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile-staging.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile-staging.xcconfig"; sourceTree = "<group>"; };
 		29B8734706E8107027C3428A /* Pods-Runner.profile-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-production.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile-production.xcconfig"; sourceTree = "<group>"; };
 		2F550546876FA50CD9439009 /* Pods-Runner.release-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-staging.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-staging.xcconfig"; sourceTree = "<group>"; };
+		3209610505E4D200AEE4EA2D /* MemeWidgetExtension-Release-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "MemeWidgetExtension-Release-development.xcconfig"; path = "Flutter/MemeWidgetExtension-Release-development.xcconfig"; sourceTree = "<group>"; };
 		331C807B294A618700263BE5 /* RunnerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RunnerTests.swift; sourceTree = "<group>"; };
 		331C8081294A63A400263BE5 /* RunnerTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RunnerTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		332D7A6F233EAFF6AAB899E7 /* Pods-ImageNotification.profile-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageNotification.profile-development.xcconfig"; path = "Target Support Files/Pods-ImageNotification/Pods-ImageNotification.profile-development.xcconfig"; sourceTree = "<group>"; };
 		3427E42B3B19A3AF44C977AC /* Pods_ImageNotification.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ImageNotification.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		3530F08A2A35408CDE495F8C /* MemeWidgetExtension-Release-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "MemeWidgetExtension-Release-staging.xcconfig"; path = "Flutter/MemeWidgetExtension-Release-staging.xcconfig"; sourceTree = "<group>"; };
+		37F55F03F24CEAEA83A8B2AE /* Pods-MemeWidgetExtension.profile-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemeWidgetExtension.profile-staging.xcconfig"; path = "Target Support Files/Pods-MemeWidgetExtension/Pods-MemeWidgetExtension.profile-staging.xcconfig"; sourceTree = "<group>"; };
+		3AD812BCE2A0E55870001357 /* MemeWidgetExtension-Profile-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "MemeWidgetExtension-Profile-staging.xcconfig"; path = "Flutter/MemeWidgetExtension-Profile-staging.xcconfig"; sourceTree = "<group>"; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
 		435FC6CDE8B8C59CC2635A57 /* Runner-Profile-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/Runner-Profile-development.xcconfig"; sourceTree = "<group>"; };
 		444E18A459DDA410A16A9E12 /* Pods-Runner.debug-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-development.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-development.xcconfig"; sourceTree = "<group>"; };
+		4926A04C975A8BF94743884B /* MemeWidgetExtension-Debug-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "MemeWidgetExtension-Debug-production.xcconfig"; path = "Flutter/MemeWidgetExtension-Debug-production.xcconfig"; sourceTree = "<group>"; };
 		4A45C8B8BCABECFCB92B9388 /* Pods-RunnerTests.profile-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile-production.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile-production.xcconfig"; sourceTree = "<group>"; };
+		4AE11D1193026DFFE08A6B39 /* Pods-MemeWidgetExtension.debug-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemeWidgetExtension.debug-development.xcconfig"; path = "Target Support Files/Pods-MemeWidgetExtension/Pods-MemeWidgetExtension.debug-development.xcconfig"; sourceTree = "<group>"; };
 		4DBB460737CE8A92B59C7D2A /* Pods-ImageNotification.release-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageNotification.release-staging.xcconfig"; path = "Target Support Files/Pods-ImageNotification/Pods-ImageNotification.release-staging.xcconfig"; sourceTree = "<group>"; };
 		4F1271BC80E69139A6FA8616 /* Pods-Runner.debug-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-production.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-production.xcconfig"; sourceTree = "<group>"; };
 		508E7707B4BE8AC1669C7918 /* Pods-RunnerTests.release-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-development.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-development.xcconfig"; sourceTree = "<group>"; };
 		51A0F04D98E2B213F6C41DB0 /* ImageNotification-Debug-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/ImageNotification-Debug-development.xcconfig"; sourceTree = "<group>"; };
+		54801AC4393AD007DF88B514 /* MemeWidgetExtension-Release-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "MemeWidgetExtension-Release-production.xcconfig"; path = "Flutter/MemeWidgetExtension-Release-production.xcconfig"; sourceTree = "<group>"; };
 		5CF8807E0658E90EB4665EBC /* ImageNotification.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ImageNotification.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		5DA74DB13A04A9460B2F7FF8 /* Pods-MemeWidgetExtension.debug-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemeWidgetExtension.debug-staging.xcconfig"; path = "Target Support Files/Pods-MemeWidgetExtension/Pods-MemeWidgetExtension.debug-staging.xcconfig"; sourceTree = "<group>"; };
+		5EF3EFE2A390AC317CD45A50 /* MemeWidget.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = MemeWidget.swift; path = MemeWidgetExtension/MemeWidget.swift; sourceTree = "<group>"; };
 		639B09146B6409A5FF7304A2 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		670D5A44F7BEBAF713A8C6EB /* Pods-ImageNotification.release-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageNotification.release-production.xcconfig"; path = "Target Support Files/Pods-ImageNotification/Pods-ImageNotification.release-production.xcconfig"; sourceTree = "<group>"; };
 		6B50B513D48BA4D894892C5C /* Runner-Release-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/Runner-Release-production.xcconfig"; sourceTree = "<group>"; };
@@ -98,9 +126,12 @@
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
+		85FADC109D64FF7FC596F346 /* MemeWidgetExtension-Debug-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "MemeWidgetExtension-Debug-staging.xcconfig"; path = "Flutter/MemeWidgetExtension-Debug-staging.xcconfig"; sourceTree = "<group>"; };
+		880547419A9C6A4A92C0E473 /* Info-Staging.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "Info-Staging.plist"; path = "MemeWidgetExtension/Info-Staging.plist"; sourceTree = "<group>"; };
 		897EB7F16457A8A447BFA92A /* Pods-RunnerTests.release-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-production.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-production.xcconfig"; sourceTree = "<group>"; };
 		8B6A0E9D7C4544A3A07D7E17 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		94B79D78773C7BBBE3B96E8E /* Pods-ImageNotification.debug-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageNotification.debug-production.xcconfig"; path = "Target Support Files/Pods-ImageNotification/Pods-ImageNotification.debug-production.xcconfig"; sourceTree = "<group>"; };
+		95C5CC552305D20A2DA0A9BA /* Pods-MemeWidgetExtension.release-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemeWidgetExtension.release-staging.xcconfig"; path = "Target Support Files/Pods-MemeWidgetExtension/Pods-MemeWidgetExtension.release-staging.xcconfig"; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
 		97C146EE1CF9000F007C117D /* Runner.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Runner.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -110,20 +141,29 @@
 		97C147021CF9000F007C117D /* Info-Production.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-Production.plist"; sourceTree = "<group>"; };
 		9B34AE4394329773828C7E0B /* Runner-Debug-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/Runner-Debug-production.xcconfig"; sourceTree = "<group>"; };
 		A120B24EC3DCF72700D4D419 /* ImageNotification-Profile-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/ImageNotification-Profile-staging.xcconfig"; sourceTree = "<group>"; };
+		A4117855DE935CA1AF59348A /* Pods-MemeWidgetExtension.profile-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemeWidgetExtension.profile-production.xcconfig"; path = "Target Support Files/Pods-MemeWidgetExtension/Pods-MemeWidgetExtension.profile-production.xcconfig"; sourceTree = "<group>"; };
 		A5D76E9EE16B44BB8A4BDDF3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A6C6D564FFA8630FE32CAFFE /* Pods-Runner.profile-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-staging.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile-staging.xcconfig"; sourceTree = "<group>"; };
 		A7E8AA497EE8D483B0313537 /* ImageNotification-Profile-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/ImageNotification-Profile-production.xcconfig"; sourceTree = "<group>"; };
 		A82DBF46B7027C99816B1927 /* Runner-Profile-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/Runner-Profile-production.xcconfig"; sourceTree = "<group>"; };
 		A8873C25151678D639C65391 /* ImageNotification-Profile-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/ImageNotification-Profile-development.xcconfig"; sourceTree = "<group>"; };
+		AD4825B5912A3D923A23262E /* Pods-MemeWidgetExtension.release-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemeWidgetExtension.release-production.xcconfig"; path = "Target Support Files/Pods-MemeWidgetExtension/Pods-MemeWidgetExtension.release-production.xcconfig"; sourceTree = "<group>"; };
 		BCCBD223314E6D4A220CF4BD /* Pods-ImageNotification.profile-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageNotification.profile-staging.xcconfig"; path = "Target Support Files/Pods-ImageNotification/Pods-ImageNotification.profile-staging.xcconfig"; sourceTree = "<group>"; };
 		BEA14533C55A216D71CB12B2 /* Runner-Release-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/Runner-Release-staging.xcconfig"; sourceTree = "<group>"; };
+		C43A81ED595C46A60D0538A0 /* Pods-MemeWidgetExtension.profile-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemeWidgetExtension.profile-development.xcconfig"; path = "Target Support Files/Pods-MemeWidgetExtension/Pods-MemeWidgetExtension.profile-development.xcconfig"; sourceTree = "<group>"; };
 		C4AF26E60B0AE73A2782B5F8 /* ImageNotification-Debug-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/ImageNotification-Debug-staging.xcconfig"; sourceTree = "<group>"; };
 		CA418836A16477F808D56E63 /* ImageNotification-Release-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/ImageNotification-Release-production.xcconfig"; sourceTree = "<group>"; };
 		CD4385321C05C74BE08C32A1 /* ImageNotification-Debug-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/ImageNotification-Debug-production.xcconfig"; sourceTree = "<group>"; };
+		CEDC5794F6DE6FCBAC13F1A7 /* Pods-MemeWidgetExtension.debug-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MemeWidgetExtension.debug-production.xcconfig"; path = "Target Support Files/Pods-MemeWidgetExtension/Pods-MemeWidgetExtension.debug-production.xcconfig"; sourceTree = "<group>"; };
 		D08CE9FBCFBFE4174533CE2B /* Pods-RunnerTests.debug-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-staging.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-staging.xcconfig"; sourceTree = "<group>"; };
+		D2C1947F3A935231BD9D96E7 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = Platforms/iPhoneOS.platform/Developer/SDKs/iPhoneOS18.0.sdk/System/Library/Frameworks/Foundation.framework; sourceTree = DEVELOPER_DIR; };
+		D60ACBF14577E4BE69952D25 /* Info-Development.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "Info-Development.plist"; path = "MemeWidgetExtension/Info-Development.plist"; sourceTree = "<group>"; };
+		D858230E6DA2A4CE78B69020 /* MemeWidgetExtension-Debug-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "MemeWidgetExtension-Debug-development.xcconfig"; path = "Flutter/MemeWidgetExtension-Debug-development.xcconfig"; sourceTree = "<group>"; };
 		DBABFCE19FE45CD90B544842 /* Pods-Runner.release-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-production.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-production.xcconfig"; sourceTree = "<group>"; };
+		DBD95F5A6C534783F5518EEC /* MemeWidgetExtension-Profile-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "MemeWidgetExtension-Profile-production.xcconfig"; path = "Flutter/MemeWidgetExtension-Profile-production.xcconfig"; sourceTree = "<group>"; };
 		DFB3A2605B5F87ACE6D1CC90 /* Pods-ImageNotification.release-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageNotification.release-development.xcconfig"; path = "Target Support Files/Pods-ImageNotification/Pods-ImageNotification.release-development.xcconfig"; sourceTree = "<group>"; };
 		E0E5CD99E3DB5F499EAE803E /* ImageNotification-Release-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/ImageNotification-Release-development.xcconfig"; sourceTree = "<group>"; };
+		E32DD811FFB7D0A18068703C /* MemeWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = MemeWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3B6203E1123C8B79809F451 /* Pods-RunnerTests.profile-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile-development.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile-development.xcconfig"; sourceTree = "<group>"; };
 		E63D42E840D01ADAB975EBD8 /* Pods-RunnerTests.debug-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-development.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-development.xcconfig"; sourceTree = "<group>"; };
 		E766D71FC85A8701503F8E41 /* Runner-Release-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/Runner-Release-development.xcconfig"; sourceTree = "<group>"; };
@@ -139,9 +179,19 @@
 		F59BEC68F5E49D1B6A66346A /* Runner-Debug-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/Runner-Debug-staging.xcconfig"; sourceTree = "<group>"; };
 		F6CA1853339040ECE10F6557 /* NotificationService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NotificationService.swift; path = ImageNotification/NotificationService.swift; sourceTree = "<group>"; };
 		FB54EFD3D79D77D6A4BFF9BC /* Pods-ImageNotification.debug-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageNotification.debug-staging.xcconfig"; path = "Target Support Files/Pods-ImageNotification/Pods-ImageNotification.debug-staging.xcconfig"; sourceTree = "<group>"; };
+		FFA6A4E884999BFDE53C4564 /* MemeWidgetExtension-Profile-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "MemeWidgetExtension-Profile-development.xcconfig"; path = "Flutter/MemeWidgetExtension-Profile-development.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
+		57383715281358EBE5F3E8DD /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				03C75E77BDA85C15C7B1321A /* Foundation.framework in Frameworks */,
+				A5E19258ED7C715B90DB25CF /* Pods_MemeWidgetExtension.framework in Frameworks */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		8D13B7610A3997C118BEE81C /* Frameworks */ = {
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
@@ -175,6 +225,8 @@
 				639B09146B6409A5FF7304A2 /* Pods_Runner.framework */,
 				EB1EAB5BA24D25B7B916BEBD /* Pods_RunnerTests.framework */,
 				3427E42B3B19A3AF44C977AC /* Pods_ImageNotification.framework */,
+				EA073D9E74FDACBD1A5AA34C /* iOS */,
+				170911EEE7CC110CA5DFDBAF /* Pods_MemeWidgetExtension.framework */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -227,6 +279,15 @@
 				0CC891C35AEBD11B2B6F8334 /* Pods-ImageNotification.profile-production.xcconfig */,
 				BCCBD223314E6D4A220CF4BD /* Pods-ImageNotification.profile-staging.xcconfig */,
 				332D7A6F233EAFF6AAB899E7 /* Pods-ImageNotification.profile-development.xcconfig */,
+				CEDC5794F6DE6FCBAC13F1A7 /* Pods-MemeWidgetExtension.debug-production.xcconfig */,
+				5DA74DB13A04A9460B2F7FF8 /* Pods-MemeWidgetExtension.debug-staging.xcconfig */,
+				4AE11D1193026DFFE08A6B39 /* Pods-MemeWidgetExtension.debug-development.xcconfig */,
+				AD4825B5912A3D923A23262E /* Pods-MemeWidgetExtension.release-production.xcconfig */,
+				95C5CC552305D20A2DA0A9BA /* Pods-MemeWidgetExtension.release-staging.xcconfig */,
+				022A2A382D26A9113C9CB122 /* Pods-MemeWidgetExtension.release-development.xcconfig */,
+				A4117855DE935CA1AF59348A /* Pods-MemeWidgetExtension.profile-production.xcconfig */,
+				37F55F03F24CEAEA83A8B2AE /* Pods-MemeWidgetExtension.profile-staging.xcconfig */,
+				C43A81ED595C46A60D0538A0 /* Pods-MemeWidgetExtension.profile-development.xcconfig */,
 			);
 			path = Pods;
 			sourceTree = "<group>";
@@ -259,6 +320,15 @@
 				CA418836A16477F808D56E63 /* ImageNotification-Release-production.xcconfig */,
 				A82DBF46B7027C99816B1927 /* Runner-Profile-production.xcconfig */,
 				A7E8AA497EE8D483B0313537 /* ImageNotification-Profile-production.xcconfig */,
+				D858230E6DA2A4CE78B69020 /* MemeWidgetExtension-Debug-development.xcconfig */,
+				85FADC109D64FF7FC596F346 /* MemeWidgetExtension-Debug-staging.xcconfig */,
+				4926A04C975A8BF94743884B /* MemeWidgetExtension-Debug-production.xcconfig */,
+				3209610505E4D200AEE4EA2D /* MemeWidgetExtension-Release-development.xcconfig */,
+				3530F08A2A35408CDE495F8C /* MemeWidgetExtension-Release-staging.xcconfig */,
+				54801AC4393AD007DF88B514 /* MemeWidgetExtension-Release-production.xcconfig */,
+				FFA6A4E884999BFDE53C4564 /* MemeWidgetExtension-Profile-development.xcconfig */,
+				3AD812BCE2A0E55870001357 /* MemeWidgetExtension-Profile-staging.xcconfig */,
+				DBD95F5A6C534783F5518EEC /* MemeWidgetExtension-Profile-production.xcconfig */,
 			);
 			name = Flutter;
 			sourceTree = "<group>";
@@ -273,6 +343,7 @@
 				416FE765BCA9713A1E0961CB /* Pods */,
 				1BE0833C23642574373735EC /* Frameworks */,
 				2190B8E597D481AED0A20CD9 /* ImageNotification */,
+				F96D88A26E35B61A1E3A99B8 /* MemeWidgetExtension */,
 			);
 			sourceTree = "<group>";
 		};
@@ -282,6 +353,7 @@
 				97C146EE1CF9000F007C117D /* Runner.app */,
 				331C8081294A63A400263BE5 /* RunnerTests.xctest */,
 				5CF8807E0658E90EB4665EBC /* ImageNotification.appex */,
+				E32DD811FFB7D0A18068703C /* MemeWidgetExtension.appex */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -302,6 +374,27 @@
 				1BCF74CD2F5652CA00D95749 /* logo.icon */,
 			);
 			path = Runner;
+			sourceTree = "<group>";
+		};
+		EA073D9E74FDACBD1A5AA34C /* iOS */ = {
+			isa = PBXGroup;
+			children = (
+				D2C1947F3A935231BD9D96E7 /* Foundation.framework */,
+			);
+			name = iOS;
+			sourceTree = "<group>";
+		};
+		F96D88A26E35B61A1E3A99B8 /* MemeWidgetExtension */ = {
+			isa = PBXGroup;
+			children = (
+				5EF3EFE2A390AC317CD45A50 /* MemeWidget.swift */,
+				0DD94881AE5680DB146209BE /* MemeWidgetActionIntent.swift */,
+				D60ACBF14577E4BE69952D25 /* Info-Development.plist */,
+				880547419A9C6A4A92C0E473 /* Info-Staging.plist */,
+				1CE43111BC4F4836E03B888A /* Info-Production.plist */,
+				18A5E8756C745AAAB6EB8F56 /* MemeWidgetExtension.entitlements */,
+			);
+			name = MemeWidgetExtension;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -364,11 +457,30 @@
 			);
 			dependencies = (
 				FBCD85DD9D8B4301D59FC9C7 /* PBXTargetDependency */,
+				186C5910D27747782F3B48FF /* PBXTargetDependency */,
 			);
 			name = Runner;
 			productName = Runner;
 			productReference = 97C146EE1CF9000F007C117D /* Runner.app */;
 			productType = "com.apple.product-type.application";
+		};
+		EEF5DD18C91EF0A315CDBADF /* MemeWidgetExtension */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 2FE6CE3034D5168493D38328 /* Build configuration list for PBXNativeTarget "MemeWidgetExtension" */;
+			buildPhases = (
+				74C67C6900C6E262DEC8D551 /* [CP] Check Pods Manifest.lock */,
+				2A58C66B04E161AA0C37938F /* Sources */,
+				57383715281358EBE5F3E8DD /* Frameworks */,
+				FE92CBAB42D144B49B5AA83D /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = MemeWidgetExtension;
+			productName = MemeWidgetExtension;
+			productReference = E32DD811FFB7D0A18068703C /* MemeWidgetExtension.appex */;
+			productType = "com.apple.product-type.app-extension";
 		};
 /* End PBXNativeTarget section */
 
@@ -407,6 +519,7 @@
 				97C146ED1CF9000F007C117D /* Runner */,
 				331C8080294A63A400263BE5 /* RunnerTests */,
 				356D747719926DA003C88D09 /* ImageNotification */,
+				EEF5DD18C91EF0A315CDBADF /* MemeWidgetExtension */,
 			);
 		};
 /* End PBXProject section */
@@ -436,6 +549,13 @@
 				97C146FE1CF9000F007C117D /* Assets.xcassets in Resources */,
 				9D81E7C2A5B34F1EBB3D6C89 /* InfoPlist.strings in Resources */,
 				97C146FC1CF9000F007C117D /* Main.storyboard in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		FE92CBAB42D144B49B5AA83D /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -542,6 +662,28 @@
 			shellPath = /bin/sh;
 			shellScript = "\n#!/bin/bash\nPATH=\"${PATH}:$FLUTTER_ROOT/bin:${PUB_CACHE}/bin:$HOME/.pub-cache/bin\"\nflutterfire bundle-service-file --plist-destination=\"${BUILT_PRODUCTS_DIR}/${PRODUCT_NAME}.app\" --build-configuration=${CONFIGURATION} --platform=ios --apple-project-path=\"${SRCROOT}\"\n";
 		};
+		74C67C6900C6E262DEC8D551 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-MemeWidgetExtension-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
 		9740EEB61CF901F6004384FC /* Run Script */ = {
 			isa = PBXShellScriptBuildPhase;
 			alwaysOutOfDate = 1;
@@ -594,6 +736,15 @@
 /* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
+		2A58C66B04E161AA0C37938F /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				5422A8B6472C31DA68354168 /* MemeWidget.swift in Sources */,
+				4DB164324F1B8C1F04381B83 /* MemeWidgetActionIntent.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
 		331C807D294A63A400263BE5 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
@@ -614,6 +765,7 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				5E4FE9E90B03400A8B0FC0A4 /* MemeWidgetActionIntent.swift in Sources */,
 				74858FAF1ED2DC5600515810 /* AppDelegate.swift in Sources */,
 				1498D2341E8E89220040F4C2 /* GeneratedPluginRegistrant.m in Sources */,
 			);
@@ -622,6 +774,12 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		186C5910D27747782F3B48FF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			name = MemeWidgetExtension;
+			target = EEF5DD18C91EF0A315CDBADF /* MemeWidgetExtension */;
+			targetProxy = AB754CDC4B80B7A265F77B39 /* PBXContainerItemProxy */;
+		};
 		331C8086294A63A400263BE5 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 97C146ED1CF9000F007C117D /* Runner */;
@@ -669,6 +827,7 @@
 			baseConfigurationReference = CA418836A16477F808D56E63 /* ImageNotification-Release-production.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = ImageNotification/ImageNotification.entitlements;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Automatic;
@@ -1358,6 +1517,7 @@
 			baseConfigurationReference = A8873C25151678D639C65391 /* ImageNotification-Profile-development.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = ImageNotification/ImageNotification.entitlements;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Automatic;
@@ -1540,11 +1700,38 @@
 			};
 			name = "Profile-production";
 		};
+		3DAE64574AEAC2CB5D4E445E /* Debug-staging */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 85FADC109D64FF7FC596F346 /* MemeWidgetExtension-Debug-staging.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = MemeWidgetExtension/MemeWidgetExtension.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = X4K74N37FK;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "MemeWidgetExtension/Info-Staging.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = dev.coderave.memunoapp.stg.MemeWidgetExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = "Debug-staging";
+		};
 		3EE0A8CC717464A222DD24D2 /* Release-development */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E0E5CD99E3DB5F499EAE803E /* ImageNotification-Release-development.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = ImageNotification/ImageNotification.entitlements;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Automatic;
@@ -1573,11 +1760,116 @@
 			};
 			name = "Release-development";
 		};
+		464B4737A7D91EE3D3ABA02E /* Debug-development */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = D858230E6DA2A4CE78B69020 /* MemeWidgetExtension-Debug-development.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = MemeWidgetExtension/MemeWidgetExtension.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = X4K74N37FK;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "MemeWidgetExtension/Info-Development.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = dev.coderave.memunoapp.dev.MemeWidgetExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = "Debug-development";
+		};
+		58CD56B70ED3B7F6F89288D3 /* Release-development */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3209610505E4D200AEE4EA2D /* MemeWidgetExtension-Release-development.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = MemeWidgetExtension/MemeWidgetExtension.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = X4K74N37FK;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "MemeWidgetExtension/Info-Development.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = dev.coderave.memunoapp.dev.MemeWidgetExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = "Release-development";
+		};
+		738B57DE6A14E8CB85E7C4F4 /* Debug-production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 4926A04C975A8BF94743884B /* MemeWidgetExtension-Debug-production.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = MemeWidgetExtension/MemeWidgetExtension.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = X4K74N37FK;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "MemeWidgetExtension/Info-Production.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = dev.coderave.memunoapp.MemeWidgetExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = "Debug-production";
+		};
+		73FF9307CEFCC9F2CE9BEE9E /* Profile-production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = DBD95F5A6C534783F5518EEC /* MemeWidgetExtension-Profile-production.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = MemeWidgetExtension/MemeWidgetExtension.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = X4K74N37FK;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "MemeWidgetExtension/Info-Production.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = dev.coderave.memunoapp.MemeWidgetExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = "Profile-production";
+		};
 		955A2BCF75D45BA7BE3DB07F /* Profile-staging */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A120B24EC3DCF72700D4D419 /* ImageNotification-Profile-staging.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = ImageNotification/ImageNotification.entitlements;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Automatic;
@@ -1780,11 +2072,90 @@
 			};
 			name = "Release-production";
 		};
+		B5C8E8E72323CB6F122B65AB /* Release-production */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 54801AC4393AD007DF88B514 /* MemeWidgetExtension-Release-production.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = MemeWidgetExtension/MemeWidgetExtension.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = X4K74N37FK;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "MemeWidgetExtension/Info-Production.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = dev.coderave.memunoapp.MemeWidgetExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = "Release-production";
+		};
+		B680F1BBE6DE06D77922893D /* Profile-staging */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3AD812BCE2A0E55870001357 /* MemeWidgetExtension-Profile-staging.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = MemeWidgetExtension/MemeWidgetExtension.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = X4K74N37FK;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "MemeWidgetExtension/Info-Staging.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = dev.coderave.memunoapp.stg.MemeWidgetExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = "Profile-staging";
+		};
+		C3B2F4D5907EE3783309705D /* Profile-development */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = FFA6A4E884999BFDE53C4564 /* MemeWidgetExtension-Profile-development.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = MemeWidgetExtension/MemeWidgetExtension.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = X4K74N37FK;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "MemeWidgetExtension/Info-Development.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = dev.coderave.memunoapp.dev.MemeWidgetExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = "Profile-development";
+		};
 		C857BF7B362FA53569AFF44F /* Profile-production */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = A7E8AA497EE8D483B0313537 /* ImageNotification-Profile-production.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = ImageNotification/ImageNotification.entitlements;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Automatic;
@@ -1813,11 +2184,38 @@
 			};
 			name = "Profile-production";
 		};
+		D5CEA9EDDA6B615059F03896 /* Release-staging */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 3530F08A2A35408CDE495F8C /* MemeWidgetExtension-Release-staging.xcconfig */;
+			buildSettings = {
+				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = MemeWidgetExtension/MemeWidgetExtension.entitlements;
+				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
+				DEFINES_MODULE = YES;
+				DEVELOPMENT_TEAM = X4K74N37FK;
+				GENERATE_INFOPLIST_FILE = NO;
+				INFOPLIST_FILE = "MemeWidgetExtension/Info-Staging.plist";
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = "$(FLUTTER_BUILD_NAME)";
+				PRODUCT_BUNDLE_IDENTIFIER = dev.coderave.memunoapp.stg.MemeWidgetExtension;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = 1;
+			};
+			name = "Release-staging";
+		};
 		D7FED8FE259205126CE66F3C /* Release-staging */ = {
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = 0C7C4737976E4D28FA0E9F4B /* ImageNotification-Release-staging.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = ImageNotification/ImageNotification.entitlements;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Automatic;
@@ -1851,6 +2249,7 @@
 			baseConfigurationReference = 51A0F04D98E2B213F6C41DB0 /* ImageNotification-Debug-development.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = ImageNotification/ImageNotification.entitlements;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Automatic;
@@ -1885,6 +2284,7 @@
 			baseConfigurationReference = CD4385321C05C74BE08C32A1 /* ImageNotification-Debug-production.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = ImageNotification/ImageNotification.entitlements;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Automatic;
@@ -1919,6 +2319,7 @@
 			baseConfigurationReference = C4AF26E60B0AE73A2782B5F8 /* ImageNotification-Debug-staging.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
+				CODE_SIGN_ENTITLEMENTS = ImageNotification/ImageNotification.entitlements;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				CODE_SIGN_STYLE = Automatic;
@@ -1963,6 +2364,22 @@
 				C857BF7B362FA53569AFF44F /* Profile-production */,
 				955A2BCF75D45BA7BE3DB07F /* Profile-staging */,
 				228094BEE255EE3EF8A40C16 /* Profile-development */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = "Release-production";
+		};
+		2FE6CE3034D5168493D38328 /* Build configuration list for PBXNativeTarget "MemeWidgetExtension" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				738B57DE6A14E8CB85E7C4F4 /* Debug-production */,
+				3DAE64574AEAC2CB5D4E445E /* Debug-staging */,
+				464B4737A7D91EE3D3ABA02E /* Debug-development */,
+				B5C8E8E72323CB6F122B65AB /* Release-production */,
+				D5CEA9EDDA6B615059F03896 /* Release-staging */,
+				58CD56B70ED3B7F6F89288D3 /* Release-development */,
+				73FF9307CEFCC9F2CE9BEE9E /* Profile-production */,
+				B680F1BBE6DE06D77922893D /* Profile-staging */,
+				C3B2F4D5907EE3783309705D /* Profile-development */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = "Release-production";

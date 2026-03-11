@@ -394,6 +394,36 @@ abstract class AppLocalizations {
   /// **'No memes in your feed yet.'**
   String get feedListEmpty;
 
+  /// No description provided for @widgetNoMemesYet.
+  ///
+  /// In en_US, this message translates to:
+  /// **'No memes, yet.'**
+  String get widgetNoMemesYet;
+
+  /// No description provided for @widgetSignInToDisplayMemes.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Sign in to display memes.'**
+  String get widgetSignInToDisplayMemes;
+
+  /// No description provided for @widgetLaughAction.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Laugh'**
+  String get widgetLaughAction;
+
+  /// No description provided for @widgetUnlaughAction.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Unlaugh'**
+  String get widgetUnlaughAction;
+
+  /// No description provided for @widgetOwnerAction.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Owner'**
+  String get widgetOwnerAction;
+
   /// No description provided for @memeDetailsTitle.
   ///
   /// In en_US, this message translates to:

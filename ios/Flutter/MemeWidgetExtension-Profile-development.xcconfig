@@ -1,0 +1,3 @@
+#include? "Pods/Target Support Files/Pods-MemeWidgetExtension/Pods-MemeWidgetExtension.profile-development.xcconfig"
+#include "Generated.xcconfig"
+MEME_WIDGET_APP_GROUP_ID=group.dev.coderave.memunoapp.dev

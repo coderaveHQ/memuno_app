@@ -1,2 +1,4 @@
 #include? "Pods/Target Support Files/Pods-ImageNotification/Pods-ImageNotification.profile-development.xcconfig"
 #include "Generated.xcconfig"
+
+MEME_WIDGET_APP_GROUP_ID=group.dev.coderave.memunoapp.dev
