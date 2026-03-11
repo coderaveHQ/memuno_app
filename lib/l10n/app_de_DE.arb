@@ -64,6 +64,11 @@
   "notificationsSearchHint": "Nach Name oder Freundschaftscode suchen",
   "notificationsListEmpty": "Noch keine Benachrichtigungen.",
   "feedListEmpty": "Noch keine Memes in deinem Feed.",
+  "widgetNoMemesYet": "Noch keine Memes.",
+  "widgetSignInToDisplayMemes": "Melde dich an, um Memes anzuzeigen.",
+  "widgetLaughAction": "Lachen",
+  "widgetUnlaughAction": "Nicht mehr",
+  "widgetOwnerAction": "Eigener",
   "memeDetailsTitle": "Meme-Details",
   "memeDetailsLaughsTitle": "Wer hat gelacht?",
   "memeDetailsLaughsEmpty": "Noch keine Lacher.",
@@ -89,7 +94,7 @@
     }
   },
   "notificationsItemMemeLaughedTitle": "Dein Meme brachte jemanden zum Lachen",
-  "notificationsItemMemeLaughed": "{sender_name} hat ueber dein Meme gelacht.",
+  "notificationsItemMemeLaughed": "{sender_name} hat über dein Meme gelacht.",
   "@notificationsItemMemeLaughed": {
     "placeholders": {
       "sender_name": {}

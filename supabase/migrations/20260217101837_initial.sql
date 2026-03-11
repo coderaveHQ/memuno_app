@@ -553,7 +553,7 @@ values
     'de',
     null,
     'Dein Meme brachte jemanden zum Lachen',
-    '{sender_name} hat ueber dein Meme gelacht.'
+    '{sender_name} hat über dein Meme gelacht.'
   ),
   (
     'friendship_request_sent',
@@ -581,7 +581,7 @@ values
     'de',
     'DE',
     'Dein Meme brachte jemanden zum Lachen',
-    '{sender_name} hat ueber dein Meme gelacht.'
+    '{sender_name} hat über dein Meme gelacht.'
   );
 
 -- -----------------------------------------------------------------------------

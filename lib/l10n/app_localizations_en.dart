@@ -169,6 +169,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get feedListEmpty => 'No memes in your feed yet.';
 
   @override
+  String get widgetNoMemesYet => 'No memes, yet.';
+
+  @override
+  String get widgetSignInToDisplayMemes => 'Sign in to display memes.';
+
+  @override
+  String get widgetLaughAction => 'Laugh';
+
+  @override
+  String get widgetUnlaughAction => 'Unlaugh';
+
+  @override
+  String get widgetOwnerAction => 'Owner';
+
+  @override
   String get memeDetailsTitle => 'Meme details';
 
   @override
@@ -591,6 +606,21 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
 
   @override
   String get feedListEmpty => 'No memes in your feed yet.';
+
+  @override
+  String get widgetNoMemesYet => 'No memes, yet.';
+
+  @override
+  String get widgetSignInToDisplayMemes => 'Sign in to display memes.';
+
+  @override
+  String get widgetLaughAction => 'Laugh';
+
+  @override
+  String get widgetUnlaughAction => 'Unlaugh';
+
+  @override
+  String get widgetOwnerAction => 'Owner';
 
   @override
   String get memeDetailsTitle => 'Meme details';
