@@ -44,20 +44,19 @@ PushNotificationsIntentService pushNotificationsIntentService(Ref ref) {
   final GoRouter router = ref.watch(appRouterProvider);
   final Logger logger = ref.watch(loggerProvider);
 
-  final PushNotificationsIntentService service =
-      PushNotificationsIntentService(
-        pushMessagingGateway: pushMessagingGateway,
-        pushPlatformGateway: pushPlatformGateway,
-        pushLocalNotificationsGateway: pushLocalNotificationsGateway,
-        resolveNotificationPushIntentUsecase: intentResolver,
-        notificationTargetRouteMapper: routeMapper,
-        markNotificationReadUsecase: markNotificationReadUsecase,
-        router: router,
-        onUnreadCountChanged: () {
-          ref.invalidate(notificationsUnreadCountProvider);
-        },
-        logger: logger,
-      );
+  final PushNotificationsIntentService service = PushNotificationsIntentService(
+    pushMessagingGateway: pushMessagingGateway,
+    pushPlatformGateway: pushPlatformGateway,
+    pushLocalNotificationsGateway: pushLocalNotificationsGateway,
+    resolveNotificationPushIntentUsecase: intentResolver,
+    notificationTargetRouteMapper: routeMapper,
+    markNotificationReadUsecase: markNotificationReadUsecase,
+    router: router,
+    onUnreadCountChanged: () {
+      ref.invalidate(notificationsUnreadCountProvider);
+    },
+    logger: logger,
+  );
 
   ref.onDispose(service.dispose);
   return service;

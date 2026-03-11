@@ -14,7 +14,9 @@ Make memes fast: pick a template, add your caption, and send it to friends insta
 
 ##### 1. Copy env files and fill values
 
-- `.env.local.example` -> `.env.local`
+- `.env.development.example` -> `.env.development`
+- `.env.staging.example` -> `.env.staging`
+- `.env.production.example` -> `.env.production`
 - `supabase/.env.local.example` -> `supabase/.env.local`
 
 ##### 2. Start local Supabase
@@ -64,7 +66,7 @@ flutter gen-l10n
 ```
 
 ```sh
-flutter run --flavor development --dart-define-from-file=.env.local
+flutter run --flavor development --dart-define-from-file=.env.development
 ```
 
 ### Hosted Setup (staging + production)

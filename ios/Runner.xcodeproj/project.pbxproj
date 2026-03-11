@@ -66,6 +66,7 @@
 
 /* Begin PBXFileReference section */
 		04FB913CD6B9094865B5D3E3 /* Pods-Runner.release-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-development.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-development.xcconfig"; sourceTree = "<group>"; };
+		0C7C4737976E4D28FA0E9F4B /* ImageNotification-Release-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/ImageNotification-Release-staging.xcconfig"; sourceTree = "<group>"; };
 		0CC891C35AEBD11B2B6F8334 /* Pods-ImageNotification.profile-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageNotification.profile-production.xcconfig"; path = "Target Support Files/Pods-ImageNotification/Pods-ImageNotification.profile-production.xcconfig"; sourceTree = "<group>"; };
 		1498D2321E8E86230040F4C2 /* GeneratedPluginRegistrant.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = GeneratedPluginRegistrant.h; sourceTree = "<group>"; };
 		1498D2331E8E89220040F4C2 /* GeneratedPluginRegistrant.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = GeneratedPluginRegistrant.m; sourceTree = "<group>"; };
@@ -80,23 +81,23 @@
 		332D7A6F233EAFF6AAB899E7 /* Pods-ImageNotification.profile-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageNotification.profile-development.xcconfig"; path = "Target Support Files/Pods-ImageNotification/Pods-ImageNotification.profile-development.xcconfig"; sourceTree = "<group>"; };
 		3427E42B3B19A3AF44C977AC /* Pods_ImageNotification.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ImageNotification.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		3B3967151E833CAA004F5970 /* AppFrameworkInfo.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = AppFrameworkInfo.plist; path = Flutter/AppFrameworkInfo.plist; sourceTree = "<group>"; };
+		435FC6CDE8B8C59CC2635A57 /* Runner-Profile-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/Runner-Profile-development.xcconfig"; sourceTree = "<group>"; };
 		444E18A459DDA410A16A9E12 /* Pods-Runner.debug-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-development.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-development.xcconfig"; sourceTree = "<group>"; };
 		4A45C8B8BCABECFCB92B9388 /* Pods-RunnerTests.profile-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile-production.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile-production.xcconfig"; sourceTree = "<group>"; };
 		4DBB460737CE8A92B59C7D2A /* Pods-ImageNotification.release-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageNotification.release-staging.xcconfig"; path = "Target Support Files/Pods-ImageNotification/Pods-ImageNotification.release-staging.xcconfig"; sourceTree = "<group>"; };
 		4F1271BC80E69139A6FA8616 /* Pods-Runner.debug-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-production.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-production.xcconfig"; sourceTree = "<group>"; };
 		508E7707B4BE8AC1669C7918 /* Pods-RunnerTests.release-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-development.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-development.xcconfig"; sourceTree = "<group>"; };
+		51A0F04D98E2B213F6C41DB0 /* ImageNotification-Debug-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/ImageNotification-Debug-development.xcconfig"; sourceTree = "<group>"; };
 		5CF8807E0658E90EB4665EBC /* ImageNotification.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = ImageNotification.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		639B09146B6409A5FF7304A2 /* Pods_Runner.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Runner.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		670D5A44F7BEBAF713A8C6EB /* Pods-ImageNotification.release-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageNotification.release-production.xcconfig"; path = "Target Support Files/Pods-ImageNotification/Pods-ImageNotification.release-production.xcconfig"; sourceTree = "<group>"; };
+		6B50B513D48BA4D894892C5C /* Runner-Release-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/Runner-Release-production.xcconfig"; sourceTree = "<group>"; };
 		6C13A6294B7949298FC8B99C /* Pods-ImageNotification.debug-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageNotification.debug-development.xcconfig"; path = "Target Support Files/Pods-ImageNotification/Pods-ImageNotification.debug-development.xcconfig"; sourceTree = "<group>"; };
+		6C775E64078182B9EA63B99B /* Runner-Debug-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/Runner-Debug-development.xcconfig"; sourceTree = "<group>"; };
 		6E06CE3DAE7C5085C8B54341 /* Info-Production.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "Info-Production.plist"; path = "ImageNotification/Info-Production.plist"; sourceTree = "<group>"; };
 		74858FAD1ED2DC5600515810 /* Runner-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Runner-Bridging-Header.h"; sourceTree = "<group>"; };
 		74858FAE1ED2DC5600515810 /* AppDelegate.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
-		F17D0C4E6B6B4AA780001001 /* ImageNotification-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "ImageNotification-Debug.xcconfig"; path = "Flutter/ImageNotification-Debug.xcconfig"; sourceTree = "<group>"; };
-		F17D0C4E6B6B4AA780001002 /* ImageNotification-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "ImageNotification-Release.xcconfig"; path = "Flutter/ImageNotification-Release.xcconfig"; sourceTree = "<group>"; };
-		F17D0C4E6B6B4AA780001003 /* ImageNotification-Profile.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "ImageNotification-Profile.xcconfig"; path = "Flutter/ImageNotification-Profile.xcconfig"; sourceTree = "<group>"; };
-		F17D0C4E6B6B4AA780001004 /* Info-Staging.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "Info-Staging.plist"; path = "ImageNotification/Info-Staging.plist"; sourceTree = "<group>"; };
 		897EB7F16457A8A447BFA92A /* Pods-RunnerTests.release-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-production.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-production.xcconfig"; sourceTree = "<group>"; };
 		8B6A0E9D7C4544A3A07D7E17 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		94B79D78773C7BBBE3B96E8E /* Pods-ImageNotification.debug-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageNotification.debug-production.xcconfig"; path = "Target Support Files/Pods-ImageNotification/Pods-ImageNotification.debug-production.xcconfig"; sourceTree = "<group>"; };
@@ -106,19 +107,36 @@
 		97C146FB1CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		97C146FD1CF9000F007C117D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		97C147001CF9000F007C117D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
-		97C147021CF9000F007C117D /* Info-Production.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-Production.plist"; path = "Info-Production.plist"; sourceTree = "<group>"; };
-		F17D0C4E6B6B4AA780001005 /* Info-Staging.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; name = "Info-Staging.plist"; path = "Info-Staging.plist"; sourceTree = "<group>"; };
+		97C147021CF9000F007C117D /* Info-Production.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-Production.plist"; sourceTree = "<group>"; };
+		9B34AE4394329773828C7E0B /* Runner-Debug-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/Runner-Debug-production.xcconfig"; sourceTree = "<group>"; };
+		A120B24EC3DCF72700D4D419 /* ImageNotification-Profile-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/ImageNotification-Profile-staging.xcconfig"; sourceTree = "<group>"; };
 		A5D76E9EE16B44BB8A4BDDF3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		A6C6D564FFA8630FE32CAFFE /* Pods-Runner.profile-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-staging.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile-staging.xcconfig"; sourceTree = "<group>"; };
+		A7E8AA497EE8D483B0313537 /* ImageNotification-Profile-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/ImageNotification-Profile-production.xcconfig"; sourceTree = "<group>"; };
+		A82DBF46B7027C99816B1927 /* Runner-Profile-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/Runner-Profile-production.xcconfig"; sourceTree = "<group>"; };
+		A8873C25151678D639C65391 /* ImageNotification-Profile-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/ImageNotification-Profile-development.xcconfig"; sourceTree = "<group>"; };
 		BCCBD223314E6D4A220CF4BD /* Pods-ImageNotification.profile-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageNotification.profile-staging.xcconfig"; path = "Target Support Files/Pods-ImageNotification/Pods-ImageNotification.profile-staging.xcconfig"; sourceTree = "<group>"; };
+		BEA14533C55A216D71CB12B2 /* Runner-Release-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/Runner-Release-staging.xcconfig"; sourceTree = "<group>"; };
+		C4AF26E60B0AE73A2782B5F8 /* ImageNotification-Debug-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/ImageNotification-Debug-staging.xcconfig"; sourceTree = "<group>"; };
+		CA418836A16477F808D56E63 /* ImageNotification-Release-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/ImageNotification-Release-production.xcconfig"; sourceTree = "<group>"; };
+		CD4385321C05C74BE08C32A1 /* ImageNotification-Debug-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/ImageNotification-Debug-production.xcconfig"; sourceTree = "<group>"; };
 		D08CE9FBCFBFE4174533CE2B /* Pods-RunnerTests.debug-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-staging.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-staging.xcconfig"; sourceTree = "<group>"; };
 		DBABFCE19FE45CD90B544842 /* Pods-Runner.release-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.release-production.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.release-production.xcconfig"; sourceTree = "<group>"; };
 		DFB3A2605B5F87ACE6D1CC90 /* Pods-ImageNotification.release-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageNotification.release-development.xcconfig"; path = "Target Support Files/Pods-ImageNotification/Pods-ImageNotification.release-development.xcconfig"; sourceTree = "<group>"; };
+		E0E5CD99E3DB5F499EAE803E /* ImageNotification-Release-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/ImageNotification-Release-development.xcconfig"; sourceTree = "<group>"; };
 		E3B6203E1123C8B79809F451 /* Pods-RunnerTests.profile-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.profile-development.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.profile-development.xcconfig"; sourceTree = "<group>"; };
 		E63D42E840D01ADAB975EBD8 /* Pods-RunnerTests.debug-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.debug-development.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.debug-development.xcconfig"; sourceTree = "<group>"; };
+		E766D71FC85A8701503F8E41 /* Runner-Release-development.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/Runner-Release-development.xcconfig"; sourceTree = "<group>"; };
 		EB1EAB5BA24D25B7B916BEBD /* Pods_RunnerTests.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_RunnerTests.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		EBBB5A54B0F4FDFCF4424C70 /* Runner-Profile-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/Runner-Profile-staging.xcconfig"; sourceTree = "<group>"; };
 		EDB9E1806D63CE0BCB8F5935 /* Pods-RunnerTests.release-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-staging.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-staging.xcconfig"; sourceTree = "<group>"; };
 		EEE7CB749BFCFE430E49FCB7 /* Pods-Runner.debug-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.debug-staging.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.debug-staging.xcconfig"; sourceTree = "<group>"; };
+		F17D0C4E6B6B4AA780001001 /* ImageNotification-Debug.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "ImageNotification-Debug.xcconfig"; path = "Flutter/ImageNotification-Debug.xcconfig"; sourceTree = "<group>"; };
+		F17D0C4E6B6B4AA780001002 /* ImageNotification-Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "ImageNotification-Release.xcconfig"; path = "Flutter/ImageNotification-Release.xcconfig"; sourceTree = "<group>"; };
+		F17D0C4E6B6B4AA780001003 /* ImageNotification-Profile.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = "ImageNotification-Profile.xcconfig"; path = "Flutter/ImageNotification-Profile.xcconfig"; sourceTree = "<group>"; };
+		F17D0C4E6B6B4AA780001004 /* Info-Staging.plist */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.plist.xml; name = "Info-Staging.plist"; path = "ImageNotification/Info-Staging.plist"; sourceTree = "<group>"; };
+		F17D0C4E6B6B4AA780001005 /* Info-Staging.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-Staging.plist"; sourceTree = "<group>"; };
+		F59BEC68F5E49D1B6A66346A /* Runner-Debug-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/Runner-Debug-staging.xcconfig"; sourceTree = "<group>"; };
 		F6CA1853339040ECE10F6557 /* NotificationService.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = NotificationService.swift; path = ImageNotification/NotificationService.swift; sourceTree = "<group>"; };
 		FB54EFD3D79D77D6A4BFF9BC /* Pods-ImageNotification.debug-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageNotification.debug-staging.xcconfig"; path = "Target Support Files/Pods-ImageNotification/Pods-ImageNotification.debug-staging.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -161,16 +179,16 @@
 			name = Frameworks;
 			sourceTree = "<group>";
 		};
-			2190B8E597D481AED0A20CD9 /* ImageNotification */ = {
-				isa = PBXGroup;
-				children = (
-					F6CA1853339040ECE10F6557 /* NotificationService.swift */,
-					6E06CE3DAE7C5085C8B54341 /* Info-Production.plist */,
-					F17D0C4E6B6B4AA780001004 /* Info-Staging.plist */,
-				);
-				name = ImageNotification;
-				sourceTree = "<group>";
-			};
+		2190B8E597D481AED0A20CD9 /* ImageNotification */ = {
+			isa = PBXGroup;
+			children = (
+				F6CA1853339040ECE10F6557 /* NotificationService.swift */,
+				6E06CE3DAE7C5085C8B54341 /* Info-Production.plist */,
+				F17D0C4E6B6B4AA780001004 /* Info-Staging.plist */,
+			);
+			name = ImageNotification;
+			sourceTree = "<group>";
+		};
 		331C8082294A63A400263BE5 /* RunnerTests */ = {
 			isa = PBXGroup;
 			children = (
@@ -223,6 +241,24 @@
 				F17D0C4E6B6B4AA780001001 /* ImageNotification-Debug.xcconfig */,
 				F17D0C4E6B6B4AA780001002 /* ImageNotification-Release.xcconfig */,
 				F17D0C4E6B6B4AA780001003 /* ImageNotification-Profile.xcconfig */,
+				6C775E64078182B9EA63B99B /* Runner-Debug-development.xcconfig */,
+				51A0F04D98E2B213F6C41DB0 /* ImageNotification-Debug-development.xcconfig */,
+				E766D71FC85A8701503F8E41 /* Runner-Release-development.xcconfig */,
+				E0E5CD99E3DB5F499EAE803E /* ImageNotification-Release-development.xcconfig */,
+				435FC6CDE8B8C59CC2635A57 /* Runner-Profile-development.xcconfig */,
+				A8873C25151678D639C65391 /* ImageNotification-Profile-development.xcconfig */,
+				F59BEC68F5E49D1B6A66346A /* Runner-Debug-staging.xcconfig */,
+				C4AF26E60B0AE73A2782B5F8 /* ImageNotification-Debug-staging.xcconfig */,
+				BEA14533C55A216D71CB12B2 /* Runner-Release-staging.xcconfig */,
+				0C7C4737976E4D28FA0E9F4B /* ImageNotification-Release-staging.xcconfig */,
+				EBBB5A54B0F4FDFCF4424C70 /* Runner-Profile-staging.xcconfig */,
+				A120B24EC3DCF72700D4D419 /* ImageNotification-Profile-staging.xcconfig */,
+				9B34AE4394329773828C7E0B /* Runner-Debug-production.xcconfig */,
+				CD4385321C05C74BE08C32A1 /* ImageNotification-Debug-production.xcconfig */,
+				6B50B513D48BA4D894892C5C /* Runner-Release-production.xcconfig */,
+				CA418836A16477F808D56E63 /* ImageNotification-Release-production.xcconfig */,
+				A82DBF46B7027C99816B1927 /* Runner-Profile-production.xcconfig */,
+				A7E8AA497EE8D483B0313537 /* ImageNotification-Profile-production.xcconfig */,
 			);
 			name = Flutter;
 			sourceTree = "<group>";
@@ -630,7 +666,7 @@
 /* Begin XCBuildConfiguration section */
 		04664A1E1B121E15485AAA85 /* Release-production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F17D0C4E6B6B4AA780001002 /* ImageNotification-Release.xcconfig */;
+			baseConfigurationReference = CA418836A16477F808D56E63 /* ImageNotification-Release-production.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -639,7 +675,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = X4K74N37FK;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = ImageNotification/Info-Production.plist;
+				INFOPLIST_FILE = "ImageNotification/Info-Production.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -652,6 +688,9 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
@@ -717,7 +756,7 @@
 		};
 		1BBD01742F280E9900580F93 /* Debug-development */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
+			baseConfigurationReference = 6C775E64078182B9EA63B99B /* Runner-Debug-development.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "Memuno (dev)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = logo;
@@ -727,7 +766,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = X4K74N37FK;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = Runner/Info-Development.plist;
+				INFOPLIST_FILE = "Runner/Info-Development.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -829,10 +868,10 @@
 			};
 			name = "Debug-staging";
 		};
-			1BBD01772F280EA100580F93 /* Debug-staging */ = {
-				isa = XCBuildConfiguration;
-				baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
-				buildSettings = {
+		1BBD01772F280EA100580F93 /* Debug-staging */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = F59BEC68F5E49D1B6A66346A /* Runner-Debug-staging.xcconfig */;
+			buildSettings = {
 				APP_DISPLAY_NAME = "Memuno (stg)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = logo;
 				BASE_URL_SCHEME = dev.coderave.memunoapp.stg;
@@ -841,7 +880,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = X4K74N37FK;
 				ENABLE_BITCODE = NO;
-					INFOPLIST_FILE = Runner/Info-Staging.plist;
+				INFOPLIST_FILE = "Runner/Info-Staging.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -942,7 +981,7 @@
 		};
 		1BBD017A2F280EB100580F93 /* Release-development */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			baseConfigurationReference = E766D71FC85A8701503F8E41 /* Runner-Release-development.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "Memuno (dev)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = logo;
@@ -952,7 +991,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = X4K74N37FK;
 				ENABLE_BITCODE = NO;
-				INFOPLIST_FILE = Runner/Info-Development.plist;
+				INFOPLIST_FILE = "Runner/Info-Development.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1050,7 +1089,7 @@
 		};
 		1BBD017D2F280EBE00580F93 /* Release-staging */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			baseConfigurationReference = BEA14533C55A216D71CB12B2 /* Runner-Release-staging.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "Memuno (stg)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = logo;
@@ -1060,7 +1099,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = X4K74N37FK;
 				ENABLE_BITCODE = NO;
-					INFOPLIST_FILE = Runner/Info-Staging.plist;
+				INFOPLIST_FILE = "Runner/Info-Staging.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1154,10 +1193,10 @@
 			};
 			name = "Profile-development";
 		};
-			1BBD01802F280EC600580F93 /* Profile-development */ = {
-				isa = XCBuildConfiguration;
-				baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
-				buildSettings = {
+		1BBD01802F280EC600580F93 /* Profile-development */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 435FC6CDE8B8C59CC2635A57 /* Runner-Profile-development.xcconfig */;
+			buildSettings = {
 				APP_DISPLAY_NAME = "Memuno (dev)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = logo;
 				BASE_URL_SCHEME = dev.coderave.memunoapp.dev;
@@ -1166,7 +1205,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = X4K74N37FK;
 				ENABLE_BITCODE = NO;
-					INFOPLIST_FILE = Runner/Info-Development.plist;
+				INFOPLIST_FILE = "Runner/Info-Development.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1262,7 +1301,7 @@
 		};
 		1BBD01832F280ECD00580F93 /* Profile-staging */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			baseConfigurationReference = EBBB5A54B0F4FDFCF4424C70 /* Runner-Profile-staging.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = "Memuno (stg)";
 				ASSETCATALOG_COMPILER_APPICON_NAME = logo;
@@ -1272,7 +1311,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = X4K74N37FK;
 				ENABLE_BITCODE = NO;
-					INFOPLIST_FILE = Runner/Info-Staging.plist;
+				INFOPLIST_FILE = "Runner/Info-Staging.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1316,7 +1355,7 @@
 		};
 		228094BEE255EE3EF8A40C16 /* Profile-development */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F17D0C4E6B6B4AA780001003 /* ImageNotification-Profile.xcconfig */;
+			baseConfigurationReference = A8873C25151678D639C65391 /* ImageNotification-Profile-development.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -1325,7 +1364,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = X4K74N37FK;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = ImageNotification/Info-Development.plist;
+				INFOPLIST_FILE = "ImageNotification/Info-Development.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1338,6 +1377,9 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
@@ -1398,7 +1440,7 @@
 		};
 		249021D4217E4FDB00AE95B9 /* Profile-production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			baseConfigurationReference = A82DBF46B7027C99816B1927 /* Runner-Profile-production.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = Memuno;
 				ASSETCATALOG_COMPILER_APPICON_NAME = logo;
@@ -1408,7 +1450,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = X4K74N37FK;
 				ENABLE_BITCODE = NO;
-					INFOPLIST_FILE = Runner/Info-Production.plist;
+				INFOPLIST_FILE = "Runner/Info-Production.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1500,7 +1542,7 @@
 		};
 		3EE0A8CC717464A222DD24D2 /* Release-development */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F17D0C4E6B6B4AA780001002 /* ImageNotification-Release.xcconfig */;
+			baseConfigurationReference = E0E5CD99E3DB5F499EAE803E /* ImageNotification-Release-development.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -1509,7 +1551,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = X4K74N37FK;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = ImageNotification/Info-Development.plist;
+				INFOPLIST_FILE = "ImageNotification/Info-Development.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1522,16 +1564,19 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = "Release-development";
 		};
-			955A2BCF75D45BA7BE3DB07F /* Profile-staging */ = {
-				isa = XCBuildConfiguration;
-				baseConfigurationReference = F17D0C4E6B6B4AA780001003 /* ImageNotification-Profile.xcconfig */;
-				buildSettings = {
+		955A2BCF75D45BA7BE3DB07F /* Profile-staging */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = A120B24EC3DCF72700D4D419 /* ImageNotification-Profile-staging.xcconfig */;
+			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -1539,7 +1584,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = X4K74N37FK;
 				GENERATE_INFOPLIST_FILE = NO;
-					INFOPLIST_FILE = ImageNotification/Info-Staging.plist;
+				INFOPLIST_FILE = "ImageNotification/Info-Staging.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1552,6 +1597,9 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
@@ -1671,7 +1719,7 @@
 		};
 		97C147061CF9000F007C117D /* Debug-production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 9740EEB21CF90195004384FC /* Debug.xcconfig */;
+			baseConfigurationReference = 9B34AE4394329773828C7E0B /* Runner-Debug-production.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = Memuno;
 				ASSETCATALOG_COMPILER_APPICON_NAME = logo;
@@ -1681,7 +1729,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = X4K74N37FK;
 				ENABLE_BITCODE = NO;
-					INFOPLIST_FILE = Runner/Info-Production.plist;
+				INFOPLIST_FILE = "Runner/Info-Production.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1703,7 +1751,7 @@
 		};
 		97C147071CF9000F007C117D /* Release-production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 7AFA3C8E1D35360C0083082E /* Release.xcconfig */;
+			baseConfigurationReference = 6B50B513D48BA4D894892C5C /* Runner-Release-production.xcconfig */;
 			buildSettings = {
 				APP_DISPLAY_NAME = Memuno;
 				ASSETCATALOG_COMPILER_APPICON_NAME = logo;
@@ -1713,7 +1761,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = X4K74N37FK;
 				ENABLE_BITCODE = NO;
-					INFOPLIST_FILE = Runner/Info-Production.plist;
+				INFOPLIST_FILE = "Runner/Info-Production.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1734,7 +1782,7 @@
 		};
 		C857BF7B362FA53569AFF44F /* Profile-production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F17D0C4E6B6B4AA780001003 /* ImageNotification-Profile.xcconfig */;
+			baseConfigurationReference = A7E8AA497EE8D483B0313537 /* ImageNotification-Profile-production.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -1743,7 +1791,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = X4K74N37FK;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = ImageNotification/Info-Production.plist;
+				INFOPLIST_FILE = "ImageNotification/Info-Production.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1756,6 +1804,9 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
@@ -1764,7 +1815,7 @@
 		};
 		D7FED8FE259205126CE66F3C /* Release-staging */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F17D0C4E6B6B4AA780001002 /* ImageNotification-Release.xcconfig */;
+			baseConfigurationReference = 0C7C4737976E4D28FA0E9F4B /* ImageNotification-Release-staging.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -1773,7 +1824,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = X4K74N37FK;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = ImageNotification/Info-Staging.plist;
+				INFOPLIST_FILE = "ImageNotification/Info-Staging.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1786,16 +1837,19 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
 				VALIDATE_PRODUCT = YES;
 			};
 			name = "Release-staging";
 		};
-			E0E026B137DC5CF0249CDEA8 /* Debug-development */ = {
-				isa = XCBuildConfiguration;
-				baseConfigurationReference = F17D0C4E6B6B4AA780001001 /* ImageNotification-Debug.xcconfig */;
-				buildSettings = {
+		E0E026B137DC5CF0249CDEA8 /* Debug-development */ = {
+			isa = XCBuildConfiguration;
+			baseConfigurationReference = 51A0F04D98E2B213F6C41DB0 /* ImageNotification-Debug-development.xcconfig */;
+			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
@@ -1803,7 +1857,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = X4K74N37FK;
 				GENERATE_INFOPLIST_FILE = NO;
-					INFOPLIST_FILE = ImageNotification/Info-Development.plist;
+				INFOPLIST_FILE = "ImageNotification/Info-Development.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1816,6 +1870,9 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -1825,7 +1882,7 @@
 		};
 		E7D1388C8B3352659AD6DCA5 /* Debug-production */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F17D0C4E6B6B4AA780001001 /* ImageNotification-Debug.xcconfig */;
+			baseConfigurationReference = CD4385321C05C74BE08C32A1 /* ImageNotification-Debug-production.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -1834,7 +1891,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = X4K74N37FK;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = ImageNotification/Info-Production.plist;
+				INFOPLIST_FILE = "ImageNotification/Info-Production.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1847,6 +1904,9 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;
@@ -1856,7 +1916,7 @@
 		};
 		E84D3A3A8B75E6BCECA8B13A /* Debug-staging */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = F17D0C4E6B6B4AA780001001 /* ImageNotification-Debug.xcconfig */;
+			baseConfigurationReference = C4AF26E60B0AE73A2782B5F8 /* ImageNotification-Debug-staging.xcconfig */;
 			buildSettings = {
 				APPLICATION_EXTENSION_API_ONLY = YES;
 				CLANG_ENABLE_MODULES = YES;
@@ -1865,7 +1925,7 @@
 				CURRENT_PROJECT_VERSION = "$(FLUTTER_BUILD_NUMBER)";
 				DEVELOPMENT_TEAM = X4K74N37FK;
 				GENERATE_INFOPLIST_FILE = NO;
-				INFOPLIST_FILE = ImageNotification/Info-Staging.plist;
+				INFOPLIST_FILE = "ImageNotification/Info-Staging.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -1878,6 +1938,9 @@
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator";
+				SUPPORTS_MACCATALYST = NO;
+				SUPPORTS_MAC_DESIGNED_FOR_IPHONE_IPAD = NO;
+				SUPPORTS_XR_DESIGNED_FOR_IPHONE_IPAD = NO;
 				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				SWIFT_VERSION = 5.0;

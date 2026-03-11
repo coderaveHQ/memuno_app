@@ -179,8 +179,8 @@ final class PushNotificationsIntentService {
       return;
     }
 
-    final NotificationPushIntent intent =
-        _resolveNotificationPushIntentUsecase.fromPushData(message.data);
+    final NotificationPushIntent intent = _resolveNotificationPushIntentUsecase
+        .fromPushData(message.data);
 
     if (_currentUserId == null) {
       _pendingIntent = intent;
@@ -198,8 +198,8 @@ final class PushNotificationsIntentService {
 
     unawaited(
       _enqueue(() async {
-        final NotificationPushIntent intent = _resolveNotificationPushIntentUsecase
-            .fromPushData(data);
+        final NotificationPushIntent intent =
+            _resolveNotificationPushIntentUsecase.fromPushData(data);
         if (_currentUserId == null) {
           _pendingIntent = intent;
           _navigateToSignIn();
@@ -222,11 +222,14 @@ final class PushNotificationsIntentService {
       await _router.push(targetLocation);
     } catch (error, stackTrace) {
       _logger.warn(
-        message: 'Push target navigation failed. Falling back to notifications.',
+        message:
+            'Push target navigation failed. Falling back to notifications.',
         error: error,
         stackTrace: stackTrace,
       );
-      await _router.push(_notificationTargetRouteMapper.notificationsLocation());
+      await _router.push(
+        _notificationTargetRouteMapper.notificationsLocation(),
+      );
     }
   }
 
@@ -237,7 +240,9 @@ final class PushNotificationsIntentService {
     }
 
     try {
-      await _markNotificationReadUsecase(notificationId: normalizedNotificationId);
+      await _markNotificationReadUsecase(
+        notificationId: normalizedNotificationId,
+      );
       _onUnreadCountChanged();
     } catch (error, stackTrace) {
       _logger.warn(

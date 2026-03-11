@@ -1,5 +1,3 @@
+// Legacy wrapper: flavored builds should use ImageNotification-<Mode>-<Flavor>.xcconfig files.
 #include? "Pods/Target Support Files/Pods-ImageNotification/Pods-ImageNotification.release.xcconfig"
-#include? "Pods/Target Support Files/Pods-ImageNotification/Pods-ImageNotification.release-development.xcconfig"
-#include? "Pods/Target Support Files/Pods-ImageNotification/Pods-ImageNotification.release-staging.xcconfig"
-#include? "Pods/Target Support Files/Pods-ImageNotification/Pods-ImageNotification.release-production.xcconfig"
 #include "Generated.xcconfig"

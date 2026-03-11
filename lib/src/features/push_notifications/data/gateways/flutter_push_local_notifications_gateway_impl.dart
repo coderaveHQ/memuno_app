@@ -38,7 +38,7 @@ final class FlutterPushLocalNotificationsGatewayImpl
     );
 
     await _localNotificationsPlugin.initialize(
-      settings,
+      settings: settings,
       onDidReceiveNotificationResponse:
           (NotificationResponse notificationResponse) {
             _handleNotificationTap(notificationResponse.payload);
@@ -81,10 +81,10 @@ final class FlutterPushLocalNotificationsGatewayImpl
     );
 
     await _localNotificationsPlugin.show(
-      _toNotificationIntegerId(notificationId),
-      normalizedTitle.isEmpty ? null : normalizedTitle,
-      displayBody,
-      details,
+      id: _toNotificationIntegerId(notificationId),
+      title: normalizedTitle.isEmpty ? null : normalizedTitle,
+      body: displayBody,
+      notificationDetails: details,
       payload: jsonEncode(data),
     );
   }
