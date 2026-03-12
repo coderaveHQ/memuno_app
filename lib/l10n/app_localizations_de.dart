@@ -102,9 +102,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get signOutButton => 'Abmelden';
 
   @override
-  String get homePullToRefreshHint => 'Zum Aktualisieren nach unten ziehen.';
-
-  @override
   String get userDetailsTitle => 'Nutzer-Details';
 
   @override
@@ -251,27 +248,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get memeEditorTitle => 'Neues Meme';
 
   @override
-  String get memeEditorFinalizeButton => 'Fertig';
-
-  @override
   String get memeEditorCanvasSelectTemplateHint =>
       'Wähle eine Meme-Vorlage oder ein Bild aus deiner Galerie aus.';
 
   @override
-  String get memeEditorCanvasImageLoadError =>
-      'Bild konnte nicht geladen werden.';
+  String get memeEditorTextBackgroundEnable => 'Textkontur aktivieren';
 
   @override
-  String get memeEditorAddTextButton => 'Text hinzufügen';
+  String get memeEditorTextBackgroundDisable => 'Textkontur deaktivieren';
 
   @override
-  String get memeEditorTextLabel => 'Text';
-
-  @override
-  String get memeEditorTextHint => 'Schreibe deinen Meme-Text';
-
-  @override
-  String get memeEditorDefaultText => 'Text';
+  String get memeEditorDeleteTargetSemanticsLabel => 'Text löschen';
 
   @override
   String get memeEditorRenderError =>
@@ -550,9 +537,6 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
   String get signOutButton => 'Abmelden';
 
   @override
-  String get homePullToRefreshHint => 'Zum Aktualisieren nach unten ziehen.';
-
-  @override
   String get userDetailsTitle => 'Nutzer-Details';
 
   @override
@@ -699,27 +683,17 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
   String get memeEditorTitle => 'Neues Meme';
 
   @override
-  String get memeEditorFinalizeButton => 'Fertig';
-
-  @override
   String get memeEditorCanvasSelectTemplateHint =>
       'Wähle eine Meme-Vorlage oder ein Bild aus deiner Galerie aus.';
 
   @override
-  String get memeEditorCanvasImageLoadError =>
-      'Bild konnte nicht geladen werden.';
+  String get memeEditorTextBackgroundEnable => 'Textkontur aktivieren';
 
   @override
-  String get memeEditorAddTextButton => 'Text hinzufügen';
+  String get memeEditorTextBackgroundDisable => 'Textkontur deaktivieren';
 
   @override
-  String get memeEditorTextLabel => 'Text';
-
-  @override
-  String get memeEditorTextHint => 'Schreibe deinen Meme-Text';
-
-  @override
-  String get memeEditorDefaultText => 'Text';
+  String get memeEditorDeleteTargetSemanticsLabel => 'Text löschen';
 
   @override
   String get memeEditorRenderError =>

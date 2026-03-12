@@ -7,6 +7,10 @@ final class MemeTextLayerEntity {
     required this.positionX,
     required this.positionY,
     required this.fontSize,
+    required this.rotationRadians,
+    required this.textColorValue,
+    required this.hasBackground,
+    required this.backgroundColorValue,
   });
 
   /// Stable identifier used by the editor for selection and updates.
@@ -15,14 +19,26 @@ final class MemeTextLayerEntity {
   /// User-entered text rendered on the meme image.
   final String text;
 
-  /// Horizontal position normalized between 0.0 and 1.0.
+  /// Horizontal center position normalized between 0.0 and 1.0.
   final double positionX;
 
-  /// Vertical position normalized between 0.0 and 1.0.
+  /// Vertical center position normalized between 0.0 and 1.0.
   final double positionY;
 
   /// Rendered text size in logical pixels.
   final double fontSize;
+
+  /// Clockwise layer rotation in radians.
+  final double rotationRadians;
+
+  /// ARGB color value used for layer text paint.
+  final int textColorValue;
+
+  /// Whether opposite-color text outline is currently visible.
+  final bool hasBackground;
+
+  /// ARGB color value used for the optional text outline.
+  final int backgroundColorValue;
 
   /// Returns a new layer with updated fields.
   MemeTextLayerEntity copyWith({
@@ -30,6 +46,10 @@ final class MemeTextLayerEntity {
     double? positionX,
     double? positionY,
     double? fontSize,
+    double? rotationRadians,
+    int? textColorValue,
+    bool? hasBackground,
+    int? backgroundColorValue,
   }) {
     return MemeTextLayerEntity(
       id: id,
@@ -37,6 +57,10 @@ final class MemeTextLayerEntity {
       positionX: positionX ?? this.positionX,
       positionY: positionY ?? this.positionY,
       fontSize: fontSize ?? this.fontSize,
+      rotationRadians: rotationRadians ?? this.rotationRadians,
+      textColorValue: textColorValue ?? this.textColorValue,
+      hasBackground: hasBackground ?? this.hasBackground,
+      backgroundColorValue: backgroundColorValue ?? this.backgroundColorValue,
     );
   }
 }

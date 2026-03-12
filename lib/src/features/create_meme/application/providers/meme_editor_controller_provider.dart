@@ -2,28 +2,26 @@ import 'dart:typed_data';
 
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/add_meme_text_layer_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/clear_meme_recipient_selection_usecase_provider.dart';
-import 'package:memuno_app/src/features/create_meme/application/providers/usecases/move_meme_text_layer_usecase_provider.dart';
-import 'package:memuno_app/src/features/create_meme/application/providers/usecases/optimize_custom_template_image_for_upload_usecase_provider.dart';
-import 'package:memuno_app/src/features/create_meme/application/providers/usecases/remove_selected_meme_text_layer_usecase_provider.dart';
+import 'package:memuno_app/src/features/create_meme/application/providers/usecases/remove_meme_text_layer_by_id_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/select_meme_text_layer_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/set_custom_meme_template_image_usecase_provider.dart';
-import 'package:memuno_app/src/features/create_meme/application/providers/usecases/set_finalized_meme_bytes_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/set_meme_template_usecase_provider.dart';
+import 'package:memuno_app/src/features/create_meme/application/providers/usecases/toggle_selected_meme_text_background_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/toggle_meme_recipient_selection_usecase_provider.dart';
-import 'package:memuno_app/src/features/create_meme/application/providers/usecases/update_selected_meme_text_font_size_usecase_provider.dart';
+import 'package:memuno_app/src/features/create_meme/application/providers/usecases/update_meme_text_layer_transform_usecase_provider.dart';
+import 'package:memuno_app/src/features/create_meme/application/providers/usecases/update_selected_meme_text_color_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/update_selected_meme_text_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_state_entity.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/add_meme_text_layer_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/clear_meme_recipient_selection_usecase.dart';
-import 'package:memuno_app/src/features/create_meme/domain/usecases/move_meme_text_layer_usecase.dart';
-import 'package:memuno_app/src/features/create_meme/domain/usecases/optimize_custom_template_image_for_upload_usecase.dart';
-import 'package:memuno_app/src/features/create_meme/domain/usecases/remove_selected_meme_text_layer_usecase.dart';
+import 'package:memuno_app/src/features/create_meme/domain/usecases/remove_meme_text_layer_by_id_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/select_meme_text_layer_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/set_custom_meme_template_image_usecase.dart';
-import 'package:memuno_app/src/features/create_meme/domain/usecases/set_finalized_meme_bytes_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/set_meme_template_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/toggle_meme_recipient_selection_usecase.dart';
-import 'package:memuno_app/src/features/create_meme/domain/usecases/update_selected_meme_text_font_size_usecase.dart';
+import 'package:memuno_app/src/features/create_meme/domain/usecases/toggle_selected_meme_text_background_usecase.dart';
+import 'package:memuno_app/src/features/create_meme/domain/usecases/update_meme_text_layer_transform_usecase.dart';
+import 'package:memuno_app/src/features/create_meme/domain/usecases/update_selected_meme_text_color_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/update_selected_meme_text_usecase.dart';
 import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_list_page_item_entity.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -62,12 +60,21 @@ class MemeEditorController extends _$MemeEditorController {
     );
   }
 
-  /// Adds one text layer and selects it.
-  void addTextLayer({String initialText = 'Text'}) {
+  /// Adds one text layer at normalized center position and selects it.
+  void addTextLayer({
+    required String initialText,
+    required double positionX,
+    required double positionY,
+  }) {
     final AddMemeTextLayerUsecase usecase = ref.read(
       addMemeTextLayerUsecaseProvider,
     );
-    state = usecase(state: state, initialText: initialText);
+    state = usecase(
+      state: state,
+      initialText: initialText,
+      positionX: positionX,
+      positionY: positionY,
+    );
   }
 
   /// Selects one text layer by [layerId] or clears selection when null.
@@ -86,54 +93,54 @@ class MemeEditorController extends _$MemeEditorController {
     state = usecase(state: state, text: text);
   }
 
-  /// Updates font size of the selected layer.
-  void updateSelectedFontSize(double fontSize) {
-    final UpdateSelectedMemeTextFontSizeUsecase usecase = ref.read(
-      updateSelectedMemeTextFontSizeUsecaseProvider,
-    );
-    state = usecase(state: state, fontSize: fontSize);
-  }
-
-  /// Moves one layer by drag delta in editor coordinates.
-  void moveTextLayerBy({
+  /// Updates transform fields of one text layer.
+  void updateTextLayerTransform({
     required String layerId,
-    required double deltaX,
-    required double deltaY,
-    required double canvasWidth,
-    required double canvasHeight,
+    required double positionX,
+    required double positionY,
+    required double fontSize,
+    required double rotationRadians,
   }) {
-    final MoveMemeTextLayerUsecase usecase = ref.read(
-      moveMemeTextLayerUsecaseProvider,
+    final UpdateMemeTextLayerTransformUsecase usecase = ref.read(
+      updateMemeTextLayerTransformUsecaseProvider,
     );
     state = usecase(
       state: state,
       layerId: layerId,
-      deltaX: deltaX,
-      deltaY: deltaY,
-      canvasWidth: canvasWidth,
-      canvasHeight: canvasHeight,
+      positionX: positionX,
+      positionY: positionY,
+      fontSize: fontSize,
+      rotationRadians: rotationRadians,
     );
   }
 
-  /// Removes the currently selected text layer.
-  void removeSelectedTextLayer() {
-    final RemoveSelectedMemeTextLayerUsecase usecase = ref.read(
-      removeSelectedMemeTextLayerUsecaseProvider,
+  /// Updates text color of the selected layer.
+  void updateSelectedTextColor(int colorValue) {
+    final UpdateSelectedMemeTextColorUsecase usecase = ref.read(
+      updateSelectedMemeTextColorUsecaseProvider,
+    );
+    state = usecase(state: state, colorValue: colorValue);
+  }
+
+  /// Toggles text outline visibility for the selected layer.
+  void toggleSelectedTextBackground() {
+    final ToggleSelectedMemeTextBackgroundUsecase usecase = ref.read(
+      toggleSelectedMemeTextBackgroundUsecaseProvider,
     );
     state = usecase(state: state);
+  }
+
+  /// Removes one text layer identified by [layerId].
+  void removeTextLayerById(String layerId) {
+    final RemoveMemeTextLayerByIdUsecase usecase = ref.read(
+      removeMemeTextLayerByIdUsecaseProvider,
+    );
+    state = usecase(state: state, layerId: layerId);
   }
 
   /// Replaces the full state snapshot.
   void setStateSnapshot(MemeEditorStateEntity nextState) {
     state = nextState;
-  }
-
-  /// Stores finalized image [bytes] in local state without mutation flow.
-  void setFinalizedImageBytes(Uint8List bytes) {
-    final SetFinalizedMemeBytesUsecase usecase = ref.read(
-      setFinalizedMemeBytesUsecaseProvider,
-    );
-    state = usecase(state: state, bytes: bytes);
   }
 
   /// Toggles selected recipient state for one friendship [userId].
@@ -148,14 +155,6 @@ class MemeEditorController extends _$MemeEditorController {
   void clearRecipientSelection() {
     final ClearMemeRecipientSelectionUsecase usecase = ref.read(
       clearMemeRecipientSelectionUsecaseProvider,
-    );
-    state = usecase(state: state);
-  }
-
-  /// Optimizes selected custom image bytes for upload-size budget.
-  void optimizeCustomTemplateImageForUpload() {
-    final OptimizeCustomTemplateImageForUploadUsecase usecase = ref.read(
-      optimizeCustomTemplateImageForUploadUsecaseProvider,
     );
     state = usecase(state: state);
   }

@@ -3,10 +3,10 @@ import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_
 import 'package:memuno_app/src/features/create_meme/domain/repositories/meme_editor_repository.dart';
 import 'package:memuno_app/src/features/create_meme/domain/validators/meme_editor_validator.dart';
 
-/// Usecase for moving one text layer by drag delta.
-final class MoveMemeTextLayerUsecase {
+/// Usecase for removing one meme text layer by identifier.
+final class RemoveMemeTextLayerByIdUsecase {
   /// Creates the usecase.
-  const MoveMemeTextLayerUsecase({
+  const RemoveMemeTextLayerByIdUsecase({
     required MemeEditorRepository repository,
     required MemeEditorValidator validator,
   }) : _repository = repository,
@@ -15,49 +15,22 @@ final class MoveMemeTextLayerUsecase {
   /// Repository used for local state transitions.
   final MemeEditorRepository _repository;
 
-  /// Validator used for movement input checks.
+  /// Validator used for layer-id checks.
   final MemeEditorValidator _validator;
 
-  /// Applies drag delta to the layer identified by [layerId].
+  /// Removes the layer identified by [layerId] from [state].
   MemeEditorStateEntity call({
     /// Current editor snapshot.
     required MemeEditorStateEntity state,
 
     /// Target layer identifier.
     required String layerId,
-
-    /// Horizontal drag delta in logical pixels.
-    required double deltaX,
-
-    /// Vertical drag delta in logical pixels.
-    required double deltaY,
-
-    /// Canvas width in logical pixels.
-    required double canvasWidth,
-
-    /// Canvas height in logical pixels.
-    required double canvasHeight,
   }) {
     final Failure? layerValidation = _validator.validateLayerId(layerId);
     if (layerValidation != null) {
       throw layerValidation;
     }
 
-    final Failure? sizeValidation = _validator.validateCanvasDimensions(
-      width: canvasWidth,
-      height: canvasHeight,
-    );
-    if (sizeValidation != null) {
-      throw sizeValidation;
-    }
-
-    return _repository.moveTextLayerBy(
-      state: state,
-      layerId: layerId,
-      deltaX: deltaX,
-      deltaY: deltaY,
-      canvasWidth: canvasWidth,
-      canvasHeight: canvasHeight,
-    );
+    return _repository.removeTextLayerById(state: state, layerId: layerId);
   }
 }

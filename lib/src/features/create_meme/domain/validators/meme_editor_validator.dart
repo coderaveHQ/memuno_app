@@ -2,14 +2,12 @@ import 'dart:typed_data';
 
 import 'package:memuno_app/src/core/failures/failure.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_state_entity.dart';
+import 'package:memuno_app/src/features/create_meme/domain/entities/meme_image_size_entity.dart';
 
 /// Validation helpers for meme-editor input operations.
 final class MemeEditorValidator {
   /// Creates a validator instance.
   const MemeEditorValidator();
-
-  /// Maximum length allowed for one text layer.
-  static const int maxTextLength = 60;
 
   /// Minimum font size supported by the editor.
   static const double minFontSize = 18.0;
@@ -20,19 +18,17 @@ final class MemeEditorValidator {
   /// Maximum combined bytes allowed for image payload and meme text.
   static const int maxCombinedMemePayloadBytes = 5 * 1024 * 1024;
 
+  /// Lower inclusive bound for valid ARGB color values.
+  static const int minColorValue = 0x00000000;
+
+  /// Upper inclusive bound for valid ARGB color values.
+  static const int maxColorValue = 0xFFFFFFFF;
+
   /// Validates one text-layer value.
   ///
   /// Returns a [Failure.validation] when invalid, otherwise `null`.
   Failure? validateTextLayerText(String text) {
-    if (text.length <= maxTextLength) {
-      return null;
-    }
-
-    return const Failure.validation(
-      code: 'max_length',
-      field: 'meme_text',
-      params: <String, Object?>{'max': maxTextLength},
-    );
+    return null;
   }
 
   /// Validates selected text-layer identifier.
@@ -58,23 +54,6 @@ final class MemeEditorValidator {
     }
 
     return const Failure.validation(code: 'invalid_format', field: 'font_size');
-  }
-
-  /// Validates rendered canvas dimensions.
-  ///
-  /// Returns a [Failure.validation] when invalid, otherwise `null`.
-  Failure? validateCanvasDimensions({
-    required double width,
-    required double height,
-  }) {
-    if (width > 0.0 && height > 0.0) {
-      return null;
-    }
-
-    return const Failure.validation(
-      code: 'invalid_format',
-      field: 'canvas_size',
-    );
   }
 
   /// Validates whether any meme background is currently selected.
@@ -188,6 +167,59 @@ final class MemeEditorValidator {
       code: 'meme_payload_too_large',
       field: 'meme_payload',
       params: <String, Object?>{'max_bytes': maxCombinedMemePayloadBytes},
+    );
+  }
+
+  /// Validates one normalized layer coordinate.
+  ///
+  /// Returns a [Failure.validation] when invalid, otherwise `null`.
+  Failure? validateNormalizedPosition(double value) {
+    if (value.isFinite && value >= 0.0 && value <= 1.0) {
+      return null;
+    }
+
+    return const Failure.validation(
+      code: 'invalid_format',
+      field: 'normalized_position',
+    );
+  }
+
+  /// Validates one finite rotation value in radians.
+  ///
+  /// Returns a [Failure.validation] when invalid, otherwise `null`.
+  Failure? validateRotationRadians(double rotationRadians) {
+    if (rotationRadians.isFinite) {
+      return null;
+    }
+
+    return const Failure.validation(
+      code: 'invalid_format',
+      field: 'rotation_radians',
+    );
+  }
+
+  /// Validates one ARGB color integer.
+  ///
+  /// Returns a [Failure.validation] when invalid, otherwise `null`.
+  Failure? validateColorValue(int colorValue) {
+    if (colorValue >= minColorValue && colorValue <= maxColorValue) {
+      return null;
+    }
+
+    return const Failure.validation(code: 'invalid_format', field: 'color');
+  }
+
+  /// Validates positive image width and height values.
+  ///
+  /// Returns a [Failure.validation] when invalid, otherwise `null`.
+  Failure? validateImageSize(MemeImageSizeEntity size) {
+    if (size.width > 0 && size.height > 0) {
+      return null;
+    }
+
+    return const Failure.validation(
+      code: 'invalid_format',
+      field: 'image_size',
     );
   }
 }

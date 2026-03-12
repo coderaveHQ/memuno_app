@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:math' as math;
 import 'dart:typed_data';
 import 'dart:ui' as ui;
 
@@ -10,23 +11,26 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/experimental/mutation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:memuno_app/l10n/app_localizations.dart';
-import 'package:memuno_app/src/app/extensions/build_context_x.dart';
 import 'package:memuno_app/src/app/extensions/mutation_x.dart';
 import 'package:memuno_app/src/app/feedback/app_feedback.dart';
 import 'package:memuno_app/src/app/feedback/app_feedback_provider.dart';
 import 'package:memuno_app/src/app/router/app_router.dart';
 import 'package:memuno_app/src/app/widgets/m/m_app_bar.dart';
-import 'package:memuno_app/src/app/widgets/m/m_button.dart';
-import 'package:memuno_app/src/app/widgets/m/m_gap.dart';
 import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
+import 'package:memuno_app/src/core/failures/failure.dart';
 import 'package:memuno_app/src/features/create_meme/application/mutations/finalize_meme_image_mutation.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/meme_editor_controller_provider.dart';
+import 'package:memuno_app/src/features/create_meme/application/providers/usecases/normalize_finalized_meme_bytes_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/optimize_custom_template_image_for_upload_usecase_provider.dart';
+import 'package:memuno_app/src/features/create_meme/application/providers/usecases/resolve_meme_background_size_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/set_finalized_meme_bytes_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_state_entity.dart';
+import 'package:memuno_app/src/features/create_meme/domain/entities/meme_image_size_entity.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_text_layer_entity.dart';
+import 'package:memuno_app/src/features/create_meme/domain/usecases/normalize_finalized_meme_bytes_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/optimize_custom_template_image_for_upload_usecase.dart';
+import 'package:memuno_app/src/features/create_meme/domain/usecases/resolve_meme_background_size_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/set_finalized_meme_bytes_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/presentation/widgets/meme_editor_canvas.dart';
 import 'package:memuno_app/src/features/create_meme/presentation/widgets/meme_editor_controls.dart';
@@ -39,8 +43,6 @@ import 'package:memuno_app/src/features/meme_templates/presentation/widgets/meme
 class MemeEditorPage extends HookConsumerWidget {
   /// Creates the meme editor page.
   const MemeEditorPage({super.key});
-
-  static const double _maxRenderPixelRatio = 3.0;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -55,16 +57,24 @@ class MemeEditorPage extends HookConsumerWidget {
       finalizeMemeImageMutationProvider,
     );
     final MutationState<Uint8List> finalizeState = ref.watch(finalizeMutation);
-    final bool isFinalizing = finalizeState is MutationPending<Uint8List>;
+    final bool isFinalizing = finalizeState.isPending;
 
     final TextEditingController selectedTextController =
         useTextEditingController();
     final FocusNode selectedTextFocusNode = useFocusNode();
+    final ScrollController canvasScrollController = useScrollController();
+
     final ValueNotifier<bool> hasOpenedTemplatePicker = useState<bool>(false);
-    final ValueNotifier<bool> hideSelectionOverlay = useState<bool>(false);
+    final ValueNotifier<bool> shouldEditSelectedLayer = useState<bool>(false);
     final ObjectRef<bool> isSyncingSelectedText = useRef<bool>(false);
-    final ObjectRef<bool> hasHeldTextFieldFocus = useRef<bool>(false);
     final GlobalKey repaintBoundaryKey = useMemoized(GlobalKey.new);
+
+    useListenable(selectedTextFocusNode);
+
+    final bool isTextEditingActive = selectedTextFocusNode.hasFocus;
+    final bool isSelectedLayerEditing =
+        state.selectedTextLayerId != null &&
+        (isTextEditingActive || shouldEditSelectedLayer.value);
 
     final MemeTextLayerEntity? selectedLayer = state.selectedTextLayer;
 
@@ -79,65 +89,40 @@ class MemeEditorPage extends HookConsumerWidget {
     });
 
     useEffect(() {
-      if (hasOpenedTemplatePicker.value) {
-        return null;
+      if (state.selectedTextLayerId == null && shouldEditSelectedLayer.value) {
+        shouldEditSelectedLayer.value = false;
       }
-
-      hasOpenedTemplatePicker.value = true;
-      WidgetsBinding.instance.addPostFrameCallback((Duration _) {
-        unawaited(
-          _pickTemplate(
-            context: context,
-            controller: controller,
-            closePageOnCancel: true,
-          ),
-        );
-      });
-
       return null;
-    }, <Object?>[hasOpenedTemplatePicker.value, controller]);
+    }, <Object?>[state.selectedTextLayerId, shouldEditSelectedLayer.value]);
 
     useEffect(
       () {
-        void listener() {
-          final bool hasFocus = selectedTextFocusNode.hasFocus;
-          if (hasFocus) {
-            hasHeldTextFieldFocus.value = true;
-            return;
-          }
-
-          if (!hasHeldTextFieldFocus.value) {
-            return;
-          }
-
-          hasHeldTextFieldFocus.value = false;
-          if (state.selectedTextLayerId == null) {
-            return;
-          }
-
-          try {
-            controller.selectTextLayer(null);
-          } catch (error) {
-            WidgetsBinding.instance.addPostFrameCallback((Duration _) {
-              if (!context.mounted) {
-                return;
-              }
-              feedback.resolveAndShowError(context, error);
-            });
-          }
+        if (hasOpenedTemplatePicker.value) {
+          return null;
         }
 
-        selectedTextFocusNode.addListener(listener);
-        return () {
-          selectedTextFocusNode.removeListener(listener);
-        };
+        hasOpenedTemplatePicker.value = true;
+        WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+          unawaited(
+            _pickTemplate(
+              context: context,
+              controller: controller,
+              closePageOnCancel: true,
+              selectedTextFocusNode: selectedTextFocusNode,
+              shouldEditSelectedLayer: shouldEditSelectedLayer,
+              canvasScrollController: canvasScrollController,
+            ),
+          );
+        });
+
+        return null;
       },
       <Object?>[
-        selectedTextFocusNode,
-        hasHeldTextFieldFocus,
-        state.selectedTextLayerId,
+        hasOpenedTemplatePicker.value,
         controller,
-        feedback,
+        selectedTextFocusNode,
+        shouldEditSelectedLayer,
+        canvasScrollController,
       ],
     );
 
@@ -201,12 +186,47 @@ class MemeEditorPage extends HookConsumerWidget {
       ],
     );
 
-    final EdgeInsets controlsHorizontalPadding = EdgeInsets.only(
-      left: context.leftPadding + MSpacing.md,
-      right: context.rightPadding + MSpacing.md,
-    );
+    void dismissTextEditing() {
+      shouldEditSelectedLayer.value = false;
+      selectedTextFocusNode.unfocus();
+    }
+
+    void keepTextEditingFocus({int retryFrames = 2}) {
+      final String? selectedLayerId = state.selectedTextLayerId;
+      if (selectedLayerId == null) {
+        return;
+      }
+
+      shouldEditSelectedLayer.value = true;
+
+      void requestFocusOnNextFrame(int remainingRetries) {
+        WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+          if (!context.mounted) {
+            return;
+          }
+
+          final MemeEditorStateEntity latestState = ref.read(
+            memeEditorControllerProvider,
+          );
+          if (latestState.selectedTextLayerId != selectedLayerId) {
+            return;
+          }
+
+          if (!selectedTextFocusNode.hasFocus) {
+            selectedTextFocusNode.requestFocus();
+          }
+
+          if (!selectedTextFocusNode.hasFocus && remainingRetries > 0) {
+            requestFocusOnNextFrame(remainingRetries - 1);
+          }
+        });
+      }
+
+      requestFocusOnNextFrame(retryFrames);
+    }
 
     return MScaffold(
+      resizeToAvoidBottomInset: false,
       appBar: MAppBar(
         context: context,
         title: MAppBarTitle(text: l10n.memeEditorTitle),
@@ -214,6 +234,7 @@ class MemeEditorPage extends HookConsumerWidget {
           MAppBarButton(
             onPressed: () => context.pop(),
             icon: LucideIcons.arrow_left,
+            isEnabled: !isFinalizing,
           ),
         ],
         trailing: <MAppBarButton>[
@@ -224,130 +245,150 @@ class MemeEditorPage extends HookConsumerWidget {
                   context: context,
                   controller: controller,
                   closePageOnCancel: false,
+                  selectedTextFocusNode: selectedTextFocusNode,
+                  shouldEditSelectedLayer: shouldEditSelectedLayer,
+                  canvasScrollController: canvasScrollController,
                 ),
               );
             },
             icon: LucideIcons.images,
+            isEnabled: !isFinalizing,
+          ),
+          MAppBarButton(
+            onPressed: () {
+              dismissTextEditing();
+              unawaited(
+                _submitFinalize(
+                  ref: ref,
+                  repaintBoundaryKey: repaintBoundaryKey,
+                  unableToRenderMessage: l10n.memeEditorRenderError,
+                  unableToConvertMessage: l10n.memeEditorPngEncodeError,
+                ),
+              );
+            },
+            icon: LucideIcons.check,
+            isEnabled: state.canFinalize && !isFinalizing,
+            isLoading: isFinalizing,
           ),
         ],
       ),
-      body: Padding(
-        padding: EdgeInsets.only(
-          top: MSpacing.md,
-          bottom: context.bottomPadding + MSpacing.md,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: <Widget>[
-            Expanded(
-              child: MemeEditorCanvas(
-                repaintBoundaryKey: repaintBoundaryKey,
-                template: state.template,
-                customTemplateImageBytes: state.customTemplateImageBytes,
-                customTemplateAspectRatio: state.customTemplateAspectRatio,
-                layers: state.textLayers,
-                selectedLayerId: state.selectedTextLayerId,
-                showSelectionOverlay: !hideSelectionOverlay.value,
-                onSelectLayer: (String? layerId) {
-                  try {
-                    controller.selectTextLayer(layerId);
-                    if (layerId != null) {
-                      WidgetsBinding.instance.addPostFrameCallback((
-                        Duration _,
-                      ) {
-                        if (!context.mounted) {
-                          return;
-                        }
-                        selectedTextFocusNode.requestFocus();
-                      });
+      body: Column(
+        children: <Widget>[
+          Expanded(
+            child: MemeEditorCanvas(
+              repaintBoundaryKey: repaintBoundaryKey,
+              scrollController: canvasScrollController,
+              template: state.template,
+              customTemplateImageBytes: state.customTemplateImageBytes,
+              customTemplateAspectRatio: state.customTemplateAspectRatio,
+              layers: state.textLayers,
+              selectedLayerId: state.selectedTextLayerId,
+              selectedTextController: selectedTextController,
+              selectedTextFocusNode: selectedTextFocusNode,
+              isSelectedLayerEditing: isSelectedLayerEditing,
+              isTextEditingActive: isTextEditingActive,
+              onTapCanvas: (double positionX, double positionY) {
+                try {
+                  controller.addTextLayer(
+                    initialText: '',
+                    positionX: positionX,
+                    positionY: positionY,
+                  );
+                  shouldEditSelectedLayer.value = true;
+                } catch (error) {
+                  feedback.resolveAndShowError(context, error);
+                }
+              },
+              onTapOutsideWhileEditing: () {
+                dismissTextEditing();
+              },
+              onTapLayer: (String layerId) {
+                try {
+                  controller.selectTextLayer(layerId);
+                  shouldEditSelectedLayer.value = true;
+                } catch (error) {
+                  feedback.resolveAndShowError(context, error);
+                }
+              },
+              onStartLayerTransform: (String _) {
+                dismissTextEditing();
+              },
+              onDeleteLayer: (String layerId) {
+                try {
+                  controller.removeTextLayerById(layerId);
+                } catch (error) {
+                  feedback.resolveAndShowError(context, error);
+                }
+              },
+              onTransformLayer:
+                  (
+                    String layerId,
+                    double positionX,
+                    double positionY,
+                    double fontSize,
+                    double rotationRadians,
+                  ) {
+                    try {
+                      controller.updateTextLayerTransform(
+                        layerId: layerId,
+                        positionX: positionX,
+                        positionY: positionY,
+                        fontSize: fontSize,
+                        rotationRadians: rotationRadians,
+                      );
+                    } catch (error) {
+                      feedback.resolveAndShowError(context, error);
                     }
-                  } catch (error) {
-                    feedback.resolveAndShowError(context, error);
-                  }
-                },
-                onMoveLayer:
-                    (
-                      String layerId,
-                      double deltaX,
-                      double deltaY,
-                      Size imageBoundsSize,
-                    ) {
+                  },
+            ),
+          ),
+          if (isTextEditingActive && selectedLayer != null)
+            AnimatedPadding(
+              duration: const Duration(milliseconds: 180),
+              curve: Curves.easeOut,
+              padding: EdgeInsets.only(
+                left: MSpacing.md,
+                right: MSpacing.md,
+                top: MSpacing.md,
+                bottom:
+                    math.max(
+                      MediaQuery.viewInsetsOf(context).bottom,
+                      MediaQuery.paddingOf(context).bottom,
+                    ) +
+                    MSpacing.md,
+              ),
+              child: TextFieldTapRegion(
+                child: Listener(
+                  behavior: HitTestBehavior.translucent,
+                  onPointerDown: (_) {
+                    keepTextEditingFocus();
+                  },
+                  child: MemeEditorControls(
+                    l10n: l10n,
+                    layer: selectedLayer,
+                    onTextColorChanged: (int colorValue) {
                       try {
-                        controller.moveTextLayerBy(
-                          layerId: layerId,
-                          deltaX: deltaX,
-                          deltaY: deltaY,
-                          canvasWidth: imageBoundsSize.width,
-                          canvasHeight: imageBoundsSize.height,
-                        );
+                        keepTextEditingFocus();
+                        controller.updateSelectedTextColor(colorValue);
+                        keepTextEditingFocus();
                       } catch (error) {
                         feedback.resolveAndShowError(context, error);
                       }
                     },
-              ),
-            ),
-            const MGap.md(),
-            Padding(
-              padding: controlsHorizontalPadding,
-              child: MemeEditorControls(
-                selectedLayer: selectedLayer,
-                selectedTextController: selectedTextController,
-                selectedTextFocusNode: selectedTextFocusNode,
-                l10n: l10n,
-                onAddText: () {
-                  try {
-                    controller.addTextLayer(
-                      initialText: l10n.memeEditorDefaultText,
-                    );
-                    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
-                      if (!context.mounted) {
-                        return;
+                    onToggleTextBackground: () {
+                      try {
+                        keepTextEditingFocus();
+                        controller.toggleSelectedTextBackground();
+                        keepTextEditingFocus();
+                      } catch (error) {
+                        feedback.resolveAndShowError(context, error);
                       }
-                      selectedTextFocusNode.requestFocus();
-                    });
-                  } catch (error) {
-                    feedback.resolveAndShowError(context, error);
-                  }
-                },
-                onDeleteSelectedText: () {
-                  try {
-                    controller.removeSelectedTextLayer();
-                  } catch (error) {
-                    feedback.resolveAndShowError(context, error);
-                  }
-                },
-                onFontSizeChanged: (double fontSize) {
-                  try {
-                    controller.updateSelectedFontSize(fontSize);
-                  } catch (error) {
-                    feedback.resolveAndShowError(context, error);
-                  }
-                },
+                    },
+                  ),
+                ),
               ),
             ),
-            const MGap.md(),
-            Padding(
-              padding: controlsHorizontalPadding,
-              child: MButton.primary(
-                title: l10n.memeEditorFinalizeButton,
-                onPressed: () {
-                  unawaited(
-                    _submitFinalize(
-                      ref: ref,
-                      repaintBoundaryKey: repaintBoundaryKey,
-                      hideSelectionOverlay: hideSelectionOverlay,
-                      devicePixelRatio: MediaQuery.devicePixelRatioOf(context),
-                      unableToRenderMessage: l10n.memeEditorRenderError,
-                      unableToConvertMessage: l10n.memeEditorPngEncodeError,
-                    ),
-                  );
-                },
-                isLoading: isFinalizing,
-                isEnabled: state.canFinalize && !isFinalizing,
-              ),
-            ),
-          ],
-        ),
+        ],
       ),
     );
   }
@@ -357,6 +398,9 @@ class MemeEditorPage extends HookConsumerWidget {
     required BuildContext context,
     required MemeEditorController controller,
     required bool closePageOnCancel,
+    required FocusNode selectedTextFocusNode,
+    required ValueNotifier<bool> shouldEditSelectedLayer,
+    required ScrollController canvasScrollController,
   }) async {
     final MemeTemplatePickerSelectionEntity? selection =
         await showMemeTemplatesBottomSheet(context);
@@ -375,6 +419,11 @@ class MemeEditorPage extends HookConsumerWidget {
     final MemeTemplateListPageItemEntity? template = selection.template;
     if (template != null) {
       controller.setTemplate(template);
+      _resetEditorInteractionState(
+        selectedTextFocusNode: selectedTextFocusNode,
+        shouldEditSelectedLayer: shouldEditSelectedLayer,
+        canvasScrollController: canvasScrollController,
+      );
       return;
     }
 
@@ -384,15 +433,35 @@ class MemeEditorPage extends HookConsumerWidget {
         imageBytes: pickedImage.pngBytes,
         aspectRatio: pickedImage.aspectRatio,
       );
+      _resetEditorInteractionState(
+        selectedTextFocusNode: selectedTextFocusNode,
+        shouldEditSelectedLayer: shouldEditSelectedLayer,
+        canvasScrollController: canvasScrollController,
+      );
     }
+  }
+
+  /// Resets focus and viewport after selecting a new meme template.
+  void _resetEditorInteractionState({
+    required FocusNode selectedTextFocusNode,
+    required ValueNotifier<bool> shouldEditSelectedLayer,
+    required ScrollController canvasScrollController,
+  }) {
+    shouldEditSelectedLayer.value = false;
+    selectedTextFocusNode.unfocus();
+
+    WidgetsBinding.instance.addPostFrameCallback((Duration _) {
+      if (!canvasScrollController.hasClients) {
+        return;
+      }
+      canvasScrollController.jumpTo(0.0);
+    });
   }
 
   /// Runs the finalize mutation and stores generated PNG bytes in state.
   Future<void> _submitFinalize({
     required WidgetRef ref,
     required GlobalKey repaintBoundaryKey,
-    required ValueNotifier<bool> hideSelectionOverlay,
-    required double devicePixelRatio,
     required String unableToRenderMessage,
     required String unableToConvertMessage,
   }) async {
@@ -401,55 +470,65 @@ class MemeEditorPage extends HookConsumerWidget {
     );
 
     await mutation.runSafely(ref, (MutationTransaction tx) async {
-      hideSelectionOverlay.value = true;
-      try {
-        final MemeEditorStateEntity stateBeforeOptimization = ref.read(
-          memeEditorControllerProvider,
+      final MemeEditorStateEntity stateBeforeOptimization = ref.read(
+        memeEditorControllerProvider,
+      );
+      if (stateBeforeOptimization.hasCustomTemplateImage) {
+        final OptimizeCustomTemplateImageForUploadUsecase optimizeUsecase = tx
+            .get(optimizeCustomTemplateImageForUploadUsecaseProvider);
+        final MemeEditorStateEntity optimizedState = optimizeUsecase(
+          state: stateBeforeOptimization,
         );
-        if (stateBeforeOptimization.hasCustomTemplateImage) {
-          final OptimizeCustomTemplateImageForUploadUsecase optimizeUsecase = tx
-              .get(optimizeCustomTemplateImageForUploadUsecaseProvider);
-          final MemeEditorStateEntity optimizedState = optimizeUsecase(
-            state: stateBeforeOptimization,
-          );
-          ref
-              .read(memeEditorControllerProvider.notifier)
-              .setStateSnapshot(optimizedState);
-          await WidgetsBinding.instance.endOfFrame;
-        }
-
-        final Uint8List bytes = await _captureMemeBytes(
-          repaintBoundaryKey: repaintBoundaryKey,
-          devicePixelRatio: devicePixelRatio,
-          unableToRenderMessage: unableToRenderMessage,
-          unableToConvertMessage: unableToConvertMessage,
-        );
-
-        final SetFinalizedMemeBytesUsecase usecase = tx.get(
-          setFinalizedMemeBytesUsecaseProvider,
-        );
-        final MemeEditorStateEntity currentState = ref.read(
-          memeEditorControllerProvider,
-        );
-        final MemeEditorStateEntity nextState = usecase(
-          state: currentState,
-          bytes: bytes,
-        );
-
         ref
             .read(memeEditorControllerProvider.notifier)
-            .setStateSnapshot(nextState);
-        return bytes;
-      } finally {
-        hideSelectionOverlay.value = false;
+            .setStateSnapshot(optimizedState);
+        await WidgetsBinding.instance.endOfFrame;
       }
+
+      final MemeEditorStateEntity currentState = ref.read(
+        memeEditorControllerProvider,
+      );
+      final ResolveMemeBackgroundSizeUsecase resolveSizeUsecase = tx.get(
+        resolveMemeBackgroundSizeUsecaseProvider,
+      );
+      final MemeImageSizeEntity targetSize = await resolveSizeUsecase(
+        state: currentState,
+      );
+
+      final Uint8List capturedBytes = await _captureMemeBytes(
+        repaintBoundaryKey: repaintBoundaryKey,
+        targetSize: targetSize,
+        unableToRenderMessage: unableToRenderMessage,
+        unableToConvertMessage: unableToConvertMessage,
+      );
+
+      final NormalizeFinalizedMemeBytesUsecase normalizeUsecase = tx.get(
+        normalizeFinalizedMemeBytesUsecaseProvider,
+      );
+      final Uint8List normalizedBytes = normalizeUsecase(
+        bytes: capturedBytes,
+        targetSize: targetSize,
+      );
+
+      final SetFinalizedMemeBytesUsecase setBytesUsecase = tx.get(
+        setFinalizedMemeBytesUsecaseProvider,
+      );
+      final MemeEditorStateEntity nextState = setBytesUsecase(
+        state: currentState,
+        bytes: normalizedBytes,
+      );
+
+      ref
+          .read(memeEditorControllerProvider.notifier)
+          .setStateSnapshot(nextState);
+      return normalizedBytes;
     });
   }
 
   /// Captures the editor [RepaintBoundary] and returns PNG bytes.
   Future<Uint8List> _captureMemeBytes({
     required GlobalKey repaintBoundaryKey,
-    required double devicePixelRatio,
+    required MemeImageSizeEntity targetSize,
     required String unableToRenderMessage,
     required String unableToConvertMessage,
   }) async {
@@ -458,23 +537,28 @@ class MemeEditorPage extends HookConsumerWidget {
     final BuildContext? boundaryContext = repaintBoundaryKey.currentContext;
     final RenderObject? renderObject = boundaryContext?.findRenderObject();
     if (renderObject is! RenderRepaintBoundary) {
-      throw StateError(unableToRenderMessage);
+      throw Failure.unknown(message: unableToRenderMessage);
     }
 
-    final double clampedPixelRatio = devicePixelRatio.clamp(
+    final Size boundarySize = renderObject.size;
+    if (boundarySize.width <= 0.0 || boundarySize.height <= 0.0) {
+      throw Failure.unknown(message: unableToRenderMessage);
+    }
+
+    final double widthPixelRatio = targetSize.width / boundarySize.width;
+    final double heightPixelRatio = targetSize.height / boundarySize.height;
+    final double pixelRatio = math.max(
       1.0,
-      _maxRenderPixelRatio,
+      math.min(widthPixelRatio, heightPixelRatio),
     );
 
-    final ui.Image image = await renderObject.toImage(
-      pixelRatio: clampedPixelRatio,
-    );
+    final ui.Image image = await renderObject.toImage(pixelRatio: pixelRatio);
     try {
       final ByteData? byteData = await image.toByteData(
         format: ui.ImageByteFormat.png,
       );
       if (byteData == null) {
-        throw StateError(unableToConvertMessage);
+        throw Failure.unknown(message: unableToConvertMessage);
       }
 
       return byteData.buffer.asUint8List();

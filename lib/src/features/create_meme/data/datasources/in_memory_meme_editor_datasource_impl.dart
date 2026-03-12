@@ -15,12 +15,14 @@ final class InMemoryMemeEditorDatasourceImpl implements MemeEditorDatasource {
     : _random = random ?? Random();
 
   static const double _maxNormalizedPosition = 1.0;
-  static const double _basePositionX = 0.08;
-  static const double _basePositionY = 0.16;
-  static const double _layerVerticalOffset = 0.08;
-  static const double _minStaggerY = 0.05;
-  static const double _maxStaggerY = 0.85;
+  static const double _minNormalizedPosition = 0.0;
   static const double _initialFontSize = 34.0;
+  static const double _initialRotation = 0.0;
+  static const int _whiteTextColorValue = 0xFFFFFFFF;
+  static const int _blackTextColorValue = 0xFF000000;
+  static const int _defaultTextColorValue = _whiteTextColorValue;
+  static const bool _defaultHasBackground = false;
+  static const int _defaultBackgroundColorValue = _blackTextColorValue;
   static const double _resizeStepFactor = 0.9;
   static const int _minOptimizedDimension = 128;
 
@@ -64,19 +66,19 @@ final class InMemoryMemeEditorDatasourceImpl implements MemeEditorDatasource {
   MemeEditorStateEntity addTextLayer({
     required MemeEditorStateEntity state,
     required String initialText,
+    required double positionX,
+    required double positionY,
   }) {
-    final double staggerY =
-        (_basePositionY + state.textLayers.length * _layerVerticalOffset).clamp(
-          _minStaggerY,
-          _maxStaggerY,
-        );
-
     final MemeTextLayerEntity newLayer = MemeTextLayerEntity(
       id: _nextLayerId(),
       text: initialText,
-      positionX: _basePositionX,
-      positionY: staggerY,
+      positionX: _clampNormalized(positionX),
+      positionY: _clampNormalized(positionY),
       fontSize: _initialFontSize,
+      rotationRadians: _initialRotation,
+      textColorValue: _defaultTextColorValue,
+      hasBackground: _defaultHasBackground,
+      backgroundColorValue: _defaultBackgroundColorValue,
     );
 
     return state.copyWith(
@@ -127,77 +129,55 @@ final class InMemoryMemeEditorDatasourceImpl implements MemeEditorDatasource {
   }
 
   @override
-  MemeEditorStateEntity updateSelectedFontSize({
-    required MemeEditorStateEntity state,
-    required double fontSize,
-  }) {
-    final MemeTextLayerEntity? selected = state.selectedTextLayer;
-    if (selected == null) {
-      return state;
-    }
-
-    final double clampedSize = fontSize.clamp(
-      MemeEditorValidator.minFontSize,
-      MemeEditorValidator.maxFontSize,
-    );
-    if ((selected.fontSize - clampedSize).abs() < 0.001) {
-      return state;
-    }
-
-    return _updateLayer(
-      state: state,
-      layerId: selected.id,
-      updater: (MemeTextLayerEntity layer) =>
-          layer.copyWith(fontSize: clampedSize),
-    );
-  }
-
-  @override
-  MemeEditorStateEntity moveTextLayerBy({
+  MemeEditorStateEntity updateTextLayerTransform({
     required MemeEditorStateEntity state,
     required String layerId,
-    required double deltaX,
-    required double deltaY,
-    required double canvasWidth,
-    required double canvasHeight,
+    required double positionX,
+    required double positionY,
+    required double fontSize,
+    required double rotationRadians,
   }) {
-    if (canvasWidth <= 0.0 || canvasHeight <= 0.0) {
-      return state;
-    }
-
     return _updateLayer(
       state: state,
       layerId: layerId,
       updater: (MemeTextLayerEntity layer) {
-        final double nextX = (layer.positionX + deltaX / canvasWidth).clamp(
-          0.0,
-          _maxNormalizedPosition,
+        return layer.copyWith(
+          positionX: _clampNormalized(positionX),
+          positionY: _clampNormalized(positionY),
+          fontSize: fontSize.clamp(
+            MemeEditorValidator.minFontSize,
+            MemeEditorValidator.maxFontSize,
+          ),
+          rotationRadians: rotationRadians,
         );
-        final double nextY = (layer.positionY + deltaY / canvasHeight).clamp(
-          0.0,
-          _maxNormalizedPosition,
-        );
-        return layer.copyWith(positionX: nextX, positionY: nextY);
       },
     );
   }
 
   @override
-  MemeEditorStateEntity removeSelectedTextLayer({
+  MemeEditorStateEntity removeTextLayerById({
     required MemeEditorStateEntity state,
+    required String layerId,
   }) {
-    final String? selectedId = state.selectedTextLayerId;
-    if (selectedId == null) {
+    final bool exists = state.textLayers.any(
+      (MemeTextLayerEntity layer) => layer.id == layerId,
+    );
+    if (!exists) {
       return state;
     }
 
     final List<MemeTextLayerEntity> remaining = state.textLayers
-        .where((MemeTextLayerEntity layer) => layer.id != selectedId)
+        .where((MemeTextLayerEntity layer) => layer.id != layerId)
         .toList(growable: false);
+
+    final String? selectedId = state.selectedTextLayerId;
+    final bool selectedStillExists =
+        selectedId != null &&
+        remaining.any((MemeTextLayerEntity layer) => layer.id == selectedId);
 
     return state.copyWith(
       textLayers: List<MemeTextLayerEntity>.unmodifiable(remaining),
-      selectedTextLayerId: remaining.isEmpty ? null : remaining.last.id,
+      selectedTextLayerId: selectedStillExists ? selectedId : null,
       finalizedImageBytes: null,
     );
   }
@@ -239,6 +219,56 @@ final class InMemoryMemeEditorDatasourceImpl implements MemeEditorDatasource {
     }
 
     return state.copyWith(selectedRecipientUserIds: const <String>{});
+  }
+
+  @override
+  MemeEditorStateEntity updateSelectedTextColor({
+    required MemeEditorStateEntity state,
+    required int colorValue,
+  }) {
+    final MemeTextLayerEntity? selected = state.selectedTextLayer;
+    if (selected == null || selected.textColorValue == colorValue) {
+      return state;
+    }
+
+    return _updateLayer(
+      state: state,
+      layerId: selected.id,
+      updater: (MemeTextLayerEntity layer) {
+        if (!layer.hasBackground) {
+          return layer.copyWith(textColorValue: colorValue);
+        }
+
+        return layer.copyWith(
+          textColorValue: colorValue,
+          backgroundColorValue: _resolveOppositeOutlineColor(colorValue),
+        );
+      },
+    );
+  }
+
+  @override
+  MemeEditorStateEntity toggleSelectedTextBackground({
+    required MemeEditorStateEntity state,
+  }) {
+    final MemeTextLayerEntity? selected = state.selectedTextLayer;
+    if (selected == null) {
+      return state;
+    }
+
+    return _updateLayer(
+      state: state,
+      layerId: selected.id,
+      updater: (MemeTextLayerEntity layer) {
+        final bool nextHasBackground = !layer.hasBackground;
+        return layer.copyWith(
+          hasBackground: nextHasBackground,
+          backgroundColorValue: nextHasBackground
+              ? _resolveOppositeOutlineColor(layer.textColorValue)
+              : layer.backgroundColorValue,
+        );
+      },
+    );
   }
 
   @override
@@ -309,6 +339,17 @@ final class InMemoryMemeEditorDatasourceImpl implements MemeEditorDatasource {
     return 'layer_${DateTime.now().microsecondsSinceEpoch}_${_layerCounter}_$randomPart';
   }
 
+  double _clampNormalized(double value) {
+    return value.clamp(_minNormalizedPosition, _maxNormalizedPosition);
+  }
+
+  /// Resolves the opposite outline color for [textColorValue].
+  int _resolveOppositeOutlineColor(int textColorValue) {
+    return textColorValue == _blackTextColorValue
+        ? _whiteTextColorValue
+        : _blackTextColorValue;
+  }
+
   MemeEditorStateEntity _updateLayer({
     required MemeEditorStateEntity state,
     required String layerId,
@@ -322,8 +363,12 @@ final class InMemoryMemeEditorDatasourceImpl implements MemeEditorDatasource {
             return layer;
           }
 
+          final MemeTextLayerEntity updatedLayer = updater(layer);
+          if (updatedLayer == layer) {
+            return layer;
+          }
           hasChanged = true;
-          return updater(layer);
+          return updatedLayer;
         })
         .toList(growable: false);
 

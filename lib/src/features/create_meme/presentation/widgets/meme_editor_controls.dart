@@ -1,110 +1,104 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:memuno_app/l10n/app_localizations.dart';
 import 'package:memuno_app/src/app/widgets/m/m_button.dart';
 import 'package:memuno_app/src/app/widgets/m/m_colors.dart';
-import 'package:memuno_app/src/app/widgets/m/m_gap.dart';
-import 'package:memuno_app/src/app/widgets/m/m_icon_button.dart';
-import 'package:memuno_app/src/app/widgets/m/m_slider.dart';
-import 'package:memuno_app/src/app/widgets/m/m_text.dart';
-import 'package:memuno_app/src/app/widgets/m/m_text_field.dart';
+import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_text_layer_entity.dart';
 
-/// Editor controls for adding, editing, and deleting text layers.
+/// Focus-only mini bar for text-layer color and outline actions.
 final class MemeEditorControls extends StatelessWidget {
-  /// Creates editor controls.
+  /// Creates focus-only controls for the currently edited text layer.
   const MemeEditorControls({
     super.key,
     required this.l10n,
-    required this.selectedLayer,
-    required this.selectedTextController,
-    required this.selectedTextFocusNode,
-    required this.onAddText,
-    required this.onDeleteSelectedText,
-    required this.onFontSizeChanged,
+    required this.layer,
+    required this.onTextColorChanged,
+    required this.onToggleTextBackground,
   });
 
-  /// Localized strings for the editor controls.
+  static const List<int> _textColorValues = <int>[0xFFFFFFFF, 0xFF000000];
+
+  /// Localized strings used by the controls.
   final AppLocalizations l10n;
 
-  /// Currently selected text layer.
-  final MemeTextLayerEntity? selectedLayer;
+  /// Currently edited text layer.
+  final MemeTextLayerEntity layer;
 
-  /// Text controller bound to selected layer text.
-  final TextEditingController selectedTextController;
+  /// Called when the text color should change.
+  final ValueChanged<int> onTextColorChanged;
 
-  /// Focus node bound to selected layer text field.
-  final FocusNode selectedTextFocusNode;
-
-  /// Called when a new text layer should be inserted.
-  final VoidCallback onAddText;
-
-  /// Called when selected text layer should be removed.
-  final VoidCallback onDeleteSelectedText;
-
-  /// Called when selected-layer font size changes.
-  final ValueChanged<double> onFontSizeChanged;
+  /// Called when text outline should be toggled.
+  final VoidCallback onToggleTextBackground;
 
   @override
   Widget build(BuildContext context) {
-    final MemeTextLayerEntity? layer = selectedLayer;
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: <Widget>[
-        Row(
-          children: <Widget>[
-            Expanded(
-              child: MButton.secondary(
-                title: l10n.memeEditorAddTextButton,
-                onPressed: onAddText,
+    return Container(
+      decoration: BoxDecoration(
+        color: MColors.gray100,
+        borderRadius: BorderRadius.circular(16.0),
+      ),
+      padding: const EdgeInsets.all(MSpacing.sm),
+      child: Row(
+        children: <Widget>[
+          ..._textColorValues.map(
+            (int value) => Padding(
+              padding: const EdgeInsets.only(right: MSpacing.xs),
+              child: _MemeColorSwatch(
+                colorValue: value,
+                isSelected: layer.textColorValue == value,
+                onTap: () => onTextColorChanged(value),
               ),
             ),
-            const MGap.sm(),
-            MIconButton.destructive(
-              icon: LucideIcons.trash_2,
-              onPressed: layer == null ? null : onDeleteSelectedText,
-              isEnabled: layer != null,
-            ),
-          ],
-        ),
-        if (layer != null) ...<Widget>[
-          const MGap.sm(),
-          MTextField(
-            controller: selectedTextController,
-            focusNode: selectedTextFocusNode,
-            inputType: TextInputType.multiline,
-            textInputAction: TextInputAction.newline,
-            label: l10n.memeEditorTextLabel,
-            hint: l10n.memeEditorTextHint,
-            maxLength: 60,
-            minLines: 1,
-            maxLines: 4,
           ),
-          Row(
-            children: <Widget>[
-              const Icon(LucideIcons.type, color: MColors.gray400, size: 18.0),
-              const MGap.sm(),
-              Expanded(
-                child: MSlider(
-                  minValue: 18.0,
-                  maxValue: 64.0,
-                  value: layer.fontSize.clamp(18.0, 64.0),
-                  onChanged: onFontSizeChanged,
-                ),
-              ),
-              SizedBox(
-                width: 34.0,
-                child: MText.small(
-                  text: layer.fontSize.toStringAsFixed(0),
-                  alignment: TextAlign.right,
-                  style: const TextStyle(color: MColors.gray300),
-                ),
-              ),
-            ],
+          const Spacer(),
+          MButton.secondary(
+            title: layer.hasBackground
+                ? l10n.memeEditorTextBackgroundDisable
+                : l10n.memeEditorTextBackgroundEnable,
+            onPressed: onToggleTextBackground,
+            isExpanded: false,
           ),
         ],
-      ],
+      ),
+    );
+  }
+}
+
+/// Selectable color chip used by the mini editor bar.
+final class _MemeColorSwatch extends StatelessWidget {
+  /// Creates one selectable color chip.
+  const _MemeColorSwatch({
+    required this.colorValue,
+    required this.isSelected,
+    required this.onTap,
+  });
+
+  /// ARGB color represented by this chip.
+  final int colorValue;
+
+  /// Whether this chip is currently selected.
+  final bool isSelected;
+
+  /// Called when this chip is selected.
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      behavior: HitTestBehavior.opaque,
+      child: Container(
+        width: 30.0,
+        height: 30.0,
+        decoration: BoxDecoration(
+          color: Color(colorValue),
+          borderRadius: BorderRadius.circular(8.0),
+          border: Border.all(
+            color: isSelected ? MColors.gray900 : MColors.gray500,
+            width: isSelected ? 2.0 : 1.0,
+          ),
+        ),
+      ),
     );
   }
 }

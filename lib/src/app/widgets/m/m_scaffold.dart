@@ -5,15 +5,26 @@ import 'package:memuno_app/src/app/widgets/m/m_bottom_navigation_bar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_colors.dart';
 
 class MScaffold extends StatelessWidget {
+  /// App bar rendered at the top of the scaffold.
   final MAppBar? appBar;
+
+  /// Main content of the scaffold.
   final Widget? body;
+
+  /// Optional bottom navigation bar.
   final MBottomNavigationBar? bottomNavigationBar;
+
+  /// Whether the body should resize when the on-screen keyboard appears.
+  ///
+  /// When `null`, Flutter keeps the default scaffold behavior unchanged.
+  final bool? resizeToAvoidBottomInset;
 
   const MScaffold({
     super.key,
     this.appBar,
     this.body,
     this.bottomNavigationBar,
+    this.resizeToAvoidBottomInset,
   });
 
   @override
@@ -32,6 +43,7 @@ class MScaffold extends StatelessWidget {
         appBar: appBar,
         body: body,
         bottomNavigationBar: bottomNavigationBar,
+        resizeToAvoidBottomInset: resizeToAvoidBottomInset,
       ),
     );
   }

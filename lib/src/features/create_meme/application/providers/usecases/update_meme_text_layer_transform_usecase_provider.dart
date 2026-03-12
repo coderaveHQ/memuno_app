@@ -1,15 +1,15 @@
 import 'package:memuno_app/src/features/create_meme/application/providers/meme_editor_repository_provider.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/meme_editor_validator_provider.dart';
 import 'package:memuno_app/src/features/create_meme/domain/repositories/meme_editor_repository.dart';
-import 'package:memuno_app/src/features/create_meme/domain/usecases/update_selected_meme_text_font_size_usecase.dart';
+import 'package:memuno_app/src/features/create_meme/domain/usecases/update_meme_text_layer_transform_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/domain/validators/meme_editor_validator.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-part 'update_selected_meme_text_font_size_usecase_provider.g.dart';
+part 'update_meme_text_layer_transform_usecase_provider.g.dart';
 
-/// Provides the [UpdateSelectedMemeTextFontSizeUsecase] usecase.
+/// Provides the [UpdateMemeTextLayerTransformUsecase] usecase.
 @riverpod
-UpdateSelectedMemeTextFontSizeUsecase updateSelectedMemeTextFontSizeUsecase(
+UpdateMemeTextLayerTransformUsecase updateMemeTextLayerTransformUsecase(
   Ref ref,
 ) {
   final MemeEditorRepository repository = ref.watch(
@@ -17,7 +17,7 @@ UpdateSelectedMemeTextFontSizeUsecase updateSelectedMemeTextFontSizeUsecase(
   );
   final MemeEditorValidator validator = ref.watch(memeEditorValidatorProvider);
 
-  return UpdateSelectedMemeTextFontSizeUsecase(
+  return UpdateMemeTextLayerTransformUsecase(
     repository: repository,
     validator: validator,
   );

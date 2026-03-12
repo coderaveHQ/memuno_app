@@ -33,6 +33,12 @@ abstract class MemeEditorRepository {
 
     /// Initial text rendered by the new layer.
     required String initialText,
+
+    /// Horizontal center position normalized between 0.0 and 1.0.
+    required double positionX,
+
+    /// Vertical center position normalized between 0.0 and 1.0.
+    required double positionY,
   });
 
   /// Selects a text layer by [layerId] or clears selection when null.
@@ -53,40 +59,34 @@ abstract class MemeEditorRepository {
     required String text,
   });
 
-  /// Updates font size of the currently selected layer.
-  MemeEditorStateEntity updateSelectedFontSize({
-    /// Current editor snapshot.
-    required MemeEditorStateEntity state,
-
-    /// Updated font size for the selected layer.
-    required double fontSize,
-  });
-
-  /// Moves a layer by drag delta in canvas coordinates.
-  MemeEditorStateEntity moveTextLayerBy({
+  /// Updates transform fields of one text layer.
+  MemeEditorStateEntity updateTextLayerTransform({
     /// Current editor snapshot.
     required MemeEditorStateEntity state,
 
     /// Layer identifier to update.
     required String layerId,
 
-    /// Horizontal drag delta in logical pixels.
-    required double deltaX,
+    /// Next horizontal center position normalized between 0.0 and 1.0.
+    required double positionX,
 
-    /// Vertical drag delta in logical pixels.
-    required double deltaY,
+    /// Next vertical center position normalized between 0.0 and 1.0.
+    required double positionY,
 
-    /// Rendered canvas width in logical pixels.
-    required double canvasWidth,
+    /// Next font size for the target layer.
+    required double fontSize,
 
-    /// Rendered canvas height in logical pixels.
-    required double canvasHeight,
+    /// Next clockwise rotation in radians for the target layer.
+    required double rotationRadians,
   });
 
-  /// Removes the currently selected text layer.
-  MemeEditorStateEntity removeSelectedTextLayer({
+  /// Removes one text layer identified by [layerId] when available.
+  MemeEditorStateEntity removeTextLayerById({
     /// Current editor snapshot.
     required MemeEditorStateEntity state,
+
+    /// Layer identifier to remove.
+    required String layerId,
   });
 
   /// Stores finalized PNG bytes in editor state.
@@ -109,6 +109,21 @@ abstract class MemeEditorRepository {
 
   /// Clears all selected friendship recipients.
   MemeEditorStateEntity clearRecipientSelection({
+    /// Current editor snapshot.
+    required MemeEditorStateEntity state,
+  });
+
+  /// Updates text color of the currently selected text layer.
+  MemeEditorStateEntity updateSelectedTextColor({
+    /// Current editor snapshot.
+    required MemeEditorStateEntity state,
+
+    /// Next text ARGB color value.
+    required int colorValue,
+  });
+
+  /// Toggles text-outline visibility of the selected text layer.
+  MemeEditorStateEntity toggleSelectedTextBackground({
     /// Current editor snapshot.
     required MemeEditorStateEntity state,
   });

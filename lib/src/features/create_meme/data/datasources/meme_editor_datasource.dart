@@ -22,6 +22,8 @@ abstract class MemeEditorDatasource {
   MemeEditorStateEntity addTextLayer({
     required MemeEditorStateEntity state,
     required String initialText,
+    required double positionX,
+    required double positionY,
   });
 
   /// Selects a text layer by [layerId] or clears selection when null.
@@ -36,25 +38,20 @@ abstract class MemeEditorDatasource {
     required String text,
   });
 
-  /// Updates selected-layer font size.
-  MemeEditorStateEntity updateSelectedFontSize({
-    required MemeEditorStateEntity state,
-    required double fontSize,
-  });
-
-  /// Moves one text layer by drag delta in canvas coordinates.
-  MemeEditorStateEntity moveTextLayerBy({
+  /// Updates transform fields of one text layer.
+  MemeEditorStateEntity updateTextLayerTransform({
     required MemeEditorStateEntity state,
     required String layerId,
-    required double deltaX,
-    required double deltaY,
-    required double canvasWidth,
-    required double canvasHeight,
+    required double positionX,
+    required double positionY,
+    required double fontSize,
+    required double rotationRadians,
   });
 
-  /// Removes selected text layer when available.
-  MemeEditorStateEntity removeSelectedTextLayer({
+  /// Removes one text layer identified by [layerId] when available.
+  MemeEditorStateEntity removeTextLayerById({
     required MemeEditorStateEntity state,
+    required String layerId,
   });
 
   /// Stores finalized PNG bytes.
@@ -71,6 +68,17 @@ abstract class MemeEditorDatasource {
 
   /// Clears all selected recipients.
   MemeEditorStateEntity clearRecipientSelection({
+    required MemeEditorStateEntity state,
+  });
+
+  /// Updates text color of the currently selected text layer.
+  MemeEditorStateEntity updateSelectedTextColor({
+    required MemeEditorStateEntity state,
+    required int colorValue,
+  });
+
+  /// Toggles outline visibility of the currently selected text layer.
+  MemeEditorStateEntity toggleSelectedTextBackground({
     required MemeEditorStateEntity state,
   });
 
