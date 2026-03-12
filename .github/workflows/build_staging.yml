@@ -225,6 +225,14 @@ jobs:
       - name: Flutter pub get
         run: flutter pub get
 
+      # Required by the Xcode build phase:
+      # FlutterFire: "flutterfire bundle-service-file"
+      - name: Install FlutterFire CLI
+        run: |
+          dart pub global activate flutterfire_cli
+          FLUTTERFIRE_BIN="${PUB_CACHE:-$HOME/.pub-cache}/bin/flutterfire"
+          "$FLUTTERFIRE_BIN" --version
+
       # Cache build_runner intermediate outputs (same strategy as Android).
       - name: Cache build_runner outputs
         uses: actions/cache@v4
