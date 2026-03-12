@@ -100,9 +100,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signOutButton => 'Sign out';
 
   @override
-  String get homePullToRefreshHint => 'Pull down to refresh.';
-
-  @override
   String get userDetailsTitle => 'User details';
 
   @override
@@ -245,26 +242,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get memeEditorTitle => 'New meme';
 
   @override
-  String get memeEditorFinalizeButton => 'Done';
-
-  @override
   String get memeEditorCanvasSelectTemplateHint =>
       'Select a meme template or choose an image from your gallery.';
 
   @override
-  String get memeEditorCanvasImageLoadError => 'Image could not be loaded.';
+  String get memeEditorTextBackgroundEnable => 'Enable text outline';
 
   @override
-  String get memeEditorAddTextButton => 'Add text';
+  String get memeEditorTextBackgroundDisable => 'Disable text outline';
 
   @override
-  String get memeEditorTextLabel => 'Text';
-
-  @override
-  String get memeEditorTextHint => 'Write your meme text';
-
-  @override
-  String get memeEditorDefaultText => 'Text';
+  String get memeEditorDeleteTargetSemanticsLabel => 'Delete text';
 
   @override
   String get memeEditorRenderError => 'Unable to render meme editor output.';
@@ -539,9 +527,6 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   String get signOutButton => 'Sign out';
 
   @override
-  String get homePullToRefreshHint => 'Pull down to refresh.';
-
-  @override
   String get userDetailsTitle => 'User details';
 
   @override
@@ -684,26 +669,17 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   String get memeEditorTitle => 'New meme';
 
   @override
-  String get memeEditorFinalizeButton => 'Done';
-
-  @override
   String get memeEditorCanvasSelectTemplateHint =>
       'Select a meme template or choose an image from your gallery.';
 
   @override
-  String get memeEditorCanvasImageLoadError => 'Image could not be loaded.';
+  String get memeEditorTextBackgroundEnable => 'Enable text outline';
 
   @override
-  String get memeEditorAddTextButton => 'Add text';
+  String get memeEditorTextBackgroundDisable => 'Disable text outline';
 
   @override
-  String get memeEditorTextLabel => 'Text';
-
-  @override
-  String get memeEditorTextHint => 'Write your meme text';
-
-  @override
-  String get memeEditorDefaultText => 'Text';
+  String get memeEditorDeleteTargetSemanticsLabel => 'Delete text';
 
   @override
   String get memeEditorRenderError => 'Unable to render meme editor output.';

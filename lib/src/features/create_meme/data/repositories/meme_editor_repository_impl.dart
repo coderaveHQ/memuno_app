@@ -57,11 +57,15 @@ final class MemeEditorRepositoryImpl implements MemeEditorRepository {
   MemeEditorStateEntity addTextLayer({
     required MemeEditorStateEntity state,
     required String initialText,
+    required double positionX,
+    required double positionY,
   }) {
     try {
       return _memeEditorDatasource.addTextLayer(
         state: state,
         initialText: initialText,
+        positionX: positionX,
+        positionY: positionY,
       );
     } catch (error) {
       throw _failureMapper.map(error);
@@ -96,37 +100,22 @@ final class MemeEditorRepositoryImpl implements MemeEditorRepository {
   }
 
   @override
-  MemeEditorStateEntity updateSelectedFontSize({
-    required MemeEditorStateEntity state,
-    required double fontSize,
-  }) {
-    try {
-      return _memeEditorDatasource.updateSelectedFontSize(
-        state: state,
-        fontSize: fontSize,
-      );
-    } catch (error) {
-      throw _failureMapper.map(error);
-    }
-  }
-
-  @override
-  MemeEditorStateEntity moveTextLayerBy({
+  MemeEditorStateEntity updateTextLayerTransform({
     required MemeEditorStateEntity state,
     required String layerId,
-    required double deltaX,
-    required double deltaY,
-    required double canvasWidth,
-    required double canvasHeight,
+    required double positionX,
+    required double positionY,
+    required double fontSize,
+    required double rotationRadians,
   }) {
     try {
-      return _memeEditorDatasource.moveTextLayerBy(
+      return _memeEditorDatasource.updateTextLayerTransform(
         state: state,
         layerId: layerId,
-        deltaX: deltaX,
-        deltaY: deltaY,
-        canvasWidth: canvasWidth,
-        canvasHeight: canvasHeight,
+        positionX: positionX,
+        positionY: positionY,
+        fontSize: fontSize,
+        rotationRadians: rotationRadians,
       );
     } catch (error) {
       throw _failureMapper.map(error);
@@ -134,11 +123,15 @@ final class MemeEditorRepositoryImpl implements MemeEditorRepository {
   }
 
   @override
-  MemeEditorStateEntity removeSelectedTextLayer({
+  MemeEditorStateEntity removeTextLayerById({
     required MemeEditorStateEntity state,
+    required String layerId,
   }) {
     try {
-      return _memeEditorDatasource.removeSelectedTextLayer(state: state);
+      return _memeEditorDatasource.removeTextLayerById(
+        state: state,
+        layerId: layerId,
+      );
     } catch (error) {
       throw _failureMapper.map(error);
     }
@@ -180,6 +173,32 @@ final class MemeEditorRepositoryImpl implements MemeEditorRepository {
   }) {
     try {
       return _memeEditorDatasource.clearRecipientSelection(state: state);
+    } catch (error) {
+      throw _failureMapper.map(error);
+    }
+  }
+
+  @override
+  MemeEditorStateEntity updateSelectedTextColor({
+    required MemeEditorStateEntity state,
+    required int colorValue,
+  }) {
+    try {
+      return _memeEditorDatasource.updateSelectedTextColor(
+        state: state,
+        colorValue: colorValue,
+      );
+    } catch (error) {
+      throw _failureMapper.map(error);
+    }
+  }
+
+  @override
+  MemeEditorStateEntity toggleSelectedTextBackground({
+    required MemeEditorStateEntity state,
+  }) {
+    try {
+      return _memeEditorDatasource.toggleSelectedTextBackground(state: state);
     } catch (error) {
       throw _failureMapper.map(error);
     }

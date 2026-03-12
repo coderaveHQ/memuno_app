@@ -71,6 +71,7 @@ class MIconButton extends StatelessWidget {
       isLoading: isLoading,
       dimension: dimension,
       background: background,
+      foreground: foreground,
       borderRadius: borderRadius,
       child: Icon(
         icon,

@@ -262,12 +262,6 @@ abstract class AppLocalizations {
   /// **'Sign out'**
   String get signOutButton;
 
-  /// No description provided for @homePullToRefreshHint.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Pull down to refresh.'**
-  String get homePullToRefreshHint;
-
   /// No description provided for @userDetailsTitle.
   ///
   /// In en_US, this message translates to:
@@ -526,47 +520,29 @@ abstract class AppLocalizations {
   /// **'New meme'**
   String get memeEditorTitle;
 
-  /// No description provided for @memeEditorFinalizeButton.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Done'**
-  String get memeEditorFinalizeButton;
-
   /// No description provided for @memeEditorCanvasSelectTemplateHint.
   ///
   /// In en_US, this message translates to:
   /// **'Select a meme template or choose an image from your gallery.'**
   String get memeEditorCanvasSelectTemplateHint;
 
-  /// No description provided for @memeEditorCanvasImageLoadError.
+  /// No description provided for @memeEditorTextBackgroundEnable.
   ///
   /// In en_US, this message translates to:
-  /// **'Image could not be loaded.'**
-  String get memeEditorCanvasImageLoadError;
+  /// **'Enable text outline'**
+  String get memeEditorTextBackgroundEnable;
 
-  /// No description provided for @memeEditorAddTextButton.
+  /// No description provided for @memeEditorTextBackgroundDisable.
   ///
   /// In en_US, this message translates to:
-  /// **'Add text'**
-  String get memeEditorAddTextButton;
+  /// **'Disable text outline'**
+  String get memeEditorTextBackgroundDisable;
 
-  /// No description provided for @memeEditorTextLabel.
+  /// No description provided for @memeEditorDeleteTargetSemanticsLabel.
   ///
   /// In en_US, this message translates to:
-  /// **'Text'**
-  String get memeEditorTextLabel;
-
-  /// No description provided for @memeEditorTextHint.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Write your meme text'**
-  String get memeEditorTextHint;
-
-  /// No description provided for @memeEditorDefaultText.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Text'**
-  String get memeEditorDefaultText;
+  /// **'Delete text'**
+  String get memeEditorDeleteTargetSemanticsLabel;
 
   /// No description provided for @memeEditorRenderError.
   ///
