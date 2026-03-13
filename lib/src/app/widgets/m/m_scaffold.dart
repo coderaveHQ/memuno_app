@@ -14,17 +14,20 @@ class MScaffold extends StatelessWidget {
   /// Optional bottom navigation bar.
   final MBottomNavigationBar? bottomNavigationBar;
 
-  /// Whether the body should resize when the on-screen keyboard appears.
-  ///
-  /// When `null`, Flutter keeps the default scaffold behavior unchanged.
   final bool? resizeToAvoidBottomInset;
+
+  final bool extendBody;
+
+  final bool extendBodyBehindAppBar;
 
   const MScaffold({
     super.key,
     this.appBar,
     this.body,
     this.bottomNavigationBar,
-    this.resizeToAvoidBottomInset,
+    this.resizeToAvoidBottomInset = true,
+    this.extendBody = false,
+    this.extendBodyBehindAppBar = false,
   });
 
   @override
@@ -44,6 +47,8 @@ class MScaffold extends StatelessWidget {
         body: body,
         bottomNavigationBar: bottomNavigationBar,
         resizeToAvoidBottomInset: resizeToAvoidBottomInset,
+        extendBody: extendBody,
+        extendBodyBehindAppBar: extendBodyBehindAppBar,
       ),
     );
   }

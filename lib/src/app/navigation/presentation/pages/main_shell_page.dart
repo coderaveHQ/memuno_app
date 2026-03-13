@@ -31,6 +31,7 @@ class MainShellPage extends StatelessWidget {
 
     return MScaffold(
       body: navigator,
+      extendBody: true,
       bottomNavigationBar: MBottomNavigationBar(
         items: <MBottomNavigationBarItem>[
           MBottomNavigationBarItem(

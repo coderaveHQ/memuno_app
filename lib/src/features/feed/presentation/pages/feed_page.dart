@@ -74,6 +74,7 @@ class FeedPage extends ConsumerWidget {
         ref.watch(notificationsUnreadCountProvider).asData?.value ?? 0;
 
     return MScaffold(
+      extendBodyBehindAppBar: true,
       appBar: MAppBar(
         context: context,
         title: MAppBarTitle(
@@ -107,22 +108,32 @@ class FeedPage extends ConsumerWidget {
           ),
         ],
       ),
-      body: MAsyncList<FeedListPageItemEntity, FeedCursorEntity>(
-        provider: feedListProvider,
-        emptyText: l10n.feedListEmpty,
-        loadMoreExtent: 220.0,
-        onRefresh: _onRefresh,
-        listPadding: EdgeInsets.only(
-          top: MSpacing.md,
-          bottom:
-              context.bottomPadding + kBottomNavigationBarHeight + MSpacing.md,
+      body: Padding(
+        padding: EdgeInsets.only(
+          top: context.topPadding + kToolbarHeight - 20.0,
         ),
-        separatorBuilder: (BuildContext _, int _) {
-          return const MGap.sm();
-        },
-        itemBuilder: (BuildContext context, FeedListPageItemEntity feedItem) {
-          return FeedListItem(feedItem: feedItem);
-        },
+        child: MAsyncList<FeedListPageItemEntity, FeedCursorEntity>(
+          provider: feedListProvider,
+          emptyText: l10n.feedListEmpty,
+          loadMoreExtent: 220.0,
+          onRefresh: _onRefresh,
+          listPadding: EdgeInsets.only(
+            top: 20.0 + MSpacing.md,
+            bottom: context.bottomPadding + MSpacing.md,
+          ),
+          childPadding: EdgeInsets.only(
+            top: 20.0 + MSpacing.md,
+            bottom: context.bottomPadding + MSpacing.md,
+            left: context.leftPadding + MSpacing.md,
+            right: context.rightPadding + MSpacing.md,
+          ),
+          separatorBuilder: (BuildContext _, int _) {
+            return const MGap.sm();
+          },
+          itemBuilder: (BuildContext context, FeedListPageItemEntity feedItem) {
+            return FeedListItem(feedItem: feedItem);
+          },
+        ),
       ),
     );
   }
