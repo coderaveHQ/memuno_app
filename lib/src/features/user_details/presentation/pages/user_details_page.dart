@@ -15,6 +15,7 @@ import 'package:memuno_app/src/app/widgets/m/m_app_bar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_avatar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_colors.dart';
 import 'package:memuno_app/src/app/widgets/m/m_gap.dart';
+import 'package:memuno_app/src/app/widgets/m/m_icon_button.dart';
 import 'package:memuno_app/src/app/widgets/m/m_refresh_indicator.dart';
 import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
@@ -28,6 +29,7 @@ import 'package:memuno_app/src/features/friendships/domain/entities/friendship_r
 import 'package:memuno_app/src/features/friendships/domain/usecases/create_friendship_request_usecase.dart';
 import 'package:memuno_app/src/features/user_details/application/providers/user_details_provider.dart';
 import 'package:memuno_app/src/features/user_details/domain/entities/user_details_entity.dart';
+import 'package:memuno_app/src/features/user_details/presentation/widgets/update_current_user_details_name_dialog.dart';
 import 'package:memuno_app/src/infrastructure/share_plus/share_plus_provider.dart';
 import 'package:share_plus/share_plus.dart';
 
@@ -91,6 +93,18 @@ class UserDetailsPage extends ConsumerWidget {
   Future<void> _onRefresh(WidgetRef ref) async {
     final AsyncValue<UserDetailsEntity> _ = ref.refresh(
       userDetailsProvider(userId),
+    );
+  }
+
+  /// Opens the update-name dialog for the current user.
+  Future<void> _onUpdateName(
+    BuildContext context, {
+    required String initialName,
+  }) async {
+    await showUpdateCurrentUserDetailsNameDialog(
+      context,
+      userId: userId,
+      initialName: initialName,
     );
   }
 
@@ -190,78 +204,90 @@ class UserDetailsPage extends ConsumerWidget {
                 left: context.leftPadding + MSpacing.md,
                 right: context.rightPadding + MSpacing.md,
               ),
-              child: Column(
+              child: Row(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: <Widget>[
-                  Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: <Widget>[
-                      MAvatar(
-                        dimension: kToolbarHeight - 4.0,
-                        background: MColors.gray200,
-                        foreground: MColors.gray900,
-                        isLoading: userDetailsState.isLoading,
-                        name: userDetailsState.value?.name,
-                      ),
-                      const MGap.lg(),
-                      Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: <Widget>[
-                            MText.h3(
-                              text: userDetailsState.when<String>(
-                                data: (UserDetailsEntity userDetails) {
-                                  return userDetails.name;
-                                },
-                                error: (Object _, StackTrace _) {
-                                  return '???';
-                                },
-                                loading: () {
-                                  return 'Florian Leeser';
-                                },
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              isLoading: userDetailsState.isLoading,
-                            ),
-                            const MGap.xxs(),
-                            MText.small(
-                              text: userDetailsState.when<String>(
-                                data: (UserDetailsEntity userDetails) {
-                                  return '${l10n.userDetailsJoinedAtLabel} ${userDetails.createdAt.formatDateOnly(fullDate: true)}';
-                                },
-                                error: (Object _, StackTrace _) {
-                                  return '${l10n.userDetailsJoinedAtLabel} ???';
-                                },
-                                loading: () {
-                                  return '${l10n.userDetailsJoinedAtLabel} ${DateTime.now().formatDateOnly(fullDate: true)}';
-                                },
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              isLoading: userDetailsState.isLoading,
-                            ),
-                            const MGap.xxs(),
-                            MText.small(
-                              text: userDetailsState.when<String>(
-                                data: (UserDetailsEntity userDetails) {
-                                  return '${l10n.userDetailsFriendshipCodeLabel} ${userDetails.friendshipCode}';
-                                },
-                                error: (Object _, StackTrace _) {
-                                  return '${l10n.userDetailsFriendshipCodeLabel} ???';
-                                },
-                                loading: () {
-                                  return '${l10n.userDetailsFriendshipCodeLabel} 00000000';
-                                },
-                              ),
-                              maxLines: 1,
-                              overflow: TextOverflow.ellipsis,
-                              isLoading: userDetailsState.isLoading,
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+                  MAvatar(
+                    dimension: kToolbarHeight - 4.0,
+                    background: MColors.gray200,
+                    foreground: MColors.gray900,
+                    isLoading: userDetailsState.isLoading,
+                    name: userDetailsState.value?.name,
                   ),
+                  const MGap.md(),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        MText.h3(
+                          text: userDetailsState.when<String>(
+                            data: (UserDetailsEntity userDetails) {
+                              return userDetails.name;
+                            },
+                            error: (Object _, StackTrace _) {
+                              return '???';
+                            },
+                            loading: () {
+                              return 'Florian Leeser';
+                            },
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          isLoading: userDetailsState.isLoading,
+                        ),
+                        const MGap.xxs(),
+                        MText.small(
+                          text: userDetailsState.when<String>(
+                            data: (UserDetailsEntity userDetails) {
+                              return '${l10n.userDetailsJoinedAtLabel} ${userDetails.createdAt.formatDateOnly(fullDate: true)}';
+                            },
+                            error: (Object _, StackTrace _) {
+                              return '${l10n.userDetailsJoinedAtLabel} ???';
+                            },
+                            loading: () {
+                              return '${l10n.userDetailsJoinedAtLabel} ${DateTime.now().formatDateOnly(fullDate: true)}';
+                            },
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          isLoading: userDetailsState.isLoading,
+                        ),
+                        const MGap.xxs(),
+                        MText.small(
+                          text: userDetailsState.when<String>(
+                            data: (UserDetailsEntity userDetails) {
+                              return '${l10n.userDetailsFriendshipCodeLabel} ${userDetails.friendshipCode}';
+                            },
+                            error: (Object _, StackTrace _) {
+                              return '${l10n.userDetailsFriendshipCodeLabel} ???';
+                            },
+                            loading: () {
+                              return '${l10n.userDetailsFriendshipCodeLabel} 00000000';
+                            },
+                          ),
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          isLoading: userDetailsState.isLoading,
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (isProfileRoute) ...<Widget>[
+                    const MGap.md(),
+                    MIconButton.secondary(
+                      onPressed: () {
+                        _onUpdateName(
+                          context,
+                          initialName: userDetailsState.value!.name,
+                        );
+                      },
+                      background: MColors.gray200,
+                      foreground: MColors.gray900,
+                      icon: LucideIcons.pencil,
+                      dimension: kToolbarHeight - 4.0,
+                      isEnabled: userDetailsState.hasValue,
+                    ),
+                  ],
                 ],
               ),
             ),

@@ -286,6 +286,24 @@ abstract class AppLocalizations {
   /// **'Joined on:'**
   String get userDetailsJoinedAtLabel;
 
+  /// No description provided for @userDetailsUpdateNameDialogTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Update name'**
+  String get userDetailsUpdateNameDialogTitle;
+
+  /// No description provided for @userDetailsUpdateNameSubmitButton.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Save name'**
+  String get userDetailsUpdateNameSubmitButton;
+
+  /// No description provided for @userDetailsUpdateNameSuccessMessage.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Your name was updated.'**
+  String get userDetailsUpdateNameSuccessMessage;
+
   /// No description provided for @friendshipsTitle.
   ///
   /// In en_US, this message translates to:
