@@ -114,6 +114,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get userDetailsJoinedAtLabel => 'Joined on:';
 
   @override
+  String get userDetailsUpdateNameDialogTitle => 'Update name';
+
+  @override
+  String get userDetailsUpdateNameSubmitButton => 'Save name';
+
+  @override
+  String get userDetailsUpdateNameSuccessMessage => 'Your name was updated.';
+
+  @override
   String get friendshipsTitle => 'Friendships';
 
   @override
@@ -539,6 +548,15 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
 
   @override
   String get userDetailsJoinedAtLabel => 'Joined on:';
+
+  @override
+  String get userDetailsUpdateNameDialogTitle => 'Update name';
+
+  @override
+  String get userDetailsUpdateNameSubmitButton => 'Save name';
+
+  @override
+  String get userDetailsUpdateNameSuccessMessage => 'Your name was updated.';
 
   @override
   String get friendshipsTitle => 'Friendships';

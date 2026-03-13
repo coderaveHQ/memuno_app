@@ -46,6 +46,9 @@
     }
   },
   "userDetailsJoinedAtLabel": "Joined on:",
+  "userDetailsUpdateNameDialogTitle": "Update name",
+  "userDetailsUpdateNameSubmitButton": "Save name",
+  "userDetailsUpdateNameSuccessMessage": "Your name was updated.",
   "friendshipsTitle": "Friendships",
   "friendshipsTabFriendships": "Friendships",
   "friendshipsTabRequests": "Requests",
