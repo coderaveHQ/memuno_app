@@ -124,6 +124,7 @@ final class _CanvasTransformSession {
   _CanvasTransformSession({
     required this.layerId,
     required this.startFocalPoint,
+    required this.currentFocalPoint,
     required this.startCenter,
     required this.currentCenter,
     required this.startFontSize,
@@ -138,6 +139,9 @@ final class _CanvasTransformSession {
 
   /// Gesture focal point at scale-start time.
   Offset startFocalPoint;
+
+  /// Last observed gesture focal point in canvas coordinates.
+  Offset currentFocalPoint;
 
   /// Layer center at scale-start time.
   Offset startCenter;
@@ -234,7 +238,6 @@ final class _MemeEditorCanvasState extends State<MemeEditorCanvas> {
   static const double _rotationSnapReleaseRadians = 8.0 * math.pi / 180.0;
   static const double _trashTargetSize = 62.0;
   static const double _trashTargetBottomInset = 46.0;
-  static const double _trashTargetHitRadius = 64.0;
   static const Duration _caretTouchModeTimeout = Duration(seconds: 4);
   static const Duration _gestureTapGuardDuration = Duration(milliseconds: 140);
   static const Duration _autoScrollTickInterval = Duration(milliseconds: 16);
@@ -448,7 +451,8 @@ final class _MemeEditorCanvasState extends State<MemeEditorCanvas> {
     }
 
     _updateTrashHoverState(
-      draggedCenter: session.currentCenter,
+      pointerPosition: session.currentFocalPoint,
+      pointerCount: session.pointerCount,
       canvasSize: _latestCanvasSize,
       forceRebuild: true,
     );
@@ -624,6 +628,7 @@ final class _MemeEditorCanvasState extends State<MemeEditorCanvas> {
     _activeTransformSession = _CanvasTransformSession(
       layerId: layerId,
       startFocalPoint: focalPoint,
+      currentFocalPoint: focalPoint,
       startCenter: renderData.center,
       currentCenter: renderData.center,
       startFontSize: layer.fontSize,
@@ -638,7 +643,8 @@ final class _MemeEditorCanvasState extends State<MemeEditorCanvas> {
     });
 
     _updateTrashHoverState(
-      draggedCenter: renderData.center,
+      pointerPosition: focalPoint,
+      pointerCount: details.pointerCount,
       canvasSize: canvasSize,
     );
 
@@ -673,6 +679,7 @@ final class _MemeEditorCanvasState extends State<MemeEditorCanvas> {
 
     final Offset focalPointDelta =
         details.localFocalPoint - session.startFocalPoint;
+    session.currentFocalPoint = details.localFocalPoint;
     final Offset rawCenter = session.startCenter + focalPointDelta;
     final bool isTwoFingerGesture = details.pointerCount >= 2;
 
@@ -736,7 +743,8 @@ final class _MemeEditorCanvasState extends State<MemeEditorCanvas> {
     session.currentRotationRadians = nextRotationRadians;
 
     _updateTrashHoverState(
-      draggedCenter: nextRenderData.center,
+      pointerPosition: session.currentFocalPoint,
+      pointerCount: details.pointerCount,
       canvasSize: canvasSize,
     );
 
@@ -848,6 +856,7 @@ final class _MemeEditorCanvasState extends State<MemeEditorCanvas> {
   }) {
     session.pointerCount = details.pointerCount;
     session.startFocalPoint = details.localFocalPoint;
+    session.currentFocalPoint = details.localFocalPoint;
     session.startCenter = session.currentCenter;
     session.startFontSize = session.currentFontSize;
     session.startRotationRadians = session.currentRotationRadians;
@@ -857,15 +866,17 @@ final class _MemeEditorCanvasState extends State<MemeEditorCanvas> {
     }
   }
 
-  /// Updates hover state for the trash target based on [draggedCenter].
+  /// Updates hover state for the trash target based on pointer hit-testing.
   void _updateTrashHoverState({
-    required Offset draggedCenter,
+    required Offset pointerPosition,
+    required int pointerCount,
     required Size canvasSize,
     bool forceRebuild = false,
   }) {
     final Offset trashCenter = _resolveTrashCenter(canvasSize);
     final bool isHovered =
-        (draggedCenter - trashCenter).distance <= _trashTargetHitRadius;
+        pointerCount == 1 &&
+        (pointerPosition - trashCenter).distance <= _trashTargetSize / 2.0;
 
     if (isHovered == _isTrashHovered && !forceRebuild) {
       return;
@@ -979,6 +990,7 @@ final class _MemeEditorCanvasState extends State<MemeEditorCanvas> {
 
     final Offset scrollDelta = Offset(0.0, actualScrollDelta);
     session.startFocalPoint += scrollDelta;
+    session.currentFocalPoint += scrollDelta;
     session.startCenter += scrollDelta;
     session.currentCenter += scrollDelta;
 
@@ -999,7 +1011,8 @@ final class _MemeEditorCanvasState extends State<MemeEditorCanvas> {
     session.startCenter = nextRenderData.center;
 
     _updateTrashHoverState(
-      draggedCenter: nextRenderData.center,
+      pointerPosition: session.currentFocalPoint,
+      pointerCount: session.pointerCount,
       canvasSize: _latestCanvasSize,
       forceRebuild: true,
     );
