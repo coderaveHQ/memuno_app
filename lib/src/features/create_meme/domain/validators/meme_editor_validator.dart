@@ -15,9 +15,6 @@ final class MemeEditorValidator {
   /// Maximum font size supported by the editor.
   static const double maxFontSize = 64.0;
 
-  /// Maximum combined bytes allowed for image payload and meme text.
-  static const int maxCombinedMemePayloadBytes = 5 * 1024 * 1024;
-
   /// Lower inclusive bound for valid ARGB color values.
   static const int minColorValue = 0x00000000;
 
@@ -60,7 +57,7 @@ final class MemeEditorValidator {
   ///
   /// Returns a [Failure.validation] when invalid, otherwise `null`.
   Failure? validateTemplateSelected(MemeEditorStateEntity state) {
-    if (state.hasBackground) {
+    if (state.hasTemplate) {
       return null;
     }
 
@@ -134,39 +131,6 @@ final class MemeEditorValidator {
     return const Failure.validation(
       code: 'invalid_format',
       field: 'image_aspect_ratio',
-    );
-  }
-
-  /// Validates selected custom-image bytes.
-  ///
-  /// Returns a [Failure.validation] when invalid, otherwise `null`.
-  Failure? validateSelectedImageBytes(Uint8List imageBytes) {
-    if (imageBytes.isNotEmpty) {
-      return null;
-    }
-
-    return const Failure.validation(
-      code: 'invalid_format',
-      field: 'custom_template_image',
-    );
-  }
-
-  /// Validates combined byte size for meme image and text payload.
-  ///
-  /// Returns a [Failure.validation] when invalid, otherwise `null`.
-  Failure? validateCombinedPayloadBytes({
-    required int imageBytes,
-    required int textBytes,
-  }) {
-    final int total = imageBytes + textBytes;
-    if (total <= maxCombinedMemePayloadBytes) {
-      return null;
-    }
-
-    return const Failure.validation(
-      code: 'meme_payload_too_large',
-      field: 'meme_payload',
-      params: <String, Object?>{'max_bytes': maxCombinedMemePayloadBytes},
     );
   }
 

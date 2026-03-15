@@ -7,8 +7,8 @@ abstract class MemeSendDatasource {
     /// Finalized PNG bytes rendered in meme editor.
     required Uint8List memeBytes,
 
-    /// Optional template identifier selected in editor.
-    required String? templateId,
+    /// Template identifier selected in editor.
+    required String templateId,
 
     /// Aspect ratio (`width / height`) for the uploaded meme image.
     required double aspectRatio,

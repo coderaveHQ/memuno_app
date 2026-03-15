@@ -14,18 +14,6 @@ abstract class MemeEditorRepository {
     required MemeTemplateListPageItemEntity template,
   });
 
-  /// Applies a selected custom gallery image and resets the editing draft.
-  MemeEditorStateEntity setCustomTemplateImage({
-    /// Current editor snapshot.
-    required MemeEditorStateEntity state,
-
-    /// PNG bytes of the selected custom image.
-    required Uint8List imageBytes,
-
-    /// Aspect ratio (`width / height`) of [imageBytes].
-    required double aspectRatio,
-  });
-
   /// Adds a new text layer and selects it.
   MemeEditorStateEntity addTextLayer({
     /// Current editor snapshot.
@@ -126,14 +114,5 @@ abstract class MemeEditorRepository {
   MemeEditorStateEntity toggleSelectedTextBackground({
     /// Current editor snapshot.
     required MemeEditorStateEntity state,
-  });
-
-  /// Downscales selected custom image until it fits [maxImageBytes].
-  MemeEditorStateEntity optimizeCustomTemplateImageForUpload({
-    /// Current editor snapshot.
-    required MemeEditorStateEntity state,
-
-    /// Maximum allowed byte size for selected custom image PNG payload.
-    required int maxImageBytes,
   });
 }

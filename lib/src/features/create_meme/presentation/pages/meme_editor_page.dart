@@ -22,21 +22,17 @@ import 'package:memuno_app/src/core/failures/failure.dart';
 import 'package:memuno_app/src/features/create_meme/application/mutations/finalize_meme_image_mutation.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/meme_editor_controller_provider.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/normalize_finalized_meme_bytes_usecase_provider.dart';
-import 'package:memuno_app/src/features/create_meme/application/providers/usecases/optimize_custom_template_image_for_upload_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/resolve_meme_background_size_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/set_finalized_meme_bytes_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_state_entity.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_image_size_entity.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_text_layer_entity.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/normalize_finalized_meme_bytes_usecase.dart';
-import 'package:memuno_app/src/features/create_meme/domain/usecases/optimize_custom_template_image_for_upload_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/resolve_meme_background_size_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/set_finalized_meme_bytes_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/presentation/widgets/meme_editor_canvas.dart';
 import 'package:memuno_app/src/features/create_meme/presentation/widgets/meme_editor_controls.dart';
 import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_list_page_item_entity.dart';
-import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_picker_selection_entity.dart';
-import 'package:memuno_app/src/features/meme_templates/domain/entities/picked_meme_template_image_entity.dart';
 import 'package:memuno_app/src/features/meme_templates/presentation/widgets/meme_templates_bottom_sheet.dart';
 
 /// Meme editor page where users compose one meme image.
@@ -279,8 +275,6 @@ class MemeEditorPage extends HookConsumerWidget {
               repaintBoundaryKey: repaintBoundaryKey,
               scrollController: canvasScrollController,
               template: state.template,
-              customTemplateImageBytes: state.customTemplateImageBytes,
-              customTemplateAspectRatio: state.customTemplateAspectRatio,
               layers: state.textLayers,
               selectedLayerId: state.selectedTextLayerId,
               selectedTextController: selectedTextController,
@@ -393,7 +387,7 @@ class MemeEditorPage extends HookConsumerWidget {
     );
   }
 
-  /// Opens the picker and applies selected template or gallery image.
+  /// Opens the picker and applies the selected template.
   Future<void> _pickTemplate({
     required BuildContext context,
     required MemeEditorController controller,
@@ -402,43 +396,26 @@ class MemeEditorPage extends HookConsumerWidget {
     required ValueNotifier<bool> shouldEditSelectedLayer,
     required ScrollController canvasScrollController,
   }) async {
-    final MemeTemplatePickerSelectionEntity? selection =
+    final MemeTemplateListPageItemEntity? template =
         await showMemeTemplatesBottomSheet(context);
 
     if (!context.mounted) {
       return;
     }
 
-    if (selection == null) {
+    if (template == null) {
       if (closePageOnCancel) {
         context.pop();
       }
       return;
     }
 
-    final MemeTemplateListPageItemEntity? template = selection.template;
-    if (template != null) {
-      controller.setTemplate(template);
-      _resetEditorInteractionState(
-        selectedTextFocusNode: selectedTextFocusNode,
-        shouldEditSelectedLayer: shouldEditSelectedLayer,
-        canvasScrollController: canvasScrollController,
-      );
-      return;
-    }
-
-    final PickedMemeTemplateImageEntity? pickedImage = selection.pickedImage;
-    if (pickedImage != null) {
-      controller.setCustomTemplateImage(
-        imageBytes: pickedImage.pngBytes,
-        aspectRatio: pickedImage.aspectRatio,
-      );
-      _resetEditorInteractionState(
-        selectedTextFocusNode: selectedTextFocusNode,
-        shouldEditSelectedLayer: shouldEditSelectedLayer,
-        canvasScrollController: canvasScrollController,
-      );
-    }
+    controller.setTemplate(template);
+    _resetEditorInteractionState(
+      selectedTextFocusNode: selectedTextFocusNode,
+      shouldEditSelectedLayer: shouldEditSelectedLayer,
+      canvasScrollController: canvasScrollController,
+    );
   }
 
   /// Resets focus and viewport after selecting a new meme template.
@@ -470,21 +447,6 @@ class MemeEditorPage extends HookConsumerWidget {
     );
 
     await mutation.runSafely(ref, (MutationTransaction tx) async {
-      final MemeEditorStateEntity stateBeforeOptimization = ref.read(
-        memeEditorControllerProvider,
-      );
-      if (stateBeforeOptimization.hasCustomTemplateImage) {
-        final OptimizeCustomTemplateImageForUploadUsecase optimizeUsecase = tx
-            .get(optimizeCustomTemplateImageForUploadUsecaseProvider);
-        final MemeEditorStateEntity optimizedState = optimizeUsecase(
-          state: stateBeforeOptimization,
-        );
-        ref
-            .read(memeEditorControllerProvider.notifier)
-            .setStateSnapshot(optimizedState);
-        await WidgetsBinding.instance.endOfFrame;
-      }
-
       final MemeEditorStateEntity currentState = ref.read(
         memeEditorControllerProvider,
       );
