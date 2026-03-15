@@ -50,7 +50,7 @@ final class MemeDetailsRepositoryImpl implements MemeDetailsRepository {
             memeId: memeId,
             limit: limit,
             cursorCreatedAt: cursor?.createdAt,
-            cursorUserId: cursor?.userId,
+            cursorId: cursor?.id,
           );
 
       return _memeDetailsMapper.laughPageToDomain(dto);

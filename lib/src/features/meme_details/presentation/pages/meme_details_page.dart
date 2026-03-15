@@ -347,7 +347,7 @@ class MemeDetailsPage extends ConsumerWidget {
                                     mainAxisSize: MainAxisSize.min,
                                     children: <Widget>[
                                       if (index > 0) const MDivider(),
-                                      MemeLaughListItem(
+                                      MAsyncMemeLaughListItem(
                                         item: state.items[index],
                                       ),
                                     ],

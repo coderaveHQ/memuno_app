@@ -16,35 +16,44 @@ import 'package:memuno_app/src/app/widgets/m/m_image.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/app/widgets/m/m_tappable.dart';
 import 'package:memuno_app/src/app/widgets/m/m_text.dart';
+import 'package:memuno_app/src/core/models/items/meme_item_entity.dart';
 import 'package:memuno_app/src/features/auth/application/providers/current_user_provider.dart';
-import 'package:memuno_app/src/features/user_details/application/mutations/toggle_user_details_meme_laugh_mutation.dart';
-import 'package:memuno_app/src/features/user_details/application/providers/user_details_other_sent_memes_list_provider.dart';
-import 'package:memuno_app/src/features/user_details/domain/entities/user_details_other_sent_memes_list_page_item_entity.dart';
 
-/// Card widget for rendering one other\-sent user-details meme item.
-class UserDetailsOtherSentMemesListItem extends ConsumerWidget {
-  /// Creates one other\-sent user-details meme card.
-  const UserDetailsOtherSentMemesListItem({
+typedef MAsyncMemeMutationReader =
+    Mutation<void> Function(WidgetRef ref, String memeId);
+
+typedef MAsyncMemeToggleHandler =
+    Future<void> Function(WidgetRef ref, MemeItemEntity meme);
+
+typedef MAsyncMemeOpenUserHandler =
+    Future<void> Function(BuildContext context, String userId);
+
+typedef MAsyncMemeOpenDetailsHandler =
+    Future<void> Function(BuildContext context, String memeId);
+
+/// Reusable canonical card for one `meme_item` list row.
+class MAsyncMemeListItem extends ConsumerWidget {
+  const MAsyncMemeListItem({
     super.key,
     required this.item,
-    required this.userId,
+    required this.readToggleMutation,
+    required this.onToggleLaugh,
+    this.onOpenUserDetails,
+    this.onOpenMemeDetails,
   });
 
-  /// other\-sent list payload to render.
-  final UserDetailsOtherSentMemesListPageItemEntity item;
-
-  /// User id of the viewed profile.
-  final String userId;
+  final MemeItemEntity item;
+  final MAsyncMemeMutationReader readToggleMutation;
+  final MAsyncMemeToggleHandler onToggleLaugh;
+  final MAsyncMemeOpenUserHandler? onOpenUserDetails;
+  final MAsyncMemeOpenDetailsHandler? onOpenMemeDetails;
 
   @override
-  /// Builds the meme-list card UI.
   Widget build(BuildContext context, WidgetRef ref) {
     final String? currentUserId = ref.watch(currentUserProvider)?.id;
     final bool isOwnMeme = item.user.id == currentUserId;
-    final bool isLiked = item.meme.isLaughed;
-    final Mutation<void> mutation = ref.watch(
-      toggleUserDetailsMemeLaughMutationProvider(item.meme.id),
-    );
+    final bool isLaughed = item.isLaughed;
+    final Mutation<void> mutation = readToggleMutation(ref, item.id);
     final MutationState<void> mutationState = ref.watch(mutation);
     final AppFeedback feedback = ref.read(appFeedbackProvider);
 
@@ -71,9 +80,7 @@ class UserDetailsOtherSentMemesListItem extends ConsumerWidget {
             child: Row(
               children: <Widget>[
                 MAvatar(
-                  onPressed: () {
-                    UserDetailsRoute(userId: item.user.id).push<void>(context);
-                  },
+                  onPressed: () => _openUserDetails(context, item.user.id),
                   name: item.user.name,
                   dimension: kToolbarHeight - 4.0,
                 ),
@@ -84,23 +91,19 @@ class UserDetailsOtherSentMemesListItem extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       MTappable(
-                        onPressed: () {
-                          UserDetailsRoute(
-                            userId: item.user.id,
-                          ).push<void>(context);
-                        },
+                        onPressed: () => _openUserDetails(context, item.user.id),
                         child: MText.h4(
                           text: item.user.name,
                           maxLines: 1,
                           overflow: TextOverflow.ellipsis,
-                          style: TextStyle(color: MColors.gray100),
+                          style: const TextStyle(color: MColors.gray100),
                         ),
                       ),
                       MText.small(
-                        text: item.meme.createdAt.formatHumanReadable(),
+                        text: item.createdAt.formatHumanReadable(),
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: MColors.gray400,
                           fontStyle: FontStyle.italic,
                         ),
@@ -110,17 +113,14 @@ class UserDetailsOtherSentMemesListItem extends ConsumerWidget {
                 ),
                 const MGap.md(),
                 MIconButton.primary(
-                  onPressed: () => _onOpenMemeDetails(context),
+                  onPressed: () => _openMemeDetails(context, item.id),
                   dimension: kToolbarHeight - 4.0,
                   icon: LucideIcons.arrow_right,
                 ),
               ],
             ),
           ),
-          MImage.url(
-            item.meme.signedImageUrl,
-            aspectRatio: item.meme.aspectRatio,
-          ),
+          MImage.url(item.signedImageUrl, aspectRatio: item.aspectRatio),
           Padding(
             padding: EdgeInsets.only(
               top: MSpacing.md,
@@ -131,12 +131,12 @@ class UserDetailsOtherSentMemesListItem extends ConsumerWidget {
             child: Row(
               children: <Widget>[
                 MTappable(
-                  onPressed: () => _onToggleLaugh(ref),
+                  onPressed: () => _toggleLaugh(ref),
                   isEnabled: !isOwnMeme && !mutationState.isPending,
                   child: Container(
                     height: 40.0,
                     decoration: BoxDecoration(
-                      color: isLiked
+                      color: isLaughed
                           ? MColors.yellow400.withValues(alpha: 0.1)
                           : MColors.gray100,
                       borderRadius: BorderRadius.circular(20.0),
@@ -147,9 +147,9 @@ class UserDetailsOtherSentMemesListItem extends ConsumerWidget {
                         MText.h3(text: '😂'),
                         const MGap.xs(),
                         MText.p(
-                          text: '${item.meme.laughCount}',
+                          text: '${item.laughCount}',
                           style: TextStyle(
-                            color: isLiked
+                            color: isLaughed
                                 ? MColors.yellow400
                                 : MColors.gray900,
                             fontWeight: FontWeight.w600,
@@ -167,21 +167,26 @@ class UserDetailsOtherSentMemesListItem extends ConsumerWidget {
     );
   }
 
-  /// Runs an optimistic meme-laugh toggle through this list notifier.
-  Future<void> _onToggleLaugh(WidgetRef ref) async {
-    final Mutation<void> mutation = ref.read(
-      toggleUserDetailsMemeLaughMutationProvider(item.meme.id),
-    );
-
+  Future<void> _toggleLaugh(WidgetRef ref) async {
+    final Mutation<void> mutation = readToggleMutation(ref, item.id);
     await mutation.runSafely(ref, (MutationTransaction tx) async {
-      await ref
-          .read(userDetailsOtherSentMemesListProvider(userId).notifier)
-          .toggleMemeLaugh(item);
+      await onToggleLaugh(ref, item);
     });
   }
 
-  /// Opens the meme-details page for this meme.
-  Future<void> _onOpenMemeDetails(BuildContext context) async {
-    await MemeDetailsRoute(memeId: item.meme.id).push<void>(context);
+  Future<void> _openUserDetails(BuildContext context, String userId) async {
+    if (onOpenUserDetails != null) {
+      await onOpenUserDetails!(context, userId);
+      return;
+    }
+    await UserDetailsRoute(userId: userId).push<void>(context);
+  }
+
+  Future<void> _openMemeDetails(BuildContext context, String memeId) async {
+    if (onOpenMemeDetails != null) {
+      await onOpenMemeDetails!(context, memeId);
+      return;
+    }
+    await MemeDetailsRoute(memeId: memeId).push<void>(context);
   }
 }

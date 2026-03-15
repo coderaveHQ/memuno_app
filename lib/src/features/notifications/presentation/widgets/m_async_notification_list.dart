@@ -3,18 +3,18 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:memuno_app/src/app/feedback/app_feedback.dart';
 import 'package:memuno_app/src/app/widgets/m/m_async_list.dart';
 import 'package:memuno_app/src/core/state/pagination/paginated_list_state.dart';
-import 'package:memuno_app/src/features/friendships/application/providers/friendship_requests_list_provider.dart';
-import 'package:memuno_app/src/features/friendships/domain/entities/friendship_request_cursor_entity.dart';
-import 'package:memuno_app/src/features/friendships/domain/entities/friendship_request_list_page_item_entity.dart';
-import 'package:memuno_app/src/features/friendships/presentation/widgets/m_async_friendship_request_list_item.dart';
+import 'package:memuno_app/src/features/notifications/domain/entities/notification_cursor_entity.dart';
+import 'package:memuno_app/src/features/notifications/domain/entities/notification_list_page_item_entity.dart';
+import 'package:memuno_app/src/features/notifications/presentation/widgets/notification_list_item.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-/// Typed async list wrapper for friendship-request pages.
-class MAsyncFriendshipRequestList extends ConsumerWidget {
-  const MAsyncFriendshipRequestList({
+/// Typed async list wrapper for notification pages.
+class MAsyncNotificationList extends StatelessWidget {
+  const MAsyncNotificationList({
     super.key,
-    this.provider,
+    required this.provider,
     required this.emptyText,
+    required this.onPressed,
     this.loadMoreExtent = 220.0,
     this.onRefresh,
     this.listPadding,
@@ -24,13 +24,11 @@ class MAsyncFriendshipRequestList extends ConsumerWidget {
 
   final $AsyncNotifierProvider<
     dynamic,
-    PaginatedListState<
-      FriendshipRequestListPageItemEntity,
-      FriendshipRequestCursorEntity
-    >
-  >?
+    PaginatedListState<NotificationListPageItemEntity, NotificationCursorEntity>
+  >
   provider;
   final String emptyText;
+  final void Function(NotificationListPageItemEntity notification) onPressed;
   final double loadMoreExtent;
   final Future<void> Function(
     WidgetRef ref,
@@ -43,12 +41,9 @@ class MAsyncFriendshipRequestList extends ConsumerWidget {
   final EdgeInsetsGeometry? listChildPadding;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return MAsyncList<
-      FriendshipRequestListPageItemEntity,
-      FriendshipRequestCursorEntity
-    >(
-      provider: provider ?? friendshipRequestsListProvider,
+  Widget build(BuildContext context) {
+    return MAsyncList<NotificationListPageItemEntity, NotificationCursorEntity>(
+      provider: provider,
       emptyText: emptyText,
       loadMoreExtent: loadMoreExtent,
       onRefresh: onRefresh,
@@ -58,10 +53,11 @@ class MAsyncFriendshipRequestList extends ConsumerWidget {
       itemBuilder:
           (
             BuildContext context,
-            FriendshipRequestListPageItemEntity friendshipRequest,
+            NotificationListPageItemEntity notification,
           ) {
-            return MAsyncFriendshipRequestListItem(
-              friendshipRequest: friendshipRequest,
+            return MAsyncNotificationListItem(
+              notification: notification,
+              onPressed: onPressed,
             );
           },
     );

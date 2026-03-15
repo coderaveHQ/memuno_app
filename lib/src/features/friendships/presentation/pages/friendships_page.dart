@@ -95,8 +95,10 @@ class FriendshipsPage extends HookConsumerWidget {
       body: TabBarView(
         controller: tabController,
         children: <Widget>[
-          const FriendshipsList(),
-          const FriendshipRequestsList(),
+          MAsyncFriendshipList(emptyText: l10n.friendshipsListEmpty),
+          MAsyncFriendshipRequestList(
+            emptyText: l10n.friendshipsRequestsListEmpty,
+          ),
         ],
       ),
     );

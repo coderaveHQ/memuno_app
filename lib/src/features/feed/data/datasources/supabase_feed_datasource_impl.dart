@@ -1,6 +1,10 @@
+import 'package:memuno_app/src/core/models/items/meme_item_dto.dart';
+import 'package:memuno_app/src/core/models/pagination/list_page_dto.dart';
 import 'package:memuno_app/src/features/feed/data/datasources/feed_datasource.dart';
 import 'package:memuno_app/src/features/feed/data/dto/feed_list_page_dto.dart';
 import 'package:memuno_app/src/features/feed/data/dto/feed_list_page_item_dto.dart';
+import 'package:memuno_app/src/features/feed/data/dto/feed_list_page_item_meme_dto.dart';
+import 'package:memuno_app/src/features/feed/data/dto/feed_list_page_item_user_dto.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Supabase-backed implementation of [FeedDatasource].
@@ -39,12 +43,16 @@ final class SupabaseFeedDatasourceImpl implements FeedDatasource {
       rpcName: 'feed_list',
     );
 
-    final FeedListPageDto page = FeedListPageDto.fromJson(json);
-    final List<FeedListPageItemDto> signedItems = await _attachSignedUrls(
-      page.items,
+    final ListPageDto<MemeItemDto> page = ListPageDto<MemeItemDto>.fromJson(
+      json,
+      itemFromJson: MemeItemDto.fromJson,
     );
-
-    return page.copyWith(items: signedItems);
+    final List<MemeItemDto> signedItems = await _attachSignedUrls(page.items);
+    return FeedListPageDto(
+      items: signedItems.map(_toFeedListPageItemDto).toList(growable: false),
+      nextCursorCreatedAt: page.nextCursorCreatedAt,
+      nextCursorId: page.nextCursorId,
+    );
   }
 
   @override
@@ -65,15 +73,13 @@ final class SupabaseFeedDatasourceImpl implements FeedDatasource {
   }
 
   /// Creates signed URLs for every feed item image in [items].
-  Future<List<FeedListPageItemDto>> _attachSignedUrls(
-    List<FeedListPageItemDto> items,
-  ) async {
+  Future<List<MemeItemDto>> _attachSignedUrls(List<MemeItemDto> items) async {
     if (items.isEmpty) {
       return items;
     }
 
     final List<String> imagePaths = items
-        .map((FeedListPageItemDto item) => item.meme.imagePath)
+        .map((MemeItemDto item) => item.imagePath)
         .toSet()
         .toList(growable: false);
 
@@ -94,14 +100,32 @@ final class SupabaseFeedDatasourceImpl implements FeedDatasource {
     }
 
     return items
-        .map((FeedListPageItemDto item) {
-          return item.copyWith(
-            meme: item.meme.copyWith(
-              signedImageUrl: signedUrlByPath[item.meme.imagePath],
-            ),
-          );
+        .map((MemeItemDto item) {
+          return item.copyWith(signedImageUrl: signedUrlByPath[item.imagePath]);
         })
         .toList(growable: false);
+  }
+
+  FeedListPageItemDto _toFeedListPageItemDto(MemeItemDto item) {
+    return FeedListPageItemDto(
+      meme: FeedListPageItemMemeDto(
+        id: item.id,
+        createdAt: item.createdAt,
+        updatedAt: item.updatedAt,
+        imagePath: item.imagePath,
+        aspectRatio: item.aspectRatio,
+        laughCount: item.laughCount,
+        isLaughed: item.isLaughed,
+        signedImageUrl: item.signedImageUrl,
+      ),
+      user: FeedListPageItemUserDto(
+        id: item.user.id,
+        name: item.user.name,
+        friendshipCode: item.user.friendshipCode,
+        createdAt: item.user.createdAt,
+        updatedAt: item.user.updatedAt,
+      ),
+    );
   }
 
   /// Casts an RPC payload to `Map<String, Object?>`.

@@ -20,8 +20,8 @@ abstract interface class MemeDetailsDatasource {
     /// Optional cursor created-at value for subsequent page fetches.
     DateTime? cursorCreatedAt,
 
-    /// Optional cursor user-id value for subsequent page fetches.
-    String? cursorUserId,
+    /// Optional cursor id value for subsequent page fetches.
+    String? cursorId,
   });
 
   /// Toggles the current user's laugh state for one meme.

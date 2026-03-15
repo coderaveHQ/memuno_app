@@ -17,8 +17,8 @@ sealed class MemeLaughListPageDto with _$MemeLaughListPageDto {
     /// Next cursor `created_at` value.
     @JsonKey(name: 'next_cursor_created_at') DateTime? nextCursorCreatedAt,
 
-    /// Next cursor `user_id` value.
-    @JsonKey(name: 'next_cursor_user_id') String? nextCursorUserId,
+    /// Next cursor `id` value.
+    @JsonKey(name: 'next_cursor_id') String? nextCursorId,
   }) = _MemeLaughListPageDto;
 
   /// Creates one meme-laugh-list page DTO from JSON.

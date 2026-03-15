@@ -26,7 +26,7 @@ final class FriendshipMapper {
   FriendshipListPageEntity pageToDomain(FriendshipListPageDto dto) {
     return FriendshipListPageEntity(
       items: dto.items.map(toDomain).toList(growable: false),
-      nextCursorName: dto.nextCursorName,
+      nextCursorCreatedAt: dto.nextCursorCreatedAt,
       nextCursorId: dto.nextCursorId,
     );
   }

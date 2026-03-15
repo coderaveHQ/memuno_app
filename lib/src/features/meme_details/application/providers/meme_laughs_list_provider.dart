@@ -58,11 +58,11 @@ class MemeLaughsList extends _$MemeLaughsList
 
   MemeLaughCursorEntity? _cursorFromPage(MemeLaughListPageEntity page) {
     final DateTime? createdAt = page.nextCursorCreatedAt;
-    final String? userId = page.nextCursorUserId;
-    if (createdAt == null || userId == null) {
+    final String? id = page.nextCursorId;
+    if (createdAt == null || id == null) {
       return null;
     }
 
-    return MemeLaughCursorEntity(createdAt: createdAt, userId: userId);
+    return MemeLaughCursorEntity(createdAt: createdAt, id: id);
   }
 }

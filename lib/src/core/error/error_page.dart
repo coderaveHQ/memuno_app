@@ -3,6 +3,7 @@ import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:memuno_app/src/app/extensions/build_context_x.dart';
 import 'package:memuno_app/src/app/widgets/m/m_center.dart';
 import 'package:memuno_app/src/app/widgets/m/m_colors.dart';
+import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/app/widgets/m/m_text.dart';
 import 'package:memuno_app/src/core/failures/failure.dart';
@@ -27,7 +28,7 @@ final class ErrorPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     // Resolve a user-facing message from the error.
     final String message = _resolveMessage(context, ref, error);
-    return Scaffold(
+    return MScaffold(
       body: MCenter(
         padding: EdgeInsets.only(
           left: context.leftPadding + MSpacing.md,

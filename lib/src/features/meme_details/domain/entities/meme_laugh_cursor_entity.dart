@@ -10,8 +10,8 @@ sealed class MemeLaughCursorEntity with _$MemeLaughCursorEntity {
     /// Last seen `created_at` used for descending timestamp pagination.
     required DateTime createdAt,
 
-    /// Stable user id used as tie-breaker cursor.
-    required String userId,
+    /// Stable item id used as tie-breaker cursor.
+    required String id,
   }) = _MemeLaughCursorEntity;
 
   const MemeLaughCursorEntity._();

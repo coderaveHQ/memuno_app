@@ -74,7 +74,7 @@ String? _redirect(BuildContext context, GoRouterState state, Ref ref) {
   }
 
   final bool isAuthenticated = authState.value!.isAuthenticated;
-  final String currentUserId = authState.value!.user!.id;
+  final String? currentUserId = authState.value!.user?.id;
 
   final String location = state.uri.toString();
   final String path = state.uri.path;
