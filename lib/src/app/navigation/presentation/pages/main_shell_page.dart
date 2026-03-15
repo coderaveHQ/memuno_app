@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
+import 'package:memuno_app/l10n/app_localizations.dart';
 import 'package:memuno_app/src/app/router/app_router.dart';
 import 'package:memuno_app/src/app/widgets/m/m_bottom_navigation_bar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
@@ -28,6 +29,7 @@ class MainShellPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final String? topRouteName = GoRouterState.of(context).topRoute?.name;
+    final AppLocalizations l10n = AppLocalizations.of(context);
 
     return MScaffold(
       body: navigator,
@@ -37,13 +39,13 @@ class MainShellPage extends StatelessWidget {
           MBottomNavigationBarItem(
             onPressed: () => _onFeed(context),
             icon: LucideIcons.house,
-            title: 'Feed',
+            title: l10n.mainShellTabFeed,
             isSelected: topRouteName == FeedRoute.routeName,
           ),
           MBottomNavigationBarItem(
             onPressed: () => _onCommunity(context),
             icon: LucideIcons.users,
-            title: 'Community',
+            title: l10n.mainShellTabCommunity,
             isSelected: topRouteName == CommunityRoute.routeName,
           ),
         ],

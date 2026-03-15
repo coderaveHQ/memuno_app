@@ -74,6 +74,7 @@ String? _redirect(BuildContext context, GoRouterState state, Ref ref) {
   }
 
   final bool isAuthenticated = authState.value!.isAuthenticated;
+  final String currentUserId = authState.value!.user!.id;
 
   final String location = state.uri.toString();
   final String path = state.uri.path;
@@ -91,6 +92,17 @@ String? _redirect(BuildContext context, GoRouterState state, Ref ref) {
   final String? routeName = state.topRoute?.name;
   if (routeName == null) {
     return null;
+  }
+
+  // Keep canonical "my profile" navigation on /profile.
+  if (isAuthenticated && routeName == UserDetailsRoute.routeName) {
+    final String? requestedUserId = state.pathParameters['userId'];
+    if (requestedUserId != null && requestedUserId == currentUserId) {
+      final String target = state.namedLocation(
+        CurrentUserDetailsRoute.routeName,
+      );
+      return target == location ? null : target;
+    }
   }
 
   // Apply auth routing policy.
