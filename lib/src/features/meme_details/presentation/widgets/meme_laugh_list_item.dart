@@ -7,10 +7,10 @@ import 'package:memuno_app/src/app/widgets/m/m_list_tile.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/features/meme_details/domain/entities/meme_laugh_list_page_item_entity.dart';
 
-/// Tile widget for rendering one laughed-user list item.
-class MemeLaughListItem extends StatelessWidget {
+/// Canonical list item widget for one meme-laugh row.
+class MAsyncMemeLaughListItem extends StatelessWidget {
   /// Creates one meme-laugh list item tile.
-  const MemeLaughListItem({super.key, required this.item});
+  const MAsyncMemeLaughListItem({super.key, required this.item});
 
   /// Laughed-user payload to render.
   final MemeLaughListPageItemEntity item;

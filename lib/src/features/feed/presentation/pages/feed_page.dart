@@ -7,15 +7,14 @@ import 'package:memuno_app/src/app/extensions/string_x.dart';
 import 'package:memuno_app/src/app/feedback/app_feedback.dart';
 import 'package:memuno_app/src/app/router/app_router.dart';
 import 'package:memuno_app/src/app/widgets/m/m_app_bar.dart';
-import 'package:memuno_app/src/app/widgets/m/m_async_list.dart';
+import 'package:memuno_app/src/app/widgets/m/m_async_meme_list.dart';
 import 'package:memuno_app/src/app/widgets/m/m_gap.dart';
 import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
+import 'package:memuno_app/src/core/models/items/meme_item_entity.dart';
 import 'package:memuno_app/src/features/auth/application/providers/current_user_provider.dart';
+import 'package:memuno_app/src/features/feed/application/mutations/toggle_meme_laugh_mutation.dart';
 import 'package:memuno_app/src/features/feed/application/providers/feed_list_provider.dart';
-import 'package:memuno_app/src/features/feed/domain/entities/feed_cursor_entity.dart';
-import 'package:memuno_app/src/features/feed/domain/entities/feed_list_page_item_entity.dart';
-import 'package:memuno_app/src/features/feed/presentation/widgets/feed_list_item.dart';
 import 'package:memuno_app/src/features/notifications/application/providers/notifications_unread_count_provider.dart';
 import 'package:memuno_app/src/features/user_details/application/providers/user_details_provider.dart';
 import 'package:memuno_app/src/features/user_details/domain/entities/user_details_entity.dart';
@@ -112,10 +111,16 @@ class FeedPage extends ConsumerWidget {
         padding: EdgeInsets.only(
           top: context.topPadding + kToolbarHeight - 20.0,
         ),
-        child: MAsyncList<FeedListPageItemEntity, FeedCursorEntity>(
+        child: MAsyncMemeList(
           provider: feedListProvider,
           emptyText: l10n.feedListEmpty,
           loadMoreExtent: 220.0,
+          readToggleMutation: (WidgetRef ref, String memeId) {
+            return ref.watch(toggleMemeLaughMutationProvider(memeId));
+          },
+          onToggleLaugh: (WidgetRef ref, MemeItemEntity item) {
+            return ref.read(feedListProvider.notifier).toggleMemeLaugh(item);
+          },
           onRefresh: _onRefresh,
           listPadding: EdgeInsets.only(
             top: 20.0 + MSpacing.md,
@@ -129,9 +134,6 @@ class FeedPage extends ConsumerWidget {
           ),
           separatorBuilder: (BuildContext _, int _) {
             return const MGap.sm();
-          },
-          itemBuilder: (BuildContext context, FeedListPageItemEntity feedItem) {
-            return FeedListItem(feedItem: feedItem);
           },
         ),
       ),

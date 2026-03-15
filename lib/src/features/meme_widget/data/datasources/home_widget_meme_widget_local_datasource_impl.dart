@@ -13,15 +13,18 @@ final class HomeWidgetMemeWidgetLocalDatasourceImpl
 
   static const String _snapshotKey = 'meme_widget_snapshot';
   static const String _pendingActionUriKey = 'meme_widget_pending_action_uri';
+  static bool _isConfigured = false;
+  static Future<void>? _configureInFlight;
 
   @override
   Future<void> configure() async {
-    await HomeWidget.setAppGroupId(AppEnv.widgetAppGroupId);
+    await _ensureConfigured();
   }
 
   @override
-  Future<void> saveSnapshot(MemeWidgetSnapshotEntity snapshot) {
-    return HomeWidget.saveWidgetData<String>(
+  Future<void> saveSnapshot(MemeWidgetSnapshotEntity snapshot) async {
+    await _ensureConfigured();
+    await HomeWidget.saveWidgetData<String>(
       _snapshotKey,
       jsonEncode(snapshot.toJson()),
     );
@@ -29,6 +32,7 @@ final class HomeWidgetMemeWidgetLocalDatasourceImpl
 
   @override
   Future<MemeWidgetSnapshotEntity?> loadSnapshot() async {
+    await _ensureConfigured();
     final String? rawValue = await HomeWidget.getWidgetData<String>(
       _snapshotKey,
     );
@@ -50,17 +54,20 @@ final class HomeWidgetMemeWidgetLocalDatasourceImpl
   }
 
   @override
-  Future<void> clearSnapshot() {
-    return HomeWidget.saveWidgetData<String>(_snapshotKey, '');
+  Future<void> clearSnapshot() async {
+    await _ensureConfigured();
+    await HomeWidget.saveWidgetData<String>(_snapshotKey, '');
   }
 
   @override
-  Future<void> savePendingActionUri(String actionUri) {
-    return HomeWidget.saveWidgetData<String>(_pendingActionUriKey, actionUri);
+  Future<void> savePendingActionUri(String actionUri) async {
+    await _ensureConfigured();
+    await HomeWidget.saveWidgetData<String>(_pendingActionUriKey, actionUri);
   }
 
   @override
   Future<String?> takePendingActionUri() async {
+    await _ensureConfigured();
     final String? value = await HomeWidget.getWidgetData<String>(
       _pendingActionUriKey,
     );
@@ -76,6 +83,7 @@ final class HomeWidgetMemeWidgetLocalDatasourceImpl
 
   @override
   Future<void> refreshNativeWidget() async {
+    await _ensureConfigured();
     final List<Future<bool?>> updates = <Future<bool?>>[
       for (
         int index = 0;
@@ -95,13 +103,41 @@ final class HomeWidgetMemeWidgetLocalDatasourceImpl
 
   @override
   Stream<Uri> widgetClickedStream() {
-    return HomeWidget.widgetClicked
+    return _widgetClickedStream();
+  }
+
+  Stream<Uri> _widgetClickedStream() async* {
+    await _ensureConfigured();
+    yield* HomeWidget.widgetClicked
         .where((Uri? uri) => uri != null)
         .cast<Uri>();
   }
 
   @override
-  Future<Uri?> initiallyLaunchedUri() {
+  Future<Uri?> initiallyLaunchedUri() async {
+    await _ensureConfigured();
     return HomeWidget.initiallyLaunchedFromHomeWidget();
+  }
+
+  Future<void> _ensureConfigured() async {
+    if (_isConfigured) {
+      return;
+    }
+    final Future<void>? inFlight = _configureInFlight;
+    if (inFlight != null) {
+      await inFlight;
+      return;
+    }
+
+    final Future<void> configureFuture =
+        HomeWidget.setAppGroupId(AppEnv.widgetAppGroupId)
+            .then((_) {
+              _isConfigured = true;
+            })
+            .whenComplete(() {
+              _configureInFlight = null;
+            });
+    _configureInFlight = configureFuture;
+    await configureFuture;
   }
 }

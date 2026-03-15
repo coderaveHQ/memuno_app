@@ -82,7 +82,7 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
                 viewerPadding: EdgeInsets.all(MSpacing.sm),
               ),
               child: Stack(
-                children: [
+                children: <Widget>[
                   Positioned.fill(
                     child: AppEffects(child: child ?? const SizedBox.shrink()),
                   ),

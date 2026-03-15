@@ -14,8 +14,8 @@ sealed class MemeLaughListPageEntity with _$MemeLaughListPageEntity {
     /// Next cursor `created_at` value.
     DateTime? nextCursorCreatedAt,
 
-    /// Next cursor `user_id` value.
-    String? nextCursorUserId,
+    /// Next cursor `id` value.
+    String? nextCursorId,
   }) = _MemeLaughListPageEntity;
 
   const MemeLaughListPageEntity._();

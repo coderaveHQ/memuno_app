@@ -10,7 +10,6 @@ import 'package:memuno_app/l10n/app_localizations.dart';
 import 'package:memuno_app/src/app/extensions/build_context_x.dart';
 import 'package:memuno_app/src/app/extensions/mutation_x.dart';
 import 'package:memuno_app/src/app/widgets/m/m_app_bar.dart';
-import 'package:memuno_app/src/app/widgets/m/m_async_list.dart';
 import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/app/widgets/m/m_text_field.dart';
@@ -25,7 +24,7 @@ import 'package:memuno_app/src/features/notifications/domain/entities/notificati
 import 'package:memuno_app/src/features/notifications/domain/entities/notification_list_page_item_entity.dart';
 import 'package:memuno_app/src/features/notifications/domain/entities/notification_navigation_target.dart';
 import 'package:memuno_app/src/features/notifications/domain/usecases/resolve_notification_push_intent_usecase.dart';
-import 'package:memuno_app/src/features/notifications/presentation/widgets/notification_list_item.dart';
+import 'package:memuno_app/src/features/notifications/presentation/widgets/m_async_notification_list.dart';
 
 /// Notifications overview page with search, pagination, and read actions.
 class NotificationsPage extends HookConsumerWidget {
@@ -171,27 +170,13 @@ class NotificationsPage extends HookConsumerWidget {
             ),
           ),
           Expanded(
-            child:
-                MAsyncList<
-                  NotificationListPageItemEntity,
-                  NotificationCursorEntity
-                >(
-                  provider: notificationsListProvider,
-                  emptyText: l10n.notificationsListEmpty,
-                  loadMoreExtent: 220.0,
-                  itemBuilder:
-                      (
-                        BuildContext context,
-                        NotificationListPageItemEntity notification,
-                      ) {
-                        return NotificationListItem(
-                          notification: notification,
-                          onPressed: (NotificationListPageItemEntity item) {
-                            unawaited(_onOpenNotification(context, ref, item));
-                          },
-                        );
-                      },
-                ),
+            child: MAsyncNotificationList(
+              provider: notificationsListProvider,
+              emptyText: l10n.notificationsListEmpty,
+              onPressed: (NotificationListPageItemEntity item) {
+                unawaited(_onOpenNotification(context, ref, item));
+              },
+            ),
           ),
         ],
       ),

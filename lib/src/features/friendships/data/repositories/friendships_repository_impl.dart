@@ -51,7 +51,7 @@ final class FriendshipsRepositoryImpl implements FriendshipsRepository {
           .listFriendships(
             search: search,
             limit: limit,
-            cursorName: cursor?.name,
+            cursorCreatedAt: cursor?.createdAt,
             cursorId: cursor?.id,
           );
       return _friendshipMapper.pageToDomain(dto);

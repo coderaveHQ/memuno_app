@@ -14,8 +14,8 @@ sealed class FriendshipListPageDto with _$FriendshipListPageDto {
     /// Page items.
     required List<FriendshipListPageItemDto> items,
 
-    /// Next cursor `name` value.
-    @JsonKey(name: 'next_cursor_name') String? nextCursorName,
+    /// Next cursor `created_at` value.
+    @JsonKey(name: 'next_cursor_created_at') DateTime? nextCursorCreatedAt,
 
     /// Next cursor `id` value.
     @JsonKey(name: 'next_cursor_id') String? nextCursorId,

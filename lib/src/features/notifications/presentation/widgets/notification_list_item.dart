@@ -12,10 +12,10 @@ import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/features/notifications/domain/entities/notification_list_page_item_entity.dart';
 import 'package:memuno_app/src/features/notifications/domain/entities/notification_type.dart';
 
-/// Tile widget for rendering one [NotificationListPageItemEntity].
-class NotificationListItem extends StatelessWidget {
+/// Canonical list item widget for one notification row.
+class MAsyncNotificationListItem extends StatelessWidget {
   /// Creates one notification list item tile.
-  const NotificationListItem({
+  const MAsyncNotificationListItem({
     super.key,
     required this.notification,
     required this.onPressed,
