@@ -8,8 +8,6 @@ final class MemeEditorStateEntity {
   /// Creates a meme-editor state snapshot.
   const MemeEditorStateEntity({
     required this.template,
-    required this.customTemplateImageBytes,
-    required this.customTemplateAspectRatio,
     required this.textLayers,
     required this.selectedTextLayerId,
     required this.selectedRecipientUserIds,
@@ -23,8 +21,6 @@ final class MemeEditorStateEntity {
   factory MemeEditorStateEntity.initial() {
     return const MemeEditorStateEntity(
       template: null,
-      customTemplateImageBytes: null,
-      customTemplateAspectRatio: null,
       textLayers: <MemeTextLayerEntity>[],
       selectedTextLayerId: null,
       selectedRecipientUserIds: <String>{},
@@ -34,12 +30,6 @@ final class MemeEditorStateEntity {
 
   /// Currently selected meme template.
   final MemeTemplateListPageItemEntity? template;
-
-  /// PNG bytes for one custom gallery image used as meme background.
-  final Uint8List? customTemplateImageBytes;
-
-  /// Aspect ratio (`width / height`) of [customTemplateImageBytes].
-  final double? customTemplateAspectRatio;
 
   /// All text overlays currently placed on the meme.
   final List<MemeTextLayerEntity> textLayers;
@@ -72,14 +62,8 @@ final class MemeEditorStateEntity {
   /// Returns whether a template is selected.
   bool get hasTemplate => template != null;
 
-  /// Returns whether a custom gallery image is selected.
-  bool get hasCustomTemplateImage => customTemplateImageBytes != null;
-
-  /// Returns whether any meme background is selected.
-  bool get hasBackground => hasTemplate || hasCustomTemplateImage;
-
   /// Returns whether finalization is possible.
-  bool get canFinalize => hasBackground;
+  bool get canFinalize => hasTemplate;
 
   /// Returns whether one friendship user is selected for sending.
   bool get hasSelectedRecipients => selectedRecipientUserIds.isNotEmpty;
@@ -92,8 +76,6 @@ final class MemeEditorStateEntity {
   /// Returns a new state with updated fields.
   MemeEditorStateEntity copyWith({
     Object? template = _sentinel,
-    Object? customTemplateImageBytes = _sentinel,
-    Object? customTemplateAspectRatio = _sentinel,
     List<MemeTextLayerEntity>? textLayers,
     Object? selectedTextLayerId = _sentinel,
     Object? selectedRecipientUserIds = _sentinel,
@@ -103,12 +85,6 @@ final class MemeEditorStateEntity {
       template: template == _sentinel
           ? this.template
           : template as MemeTemplateListPageItemEntity?,
-      customTemplateImageBytes: customTemplateImageBytes == _sentinel
-          ? this.customTemplateImageBytes
-          : customTemplateImageBytes as Uint8List?,
-      customTemplateAspectRatio: customTemplateAspectRatio == _sentinel
-          ? this.customTemplateAspectRatio
-          : customTemplateAspectRatio as double?,
       textLayers: textLayers ?? this.textLayers,
       selectedTextLayerId: selectedTextLayerId == _sentinel
           ? this.selectedTextLayerId

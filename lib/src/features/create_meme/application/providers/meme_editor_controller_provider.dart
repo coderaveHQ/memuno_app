@@ -1,10 +1,7 @@
-import 'dart:typed_data';
-
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/add_meme_text_layer_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/clear_meme_recipient_selection_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/remove_meme_text_layer_by_id_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/select_meme_text_layer_usecase_provider.dart';
-import 'package:memuno_app/src/features/create_meme/application/providers/usecases/set_custom_meme_template_image_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/set_meme_template_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/toggle_selected_meme_text_background_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/toggle_meme_recipient_selection_usecase_provider.dart';
@@ -16,7 +13,6 @@ import 'package:memuno_app/src/features/create_meme/domain/usecases/add_meme_tex
 import 'package:memuno_app/src/features/create_meme/domain/usecases/clear_meme_recipient_selection_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/remove_meme_text_layer_by_id_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/select_meme_text_layer_usecase.dart';
-import 'package:memuno_app/src/features/create_meme/domain/usecases/set_custom_meme_template_image_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/set_meme_template_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/toggle_meme_recipient_selection_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/toggle_selected_meme_text_background_usecase.dart';
@@ -43,21 +39,6 @@ class MemeEditorController extends _$MemeEditorController {
       setMemeTemplateUsecaseProvider,
     );
     state = usecase(state: state, template: template);
-  }
-
-  /// Applies one custom gallery image as meme background and resets draft state.
-  void setCustomTemplateImage({
-    required Uint8List imageBytes,
-    required double aspectRatio,
-  }) {
-    final SetCustomMemeTemplateImageUsecase usecase = ref.read(
-      setCustomMemeTemplateImageUsecaseProvider,
-    );
-    state = usecase(
-      state: state,
-      imageBytes: imageBytes,
-      aspectRatio: aspectRatio,
-    );
   }
 
   /// Adds one text layer at normalized center position and selects it.

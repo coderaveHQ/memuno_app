@@ -37,23 +37,6 @@ final class MemeEditorRepositoryImpl implements MemeEditorRepository {
   }
 
   @override
-  MemeEditorStateEntity setCustomTemplateImage({
-    required MemeEditorStateEntity state,
-    required Uint8List imageBytes,
-    required double aspectRatio,
-  }) {
-    try {
-      return _memeEditorDatasource.setCustomTemplateImage(
-        state: state,
-        imageBytes: imageBytes,
-        aspectRatio: aspectRatio,
-      );
-    } catch (error) {
-      throw _failureMapper.map(error);
-    }
-  }
-
-  @override
   MemeEditorStateEntity addTextLayer({
     required MemeEditorStateEntity state,
     required String initialText,
@@ -199,21 +182,6 @@ final class MemeEditorRepositoryImpl implements MemeEditorRepository {
   }) {
     try {
       return _memeEditorDatasource.toggleSelectedTextBackground(state: state);
-    } catch (error) {
-      throw _failureMapper.map(error);
-    }
-  }
-
-  @override
-  MemeEditorStateEntity optimizeCustomTemplateImageForUpload({
-    required MemeEditorStateEntity state,
-    required int maxImageBytes,
-  }) {
-    try {
-      return _memeEditorDatasource.optimizeCustomTemplateImageForUpload(
-        state: state,
-        maxImageBytes: maxImageBytes,
-      );
     } catch (error) {
       throw _failureMapper.map(error);
     }

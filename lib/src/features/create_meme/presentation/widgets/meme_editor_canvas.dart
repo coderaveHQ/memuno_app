@@ -1,6 +1,5 @@
 import 'dart:async';
 import 'dart:math' as math;
-import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -47,8 +46,6 @@ final class MemeEditorCanvas extends StatefulWidget {
     required this.repaintBoundaryKey,
     required this.scrollController,
     required this.template,
-    required this.customTemplateImageBytes,
-    required this.customTemplateAspectRatio,
     required this.layers,
     required this.selectedLayerId,
     required this.selectedTextController,
@@ -71,12 +68,6 @@ final class MemeEditorCanvas extends StatefulWidget {
 
   /// Currently selected meme template.
   final MemeTemplateListPageItemEntity? template;
-
-  /// PNG bytes of selected custom gallery image, if any.
-  final Uint8List? customTemplateImageBytes;
-
-  /// Aspect ratio of selected custom gallery image.
-  final double? customTemplateAspectRatio;
 
   /// All text overlays rendered on top of the template.
   final List<MemeTextLayerEntity> layers;
@@ -317,10 +308,8 @@ final class _MemeEditorCanvasState extends State<MemeEditorCanvas> {
   Widget build(BuildContext context) {
     final AppLocalizations l10n = AppLocalizations.of(context);
     final MemeTemplateListPageItemEntity? currentTemplate = widget.template;
-    final Uint8List? currentCustomTemplateBytes =
-        widget.customTemplateImageBytes;
 
-    if (currentTemplate == null && currentCustomTemplateBytes == null) {
+    if (currentTemplate == null) {
       return ColoredBox(
         color: MColors.gray900,
         child: MCenter(
@@ -334,7 +323,6 @@ final class _MemeEditorCanvasState extends State<MemeEditorCanvas> {
 
     final double selectedAspectRatio = _resolveAspectRatio(
       template: currentTemplate,
-      customTemplateAspectRatio: widget.customTemplateAspectRatio,
     );
 
     return ColoredBox(
@@ -408,21 +396,13 @@ final class _MemeEditorCanvasState extends State<MemeEditorCanvas> {
                       clipBehavior: Clip.hardEdge,
                       children: <Widget>[
                         Positioned.fill(
-                          child: currentTemplate != null
-                              ? MImage.url(
-                                  currentTemplate.signedImageUrl,
-                                  fit: BoxFit.fill,
-                                  filterQuality: FilterQuality.high,
-                                  backgroundColor: MColors.gray900,
-                                  iconColor: MColors.gray300,
-                                )
-                              : MImage.bytes(
-                                  currentCustomTemplateBytes,
-                                  fit: BoxFit.fill,
-                                  filterQuality: FilterQuality.high,
-                                  backgroundColor: MColors.gray900,
-                                  iconColor: MColors.gray300,
-                                ),
+                          child: MImage.url(
+                            currentTemplate.signedImageUrl,
+                            fit: BoxFit.fill,
+                            filterQuality: FilterQuality.high,
+                            backgroundColor: MColors.gray900,
+                            iconColor: MColors.gray300,
+                          ),
                         ),
                         for (final MemeTextLayerEntity layer in widget.layers)
                           _buildLayer(
@@ -1432,7 +1412,6 @@ final class _MemeEditorCanvasState extends State<MemeEditorCanvas> {
   /// Resolves currently active background aspect ratio.
   double _resolveAspectRatio({
     required MemeTemplateListPageItemEntity? template,
-    required double? customTemplateAspectRatio,
   }) {
     final MemeTemplateListPageItemEntity? currentTemplate = template;
     if (currentTemplate != null) {
@@ -1440,8 +1419,7 @@ final class _MemeEditorCanvasState extends State<MemeEditorCanvas> {
       return ratio > 0.0 ? ratio : 1.0;
     }
 
-    final double ratio = customTemplateAspectRatio ?? 1.0;
-    return ratio > 0.0 ? ratio : 1.0;
+    return 1.0;
   }
 }
 

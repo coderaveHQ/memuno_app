@@ -61,24 +61,20 @@ final class SendMemeUsecase {
       }
     }
 
-    final String? templateId = state.template?.id;
-    if (templateId != null) {
-      final Failure? templateIdValidation = _validator.validateTemplateId(
-        templateId,
-      );
-      if (templateIdValidation != null) {
-        throw templateIdValidation;
-      }
+    final template = state.template;
+    if (template == null) {
+      throw const Failure.validation(code: 'invalid_format', field: 'template');
     }
 
-    final double? aspectRatio =
-        state.template?.aspectRatio ?? state.customTemplateAspectRatio;
-    if (aspectRatio == null) {
-      throw const Failure.validation(
-        code: 'invalid_format',
-        field: 'image_aspect_ratio',
-      );
+    final String templateId = template.id;
+    final Failure? templateIdValidation = _validator.validateTemplateId(
+      templateId,
+    );
+    if (templateIdValidation != null) {
+      throw templateIdValidation;
     }
+
+    final double aspectRatio = template.aspectRatio;
 
     final Failure? aspectRatioValidation = _validator.validateAspectRatio(
       aspectRatio,

@@ -10,7 +10,6 @@ import 'package:memuno_app/l10n/app_localizations.dart';
 import 'package:memuno_app/src/app/extensions/build_context_x.dart';
 import 'package:memuno_app/src/app/feedback/app_feedback.dart';
 import 'package:memuno_app/src/app/feedback/app_feedback_provider.dart';
-import 'package:memuno_app/src/app/widgets/m/m_button.dart';
 import 'package:memuno_app/src/app/widgets/m/m_center.dart';
 import 'package:memuno_app/src/app/widgets/m/m_circular_progress_indicator.dart';
 import 'package:memuno_app/src/app/widgets/m/m_image.dart';
@@ -22,18 +21,14 @@ import 'package:memuno_app/src/app/widgets/m/m_tappable.dart';
 import 'package:memuno_app/src/app/widgets/m/m_text_field.dart';
 import 'package:memuno_app/src/core/state/pagination/paginated_list_state.dart';
 import 'package:memuno_app/src/features/meme_templates/application/providers/meme_templates_list_provider.dart';
-import 'package:memuno_app/src/features/meme_templates/application/providers/usecases/pick_and_crop_meme_template_image_usecase_provider.dart';
 import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_cursor_entity.dart';
 import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_list_page_item_entity.dart';
-import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_picker_selection_entity.dart';
-import 'package:memuno_app/src/features/meme_templates/domain/entities/picked_meme_template_image_entity.dart';
-import 'package:memuno_app/src/features/meme_templates/domain/usecases/pick_and_crop_meme_template_image_usecase.dart';
 
-/// Opens the meme-template picker and returns the selected payload.
-Future<MemeTemplatePickerSelectionEntity?> showMemeTemplatesBottomSheet(
+/// Opens the meme-template picker and returns the selected template.
+Future<MemeTemplateListPageItemEntity?> showMemeTemplatesBottomSheet(
   BuildContext context,
 ) async {
-  return showMModalBottomSheet<MemeTemplatePickerSelectionEntity>(
+  return showMModalBottomSheet<MemeTemplateListPageItemEntity>(
     context,
     isScrollControlled: true,
     builder: (BuildContext _) {
@@ -71,43 +66,6 @@ class MemeTemplatesBottomSheet extends HookConsumerWidget {
   ) async {
     try {
       await ref.read(memeTemplatesListProvider.notifier).loadMore();
-    } catch (error) {
-      if (!context.mounted) {
-        return;
-      }
-      feedback.resolveAndShowError(context, error);
-    }
-  }
-
-  /// Picks one gallery image, crops it, and returns picker selection payload.
-  Future<void> _onPickFromGallery(
-    WidgetRef ref,
-    BuildContext context,
-    AppFeedback feedback,
-  ) async {
-    final PickAndCropMemeTemplateImageUsecase usecase = ref.read(
-      pickAndCropMemeTemplateImageUsecaseProvider,
-    );
-
-    final PickedMemeTemplateImageEntity? pickedImage;
-    try {
-      pickedImage = await usecase();
-    } catch (error) {
-      if (!context.mounted) {
-        return;
-      }
-      feedback.resolveAndShowError(context, error);
-      return;
-    }
-
-    if (!context.mounted || pickedImage == null) {
-      return;
-    }
-
-    try {
-      context.pop(
-        MemeTemplatePickerSelectionEntity.gallery(pickedImage: pickedImage),
-      );
     } catch (error) {
       if (!context.mounted) {
         return;
@@ -172,124 +130,98 @@ class MemeTemplatesBottomSheet extends HookConsumerWidget {
     final EdgeInsets paddingWithBottom = paddingWithoutBottom.copyWith(
       bottom: context.bottomPadding + MSpacing.md,
     );
-    const double galleryButtonBottomOffset = 56.0;
-
     return MModalBottomSheet(
       title: l10n.memeTemplatePickerTitle,
-      child: Stack(
+      child: Column(
         children: <Widget>[
-          Column(
-            children: <Widget>[
-              Padding(
-                padding: paddingWithoutBottom.copyWith(top: 0.0),
-                child: MTextField(
-                  controller: searchController,
-                  icon: LucideIcons.search,
-                  label: l10n.memeTemplatePickerSearchLabel,
-                  hint: l10n.memeTemplatePickerSearchHint,
-                ),
-              ),
-              Expanded(
-                child: asyncTemplates.when(
-                  data:
-                      (
-                        PaginatedListState<
-                          MemeTemplateListPageItemEntity,
-                          MemeTemplateCursorEntity
-                        >
-                        templatesState,
-                      ) {
-                        final List<MemeTemplateListPageItemEntity> templates =
-                            templatesState.items;
-                        return NotificationListener<ScrollNotification>(
-                          onNotification: (ScrollNotification notification) {
-                            if (notification.metrics.extentAfter < 500.0) {
-                              unawaited(_onLoadMore(ref, context, feedback));
-                            }
-                            return false;
-                          },
-                          child: MRefreshIndicator(
-                            onRefresh: () => _onRefresh(ref, context, feedback),
-                            child: MasonryGridView.builder(
-                              physics: const AlwaysScrollableScrollPhysics(),
-                              padding: EdgeInsets.only(
-                                bottom:
-                                    context.bottomPadding +
-                                    galleryButtonBottomOffset +
-                                    MSpacing.xl,
-                              ),
-                              gridDelegate:
-                                  SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                                    crossAxisCount: 2,
-                                  ),
-                              crossAxisSpacing: MSpacing.xs,
-                              mainAxisSpacing: MSpacing.xs,
-                              itemCount: _itemCount(templatesState),
-                              itemBuilder: (BuildContext context, int index) {
-                                if (templates.isEmpty) {
-                                  return MReload(
-                                    onReload: () =>
-                                        _onRefresh(ref, context, feedback),
-                                    padding: paddingWithoutBottom,
-                                    text: l10n.memeTemplatePickerEmpty,
-                                  );
-                                }
-
-                                if (index >= templates.length) {
-                                  if (!templatesState.isLoadingMore) {
-                                    return const SizedBox.shrink();
-                                  }
-
-                                  return MCenter(
-                                    padding: paddingWithoutBottom,
-                                    child: const MCircularProgressIndicator(),
-                                  );
-                                }
-
-                                final MemeTemplateListPageItemEntity template =
-                                    templates[index];
-                                return _MemeTemplateGridItem(
-                                  template: template,
-                                  isEnabled: true,
-                                );
-                              },
-                            ),
-                          ),
-                        );
-                      },
-                  error: (Object e, StackTrace _) {
-                    final String message = feedback.resolve(context, e);
-                    return MReload(
-                      onReload: () => _onRefresh(ref, context, feedback),
-                      padding: paddingWithBottom,
-                      text: message,
-                    );
-                  },
-                  loading: () {
-                    return MCenter(
-                      padding: paddingWithBottom,
-                      child: const MCircularProgressIndicator(),
-                    );
-                  },
-                ),
-              ),
-            ],
+          Padding(
+            padding: paddingWithoutBottom.copyWith(top: 0.0),
+            child: MTextField(
+              controller: searchController,
+              icon: LucideIcons.search,
+              label: l10n.memeTemplatePickerSearchLabel,
+              hint: l10n.memeTemplatePickerSearchHint,
+            ),
           ),
-          Align(
-            alignment: Alignment.bottomCenter,
-            child: Padding(
-              padding: EdgeInsets.only(
-                left: context.leftPadding + MSpacing.md,
-                right: context.rightPadding + MSpacing.md,
-                bottom: context.bottomPadding + MSpacing.md,
-              ),
-              child: MButton.primary(
-                title: l10n.memeTemplatePickerGalleryButton,
-                isExpanded: false,
-                onPressed: () {
-                  unawaited(_onPickFromGallery(ref, context, feedback));
-                },
-              ),
+          Expanded(
+            child: asyncTemplates.when(
+              data:
+                  (
+                    PaginatedListState<
+                      MemeTemplateListPageItemEntity,
+                      MemeTemplateCursorEntity
+                    >
+                    templatesState,
+                  ) {
+                    final List<MemeTemplateListPageItemEntity> templates =
+                        templatesState.items;
+                    return NotificationListener<ScrollNotification>(
+                      onNotification: (ScrollNotification notification) {
+                        if (notification.metrics.extentAfter < 500.0) {
+                          unawaited(_onLoadMore(ref, context, feedback));
+                        }
+                        return false;
+                      },
+                      child: MRefreshIndicator(
+                        onRefresh: () => _onRefresh(ref, context, feedback),
+                        child: MasonryGridView.builder(
+                          physics: const AlwaysScrollableScrollPhysics(),
+                          padding: EdgeInsets.only(
+                            bottom: context.bottomPadding + MSpacing.md,
+                          ),
+                          gridDelegate:
+                              SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                crossAxisCount: 2,
+                              ),
+                          crossAxisSpacing: MSpacing.xs,
+                          mainAxisSpacing: MSpacing.xs,
+                          itemCount: _itemCount(templatesState),
+                          itemBuilder: (BuildContext context, int index) {
+                            if (templates.isEmpty) {
+                              return MReload(
+                                onReload: () =>
+                                    _onRefresh(ref, context, feedback),
+                                padding: paddingWithoutBottom,
+                                text: l10n.memeTemplatePickerEmpty,
+                              );
+                            }
+
+                            if (index >= templates.length) {
+                              if (!templatesState.isLoadingMore) {
+                                return const SizedBox.shrink();
+                              }
+
+                              return MCenter(
+                                padding: paddingWithoutBottom,
+                                child: const MCircularProgressIndicator(),
+                              );
+                            }
+
+                            final MemeTemplateListPageItemEntity template =
+                                templates[index];
+                            return _MemeTemplateGridItem(
+                              template: template,
+                              isEnabled: true,
+                            );
+                          },
+                        ),
+                      ),
+                    );
+                  },
+              error: (Object e, StackTrace _) {
+                final String message = feedback.resolve(context, e);
+                return MReload(
+                  onReload: () => _onRefresh(ref, context, feedback),
+                  padding: paddingWithBottom,
+                  text: message,
+                );
+              },
+              loading: () {
+                return MCenter(
+                  padding: paddingWithBottom,
+                  child: const MCircularProgressIndicator(),
+                );
+              },
             ),
           ),
         ],
@@ -320,9 +252,7 @@ final class _MemeTemplateGridItem extends StatelessWidget {
 
     return MTappable(
       onPressed: () {
-        context.pop(
-          MemeTemplatePickerSelectionEntity.template(template: template),
-        );
+        context.pop(template);
       },
       isEnabled: isEnabled,
       child: MImage.url(template.signedImageUrl, aspectRatio: safeAspectRatio),
