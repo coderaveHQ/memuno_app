@@ -126,6 +126,38 @@ class AppLocalizationsDe extends AppLocalizations {
       'Dein Name wurde aktualisiert.';
 
   @override
+  String get userDetailsMemesTabAll => 'Alle';
+
+  @override
+  String get userDetailsMemesTabSent => 'Gesendet';
+
+  @override
+  String get userDetailsMemesTabReceived => 'Empfangen';
+
+  @override
+  String get userDetailsOwnAllMemesEmpty => 'Noch keine Memes.';
+
+  @override
+  String get userDetailsOwnSentMemesEmpty =>
+      'Du hast noch keine Memes erstellt.';
+
+  @override
+  String get userDetailsOwnReceivedMemesEmpty =>
+      'Du hast noch keine Memes erhalten.';
+
+  @override
+  String get userDetailsOtherAllMemesEmpty =>
+      'Noch keine ausgetauschten Memes.';
+
+  @override
+  String get userDetailsOtherSentMemesEmpty =>
+      'Du hast dieser Person noch keine Memes gesendet.';
+
+  @override
+  String get userDetailsOtherReceivedMemesEmpty =>
+      'Du hast von dieser Person noch keine Memes erhalten.';
+
+  @override
   String get friendshipsTitle => 'Freundschaften';
 
   @override
@@ -569,6 +601,38 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
   @override
   String get userDetailsUpdateNameSuccessMessage =>
       'Dein Name wurde aktualisiert.';
+
+  @override
+  String get userDetailsMemesTabAll => 'Alle';
+
+  @override
+  String get userDetailsMemesTabSent => 'Gesendet';
+
+  @override
+  String get userDetailsMemesTabReceived => 'Empfangen';
+
+  @override
+  String get userDetailsOwnAllMemesEmpty => 'Noch keine Memes.';
+
+  @override
+  String get userDetailsOwnSentMemesEmpty =>
+      'Du hast noch keine Memes erstellt.';
+
+  @override
+  String get userDetailsOwnReceivedMemesEmpty =>
+      'Du hast noch keine Memes erhalten.';
+
+  @override
+  String get userDetailsOtherAllMemesEmpty =>
+      'Noch keine ausgetauschten Memes.';
+
+  @override
+  String get userDetailsOtherSentMemesEmpty =>
+      'Du hast dieser Person noch keine Memes gesendet.';
+
+  @override
+  String get userDetailsOtherReceivedMemesEmpty =>
+      'Du hast von dieser Person noch keine Memes erhalten.';
 
   @override
   String get friendshipsTitle => 'Freundschaften';
