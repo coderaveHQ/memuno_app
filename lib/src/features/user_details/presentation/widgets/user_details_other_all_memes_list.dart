@@ -44,8 +44,12 @@ class UserDetailsOtherAllMemesListView extends StatelessWidget {
       emptyText: l10n.userDetailsOtherAllMemesEmpty,
       loadMoreExtent: 220.0,
       onRefresh: onRefresh,
-      listPadding: EdgeInsets.only(bottom: context.bottomPadding + MSpacing.md),
+      listPadding: EdgeInsets.only(
+        top: MSpacing.md,
+        bottom: context.bottomPadding + MSpacing.md,
+      ),
       childPadding: EdgeInsets.only(
+        top: MSpacing.md,
         bottom: context.bottomPadding + MSpacing.md,
         left: context.leftPadding + MSpacing.md,
         right: context.rightPadding + MSpacing.md,

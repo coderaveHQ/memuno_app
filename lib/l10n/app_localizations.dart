@@ -274,12 +274,6 @@ abstract class AppLocalizations {
   /// **'Friendship code:'**
   String get userDetailsFriendshipCodeLabel;
 
-  /// No description provided for @userDetailsFriendshipCodeShareText.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Let\'\'s be friends on Memuno: {code}'**
-  String userDetailsFriendshipCodeShareText(Object code);
-
   /// No description provided for @userDetailsJoinedAtLabel.
   ///
   /// In en_US, this message translates to:
@@ -453,6 +447,18 @@ abstract class AppLocalizations {
   /// In en_US, this message translates to:
   /// **'No notifications yet.'**
   String get notificationsListEmpty;
+
+  /// No description provided for @mainShellTabFeed.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Feed'**
+  String get mainShellTabFeed;
+
+  /// No description provided for @mainShellTabCommunity.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Community'**
+  String get mainShellTabCommunity;
 
   /// No description provided for @feedListEmpty.
   ///

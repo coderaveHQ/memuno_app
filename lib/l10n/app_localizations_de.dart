@@ -108,11 +108,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get userDetailsFriendshipCodeLabel => 'Freundschaftscode:';
 
   @override
-  String userDetailsFriendshipCodeShareText(Object code) {
-    return 'Lass uns bei Memuno befreundet sein: $code';
-  }
-
-  @override
   String get userDetailsJoinedAtLabel => 'Beigetreten am:';
 
   @override
@@ -207,6 +202,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get notificationsListEmpty => 'Noch keine Benachrichtigungen.';
+
+  @override
+  String get mainShellTabFeed => 'Feed';
+
+  @override
+  String get mainShellTabCommunity => 'Community';
 
   @override
   String get feedListEmpty => 'Noch keine Memes in deinem Feed.';
@@ -585,11 +586,6 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
   String get userDetailsFriendshipCodeLabel => 'Freundschaftscode:';
 
   @override
-  String userDetailsFriendshipCodeShareText(Object code) {
-    return 'Lass uns bei Memuno befreundet sein: $code';
-  }
-
-  @override
   String get userDetailsJoinedAtLabel => 'Beigetreten am:';
 
   @override
@@ -684,6 +680,12 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
 
   @override
   String get notificationsListEmpty => 'Noch keine Benachrichtigungen.';
+
+  @override
+  String get mainShellTabFeed => 'Feed';
+
+  @override
+  String get mainShellTabCommunity => 'Community';
 
   @override
   String get feedListEmpty => 'Noch keine Memes in deinem Feed.';
