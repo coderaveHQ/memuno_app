@@ -39,12 +39,6 @@
   "signOutButton": "Abmelden",
   "userDetailsTitle": "Nutzer-Details",
   "userDetailsFriendshipCodeLabel": "Freundschaftscode:",
-  "userDetailsFriendshipCodeShareText": "Lass uns bei Memuno befreundet sein: {code}",
-  "@userDetailsFriendshipCodeShareText": {
-    "placeholders": {
-      "code": {}
-    }
-  },
   "userDetailsJoinedAtLabel": "Beigetreten am:",
   "userDetailsUpdateNameDialogTitle": "Namen aktualisieren",
   "userDetailsUpdateNameSubmitButton": "Namen speichern",
@@ -74,6 +68,8 @@
   "notificationsSearchLabel": "Benachrichtigungen suchen",
   "notificationsSearchHint": "Nach Name oder Freundschaftscode suchen",
   "notificationsListEmpty": "Noch keine Benachrichtigungen.",
+  "mainShellTabFeed": "Feed",
+  "mainShellTabCommunity": "Community",
   "feedListEmpty": "Noch keine Memes in deinem Feed.",
   "widgetNoMemesYet": "Noch keine Memes.",
   "widgetSignInToDisplayMemes": "Melde dich an, um Memes anzuzeigen.",

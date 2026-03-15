@@ -62,8 +62,6 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
               padding: EdgeInsets.symmetric(vertical: 2.0),
               child: Row(
                 children: <Widget>[
-                  ?avatar,
-                  if (avatar != null && leading.isNotEmpty) const MGap.md(),
                   if (leading.isNotEmpty)
                     for (int i = 0; i < leading.length; i++)
                       Padding(
@@ -72,7 +70,9 @@ class MAppBar extends StatelessWidget implements PreferredSizeWidget {
                         ),
                         child: leading[i],
                       ),
-                  if ((avatar != null || leading.isNotEmpty) &&
+                  if (avatar != null && leading.isNotEmpty) const MGap.md(),
+                  ?avatar,
+                  if ((leading.isNotEmpty || avatar != null) &&
                       (title != null || subtitle != null))
                     const MGap.md(),
                   Expanded(
