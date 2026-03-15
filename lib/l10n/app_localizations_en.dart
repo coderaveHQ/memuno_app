@@ -123,6 +123,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get userDetailsUpdateNameSuccessMessage => 'Your name was updated.';
 
   @override
+  String get userDetailsMemesTabAll => 'All';
+
+  @override
+  String get userDetailsMemesTabSent => 'Sent';
+
+  @override
+  String get userDetailsMemesTabReceived => 'Received';
+
+  @override
+  String get userDetailsOwnAllMemesEmpty => 'No memes yet.';
+
+  @override
+  String get userDetailsOwnSentMemesEmpty => 'You haven\'t created memes yet.';
+
+  @override
+  String get userDetailsOwnReceivedMemesEmpty => 'No memes received yet.';
+
+  @override
+  String get userDetailsOtherAllMemesEmpty => 'No memes exchanged yet.';
+
+  @override
+  String get userDetailsOtherSentMemesEmpty =>
+      'No memes sent to this user yet.';
+
+  @override
+  String get userDetailsOtherReceivedMemesEmpty =>
+      'No memes received from this user yet.';
+
+  @override
   String get friendshipsTitle => 'Friendships';
 
   @override
@@ -557,6 +586,35 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
 
   @override
   String get userDetailsUpdateNameSuccessMessage => 'Your name was updated.';
+
+  @override
+  String get userDetailsMemesTabAll => 'All';
+
+  @override
+  String get userDetailsMemesTabSent => 'Sent';
+
+  @override
+  String get userDetailsMemesTabReceived => 'Received';
+
+  @override
+  String get userDetailsOwnAllMemesEmpty => 'No memes yet.';
+
+  @override
+  String get userDetailsOwnSentMemesEmpty => 'You haven\'t created memes yet.';
+
+  @override
+  String get userDetailsOwnReceivedMemesEmpty => 'No memes received yet.';
+
+  @override
+  String get userDetailsOtherAllMemesEmpty => 'No memes exchanged yet.';
+
+  @override
+  String get userDetailsOtherSentMemesEmpty =>
+      'No memes sent to this user yet.';
+
+  @override
+  String get userDetailsOtherReceivedMemesEmpty =>
+      'No memes received from this user yet.';
 
   @override
   String get friendshipsTitle => 'Friendships';

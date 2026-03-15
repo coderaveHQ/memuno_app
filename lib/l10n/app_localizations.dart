@@ -304,6 +304,60 @@ abstract class AppLocalizations {
   /// **'Your name was updated.'**
   String get userDetailsUpdateNameSuccessMessage;
 
+  /// No description provided for @userDetailsMemesTabAll.
+  ///
+  /// In en_US, this message translates to:
+  /// **'All'**
+  String get userDetailsMemesTabAll;
+
+  /// No description provided for @userDetailsMemesTabSent.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Sent'**
+  String get userDetailsMemesTabSent;
+
+  /// No description provided for @userDetailsMemesTabReceived.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Received'**
+  String get userDetailsMemesTabReceived;
+
+  /// No description provided for @userDetailsOwnAllMemesEmpty.
+  ///
+  /// In en_US, this message translates to:
+  /// **'No memes yet.'**
+  String get userDetailsOwnAllMemesEmpty;
+
+  /// No description provided for @userDetailsOwnSentMemesEmpty.
+  ///
+  /// In en_US, this message translates to:
+  /// **'You haven\'\'t created memes yet.'**
+  String get userDetailsOwnSentMemesEmpty;
+
+  /// No description provided for @userDetailsOwnReceivedMemesEmpty.
+  ///
+  /// In en_US, this message translates to:
+  /// **'No memes received yet.'**
+  String get userDetailsOwnReceivedMemesEmpty;
+
+  /// No description provided for @userDetailsOtherAllMemesEmpty.
+  ///
+  /// In en_US, this message translates to:
+  /// **'No memes exchanged yet.'**
+  String get userDetailsOtherAllMemesEmpty;
+
+  /// No description provided for @userDetailsOtherSentMemesEmpty.
+  ///
+  /// In en_US, this message translates to:
+  /// **'No memes sent to this user yet.'**
+  String get userDetailsOtherSentMemesEmpty;
+
+  /// No description provided for @userDetailsOtherReceivedMemesEmpty.
+  ///
+  /// In en_US, this message translates to:
+  /// **'No memes received from this user yet.'**
+  String get userDetailsOtherReceivedMemesEmpty;
+
   /// No description provided for @friendshipsTitle.
   ///
   /// In en_US, this message translates to:
