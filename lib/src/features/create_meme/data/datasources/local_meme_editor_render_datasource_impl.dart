@@ -13,15 +13,10 @@ final class LocalMemeEditorRenderDatasourceImpl
   const LocalMemeEditorRenderDatasourceImpl();
 
   @override
-  /// Resolves source background size from custom image bytes or template URL.
+  /// Resolves source background size from selected template URL.
   Future<MemeImageSizeEntity> resolveBackgroundSize({
     required MemeEditorStateEntity state,
   }) async {
-    final Uint8List? customImageBytes = state.customTemplateImageBytes;
-    if (customImageBytes != null && customImageBytes.isNotEmpty) {
-      return _decodeImageSize(customImageBytes);
-    }
-
     final String? signedImageUrl = state.template?.signedImageUrl;
     if (signedImageUrl == null || signedImageUrl.trim().isEmpty) {
       throw StateError('No meme background is selected.');

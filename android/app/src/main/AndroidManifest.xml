@@ -74,10 +74,6 @@
                 <action android:name="es.antonborri.home_widget.action.LAUNCH" />
             </intent-filter>
         </activity>
-        <activity
-            android:name="com.yalantis.ucrop.UCropActivity"
-            android:screenOrientation="portrait"
-            android:theme="@style/Theme.AppCompat.Light.NoActionBar" />
         <receiver
             android:name="dev.coderave.memuno_app.widget.MemeWidgetReceiver"
             android:exported="true"

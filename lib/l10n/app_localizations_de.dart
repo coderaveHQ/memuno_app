@@ -46,14 +46,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get validationInvalidCredentials => 'E-Mail oder Passwort ist falsch.';
 
   @override
-  String get permissionGalleryDeniedMessage =>
-      'Bitte erlaube den Zugriff auf deine Fotos, um ein Bild von deinem Gerät auszuwählen.';
-
-  @override
-  String get validationMemePayloadTooLarge =>
-      'Bild und Text sind zusammen größer als 5 MB. Bitte verwende ein kleineres Bild.';
-
-  @override
   String get validationUnknown =>
       'Eingabe ungültig. Bitte prüfe deine Angaben.';
 
@@ -285,14 +277,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get memeTemplatePickerEmpty => 'Keine Meme-Vorlagen gefunden.';
 
   @override
-  String get memeTemplatePickerGalleryButton => 'Aus Galerie';
-
-  @override
   String get memeEditorTitle => 'Neues Meme';
 
   @override
   String get memeEditorCanvasSelectTemplateHint =>
-      'Wähle eine Meme-Vorlage oder ein Bild aus deiner Galerie aus.';
+      'Wähle eine Meme-Vorlage aus.';
 
   @override
   String get memeEditorTextBackgroundEnable => 'Textkontur aktivieren';
@@ -524,14 +513,6 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
   String get validationInvalidCredentials => 'E-Mail oder Passwort ist falsch.';
 
   @override
-  String get permissionGalleryDeniedMessage =>
-      'Bitte erlaube den Zugriff auf deine Fotos, um ein Bild von deinem Gerät auszuwählen.';
-
-  @override
-  String get validationMemePayloadTooLarge =>
-      'Bild und Text sind zusammen größer als 5 MB. Bitte verwende ein kleineres Bild.';
-
-  @override
   String get validationUnknown =>
       'Eingabe ungültig. Bitte prüfe deine Angaben.';
 
@@ -763,14 +744,11 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
   String get memeTemplatePickerEmpty => 'Keine Meme-Vorlagen gefunden.';
 
   @override
-  String get memeTemplatePickerGalleryButton => 'Aus Galerie';
-
-  @override
   String get memeEditorTitle => 'Neues Meme';
 
   @override
   String get memeEditorCanvasSelectTemplateHint =>
-      'Wähle eine Meme-Vorlage oder ein Bild aus deiner Galerie aus.';
+      'Wähle eine Meme-Vorlage aus.';
 
   @override
   String get memeEditorTextBackgroundEnable => 'Textkontur aktivieren';
