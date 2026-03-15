@@ -1,3 +1,6 @@
+import 'package:memuno_app/src/core/models/items/meme_item_entity.dart';
+import 'package:memuno_app/src/core/models/items/user_item_entity.dart';
+import 'package:memuno_app/src/core/models/pagination/list_cursor_entity.dart';
 import 'package:memuno_app/src/core/state/optimistic/optimistic_async_state_mixin.dart';
 import 'package:memuno_app/src/core/state/pagination/async_pagination_mixin.dart';
 import 'package:memuno_app/src/core/state/pagination/paginated_list_state.dart';
@@ -18,27 +21,32 @@ part 'feed_list_provider.g.dart';
 @Riverpod(keepAlive: true)
 class FeedList extends _$FeedList
     with
-        AsyncPaginationMixin<FeedListPageItemEntity, FeedCursorEntity>,
+        AsyncPaginationMixin<MemeItemEntity, ListCursorEntity>,
         OptimisticAsyncStateMixin<
-          PaginatedListState<FeedListPageItemEntity, FeedCursorEntity>
+          PaginatedListState<MemeItemEntity, ListCursorEntity>
         > {
   @override
   /// Builds the initial feed page.
-  Future<PaginatedListState<FeedListPageItemEntity, FeedCursorEntity>> build() {
+  Future<PaginatedListState<MemeItemEntity, ListCursorEntity>> build() {
     return buildPaginatedState();
   }
 
   @override
   /// Loads one feed page from the list usecase.
-  Future<PaginatedPage<FeedListPageItemEntity, FeedCursorEntity>> loadPage({
+  Future<PaginatedPage<MemeItemEntity, ListCursorEntity>> loadPage({
     required int limit,
-    FeedCursorEntity? cursor,
+    ListCursorEntity? cursor,
   }) async {
     final ListFeedUsecase usecase = ref.watch(listFeedUsecaseProvider);
-    final FeedListPageEntity page = await usecase(limit: limit, cursor: cursor);
+    final FeedListPageEntity page = await usecase(
+      limit: limit,
+      cursor: cursor == null
+          ? null
+          : FeedCursorEntity(createdAt: cursor.createdAt, id: cursor.id),
+    );
 
-    return PaginatedPage<FeedListPageItemEntity, FeedCursorEntity>(
-      items: page.items,
+    return PaginatedPage<MemeItemEntity, ListCursorEntity>(
+      items: page.items.map(_toMemeItemEntity).toList(growable: false),
       nextCursor: _cursorFromPage(page),
     );
   }
@@ -54,52 +62,51 @@ class FeedList extends _$FeedList
   }
 
   /// Toggles the current user's laugh state for one feed meme.
-  Future<void> toggleMemeLaugh(FeedListPageItemEntity feedItem) async {
-    final PaginatedListState<FeedListPageItemEntity, FeedCursorEntity>?
-    current = state.asData?.value;
+  Future<void> toggleMemeLaugh(MemeItemEntity feedItem) async {
+    final PaginatedListState<MemeItemEntity, ListCursorEntity>? current =
+        state.asData?.value;
     if (current == null) {
       return;
     }
 
-    final String memeId = feedItem.meme.id;
-    final int index = current.items.indexWhere(
-      (FeedListPageItemEntity item) => item.meme.id == memeId,
-    );
+    final String memeId = feedItem.id;
+    final int index = current.items.indexWhere((MemeItemEntity item) {
+      return item.id == memeId;
+    });
     if (index < 0) {
       return;
     }
-    final FeedListPageItemEntity currentItem = current.items[index];
+
+    final MemeItemEntity currentItem = current.items[index];
     final String? currentUserId = ref.read(currentUserProvider)?.id;
     if (currentUserId != null && currentItem.user.id == currentUserId) {
       return;
     }
 
-    final bool wasLaughed = currentItem.meme.isLaughed;
-    final int previousCount = currentItem.meme.laughCount;
+    final bool wasLaughed = currentItem.isLaughed;
+    final int previousCount = currentItem.laughCount;
     final bool nextLaughed = !wasLaughed;
     final int nextCount = nextLaughed
         ? previousCount + 1
         : (previousCount - 1).clamp(0, previousCount).toInt();
 
     await runOptimisticUpdate<bool>(
-      apply:
-          (PaginatedListState<FeedListPageItemEntity, FeedCursorEntity> state) {
-            return _setMemeLaughState(
-              state,
-              memeId: memeId,
-              isLaughed: nextLaughed,
-              laughCount: nextCount,
-            );
-          },
-      rollback:
-          (PaginatedListState<FeedListPageItemEntity, FeedCursorEntity> state) {
-            return _setMemeLaughState(
-              state,
-              memeId: memeId,
-              isLaughed: wasLaughed,
-              laughCount: previousCount,
-            );
-          },
+      apply: (PaginatedListState<MemeItemEntity, ListCursorEntity> state) {
+        return _setMemeLaughState(
+          state,
+          memeId: memeId,
+          isLaughed: nextLaughed,
+          laughCount: nextCount,
+        );
+      },
+      rollback: (PaginatedListState<MemeItemEntity, ListCursorEntity> state) {
+        return _setMemeLaughState(
+          state,
+          memeId: memeId,
+          isLaughed: wasLaughed,
+          laughCount: previousCount,
+        );
+      },
       operation: () {
         final ToggleMemeLaughUsecase usecase = ref.read(
           toggleMemeLaughUsecaseProvider,
@@ -109,40 +116,51 @@ class FeedList extends _$FeedList
     );
   }
 
-  PaginatedListState<FeedListPageItemEntity, FeedCursorEntity>
-  _setMemeLaughState(
-    PaginatedListState<FeedListPageItemEntity, FeedCursorEntity> state, {
+  PaginatedListState<MemeItemEntity, ListCursorEntity> _setMemeLaughState(
+    PaginatedListState<MemeItemEntity, ListCursorEntity> state, {
     required String memeId,
     required bool isLaughed,
     required int laughCount,
   }) {
-    final List<FeedListPageItemEntity> nextItems = state.items
-        .map((FeedListPageItemEntity item) {
-          if (item.meme.id != memeId) {
+    final List<MemeItemEntity> nextItems = state.items
+        .map((MemeItemEntity item) {
+          if (item.id != memeId) {
             return item;
           }
 
-          return item.copyWith(
-            meme: item.meme.copyWith(
-              isLaughed: isLaughed,
-              laughCount: laughCount,
-            ),
-          );
+          return item.copyWith(isLaughed: isLaughed, laughCount: laughCount);
         })
         .toList(growable: false);
 
-    return state.copyWith(
-      items: List<FeedListPageItemEntity>.unmodifiable(nextItems),
-    );
+    return state.copyWith(items: List<MemeItemEntity>.unmodifiable(nextItems));
   }
 
-  FeedCursorEntity? _cursorFromPage(FeedListPageEntity page) {
+  ListCursorEntity? _cursorFromPage(FeedListPageEntity page) {
     final DateTime? createdAt = page.nextCursorCreatedAt;
     final String? id = page.nextCursorId;
     if (createdAt == null || id == null) {
       return null;
     }
 
-    return FeedCursorEntity(createdAt: createdAt, id: id);
+    return ListCursorEntity(createdAt: createdAt, id: id);
+  }
+
+  MemeItemEntity _toMemeItemEntity(FeedListPageItemEntity item) {
+    return MemeItemEntity(
+      id: item.meme.id,
+      createdAt: item.meme.createdAt,
+      updatedAt: item.meme.updatedAt,
+      signedImageUrl: item.meme.signedImageUrl,
+      aspectRatio: item.meme.aspectRatio,
+      laughCount: item.meme.laughCount,
+      isLaughed: item.meme.isLaughed,
+      user: UserItemEntity(
+        id: item.user.id,
+        name: item.user.name,
+        friendshipCode: item.user.friendshipCode,
+        createdAt: item.user.createdAt,
+        updatedAt: item.user.updatedAt,
+      ),
+    );
   }
 }

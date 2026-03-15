@@ -1,3 +1,5 @@
+import 'package:memuno_app/src/core/models/items/meme_item_dto.dart';
+import 'package:memuno_app/src/core/models/pagination/list_page_dto.dart';
 import 'package:memuno_app/src/features/user_details/data/datasources/user_details_datasource.dart';
 import 'package:memuno_app/src/features/user_details/data/dto/user_details_dto.dart';
 import 'package:memuno_app/src/features/user_details/data/dto/user_details_other_all_memes_list_page_dto.dart';
@@ -61,23 +63,17 @@ final class SupabaseUserDetailsDatasourceImpl implements UserDetailsDatasource {
     DateTime? cursorCreatedAt,
     String? cursorId,
   }) async {
-    final Object? payload = await _supabaseClient.rpc<Object?>(
-      'user_details_memes_own_all_list',
+    final ListPageDto<MemeItemDto> page = await _listMemeItemPage(
+      rpcName: 'user_details_memes_own_all_list',
       params: <String, dynamic>{
         'p_limit': limit,
         'p_cursor_created_at': cursorCreatedAt?.toIso8601String(),
         'p_cursor_id': cursorId,
       },
     );
-
-    final Map<String, Object?> json = _asObjectMap(
-      payload,
-      rpcName: 'user_details_memes_own_all_list',
-    );
-
-    final UserDetailsOwnAllMemesListPageDto page =
-        UserDetailsOwnAllMemesListPageDto.fromJson(json);
-    return _attachSignedUrlsToOwnAllPage(page);
+    final ListPageDto<MemeItemDto> signedPage =
+        await _attachSignedUrlsToMemeItemPage(page);
+    return _toOwnAllPageDto(signedPage);
   }
 
   @override
@@ -87,23 +83,17 @@ final class SupabaseUserDetailsDatasourceImpl implements UserDetailsDatasource {
     DateTime? cursorCreatedAt,
     String? cursorId,
   }) async {
-    final Object? payload = await _supabaseClient.rpc<Object?>(
-      'user_details_memes_own_sent_list',
+    final ListPageDto<MemeItemDto> page = await _listMemeItemPage(
+      rpcName: 'user_details_memes_own_sent_list',
       params: <String, dynamic>{
         'p_limit': limit,
         'p_cursor_created_at': cursorCreatedAt?.toIso8601String(),
         'p_cursor_id': cursorId,
       },
     );
-
-    final Map<String, Object?> json = _asObjectMap(
-      payload,
-      rpcName: 'user_details_memes_own_sent_list',
-    );
-
-    final UserDetailsOwnSentMemesListPageDto page =
-        UserDetailsOwnSentMemesListPageDto.fromJson(json);
-    return _attachSignedUrlsToOwnSentPage(page);
+    final ListPageDto<MemeItemDto> signedPage =
+        await _attachSignedUrlsToMemeItemPage(page);
+    return _toOwnSentPageDto(signedPage);
   }
 
   @override
@@ -114,23 +104,17 @@ final class SupabaseUserDetailsDatasourceImpl implements UserDetailsDatasource {
     DateTime? cursorCreatedAt,
     String? cursorId,
   }) async {
-    final Object? payload = await _supabaseClient.rpc<Object?>(
-      'user_details_memes_own_received_list',
+    final ListPageDto<MemeItemDto> page = await _listMemeItemPage(
+      rpcName: 'user_details_memes_own_received_list',
       params: <String, dynamic>{
         'p_limit': limit,
         'p_cursor_created_at': cursorCreatedAt?.toIso8601String(),
         'p_cursor_id': cursorId,
       },
     );
-
-    final Map<String, Object?> json = _asObjectMap(
-      payload,
-      rpcName: 'user_details_memes_own_received_list',
-    );
-
-    final UserDetailsOwnReceivedMemesListPageDto page =
-        UserDetailsOwnReceivedMemesListPageDto.fromJson(json);
-    return _attachSignedUrlsToOwnReceivedPage(page);
+    final ListPageDto<MemeItemDto> signedPage =
+        await _attachSignedUrlsToMemeItemPage(page);
+    return _toOwnReceivedPageDto(signedPage);
   }
 
   @override
@@ -141,8 +125,8 @@ final class SupabaseUserDetailsDatasourceImpl implements UserDetailsDatasource {
     DateTime? cursorCreatedAt,
     String? cursorId,
   }) async {
-    final Object? payload = await _supabaseClient.rpc<Object?>(
-      'user_details_memes_other_all_list',
+    final ListPageDto<MemeItemDto> page = await _listMemeItemPage(
+      rpcName: 'user_details_memes_other_all_list',
       params: <String, dynamic>{
         'p_user_id': userId,
         'p_limit': limit,
@@ -150,15 +134,9 @@ final class SupabaseUserDetailsDatasourceImpl implements UserDetailsDatasource {
         'p_cursor_id': cursorId,
       },
     );
-
-    final Map<String, Object?> json = _asObjectMap(
-      payload,
-      rpcName: 'user_details_memes_other_all_list',
-    );
-
-    final UserDetailsOtherAllMemesListPageDto page =
-        UserDetailsOtherAllMemesListPageDto.fromJson(json);
-    return _attachSignedUrlsToOtherAllPage(page);
+    final ListPageDto<MemeItemDto> signedPage =
+        await _attachSignedUrlsToMemeItemPage(page);
+    return _toOtherAllPageDto(signedPage);
   }
 
   @override
@@ -169,8 +147,8 @@ final class SupabaseUserDetailsDatasourceImpl implements UserDetailsDatasource {
     DateTime? cursorCreatedAt,
     String? cursorId,
   }) async {
-    final Object? payload = await _supabaseClient.rpc<Object?>(
-      'user_details_memes_other_sent_list',
+    final ListPageDto<MemeItemDto> page = await _listMemeItemPage(
+      rpcName: 'user_details_memes_other_sent_list',
       params: <String, dynamic>{
         'p_user_id': userId,
         'p_limit': limit,
@@ -178,15 +156,9 @@ final class SupabaseUserDetailsDatasourceImpl implements UserDetailsDatasource {
         'p_cursor_id': cursorId,
       },
     );
-
-    final Map<String, Object?> json = _asObjectMap(
-      payload,
-      rpcName: 'user_details_memes_other_sent_list',
-    );
-
-    final UserDetailsOtherSentMemesListPageDto page =
-        UserDetailsOtherSentMemesListPageDto.fromJson(json);
-    return _attachSignedUrlsToOtherSentPage(page);
+    final ListPageDto<MemeItemDto> signedPage =
+        await _attachSignedUrlsToMemeItemPage(page);
+    return _toOtherSentPageDto(signedPage);
   }
 
   @override
@@ -198,8 +170,8 @@ final class SupabaseUserDetailsDatasourceImpl implements UserDetailsDatasource {
     DateTime? cursorCreatedAt,
     String? cursorId,
   }) async {
-    final Object? payload = await _supabaseClient.rpc<Object?>(
-      'user_details_memes_other_received_list',
+    final ListPageDto<MemeItemDto> page = await _listMemeItemPage(
+      rpcName: 'user_details_memes_other_received_list',
       params: <String, dynamic>{
         'p_user_id': userId,
         'p_limit': limit,
@@ -207,15 +179,9 @@ final class SupabaseUserDetailsDatasourceImpl implements UserDetailsDatasource {
         'p_cursor_id': cursorId,
       },
     );
-
-    final Map<String, Object?> json = _asObjectMap(
-      payload,
-      rpcName: 'user_details_memes_other_received_list',
-    );
-
-    final UserDetailsOtherReceivedMemesListPageDto page =
-        UserDetailsOtherReceivedMemesListPageDto.fromJson(json);
-    return _attachSignedUrlsToOtherReceivedPage(page);
+    final ListPageDto<MemeItemDto> signedPage =
+        await _attachSignedUrlsToMemeItemPage(page);
+    return _toOtherReceivedPageDto(signedPage);
   }
 
   @override
@@ -274,169 +240,189 @@ final class SupabaseUserDetailsDatasourceImpl implements UserDetailsDatasource {
     return signedUrlByPath;
   }
 
-  /// Adds signed URLs to every own-all memes page item.
-  Future<UserDetailsOwnAllMemesListPageDto> _attachSignedUrlsToOwnAllPage(
-    UserDetailsOwnAllMemesListPageDto page,
-  ) async {
-    final Map<String, String> signedUrlByPath = await _createSignedUrlMap(
-      page.items
-          .map(
-            (UserDetailsOwnAllMemesListPageItemDto item) => item.meme.imagePath,
-          )
-          .toSet()
-          .toList(growable: false),
+  Future<ListPageDto<MemeItemDto>> _listMemeItemPage({
+    required String rpcName,
+    required Map<String, dynamic> params,
+  }) async {
+    final Object? payload = await _supabaseClient.rpc<Object?>(
+      rpcName,
+      params: params,
     );
-
-    final List<UserDetailsOwnAllMemesListPageItemDto> signedItems = page.items
-        .map((UserDetailsOwnAllMemesListPageItemDto item) {
-          return item.copyWith(
-            meme: item.meme.copyWith(
-              signedImageUrl: signedUrlByPath[item.meme.imagePath],
-            ),
-          );
-        })
-        .toList(growable: false);
-
-    return page.copyWith(items: signedItems);
+    final Map<String, Object?> json = _asObjectMap(payload, rpcName: rpcName);
+    return ListPageDto<MemeItemDto>.fromJson(
+      json,
+      itemFromJson: MemeItemDto.fromJson,
+    );
   }
 
-  /// Adds signed URLs to every own-sent memes page item.
-  Future<UserDetailsOwnSentMemesListPageDto> _attachSignedUrlsToOwnSentPage(
-    UserDetailsOwnSentMemesListPageDto page,
+  /// Adds signed URLs to canonical meme-item page items.
+  Future<ListPageDto<MemeItemDto>> _attachSignedUrlsToMemeItemPage(
+    ListPageDto<MemeItemDto> page,
   ) async {
     final Map<String, String> signedUrlByPath = await _createSignedUrlMap(
       page.items
-          .map(
-            (UserDetailsOwnSentMemesListPageItemDto item) =>
-                item.meme.imagePath,
-          )
+          .map((MemeItemDto item) => item.imagePath)
           .toSet()
           .toList(growable: false),
     );
 
-    final List<UserDetailsOwnSentMemesListPageItemDto> signedItems = page.items
-        .map((UserDetailsOwnSentMemesListPageItemDto item) {
-          return item.copyWith(
-            meme: item.meme.copyWith(
-              signedImageUrl: signedUrlByPath[item.meme.imagePath],
-            ),
-          );
+    final List<MemeItemDto> signedItems = page.items
+        .map((MemeItemDto item) {
+          return item.copyWith(signedImageUrl: signedUrlByPath[item.imagePath]);
         })
         .toList(growable: false);
 
-    return page.copyWith(items: signedItems);
+    return ListPageDto<MemeItemDto>(
+      items: signedItems,
+      nextCursorCreatedAt: page.nextCursorCreatedAt,
+      nextCursorId: page.nextCursorId,
+    );
   }
 
-  /// Adds signed URLs to every own-received memes page item.
-  Future<UserDetailsOwnReceivedMemesListPageDto>
-  _attachSignedUrlsToOwnReceivedPage(
-    UserDetailsOwnReceivedMemesListPageDto page,
-  ) async {
-    final Map<String, String> signedUrlByPath = await _createSignedUrlMap(
-      page.items
-          .map(
-            (UserDetailsOwnReceivedMemesListPageItemDto item) =>
-                item.meme.imagePath,
-          )
-          .toSet()
-          .toList(growable: false),
+  UserDetailsOwnAllMemesListPageDto _toOwnAllPageDto(
+    ListPageDto<MemeItemDto> page,
+  ) {
+    return UserDetailsOwnAllMemesListPageDto(
+      items: page.items.map(_toOwnAllItemDto).toList(growable: false),
+      nextCursorCreatedAt: page.nextCursorCreatedAt,
+      nextCursorId: page.nextCursorId,
     );
-
-    final List<UserDetailsOwnReceivedMemesListPageItemDto> signedItems = page
-        .items
-        .map((UserDetailsOwnReceivedMemesListPageItemDto item) {
-          return item.copyWith(
-            meme: item.meme.copyWith(
-              signedImageUrl: signedUrlByPath[item.meme.imagePath],
-            ),
-          );
-        })
-        .toList(growable: false);
-
-    return page.copyWith(items: signedItems);
   }
 
-  /// Adds signed URLs to every other-all memes page item.
-  Future<UserDetailsOtherAllMemesListPageDto> _attachSignedUrlsToOtherAllPage(
-    UserDetailsOtherAllMemesListPageDto page,
-  ) async {
-    final Map<String, String> signedUrlByPath = await _createSignedUrlMap(
-      page.items
-          .map(
-            (UserDetailsOtherAllMemesListPageItemDto item) =>
-                item.meme.imagePath,
-          )
-          .toSet()
-          .toList(growable: false),
+  UserDetailsOwnSentMemesListPageDto _toOwnSentPageDto(
+    ListPageDto<MemeItemDto> page,
+  ) {
+    return UserDetailsOwnSentMemesListPageDto(
+      items: page.items.map(_toOwnSentItemDto).toList(growable: false),
+      nextCursorCreatedAt: page.nextCursorCreatedAt,
+      nextCursorId: page.nextCursorId,
     );
-
-    final List<UserDetailsOtherAllMemesListPageItemDto> signedItems = page.items
-        .map((UserDetailsOtherAllMemesListPageItemDto item) {
-          return item.copyWith(
-            meme: item.meme.copyWith(
-              signedImageUrl: signedUrlByPath[item.meme.imagePath],
-            ),
-          );
-        })
-        .toList(growable: false);
-
-    return page.copyWith(items: signedItems);
   }
 
-  /// Adds signed URLs to every other-sent memes page item.
-  Future<UserDetailsOtherSentMemesListPageDto> _attachSignedUrlsToOtherSentPage(
-    UserDetailsOtherSentMemesListPageDto page,
-  ) async {
-    final Map<String, String> signedUrlByPath = await _createSignedUrlMap(
-      page.items
-          .map(
-            (UserDetailsOtherSentMemesListPageItemDto item) =>
-                item.meme.imagePath,
-          )
-          .toSet()
-          .toList(growable: false),
+  UserDetailsOwnReceivedMemesListPageDto _toOwnReceivedPageDto(
+    ListPageDto<MemeItemDto> page,
+  ) {
+    return UserDetailsOwnReceivedMemesListPageDto(
+      items: page.items.map(_toOwnReceivedItemDto).toList(growable: false),
+      nextCursorCreatedAt: page.nextCursorCreatedAt,
+      nextCursorId: page.nextCursorId,
     );
-
-    final List<UserDetailsOtherSentMemesListPageItemDto> signedItems = page
-        .items
-        .map((UserDetailsOtherSentMemesListPageItemDto item) {
-          return item.copyWith(
-            meme: item.meme.copyWith(
-              signedImageUrl: signedUrlByPath[item.meme.imagePath],
-            ),
-          );
-        })
-        .toList(growable: false);
-
-    return page.copyWith(items: signedItems);
   }
 
-  /// Adds signed URLs to every other-received memes page item.
-  Future<UserDetailsOtherReceivedMemesListPageDto>
-  _attachSignedUrlsToOtherReceivedPage(
-    UserDetailsOtherReceivedMemesListPageDto page,
-  ) async {
-    final Map<String, String> signedUrlByPath = await _createSignedUrlMap(
-      page.items
-          .map(
-            (UserDetailsOtherReceivedMemesListPageItemDto item) =>
-                item.meme.imagePath,
-          )
-          .toSet()
-          .toList(growable: false),
+  UserDetailsOtherAllMemesListPageDto _toOtherAllPageDto(
+    ListPageDto<MemeItemDto> page,
+  ) {
+    return UserDetailsOtherAllMemesListPageDto(
+      items: page.items.map(_toOtherAllItemDto).toList(growable: false),
+      nextCursorCreatedAt: page.nextCursorCreatedAt,
+      nextCursorId: page.nextCursorId,
     );
+  }
 
-    final List<UserDetailsOtherReceivedMemesListPageItemDto> signedItems = page
-        .items
-        .map((UserDetailsOtherReceivedMemesListPageItemDto item) {
-          return item.copyWith(
-            meme: item.meme.copyWith(
-              signedImageUrl: signedUrlByPath[item.meme.imagePath],
-            ),
-          );
-        })
-        .toList(growable: false);
+  UserDetailsOtherSentMemesListPageDto _toOtherSentPageDto(
+    ListPageDto<MemeItemDto> page,
+  ) {
+    return UserDetailsOtherSentMemesListPageDto(
+      items: page.items.map(_toOtherSentItemDto).toList(growable: false),
+      nextCursorCreatedAt: page.nextCursorCreatedAt,
+      nextCursorId: page.nextCursorId,
+    );
+  }
 
-    return page.copyWith(items: signedItems);
+  UserDetailsOtherReceivedMemesListPageDto _toOtherReceivedPageDto(
+    ListPageDto<MemeItemDto> page,
+  ) {
+    return UserDetailsOtherReceivedMemesListPageDto(
+      items: page.items.map(_toOtherReceivedItemDto).toList(growable: false),
+      nextCursorCreatedAt: page.nextCursorCreatedAt,
+      nextCursorId: page.nextCursorId,
+    );
+  }
+
+  UserDetailsOwnAllMemesListPageItemDto _toOwnAllItemDto(MemeItemDto item) {
+    final UserDetailsOwnAllMemesListPageItemDto parsed =
+        UserDetailsOwnAllMemesListPageItemDto.fromJson(
+          _legacyMemeItemJson(item),
+        );
+    return parsed.copyWith(
+      meme: parsed.meme.copyWith(signedImageUrl: item.signedImageUrl),
+    );
+  }
+
+  UserDetailsOwnSentMemesListPageItemDto _toOwnSentItemDto(MemeItemDto item) {
+    final UserDetailsOwnSentMemesListPageItemDto parsed =
+        UserDetailsOwnSentMemesListPageItemDto.fromJson(
+          _legacyMemeItemJson(item),
+        );
+    return parsed.copyWith(
+      meme: parsed.meme.copyWith(signedImageUrl: item.signedImageUrl),
+    );
+  }
+
+  UserDetailsOwnReceivedMemesListPageItemDto _toOwnReceivedItemDto(
+    MemeItemDto item,
+  ) {
+    final UserDetailsOwnReceivedMemesListPageItemDto parsed =
+        UserDetailsOwnReceivedMemesListPageItemDto.fromJson(
+          _legacyMemeItemJson(item),
+        );
+    return parsed.copyWith(
+      meme: parsed.meme.copyWith(signedImageUrl: item.signedImageUrl),
+    );
+  }
+
+  UserDetailsOtherAllMemesListPageItemDto _toOtherAllItemDto(MemeItemDto item) {
+    final UserDetailsOtherAllMemesListPageItemDto parsed =
+        UserDetailsOtherAllMemesListPageItemDto.fromJson(
+          _legacyMemeItemJson(item),
+        );
+    return parsed.copyWith(
+      meme: parsed.meme.copyWith(signedImageUrl: item.signedImageUrl),
+    );
+  }
+
+  UserDetailsOtherSentMemesListPageItemDto _toOtherSentItemDto(
+    MemeItemDto item,
+  ) {
+    final UserDetailsOtherSentMemesListPageItemDto parsed =
+        UserDetailsOtherSentMemesListPageItemDto.fromJson(
+          _legacyMemeItemJson(item),
+        );
+    return parsed.copyWith(
+      meme: parsed.meme.copyWith(signedImageUrl: item.signedImageUrl),
+    );
+  }
+
+  UserDetailsOtherReceivedMemesListPageItemDto _toOtherReceivedItemDto(
+    MemeItemDto item,
+  ) {
+    final UserDetailsOtherReceivedMemesListPageItemDto parsed =
+        UserDetailsOtherReceivedMemesListPageItemDto.fromJson(
+          _legacyMemeItemJson(item),
+        );
+    return parsed.copyWith(
+      meme: parsed.meme.copyWith(signedImageUrl: item.signedImageUrl),
+    );
+  }
+
+  Map<String, Object?> _legacyMemeItemJson(MemeItemDto item) {
+    return <String, Object?>{
+      'meme': <String, Object?>{
+        'id': item.id,
+        'created_at': item.createdAt.toIso8601String(),
+        'updated_at': item.updatedAt.toIso8601String(),
+        'image_path': item.imagePath,
+        'aspect_ratio': item.aspectRatio,
+        'laugh_count': item.laughCount,
+        'is_laughed': item.isLaughed,
+      },
+      'user': <String, Object?>{
+        'id': item.user.id,
+        'name': item.user.name,
+        'friendship_code': item.user.friendshipCode,
+        'created_at': item.user.createdAt.toIso8601String(),
+        'updated_at': item.user.updatedAt.toIso8601String(),
+      },
+    };
   }
 }

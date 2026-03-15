@@ -124,7 +124,7 @@ class FriendshipsList extends _$FriendshipsList
     );
   }
 
-  /// Upserts a friendship entity locally and keeps alphabetical sort order.
+  /// Upserts a friendship entity locally and keeps backend sort order.
   void upsertFriendship(FriendshipListPageItemEntity friendship) {
     final PaginatedListState<
       FriendshipListPageItemEntity,
@@ -143,7 +143,7 @@ class FriendshipsList extends _$FriendshipsList
             )
             .toList(growable: true)
           ..add(friendship)
-          ..sort(_compareFriendshipsByNameThenId);
+          ..sort(_compareFriendshipsByCreatedAtThenUserId);
 
     state =
         AsyncValue<
@@ -202,27 +202,25 @@ class FriendshipsList extends _$FriendshipsList
     );
   }
 
-  /// Sorts friendships by lowercased name, then by stable id.
-  int _compareFriendshipsByNameThenId(
+  /// Sorts friendships by `created_at desc`, then by `friend_id desc`.
+  int _compareFriendshipsByCreatedAtThenUserId(
     FriendshipListPageItemEntity left,
     FriendshipListPageItemEntity right,
   ) {
-    final int byName = left.user.name.toLowerCase().compareTo(
-      right.user.name.toLowerCase(),
-    );
-    if (byName != 0) {
-      return byName;
+    final int byCreatedAt = right.createdAt.compareTo(left.createdAt);
+    if (byCreatedAt != 0) {
+      return byCreatedAt;
     }
-    return left.user.id.compareTo(right.user.id);
+    return right.user.id.compareTo(left.user.id);
   }
 
   FriendshipCursorEntity? _cursorFromPage(FriendshipListPageEntity page) {
-    final String? nextCursorName = page.nextCursorName;
+    final DateTime? nextCursorCreatedAt = page.nextCursorCreatedAt;
     final String? nextCursorId = page.nextCursorId;
-    if (nextCursorName == null || nextCursorId == null) {
+    if (nextCursorCreatedAt == null || nextCursorId == null) {
       return null;
     }
 
-    return FriendshipCursorEntity(name: nextCursorName, id: nextCursorId);
+    return FriendshipCursorEntity(createdAt: nextCursorCreatedAt, id: nextCursorId);
   }
 }

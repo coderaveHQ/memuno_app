@@ -7,8 +7,8 @@ part 'friendship_cursor_entity.freezed.dart';
 sealed class FriendshipCursorEntity with _$FriendshipCursorEntity {
   /// Creates a friendship cursor entity.
   const factory FriendshipCursorEntity({
-    /// Last seen lowercase name used for lexicographic pagination.
-    required String name,
+    /// Last seen friendship creation timestamp.
+    required DateTime createdAt,
 
     /// Stable user identifier used as tie-breaker cursor.
     required String id,

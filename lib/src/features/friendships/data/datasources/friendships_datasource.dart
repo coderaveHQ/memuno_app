@@ -13,8 +13,8 @@ abstract interface class FriendshipsDatasource {
     /// Requested backend page size.
     required int limit,
 
-    /// Optional cursor name for subsequent page fetches.
-    String? cursorName,
+    /// Optional cursor created-at value for subsequent page fetches.
+    DateTime? cursorCreatedAt,
 
     /// Optional cursor id for subsequent page fetches.
     String? cursorId,

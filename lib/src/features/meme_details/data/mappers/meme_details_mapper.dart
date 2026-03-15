@@ -52,7 +52,7 @@ final class MemeDetailsMapper {
     return MemeLaughListPageEntity(
       items: dto.items.map(_laughItemToDomain).toList(growable: false),
       nextCursorCreatedAt: dto.nextCursorCreatedAt,
-      nextCursorUserId: dto.nextCursorUserId,
+      nextCursorId: dto.nextCursorId,
     );
   }
 

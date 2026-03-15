@@ -9,18 +9,13 @@ import 'package:hooks_riverpod/experimental/mutation.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:memuno_app/l10n/app_localizations.dart';
 import 'package:memuno_app/src/app/extensions/build_context_x.dart';
-import 'package:memuno_app/src/app/extensions/date_time_x.dart';
 import 'package:memuno_app/src/app/extensions/mutation_x.dart';
 import 'package:memuno_app/src/app/feedback/app_feedback.dart';
 import 'package:memuno_app/src/app/feedback/app_feedback_provider.dart';
 import 'package:memuno_app/src/app/providers/friendships_list_provider.dart';
 import 'package:memuno_app/src/app/router/app_router.dart';
 import 'package:memuno_app/src/app/widgets/m/m_app_bar.dart';
-import 'package:memuno_app/src/app/widgets/m/m_async_list.dart';
-import 'package:memuno_app/src/app/widgets/m/m_avatar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_button.dart';
-import 'package:memuno_app/src/app/widgets/m/m_list_tile.dart';
-import 'package:memuno_app/src/app/widgets/m/m_radio_indicator.dart';
 import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/features/create_meme/application/mutations/send_meme_mutation.dart';
@@ -28,8 +23,7 @@ import 'package:memuno_app/src/features/create_meme/application/providers/meme_e
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/send_meme_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_state_entity.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/send_meme_usecase.dart';
-import 'package:memuno_app/src/features/friendships/domain/entities/friendship_cursor_entity.dart';
-import 'package:memuno_app/src/features/friendships/domain/entities/friendship_list_page_item_entity.dart';
+import 'package:memuno_app/src/features/friendships/presentation/widgets/friendships_list.dart';
 import 'package:memuno_app/src/features/meme_widget/application/providers/services/meme_widget_sync_service_provider.dart';
 import 'package:memuno_app/src/features/meme_widget/application/services/meme_widget_sync_service.dart';
 
@@ -145,9 +139,15 @@ class SendMemePage extends HookConsumerWidget {
       body: Column(
         children: <Widget>[
           Expanded(
-            child: MAsyncList<FriendshipListPageItemEntity, FriendshipCursorEntity>(
+            child: MAsyncFriendshipList(
               provider: friendshipsListProvider,
               emptyText: l10n.friendshipsListEmpty,
+              mode: MAsyncFriendshipListMode.selection,
+              selectedUserIds: editorState.selectedRecipientUserIds,
+              isSelectionEnabled: !isSending,
+              onToggleSelection: (String userId) {
+                _onToggleRecipient(ref, context, feedback, userId);
+              },
               loadMoreExtent: 220.0,
               listPadding: EdgeInsets.zero,
               childPadding: EdgeInsets.only(
@@ -162,40 +162,6 @@ class SendMemePage extends HookConsumerWidget {
                 right: context.rightPadding + MSpacing.md,
                 bottom: MSpacing.md,
               ),
-              itemBuilder:
-                  (
-                    BuildContext context,
-                    FriendshipListPageItemEntity friendship,
-                  ) {
-                    final bool isSelected = editorState.isRecipientSelected(
-                      friendship.user.id,
-                    );
-                    return MListTile(
-                      onPressed: () {
-                        _onToggleRecipient(
-                          ref,
-                          context,
-                          feedback,
-                          friendship.user.id,
-                        );
-                      },
-                      isEnabled: !isSending,
-                      leading: MAvatar(
-                        name: friendship.user.name,
-                        dimension: 48.0,
-                      ),
-                      title: friendship.user.name,
-                      description:
-                          '${l10n.friendshipsFriendsSincePrefix}: ${friendship.createdAt.formatDateOnly(fullDate: true)}',
-                      trailing: MRadioIndicator(isSelected: isSelected),
-                      padding: EdgeInsets.only(
-                        top: MSpacing.md,
-                        left: context.leftPadding + MSpacing.md,
-                        right: context.rightPadding + MSpacing.md,
-                        bottom: MSpacing.md,
-                      ),
-                    );
-                  },
             ),
           ),
           Padding(

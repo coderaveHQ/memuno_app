@@ -21,7 +21,7 @@ final class SupabaseFriendshipsDatasourceImpl implements FriendshipsDatasource {
   Future<FriendshipListPageDto> listFriendships({
     String? search,
     required int limit,
-    String? cursorName,
+    DateTime? cursorCreatedAt,
     String? cursorId,
   }) async {
     final Object? payload = await _supabaseClient.rpc<Object?>(
@@ -29,7 +29,7 @@ final class SupabaseFriendshipsDatasourceImpl implements FriendshipsDatasource {
       params: <String, dynamic>{
         'p_search': search,
         'p_limit': limit,
-        'p_cursor_name': cursorName,
+        'p_cursor_created_at': cursorCreatedAt?.toIso8601String(),
         'p_cursor_id': cursorId,
       },
     );

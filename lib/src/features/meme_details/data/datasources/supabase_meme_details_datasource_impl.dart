@@ -42,7 +42,7 @@ final class SupabaseMemeDetailsDatasourceImpl implements MemeDetailsDatasource {
     required String memeId,
     required int limit,
     DateTime? cursorCreatedAt,
-    String? cursorUserId,
+    String? cursorId,
   }) async {
     final Object? payload = await _supabaseClient.rpc<Object?>(
       'meme_laughs_list',
@@ -50,7 +50,7 @@ final class SupabaseMemeDetailsDatasourceImpl implements MemeDetailsDatasource {
         'p_meme_id': memeId,
         'p_limit': limit,
         'p_cursor_created_at': cursorCreatedAt?.toIso8601String(),
-        'p_cursor_user_id': cursorUserId,
+        'p_cursor_id': cursorId,
       },
     );
 

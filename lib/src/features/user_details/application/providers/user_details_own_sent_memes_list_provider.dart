@@ -1,3 +1,6 @@
+import 'package:memuno_app/src/core/models/items/meme_item_entity.dart';
+import 'package:memuno_app/src/core/models/items/user_item_entity.dart';
+import 'package:memuno_app/src/core/models/pagination/list_cursor_entity.dart';
 import 'package:memuno_app/src/core/state/optimistic/optimistic_async_state_mixin.dart';
 import 'package:memuno_app/src/core/state/pagination/async_pagination_mixin.dart';
 import 'package:memuno_app/src/core/state/pagination/paginated_list_state.dart';
@@ -18,52 +21,39 @@ part 'user_details_own_sent_memes_list_provider.g.dart';
 @Riverpod(keepAlive: true)
 class UserDetailsOwnSentMemesList extends _$UserDetailsOwnSentMemesList
     with
-        AsyncPaginationMixin<
-          UserDetailsOwnSentMemesListPageItemEntity,
-          UserDetailsOwnSentMemesCursorEntity
-        >,
+        AsyncPaginationMixin<MemeItemEntity, ListCursorEntity>,
         OptimisticAsyncStateMixin<
-          PaginatedListState<
-            UserDetailsOwnSentMemesListPageItemEntity,
-            UserDetailsOwnSentMemesCursorEntity
-          >
+          PaginatedListState<MemeItemEntity, ListCursorEntity>
         > {
   @override
   /// Builds the initial own-sent memes page.
-  Future<
-    PaginatedListState<
-      UserDetailsOwnSentMemesListPageItemEntity,
-      UserDetailsOwnSentMemesCursorEntity
-    >
-  >
-  build() {
+  Future<PaginatedListState<MemeItemEntity, ListCursorEntity>> build() {
     return buildPaginatedState();
   }
 
   @override
   /// Loads one own-sent memes page from the list usecase.
-  Future<
-    PaginatedPage<
-      UserDetailsOwnSentMemesListPageItemEntity,
-      UserDetailsOwnSentMemesCursorEntity
-    >
-  >
-  loadPage({
+  Future<PaginatedPage<MemeItemEntity, ListCursorEntity>> loadPage({
     required int limit,
-    UserDetailsOwnSentMemesCursorEntity? cursor,
+    ListCursorEntity? cursor,
   }) async {
     final ListUserDetailsOwnSentMemesUsecase usecase = ref.watch(
       listUserDetailsOwnSentMemesUsecaseProvider,
     );
     final UserDetailsOwnSentMemesListPageEntity page = await usecase(
       limit: limit,
-      cursor: cursor,
+      cursor: cursor == null
+          ? null
+          : UserDetailsOwnSentMemesCursorEntity(
+              createdAt: cursor.createdAt,
+              id: cursor.id,
+            ),
     );
 
-    return PaginatedPage<
-      UserDetailsOwnSentMemesListPageItemEntity,
-      UserDetailsOwnSentMemesCursorEntity
-    >(items: page.items, nextCursor: _cursorFromPage(page));
+    return PaginatedPage<MemeItemEntity, ListCursorEntity>(
+      items: page.items.map(_toMemeItemEntity).toList(growable: false),
+      nextCursor: _cursorFromPage(page),
+    );
   }
 
   /// Refreshes the own-sent memes list from page 1.
@@ -77,72 +67,51 @@ class UserDetailsOwnSentMemesList extends _$UserDetailsOwnSentMemesList
   }
 
   /// Toggles the current user's laugh state for one listed meme.
-  Future<void> toggleMemeLaugh(
-    UserDetailsOwnSentMemesListPageItemEntity item,
-  ) async {
-    final PaginatedListState<
-      UserDetailsOwnSentMemesListPageItemEntity,
-      UserDetailsOwnSentMemesCursorEntity
-    >?
-    current = state.asData?.value;
+  Future<void> toggleMemeLaugh(MemeItemEntity item) async {
+    final PaginatedListState<MemeItemEntity, ListCursorEntity>? current =
+        state.asData?.value;
     if (current == null) {
       return;
     }
 
-    final String memeId = item.meme.id;
-    final int index = current.items.indexWhere(
-      (UserDetailsOwnSentMemesListPageItemEntity currentItem) =>
-          currentItem.meme.id == memeId,
-    );
+    final String memeId = item.id;
+    final int index = current.items.indexWhere((MemeItemEntity currentItem) {
+      return currentItem.id == memeId;
+    });
     if (index < 0) {
       return;
     }
 
-    final UserDetailsOwnSentMemesListPageItemEntity currentItem =
-        current.items[index];
+    final MemeItemEntity currentItem = current.items[index];
     final String? currentUserId = ref.read(currentUserProvider)?.id;
     if (currentUserId != null && currentItem.user.id == currentUserId) {
       return;
     }
 
-    final bool wasLaughed = currentItem.meme.isLaughed;
-    final int previousCount = currentItem.meme.laughCount;
+    final bool wasLaughed = currentItem.isLaughed;
+    final int previousCount = currentItem.laughCount;
     final bool nextLaughed = !wasLaughed;
     final int nextCount = nextLaughed
         ? previousCount + 1
         : (previousCount - 1).clamp(0, previousCount).toInt();
 
     await runOptimisticUpdate<bool>(
-      apply:
-          (
-            PaginatedListState<
-              UserDetailsOwnSentMemesListPageItemEntity,
-              UserDetailsOwnSentMemesCursorEntity
-            >
-            state,
-          ) {
-            return _setMemeLaughState(
-              state,
-              memeId: memeId,
-              isLaughed: nextLaughed,
-              laughCount: nextCount,
-            );
-          },
-      rollback:
-          (
-            PaginatedListState<
-              UserDetailsOwnSentMemesListPageItemEntity,
-              UserDetailsOwnSentMemesCursorEntity
-            >
-            state,
-          ) {
-            return _setMemeLaughState(
-              state,
-              memeId: memeId,
-              isLaughed: wasLaughed,
-              laughCount: previousCount,
-            );
-          },
+      apply: (PaginatedListState<MemeItemEntity, ListCursorEntity> state) {
+        return _setMemeLaughState(
+          state,
+          memeId: memeId,
+          isLaughed: nextLaughed,
+          laughCount: nextCount,
+        );
+      },
+      rollback: (PaginatedListState<MemeItemEntity, ListCursorEntity> state) {
+        return _setMemeLaughState(
+          state,
+          memeId: memeId,
+          isLaughed: wasLaughed,
+          laughCount: previousCount,
+        );
+      },
       operation: () {
         final ToggleUserDetailsMemeLaughUsecase usecase = ref.read(
           toggleUserDetailsMemeLaughUsecaseProvider,
@@ -152,44 +121,26 @@ class UserDetailsOwnSentMemesList extends _$UserDetailsOwnSentMemesList
     );
   }
 
-  PaginatedListState<
-    UserDetailsOwnSentMemesListPageItemEntity,
-    UserDetailsOwnSentMemesCursorEntity
-  >
-  _setMemeLaughState(
-    PaginatedListState<
-      UserDetailsOwnSentMemesListPageItemEntity,
-      UserDetailsOwnSentMemesCursorEntity
-    >
-    state, {
+  PaginatedListState<MemeItemEntity, ListCursorEntity> _setMemeLaughState(
+    PaginatedListState<MemeItemEntity, ListCursorEntity> state, {
     required String memeId,
     required bool isLaughed,
     required int laughCount,
   }) {
-    final List<UserDetailsOwnSentMemesListPageItemEntity> nextItems = state
-        .items
-        .map((UserDetailsOwnSentMemesListPageItemEntity item) {
-          if (item.meme.id != memeId) {
+    final List<MemeItemEntity> nextItems = state.items
+        .map((MemeItemEntity item) {
+          if (item.id != memeId) {
             return item;
           }
 
-          return item.copyWith(
-            meme: item.meme.copyWith(
-              isLaughed: isLaughed,
-              laughCount: laughCount,
-            ),
-          );
+          return item.copyWith(isLaughed: isLaughed, laughCount: laughCount);
         })
         .toList(growable: false);
 
-    return state.copyWith(
-      items: List<UserDetailsOwnSentMemesListPageItemEntity>.unmodifiable(
-        nextItems,
-      ),
-    );
+    return state.copyWith(items: List<MemeItemEntity>.unmodifiable(nextItems));
   }
 
-  UserDetailsOwnSentMemesCursorEntity? _cursorFromPage(
+  ListCursorEntity? _cursorFromPage(
     UserDetailsOwnSentMemesListPageEntity page,
   ) {
     final DateTime? createdAt = page.nextCursorCreatedAt;
@@ -198,6 +149,27 @@ class UserDetailsOwnSentMemesList extends _$UserDetailsOwnSentMemesList
       return null;
     }
 
-    return UserDetailsOwnSentMemesCursorEntity(createdAt: createdAt, id: id);
+    return ListCursorEntity(createdAt: createdAt, id: id);
+  }
+
+  MemeItemEntity _toMemeItemEntity(
+    UserDetailsOwnSentMemesListPageItemEntity item,
+  ) {
+    return MemeItemEntity(
+      id: item.meme.id,
+      createdAt: item.meme.createdAt,
+      updatedAt: item.meme.updatedAt,
+      signedImageUrl: item.meme.signedImageUrl,
+      aspectRatio: item.meme.aspectRatio,
+      laughCount: item.meme.laughCount,
+      isLaughed: item.meme.isLaughed,
+      user: UserItemEntity(
+        id: item.user.id,
+        name: item.user.name,
+        friendshipCode: item.user.friendshipCode,
+        createdAt: item.user.createdAt,
+        updatedAt: item.user.updatedAt,
+      ),
+    );
   }
 }

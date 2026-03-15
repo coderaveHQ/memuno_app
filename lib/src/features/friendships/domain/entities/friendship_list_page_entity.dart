@@ -11,8 +11,8 @@ sealed class FriendshipListPageEntity with _$FriendshipListPageEntity {
     /// Page items.
     required List<FriendshipListPageItemEntity> items,
 
-    /// Next cursor `name` value.
-    String? nextCursorName,
+    /// Next cursor `created_at` value.
+    DateTime? nextCursorCreatedAt,
 
     /// Next cursor `id` value.
     String? nextCursorId,
