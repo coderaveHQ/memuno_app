@@ -1,0 +1,12 @@
+flutter_native_splash:
+  image: assets/logo-staging.png
+  color: "#09090B"
+
+  android_12:
+    image: assets/logo-staging.png
+    icon_background_color: "#09090B"
+
+  info_plist_files:
+    - 'ios/Runner/Info-Staging.plist'
+
+  web: false
