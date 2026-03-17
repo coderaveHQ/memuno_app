@@ -49,54 +49,60 @@ class LanguageModePage extends ConsumerWidget {
       right: context.rightPadding + MSpacing.md,
     );
 
-    return MScaffold(
-      appBar: MAppBar(
-        context: context,
-        title: MAppBarTitle(text: l10n.languageModeTitle),
-        leading: <MAppBarButton>[
-          MAppBarButton(
-            onPressed: () => _onBack(context),
-            icon: LucideIcons.arrow_left,
-          ),
-        ],
-      ),
-      body: ListView(
-        padding: EdgeInsets.only(
-          top: MSpacing.md,
-          bottom: context.bottomPadding,
+    final MAppBar appBar = MAppBar(
+      context: context,
+      title: MAppBarTitle(text: l10n.languageModeTitle),
+      leading: <MAppBarButton>[
+        MAppBarButton(
+          onPressed: () => _onBack(context),
+          icon: LucideIcons.arrow_left,
         ),
-        children: <Widget>[
-          MListTile(
-            onPressed: () => _setLanguage(ref, AppLanguage.system),
-            title: l10n.languageModeSystemOption,
-            description: l10n.languageModeSystemDescription(
-              _languageLabel(resolution.resolvedSystemLanguage, l10n),
-            ),
-            padding: tilePadding,
-            trailing: MRadioIndicator(
-              isSelected: selectedLanguage == AppLanguage.system,
-            ),
+      ],
+    );
+
+    return MScaffold(
+      extendBodyBehindAppBar: true,
+      appBar: appBar,
+      body: Padding(
+        padding: EdgeInsets.only(top: appBar.preferredSize.height - 20.0),
+        child: ListView(
+          padding: EdgeInsets.only(
+            top: 20.0 + MSpacing.md,
+            bottom: context.bottomPadding,
           ),
-          MListTile(
-            onPressed: () => _setLanguage(ref, AppLanguage.enUS),
-            title: AppLanguage.enUS.nativeLabel,
-            description: l10n.languageModeSystemDescription(
-              _languageLabel(resolution.resolvedSystemLanguage, l10n),
+          children: <Widget>[
+            MListTile(
+              onPressed: () => _setLanguage(ref, AppLanguage.system),
+              title: l10n.languageModeSystemOption,
+              description: l10n.languageModeSystemDescription(
+                _languageLabel(resolution.resolvedSystemLanguage, l10n),
+              ),
+              padding: tilePadding,
+              trailing: MRadioIndicator(
+                isSelected: selectedLanguage == AppLanguage.system,
+              ),
             ),
-            padding: tilePadding,
-            trailing: MRadioIndicator(
-              isSelected: selectedLanguage == AppLanguage.enUS,
+            MListTile(
+              onPressed: () => _setLanguage(ref, AppLanguage.enUS),
+              title: AppLanguage.enUS.nativeLabel,
+              description: l10n.languageModeSystemDescription(
+                _languageLabel(resolution.resolvedSystemLanguage, l10n),
+              ),
+              padding: tilePadding,
+              trailing: MRadioIndicator(
+                isSelected: selectedLanguage == AppLanguage.enUS,
+              ),
             ),
-          ),
-          MListTile(
-            onPressed: () => _setLanguage(ref, AppLanguage.deDE),
-            title: AppLanguage.deDE.nativeLabel,
-            padding: tilePadding,
-            trailing: MRadioIndicator(
-              isSelected: selectedLanguage == AppLanguage.deDE,
+            MListTile(
+              onPressed: () => _setLanguage(ref, AppLanguage.deDE),
+              title: AppLanguage.deDE.nativeLabel,
+              padding: tilePadding,
+              trailing: MRadioIndicator(
+                isSelected: selectedLanguage == AppLanguage.deDE,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -12,6 +12,9 @@ final class NotificationTargetRouteMapper {
       NotificationNavigationTargetKind.friendships => FriendshipsRoute(
         tab: target.friendshipsTab,
       ).location,
+      NotificationNavigationTargetKind.groups => GroupsRoute(
+        tab: target.groupsTab,
+      ).location,
       NotificationNavigationTargetKind.userDetails => UserDetailsRoute(
         userId: target.userId!,
       ).location,

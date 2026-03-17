@@ -14,6 +14,8 @@ sealed class NotificationListPageItemDataDto {
         FriendshipRequestSentNotificationDataDto.fromJson(json),
       NotificationType.friendshipRequestAccepted =>
         FriendshipRequestAcceptedNotificationDataDto.fromJson(json),
+      NotificationType.groupInvitationSent =>
+        GroupInvitationSentNotificationDataDto.fromJson(json),
       NotificationType.memeReceived => MemeReceivedNotificationDataDto.fromJson(
         json,
       ),
@@ -95,6 +97,49 @@ final class FriendshipRequestAcceptedNotificationDataDto
   final String actorName;
   final String actorFriendshipCode;
   final String requestId;
+  final String routeTab;
+}
+
+/// DTO for `group_invitation_sent` notification data.
+final class GroupInvitationSentNotificationDataDto
+    extends NotificationListPageItemDataDto {
+  const GroupInvitationSentNotificationDataDto({
+    required this.actorId,
+    required this.actorName,
+    required this.actorFriendshipCode,
+    required this.invitationId,
+    required this.groupId,
+    required this.groupName,
+    required this.routeTab,
+  });
+
+  factory GroupInvitationSentNotificationDataDto.fromJson(
+    Map<String, Object?> json,
+  ) {
+    final String routeTab = _readRequiredString(json, 'route_tab');
+    if (routeTab != 'invitations') {
+      throw const FormatException(
+        'Expected route_tab=invitations for group_invitation_sent.',
+      );
+    }
+
+    return GroupInvitationSentNotificationDataDto(
+      actorId: _readRequiredString(json, 'actor_id'),
+      actorName: _readRequiredString(json, 'actor_name'),
+      actorFriendshipCode: _readRequiredString(json, 'actor_friendship_code'),
+      invitationId: _readRequiredString(json, 'invitation_id'),
+      groupId: _readRequiredString(json, 'group_id'),
+      groupName: _readRequiredString(json, 'group_name'),
+      routeTab: routeTab,
+    );
+  }
+
+  final String actorId;
+  final String actorName;
+  final String actorFriendshipCode;
+  final String invitationId;
+  final String groupId;
+  final String groupName;
   final String routeTab;
 }
 

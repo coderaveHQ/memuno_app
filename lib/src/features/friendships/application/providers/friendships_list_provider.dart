@@ -221,6 +221,9 @@ class FriendshipsList extends _$FriendshipsList
       return null;
     }
 
-    return FriendshipCursorEntity(createdAt: nextCursorCreatedAt, id: nextCursorId);
+    return FriendshipCursorEntity(
+      createdAt: nextCursorCreatedAt,
+      id: nextCursorId,
+    );
   }
 }

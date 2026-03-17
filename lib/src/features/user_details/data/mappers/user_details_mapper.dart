@@ -62,6 +62,8 @@ final class UserDetailsMapper {
       friendshipCode: dto.friendshipCode,
       createdAt: dto.createdAt,
       updatedAt: dto.updatedAt,
+      isFriend: dto.isFriend,
+      hasPendingFriendshipRequest: dto.hasPendingFriendshipRequest,
     );
   }
 

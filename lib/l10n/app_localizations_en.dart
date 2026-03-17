@@ -110,6 +110,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get userDetailsUpdateNameSuccessMessage => 'Your name was updated.';
 
   @override
+  String get userDetailsActionsTitle => 'Profile actions';
+
+  @override
+  String get userDetailsActionRemoveFriend => 'Remove friend';
+
+  @override
+  String get userDetailsRemoveFriendSuccessMessage => 'Friend removed.';
+
+  @override
   String get userDetailsMemesTabAll => 'All';
 
   @override
@@ -176,6 +185,169 @@ class AppLocalizationsEn extends AppLocalizations {
   String get friendshipsRequestDirectionOutgoing => 'Outgoing';
 
   @override
+  String get groupsTitle => 'Groups';
+
+  @override
+  String get groupsTabGroups => 'Groups';
+
+  @override
+  String get groupsTabInvitations => 'Invitations';
+
+  @override
+  String get groupsListEmpty => 'You are not in any groups yet.';
+
+  @override
+  String get groupsInvitationsListEmpty => 'No pending group invitations.';
+
+  @override
+  String groupsMemberCount(Object count) {
+    return '$count members';
+  }
+
+  @override
+  String groupsInvitationFrom(
+    Object sender_name,
+    Object sender_friendship_code,
+  ) {
+    return 'From $sender_name ($sender_friendship_code)';
+  }
+
+  @override
+  String get groupsInvitationAcceptSuccessMessage => 'Invitation accepted.';
+
+  @override
+  String get groupsInvitationRejectSuccessMessage => 'Invitation rejected.';
+
+  @override
+  String get groupsCreateNameTitle => 'Create a group';
+
+  @override
+  String get groupsCreateNameSubtitle => 'Choose a name for your group.';
+
+  @override
+  String get groupsCreateNameFieldLabel => 'Group name';
+
+  @override
+  String get groupsCreateNameFieldHint => 'Weekend Legends';
+
+  @override
+  String get groupsCreateNameContinueButton => 'Continue';
+
+  @override
+  String get groupsCreateMembersTitle => 'Invite members';
+
+  @override
+  String groupsCreateMembersSubtitle(Object count) {
+    return '$count selected';
+  }
+
+  @override
+  String get groupsCreateMembersSubmitButton => 'Create group';
+
+  @override
+  String get groupsCreateSuccessMessage => 'Group created successfully.';
+
+  @override
+  String get groupDetailsTabAllMemes => 'All';
+
+  @override
+  String get groupDetailsTabSentByMe => 'Sent by me';
+
+  @override
+  String get groupDetailsMemesAllEmpty => 'No memes sent to this group yet.';
+
+  @override
+  String get groupDetailsMemesSentByMeEmpty =>
+      'You have not sent memes to this group yet.';
+
+  @override
+  String get groupDetailsInfoTabMembers => 'Members';
+
+  @override
+  String get groupDetailsInfoTabInvitations => 'Invitations';
+
+  @override
+  String get groupDetailsMembersEmpty => 'No members found.';
+
+  @override
+  String get groupDetailsPendingInvitationsEmpty => 'No pending invitations.';
+
+  @override
+  String get groupDetailsMemberRoleCreator => 'Creator';
+
+  @override
+  String get groupDetailsMemberRoleAdmin => 'Admin';
+
+  @override
+  String get groupDetailsMemberRoleMember => 'Member';
+
+  @override
+  String get groupDetailsInviteMembersDialogTitle => 'Invite members';
+
+  @override
+  String groupDetailsInviteMembersSelected(Object count) {
+    return '$count selected';
+  }
+
+  @override
+  String get groupDetailsInviteMembersSubmitButton => 'Send invitations';
+
+  @override
+  String get groupDetailsInviteMembersEmpty =>
+      'No friends available to invite.';
+
+  @override
+  String get groupDetailsInviteMembersSuccessMessage => 'Invitations sent.';
+
+  @override
+  String get groupDetailsMemberActionsTitle => 'Member actions';
+
+  @override
+  String get groupDetailsMemberActionPromoteToAdmin => 'Make admin';
+
+  @override
+  String get groupDetailsMemberActionDemoteToMember =>
+      'Remove admin privileges';
+
+  @override
+  String get groupDetailsMemberActionRemove => 'Remove member';
+
+  @override
+  String get groupDetailsGroupActionsTitle => 'Group actions';
+
+  @override
+  String get groupDetailsGroupActionLeave => 'Leave group';
+
+  @override
+  String get groupDetailsGroupActionDelete => 'Delete group';
+
+  @override
+  String get groupDetailsMemberRoleUpdateSuccessMessage =>
+      'Member role updated.';
+
+  @override
+  String get groupDetailsUpdateNameDialogTitle => 'Update group name';
+
+  @override
+  String get groupDetailsUpdateNameSubmitButton => 'Save group name';
+
+  @override
+  String get groupDetailsUpdateNameSuccessMessage => 'Group name updated.';
+
+  @override
+  String get groupDetailsMemberRemoveSuccessMessage => 'Member removed.';
+
+  @override
+  String get groupDetailsInvitationCancelSuccessMessage =>
+      'Invitation canceled.';
+
+  @override
+  String get groupDetailsLeaveSuccessMessage => 'You left the group.';
+
+  @override
+  String get groupDetailsDeleteSuccessMessage => 'Group deleted.';
+
+  @override
   String get notificationsTitle => 'Notifications';
 
   @override
@@ -191,7 +363,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mainShellTabFeed => 'Feed';
 
   @override
-  String get mainShellTabCommunity => 'Community';
+  String get mainShellTabFriendships => 'Friends';
+
+  @override
+  String get mainShellTabGroups => 'Groups';
 
   @override
   String get feedListEmpty => 'No memes in your feed yet.';
@@ -221,6 +396,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get memeDetailsLaughsEmpty => 'No laughs yet.';
 
   @override
+  String get memeDetailsActionsTitle => 'Meme actions';
+
+  @override
+  String get memeDetailsActionDelete => 'Delete meme';
+
+  @override
+  String get memeDetailsDeleteSuccessMessage => 'Meme deleted.';
+
+  @override
   String get notificationsItemFriendshipRequestSentTitle =>
       'New friendship request';
 
@@ -236,6 +420,18 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String notificationsItemFriendshipRequestAccepted(Object sender_name) {
     return '$sender_name accepted your friendship request.';
+  }
+
+  @override
+  String get notificationsItemGroupInvitationSentTitle =>
+      'New group invitation';
+
+  @override
+  String notificationsItemGroupInvitationSent(
+    Object sender_name,
+    Object group_name,
+  ) {
+    return '$sender_name invited you to join $group_name.';
   }
 
   @override
@@ -292,6 +488,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sendMemeSubmitButton => 'Send';
+
+  @override
+  String get sendMemeRecipientsListEmpty => 'No recipients available.';
 
   @override
   String get sendMemeSuccessMessage => 'Meme sent successfully.';
@@ -564,6 +763,15 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   String get userDetailsUpdateNameSuccessMessage => 'Your name was updated.';
 
   @override
+  String get userDetailsActionsTitle => 'Profile actions';
+
+  @override
+  String get userDetailsActionRemoveFriend => 'Remove friend';
+
+  @override
+  String get userDetailsRemoveFriendSuccessMessage => 'Friend removed.';
+
+  @override
   String get userDetailsMemesTabAll => 'All';
 
   @override
@@ -630,6 +838,169 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   String get friendshipsRequestDirectionOutgoing => 'Outgoing';
 
   @override
+  String get groupsTitle => 'Groups';
+
+  @override
+  String get groupsTabGroups => 'Groups';
+
+  @override
+  String get groupsTabInvitations => 'Invitations';
+
+  @override
+  String get groupsListEmpty => 'You are not in any groups yet.';
+
+  @override
+  String get groupsInvitationsListEmpty => 'No pending group invitations.';
+
+  @override
+  String groupsMemberCount(Object count) {
+    return '$count members';
+  }
+
+  @override
+  String groupsInvitationFrom(
+    Object sender_name,
+    Object sender_friendship_code,
+  ) {
+    return 'From $sender_name ($sender_friendship_code)';
+  }
+
+  @override
+  String get groupsInvitationAcceptSuccessMessage => 'Invitation accepted.';
+
+  @override
+  String get groupsInvitationRejectSuccessMessage => 'Invitation rejected.';
+
+  @override
+  String get groupsCreateNameTitle => 'Create a group';
+
+  @override
+  String get groupsCreateNameSubtitle => 'Choose a name for your group.';
+
+  @override
+  String get groupsCreateNameFieldLabel => 'Group name';
+
+  @override
+  String get groupsCreateNameFieldHint => 'Weekend Legends';
+
+  @override
+  String get groupsCreateNameContinueButton => 'Continue';
+
+  @override
+  String get groupsCreateMembersTitle => 'Invite members';
+
+  @override
+  String groupsCreateMembersSubtitle(Object count) {
+    return '$count selected';
+  }
+
+  @override
+  String get groupsCreateMembersSubmitButton => 'Create group';
+
+  @override
+  String get groupsCreateSuccessMessage => 'Group created successfully.';
+
+  @override
+  String get groupDetailsTabAllMemes => 'All';
+
+  @override
+  String get groupDetailsTabSentByMe => 'Sent by me';
+
+  @override
+  String get groupDetailsMemesAllEmpty => 'No memes sent to this group yet.';
+
+  @override
+  String get groupDetailsMemesSentByMeEmpty =>
+      'You have not sent memes to this group yet.';
+
+  @override
+  String get groupDetailsInfoTabMembers => 'Members';
+
+  @override
+  String get groupDetailsInfoTabInvitations => 'Invitations';
+
+  @override
+  String get groupDetailsMembersEmpty => 'No members found.';
+
+  @override
+  String get groupDetailsPendingInvitationsEmpty => 'No pending invitations.';
+
+  @override
+  String get groupDetailsMemberRoleCreator => 'Creator';
+
+  @override
+  String get groupDetailsMemberRoleAdmin => 'Admin';
+
+  @override
+  String get groupDetailsMemberRoleMember => 'Member';
+
+  @override
+  String get groupDetailsInviteMembersDialogTitle => 'Invite members';
+
+  @override
+  String groupDetailsInviteMembersSelected(Object count) {
+    return '$count selected';
+  }
+
+  @override
+  String get groupDetailsInviteMembersSubmitButton => 'Send invitations';
+
+  @override
+  String get groupDetailsInviteMembersEmpty =>
+      'No friends available to invite.';
+
+  @override
+  String get groupDetailsInviteMembersSuccessMessage => 'Invitations sent.';
+
+  @override
+  String get groupDetailsMemberActionsTitle => 'Member actions';
+
+  @override
+  String get groupDetailsMemberActionPromoteToAdmin => 'Make admin';
+
+  @override
+  String get groupDetailsMemberActionDemoteToMember =>
+      'Remove admin privileges';
+
+  @override
+  String get groupDetailsMemberActionRemove => 'Remove member';
+
+  @override
+  String get groupDetailsGroupActionsTitle => 'Group actions';
+
+  @override
+  String get groupDetailsGroupActionLeave => 'Leave group';
+
+  @override
+  String get groupDetailsGroupActionDelete => 'Delete group';
+
+  @override
+  String get groupDetailsMemberRoleUpdateSuccessMessage =>
+      'Member role updated.';
+
+  @override
+  String get groupDetailsUpdateNameDialogTitle => 'Update group name';
+
+  @override
+  String get groupDetailsUpdateNameSubmitButton => 'Save group name';
+
+  @override
+  String get groupDetailsUpdateNameSuccessMessage => 'Group name updated.';
+
+  @override
+  String get groupDetailsMemberRemoveSuccessMessage => 'Member removed.';
+
+  @override
+  String get groupDetailsInvitationCancelSuccessMessage =>
+      'Invitation canceled.';
+
+  @override
+  String get groupDetailsLeaveSuccessMessage => 'You left the group.';
+
+  @override
+  String get groupDetailsDeleteSuccessMessage => 'Group deleted.';
+
+  @override
   String get notificationsTitle => 'Notifications';
 
   @override
@@ -645,7 +1016,10 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   String get mainShellTabFeed => 'Feed';
 
   @override
-  String get mainShellTabCommunity => 'Community';
+  String get mainShellTabFriendships => 'Friends';
+
+  @override
+  String get mainShellTabGroups => 'Groups';
 
   @override
   String get feedListEmpty => 'No memes in your feed yet.';
@@ -675,6 +1049,15 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   String get memeDetailsLaughsEmpty => 'No laughs yet.';
 
   @override
+  String get memeDetailsActionsTitle => 'Meme actions';
+
+  @override
+  String get memeDetailsActionDelete => 'Delete meme';
+
+  @override
+  String get memeDetailsDeleteSuccessMessage => 'Meme deleted.';
+
+  @override
   String get notificationsItemFriendshipRequestSentTitle =>
       'New friendship request';
 
@@ -690,6 +1073,18 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   @override
   String notificationsItemFriendshipRequestAccepted(Object sender_name) {
     return '$sender_name accepted your friendship request.';
+  }
+
+  @override
+  String get notificationsItemGroupInvitationSentTitle =>
+      'New group invitation';
+
+  @override
+  String notificationsItemGroupInvitationSent(
+    Object sender_name,
+    Object group_name,
+  ) {
+    return '$sender_name invited you to join $group_name.';
   }
 
   @override
@@ -746,6 +1141,9 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
 
   @override
   String get sendMemeSubmitButton => 'Send';
+
+  @override
+  String get sendMemeRecipientsListEmpty => 'No recipients available.';
 
   @override
   String get sendMemeSuccessMessage => 'Meme sent successfully.';

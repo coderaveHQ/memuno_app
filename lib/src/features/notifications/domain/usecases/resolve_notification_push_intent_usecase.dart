@@ -20,6 +20,8 @@ final class ResolveNotificationPushIntentUsecase {
         :final actorId,
       ) =>
         NotificationNavigationTarget.userDetails(userId: actorId),
+      GroupInvitationSentNotificationListPageItemDataEntity(:final routeTab) =>
+        NotificationNavigationTarget.groups(tab: routeTab),
       MemeReceivedNotificationListPageItemDataEntity(:final memeId) =>
         NotificationNavigationTarget.memeDetails(memeId: memeId),
       MemeLaughedNotificationListPageItemDataEntity(:final memeId) =>
@@ -40,6 +42,11 @@ final class ResolveNotificationPushIntentUsecase {
         ),
       ),
       'friendship_request_accepted' => _resolveUserTarget(data),
+      'group_invitation_sent' => NotificationNavigationTarget.groups(
+        tab: _normalizeGroupsTab(
+          _readTrimmed(data, 'route_tab') ?? 'invitations',
+        ),
+      ),
       'meme_received' => _resolveMemeTarget(data),
       'meme_laughed' => _resolveMemeTarget(data),
       _ => NotificationNavigationTarget.notifications(),
@@ -69,6 +76,10 @@ final class ResolveNotificationPushIntentUsecase {
 
   String _normalizeFriendshipsTab(String rawValue) {
     return rawValue == 'friendships' ? 'friendships' : 'requests';
+  }
+
+  String _normalizeGroupsTab(String rawValue) {
+    return rawValue == 'groups' ? 'groups' : 'invitations';
   }
 
   String? _readTrimmed(Map<String, String> data, String key) {

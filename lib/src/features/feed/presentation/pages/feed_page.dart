@@ -72,45 +72,45 @@ class FeedPage extends ConsumerWidget {
     final int unreadNotificationsCount =
         ref.watch(notificationsUnreadCountProvider).asData?.value ?? 0;
 
+    final MAppBar appBar = MAppBar(
+      context: context,
+      title: MAppBarTitle(
+        text: userDetailsState.when<String>(
+          data: (UserDetailsEntity userDetails) {
+            return l10n.homeGreetingWithName(userDetails.name.firstName);
+          },
+          error: (Object _, StackTrace _) {
+            return l10n.homeGreetingGeneric;
+          },
+          loading: () {
+            return l10n.homeGreetingWithName('Florian');
+          },
+        ),
+        isLoading: userDetailsState.isLoading,
+      ),
+      avatar: MAppBarAvatar(
+        onPressed: () => _onUserDetails(context),
+        name: userDetailsState.value?.name,
+        isLoading: userDetailsState.isLoading,
+      ),
+      trailing: <MAppBarButton>[
+        MAppBarButton(
+          onPressed: () => _onNotifications(context),
+          icon: LucideIcons.bell,
+          badgeCount: unreadNotificationsCount,
+        ),
+        MAppBarButton(
+          onPressed: () => _onSettings(context),
+          icon: LucideIcons.settings,
+        ),
+      ],
+    );
+
     return MScaffold(
       extendBodyBehindAppBar: true,
-      appBar: MAppBar(
-        context: context,
-        title: MAppBarTitle(
-          text: userDetailsState.when<String>(
-            data: (UserDetailsEntity userDetails) {
-              return l10n.homeGreetingWithName(userDetails.name.firstName);
-            },
-            error: (Object _, StackTrace _) {
-              return l10n.homeGreetingGeneric;
-            },
-            loading: () {
-              return l10n.homeGreetingWithName('Florian');
-            },
-          ),
-          isLoading: userDetailsState.isLoading,
-        ),
-        avatar: MAppBarAvatar(
-          onPressed: () => _onUserDetails(context),
-          name: userDetailsState.value?.name,
-          isLoading: userDetailsState.isLoading,
-        ),
-        trailing: <MAppBarButton>[
-          MAppBarButton(
-            onPressed: () => _onNotifications(context),
-            icon: LucideIcons.bell,
-            badgeCount: unreadNotificationsCount,
-          ),
-          MAppBarButton(
-            onPressed: () => _onSettings(context),
-            icon: LucideIcons.settings,
-          ),
-        ],
-      ),
+      appBar: appBar,
       body: Padding(
-        padding: EdgeInsets.only(
-          top: context.topPadding + kToolbarHeight - 20.0,
-        ),
+        padding: EdgeInsets.only(top: appBar.preferredSize.height - 20.0),
         child: MAsyncMemeList(
           provider: feedListProvider,
           emptyText: l10n.feedListEmpty,

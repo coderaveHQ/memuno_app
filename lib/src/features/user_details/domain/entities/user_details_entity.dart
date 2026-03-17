@@ -21,6 +21,12 @@ sealed class UserDetailsEntity with _$UserDetailsEntity {
 
     /// Last update timestamp from `public.users.updated_at`.
     required DateTime updatedAt,
+
+    /// Whether auth user and viewed user are friends.
+    required bool isFriend,
+
+    /// Whether a pending friendship request exists between both users.
+    required bool hasPendingFriendshipRequest,
   }) = _UserDetailsEntity;
 
   const UserDetailsEntity._();

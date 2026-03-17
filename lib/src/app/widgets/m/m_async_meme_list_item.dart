@@ -91,7 +91,8 @@ class MAsyncMemeListItem extends ConsumerWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: <Widget>[
                       MTappable(
-                        onPressed: () => _openUserDetails(context, item.user.id),
+                        onPressed: () =>
+                            _openUserDetails(context, item.user.id),
                         child: MText.h4(
                           text: item.user.name,
                           maxLines: 1,

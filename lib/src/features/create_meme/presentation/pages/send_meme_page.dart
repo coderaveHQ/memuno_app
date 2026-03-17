@@ -12,7 +12,6 @@ import 'package:memuno_app/src/app/extensions/build_context_x.dart';
 import 'package:memuno_app/src/app/extensions/mutation_x.dart';
 import 'package:memuno_app/src/app/feedback/app_feedback.dart';
 import 'package:memuno_app/src/app/feedback/app_feedback_provider.dart';
-import 'package:memuno_app/src/app/providers/friendships_list_provider.dart';
 import 'package:memuno_app/src/app/router/app_router.dart';
 import 'package:memuno_app/src/app/widgets/m/m_app_bar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_button.dart';
@@ -22,12 +21,13 @@ import 'package:memuno_app/src/features/create_meme/application/mutations/send_m
 import 'package:memuno_app/src/features/create_meme/application/providers/meme_editor_controller_provider.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/send_meme_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_state_entity.dart';
+import 'package:memuno_app/src/features/create_meme/domain/entities/meme_recipient_target_item_entity.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/send_meme_usecase.dart';
-import 'package:memuno_app/src/features/friendships/presentation/widgets/friendships_list.dart';
+import 'package:memuno_app/src/features/create_meme/presentation/widgets/meme_recipient_targets_list.dart';
 import 'package:memuno_app/src/features/meme_widget/application/providers/services/meme_widget_sync_service_provider.dart';
 import 'package:memuno_app/src/features/meme_widget/application/services/meme_widget_sync_service.dart';
 
-/// Page for selecting friendship recipients for one finalized meme.
+/// Page for selecting recipients for one finalized meme.
 class SendMemePage extends HookConsumerWidget {
   /// Finalized meme bytes received from the editor route.
   final List<int> memeBytes;
@@ -39,17 +39,20 @@ class SendMemePage extends HookConsumerWidget {
     context.pop();
   }
 
-  /// Toggles one recipient selection by friendship-user identifier.
+  /// Toggles one polymorphic recipient selection.
   void _onToggleRecipient(
     WidgetRef ref,
     BuildContext context,
     AppFeedback feedback,
-    String userId,
+    MemeRecipientTargetItemEntity target,
   ) {
     try {
       ref
           .read(memeEditorControllerProvider.notifier)
-          .toggleRecipientSelection(userId);
+          .toggleRecipientSelection(
+            targetType: target.type,
+            targetId: target.id,
+          );
     } catch (error) {
       feedback.resolveAndShowError(context, error);
     }
@@ -125,71 +128,70 @@ class SendMemePage extends HookConsumerWidget {
       return null;
     }, const <Object?>[]);
 
+    final MAppBar appBar = MAppBar(
+      context: context,
+      title: MAppBarTitle(text: l10n.sendMemeTitle),
+      leading: <MAppBarButton>[
+        MAppBarButton(
+          onPressed: () => _onBack(context),
+          icon: LucideIcons.arrow_left,
+        ),
+      ],
+    );
+
     return MScaffold(
-      appBar: MAppBar(
-        context: context,
-        title: MAppBarTitle(text: l10n.sendMemeTitle),
-        leading: <MAppBarButton>[
-          MAppBarButton(
-            onPressed: () => _onBack(context),
-            icon: LucideIcons.arrow_left,
-          ),
-        ],
-      ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: MAsyncFriendshipList(
-              provider: friendshipsListProvider,
-              emptyText: l10n.friendshipsListEmpty,
-              mode: MAsyncFriendshipListMode.selection,
-              selectedUserIds: editorState.selectedRecipientUserIds,
-              isSelectionEnabled: !isSending,
-              onToggleSelection: (String userId) {
-                _onToggleRecipient(ref, context, feedback, userId);
-              },
-              loadMoreExtent: 220.0,
-              listPadding: EdgeInsets.zero,
-              childPadding: EdgeInsets.only(
-                top: MSpacing.md,
-                left: context.leftPadding + MSpacing.md,
-                right: context.rightPadding + MSpacing.md,
-                bottom: MSpacing.md,
-              ),
-              listChildPadding: EdgeInsets.only(
-                top: MSpacing.md,
-                left: context.leftPadding + MSpacing.md,
-                right: context.rightPadding + MSpacing.md,
-                bottom: MSpacing.md,
+      extendBodyBehindAppBar: true,
+      appBar: appBar,
+      body: Padding(
+        padding: EdgeInsets.only(top: appBar.preferredSize.height - 20.0),
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: MAsyncMemeRecipientTargetsList(
+                emptyText: l10n.sendMemeRecipientsListEmpty,
+                selectedUserIds: editorState.selectedRecipientUserIds,
+                selectedGroupIds: editorState.selectedRecipientGroupIds,
+                isSelectionEnabled: !isSending,
+                onToggleSelection: (MemeRecipientTargetItemEntity target) {
+                  _onToggleRecipient(ref, context, feedback, target);
+                },
+                loadMoreExtent: 220.0,
+                listPadding: EdgeInsets.only(top: 20.0),
+                childPadding: EdgeInsets.only(
+                  top: 20.0 + MSpacing.md,
+                  left: context.leftPadding + MSpacing.md,
+                  right: context.rightPadding + MSpacing.md,
+                  bottom: MSpacing.md,
+                ),
               ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsets.only(
-              top: MSpacing.md,
-              bottom: context.bottomPadding + MSpacing.md,
-              left: context.leftPadding + MSpacing.md,
-              right: context.rightPadding + MSpacing.md,
+            Padding(
+              padding: EdgeInsets.only(
+                top: MSpacing.md,
+                bottom: context.bottomPadding + MSpacing.md,
+                left: context.leftPadding + MSpacing.md,
+                right: context.rightPadding + MSpacing.md,
+              ),
+              child: MButton.primary(
+                title: l10n.sendMemeSubmitButton,
+                isLoading: isSending,
+                isEnabled:
+                    finalizedMemeBytes.isNotEmpty &&
+                    editorState.hasSelectedRecipients &&
+                    !isSending,
+                onPressed: () {
+                  unawaited(
+                    _submitSend(
+                      ref: ref,
+                      editorState: editorState,
+                      finalizedMemeBytes: finalizedMemeBytes,
+                    ),
+                  );
+                },
+              ),
             ),
-            child: MButton.primary(
-              title: l10n.sendMemeSubmitButton,
-              isLoading: isSending,
-              isEnabled:
-                  finalizedMemeBytes.isNotEmpty &&
-                  editorState.hasSelectedRecipients &&
-                  !isSending,
-              onPressed: () {
-                unawaited(
-                  _submitSend(
-                    ref: ref,
-                    editorState: editorState,
-                    finalizedMemeBytes: finalizedMemeBytes,
-                  ),
-                );
-              },
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

@@ -3,11 +3,12 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
-import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:memuno_app/l10n/app_localizations.dart';
+import 'package:memuno_app/src/app/extensions/build_context_x.dart';
 import 'package:memuno_app/src/app/widgets/m/m_app_bar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
+import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/app/widgets/m/m_tab_bar.dart';
 import 'package:memuno_app/src/features/friendships/presentation/widgets/friendship_request_dialog.dart';
 import 'package:memuno_app/src/features/friendships/presentation/widgets/friendship_requests_list.dart';
@@ -50,10 +51,6 @@ class FriendshipsPage extends HookConsumerWidget {
   /// Initial tab selected when opening this page.
   final FriendshipsPageTab initialTab;
 
-  void _onBack(BuildContext context) {
-    context.pop();
-  }
-
   /// Opens the add-friend dialog.
   Future<void> _onShowFriendshipRequestDialog(BuildContext context) async {
     await showFriendshipRequestDialog(context);
@@ -68,38 +65,60 @@ class FriendshipsPage extends HookConsumerWidget {
       initialIndex: initialTab.tabIndex,
     );
 
+    final MAppBar appBar = MAppBar(
+      context: context,
+      title: MAppBarTitle(text: l10n.friendshipsTitle),
+      trailing: <MAppBarButton>[
+        MAppBarButton(
+          onPressed: () => unawaited(_onShowFriendshipRequestDialog(context)),
+          icon: LucideIcons.plus,
+        ),
+      ],
+      bottom: MTabBar(
+        controller: tabController,
+        titles: <String>[
+          l10n.friendshipsTabFriendships,
+          l10n.friendshipsTabRequests,
+        ],
+      ),
+    );
+
     return MScaffold(
-      appBar: MAppBar(
-        context: context,
-        title: MAppBarTitle(text: l10n.friendshipsTitle),
-        leading: <MAppBarButton>[
-          MAppBarButton(
-            onPressed: () => _onBack(context),
-            icon: LucideIcons.arrow_left,
-          ),
-        ],
-        trailing: <MAppBarButton>[
-          MAppBarButton(
-            onPressed: () => unawaited(_onShowFriendshipRequestDialog(context)),
-            icon: LucideIcons.user_plus,
-          ),
-        ],
-        bottom: MTabBar(
+      extendBodyBehindAppBar: true,
+      appBar: appBar,
+      body: Padding(
+        padding: EdgeInsets.only(top: appBar.preferredSize.height - 20.0),
+        child: TabBarView(
           controller: tabController,
-          titles: <String>[
-            l10n.friendshipsTabFriendships,
-            l10n.friendshipsTabRequests,
+          children: <Widget>[
+            MAsyncFriendshipList(
+              emptyText: l10n.friendshipsListEmpty,
+              listPadding: EdgeInsets.only(
+                top: 20.0,
+                bottom: context.bottomPadding,
+              ),
+              childPadding: EdgeInsets.only(
+                top: 20.0,
+                bottom: context.bottomPadding,
+                left: context.leftPadding + MSpacing.md,
+                right: context.rightPadding + MSpacing.md,
+              ),
+            ),
+            MAsyncFriendshipRequestList(
+              emptyText: l10n.friendshipsRequestsListEmpty,
+              listPadding: EdgeInsets.only(
+                top: 20.0,
+                bottom: context.bottomPadding,
+              ),
+              childPadding: EdgeInsets.only(
+                top: 20.0,
+                bottom: context.bottomPadding,
+                left: context.leftPadding + MSpacing.md,
+                right: context.rightPadding + MSpacing.md,
+              ),
+            ),
           ],
         ),
-      ),
-      body: TabBarView(
-        controller: tabController,
-        children: <Widget>[
-          MAsyncFriendshipList(emptyText: l10n.friendshipsListEmpty),
-          MAsyncFriendshipRequestList(
-            emptyText: l10n.friendshipsRequestsListEmpty,
-          ),
-        ],
       ),
     );
   }

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:memuno_app/src/core/failures/failure_mapper.dart';
 import 'package:memuno_app/src/features/create_meme/data/datasources/meme_editor_datasource.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_state_entity.dart';
+import 'package:memuno_app/src/features/create_meme/domain/entities/meme_recipient_target_type.dart';
 import 'package:memuno_app/src/features/create_meme/domain/repositories/meme_editor_repository.dart';
 import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_list_page_item_entity.dart';
 
@@ -138,12 +139,14 @@ final class MemeEditorRepositoryImpl implements MemeEditorRepository {
   @override
   MemeEditorStateEntity toggleRecipientSelection({
     required MemeEditorStateEntity state,
-    required String userId,
+    required MemeRecipientTargetType targetType,
+    required String targetId,
   }) {
     try {
       return _memeEditorDatasource.toggleRecipientSelection(
         state: state,
-        userId: userId,
+        targetType: targetType,
+        targetId: targetId,
       );
     } catch (error) {
       throw _failureMapper.map(error);

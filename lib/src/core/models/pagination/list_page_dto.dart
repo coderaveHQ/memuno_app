@@ -18,16 +18,21 @@ final class ListPageDto<TItem> {
       throw const FormatException('Expected `items` to be a JSON array.');
     }
 
-    final List<TItem> items = rawItems.map((Object? rawItem) {
-      if (rawItem is! Map) {
-        throw const FormatException('Expected list item to be an object.');
-      }
-      return itemFromJson(Map<String, Object?>.from(rawItem));
-    }).toList(growable: false);
+    final List<TItem> items = rawItems
+        .map((Object? rawItem) {
+          if (rawItem is! Map) {
+            throw const FormatException('Expected list item to be an object.');
+          }
+          return itemFromJson(Map<String, Object?>.from(rawItem));
+        })
+        .toList(growable: false);
 
     return ListPageDto<TItem>(
       items: items,
-      nextCursorCreatedAt: _readOptionalDateTime(json, 'next_cursor_created_at'),
+      nextCursorCreatedAt: _readOptionalDateTime(
+        json,
+        'next_cursor_created_at',
+      ),
       nextCursorId: _readOptionalString(json, 'next_cursor_id'),
     );
   }

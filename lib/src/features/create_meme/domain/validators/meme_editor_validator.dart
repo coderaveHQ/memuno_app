@@ -95,6 +95,17 @@ final class MemeEditorValidator {
     );
   }
 
+  /// Validates one group identifier used for send selection.
+  ///
+  /// Returns a [Failure.validation] when invalid, otherwise `null`.
+  Failure? validateGroupId(String groupId) {
+    if (groupId.trim().isNotEmpty) {
+      return null;
+    }
+
+    return const Failure.validation(code: 'invalid_format', field: 'group_id');
+  }
+
   /// Validates meme template identifier.
   ///
   /// Returns a [Failure.validation] when invalid, otherwise `null`.
@@ -111,6 +122,23 @@ final class MemeEditorValidator {
   /// Returns a [Failure.validation] when invalid, otherwise `null`.
   Failure? validateRecipientUserIds(Set<String> recipientUserIds) {
     if (recipientUserIds.isNotEmpty) {
+      return null;
+    }
+
+    return const Failure.validation(
+      code: 'invalid_format',
+      field: 'recipient_ids',
+    );
+  }
+
+  /// Validates that at least one recipient is selected across users/groups.
+  ///
+  /// Returns a [Failure.validation] when invalid, otherwise `null`.
+  Failure? validateRecipientSelections({
+    required Set<String> recipientUserIds,
+    required Set<String> recipientGroupIds,
+  }) {
+    if (recipientUserIds.isNotEmpty || recipientGroupIds.isNotEmpty) {
       return null;
     }
 

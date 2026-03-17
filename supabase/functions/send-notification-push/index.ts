@@ -19,6 +19,7 @@ import { createSupabaseAdminClient } from "../_shared/supabase.ts";
 type NotificationType =
   | "friendship_request_sent"
   | "friendship_request_accepted"
+  | "group_invitation_sent"
   | "meme_received"
   | "meme_laughed";
 
@@ -120,6 +121,7 @@ function parseNotificationType(raw: string): NotificationType {
   if (
     raw !== "friendship_request_sent" &&
     raw !== "friendship_request_accepted" &&
+    raw !== "group_invitation_sent" &&
     raw !== "meme_received" &&
     raw !== "meme_laughed"
   ) {

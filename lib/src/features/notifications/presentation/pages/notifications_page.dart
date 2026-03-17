@@ -135,50 +135,56 @@ class NotificationsPage extends HookConsumerWidget {
         ) ??
         false;
 
+    final MAppBar appBar = MAppBar(
+      context: context,
+      title: MAppBarTitle(text: l10n.notificationsTitle),
+      leading: <MAppBarButton>[
+        MAppBarButton(
+          onPressed: () => _onBack(context),
+          icon: LucideIcons.arrow_left,
+        ),
+      ],
+      trailing: <MAppBarButton>[
+        MAppBarButton(
+          isEnabled: hasUnread && !markAllState.isPending,
+          onPressed: () => _onMarkAllRead(ref),
+          icon: LucideIcons.check_check,
+        ),
+      ],
+    );
+
     return MScaffold(
-      appBar: MAppBar(
-        context: context,
-        title: MAppBarTitle(text: l10n.notificationsTitle),
-        leading: <MAppBarButton>[
-          MAppBarButton(
-            onPressed: () => _onBack(context),
-            icon: LucideIcons.arrow_left,
-          ),
-        ],
-        trailing: <MAppBarButton>[
-          MAppBarButton(
-            isEnabled: hasUnread && !markAllState.isPending,
-            onPressed: () => _onMarkAllRead(ref),
-            icon: LucideIcons.check_check,
-          ),
-        ],
-      ),
-      body: Column(
-        children: <Widget>[
-          Padding(
-            padding: EdgeInsets.only(
-              top: MSpacing.md,
-              left: context.leftPadding + MSpacing.md,
-              right: context.rightPadding + MSpacing.md,
-              bottom: MSpacing.md,
+      extendBodyBehindAppBar: true,
+      appBar: appBar,
+      body: Padding(
+        padding: EdgeInsets.only(top: appBar.preferredSize.height - 20.0),
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(
+                top: 20.0 + MSpacing.md,
+                left: context.leftPadding + MSpacing.md,
+                right: context.rightPadding + MSpacing.md,
+                bottom: MSpacing.md,
+              ),
+              child: MTextField(
+                controller: searchController,
+                icon: LucideIcons.search,
+                label: l10n.notificationsSearchLabel,
+                hint: l10n.notificationsSearchHint,
+              ),
             ),
-            child: MTextField(
-              controller: searchController,
-              icon: LucideIcons.search,
-              label: l10n.notificationsSearchLabel,
-              hint: l10n.notificationsSearchHint,
+            Expanded(
+              child: MAsyncNotificationList(
+                provider: notificationsListProvider,
+                emptyText: l10n.notificationsListEmpty,
+                onPressed: (NotificationListPageItemEntity item) {
+                  unawaited(_onOpenNotification(context, ref, item));
+                },
+              ),
             ),
-          ),
-          Expanded(
-            child: MAsyncNotificationList(
-              provider: notificationsListProvider,
-              emptyText: l10n.notificationsListEmpty,
-              onPressed: (NotificationListPageItemEntity item) {
-                unawaited(_onOpenNotification(context, ref, item));
-              },
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
