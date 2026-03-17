@@ -5,13 +5,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_native_splash/flutter_native_splash.dart';
-import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:memuno_app/src/app/app.dart';
+import 'package:memuno_app/src/app/bootstrap/auth_session_scope_host.dart';
 import 'package:memuno_app/src/app/bootstrap/firebase/firebase_bootstrap.dart';
 import 'package:memuno_app/src/app/bootstrap/supabase/supabase_bootstrap.dart';
 import 'package:memuno_app/src/core/utils/logger.dart';
 import 'package:memuno_app/src/infrastructure/shared_preferences/shared_preferences_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:zentoast/zentoast.dart';
 
 /// Centralized app bootstrap.
@@ -75,13 +76,24 @@ Future<void> bootstrap() async {
 
       final SharedPreferences sharedPreferences =
           await SharedPreferences.getInstance();
+      final SupabaseClient supabaseClient = Supabase.instance.client;
+      final String? initialUserId = supabaseClient.auth.currentUser?.id;
+      final Stream<String?> authUserIdChanges = supabaseClient
+          .auth
+          .onAuthStateChange
+          .map((AuthState state) {
+            return state.session?.user.id ??
+                supabaseClient.auth.currentUser?.id;
+          });
 
       SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
       // Start the app with Riverpod.
       runApp(
-        ProviderScope(
-          overrides: [
+        AuthSessionScopeHost(
+          initialUserId: initialUserId,
+          authUserIdChanges: authUserIdChanges,
+          overrides: <Object>[
             sharedPreferencesProvider.overrideWithValue(sharedPreferences),
           ],
           child: ToastProvider.create(child: const App()),
