@@ -51,6 +51,16 @@ final class NotificationMapper {
           requestId: data.requestId,
           routeTab: data.routeTab,
         ),
+      GroupInvitationSentNotificationDataDto data =>
+        NotificationListPageItemDataEntity.groupInvitationSent(
+          actorId: data.actorId,
+          actorName: data.actorName,
+          actorFriendshipCode: data.actorFriendshipCode,
+          invitationId: data.invitationId,
+          groupId: data.groupId,
+          groupName: data.groupName,
+          routeTab: data.routeTab,
+        ),
       MemeReceivedNotificationDataDto data =>
         NotificationListPageItemDataEntity.memeReceived(
           actorId: data.actorId,

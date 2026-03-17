@@ -97,52 +97,58 @@ class VerifySignUpPage extends HookConsumerWidget {
       }
     });
 
+    final MAppBar appBar = MAppBar(
+      context: context,
+      title: MAppBarTitle(text: l10n.verifySignUpTitle),
+      leading: <MAppBarButton>[
+        MAppBarButton(
+          onPressed: () => _onBack(context),
+          isEnabled: !isLoading && !isResending,
+          icon: LucideIcons.arrow_left,
+        ),
+      ],
+    );
+
     return MScaffold(
-      appBar: MAppBar(
-        context: context,
-        title: MAppBarTitle(text: l10n.verifySignUpTitle),
-        leading: <MAppBarButton>[
-          MAppBarButton(
-            onPressed: () => _onBack(context),
-            isEnabled: !isLoading && !isResending,
-            icon: LucideIcons.arrow_left,
-          ),
-        ],
-      ),
-      body: MCenter(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.only(
-            top: MSpacing.md,
-            left: context.leftPadding + MSpacing.md,
-            right: context.rightPadding + MSpacing.md,
-            bottom: context.bottomPadding + MSpacing.md,
-          ),
-          child: Column(
-            children: <Widget>[
-              MPinPut(
-                controller: otpController,
-                length: 6,
-                isEnabled: !isLoading && !isResending,
-                onCompleted: (String value) {
-                  _submit(ref, email, value);
-                },
-                autofocus: true,
-              ),
-              const MGap.md(),
-              MButton.primary(
-                onPressed: () => _submit(ref, email, otpController.text),
-                isLoading: isLoading,
-                title: l10n.verifySignUpConfirmButton,
-                isEnabled: !isLoading && !isResending,
-              ),
-              const MGap.md(),
-              MButton.secondary(
-                onPressed: () => _resendOtp(ref, email),
-                isLoading: isResending,
-                title: l10n.verifySignUpResendCodeButton,
-                isEnabled: !isLoading && !isResending,
-              ),
-            ],
+      extendBodyBehindAppBar: true,
+      appBar: appBar,
+      body: Padding(
+        padding: EdgeInsets.only(top: appBar.preferredSize.height - 20.0),
+        child: MCenter(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(
+              top: 20.0 + MSpacing.md,
+              left: context.leftPadding + MSpacing.md,
+              right: context.rightPadding + MSpacing.md,
+              bottom: context.bottomPadding + MSpacing.md,
+            ),
+            child: Column(
+              children: <Widget>[
+                MPinPut(
+                  controller: otpController,
+                  length: 6,
+                  isEnabled: !isLoading && !isResending,
+                  onCompleted: (String value) {
+                    _submit(ref, email, value);
+                  },
+                  autofocus: true,
+                ),
+                const MGap.md(),
+                MButton.primary(
+                  onPressed: () => _submit(ref, email, otpController.text),
+                  isLoading: isLoading,
+                  title: l10n.verifySignUpConfirmButton,
+                  isEnabled: !isLoading && !isResending,
+                ),
+                const MGap.md(),
+                MButton.secondary(
+                  onPressed: () => _resendOtp(ref, email),
+                  isLoading: isResending,
+                  title: l10n.verifySignUpResendCodeButton,
+                  isEnabled: !isLoading && !isResending,
+                ),
+              ],
+            ),
           ),
         ),
       ),

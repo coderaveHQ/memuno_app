@@ -83,7 +83,7 @@ class MTextField extends StatelessWidget {
         ),
         prefixIcon: icon != null
             ? Padding(
-                padding: EdgeInsetsGeometry.only(left: MSpacing.sm),
+                padding: EdgeInsets.only(left: MSpacing.sm),
                 child: Icon(icon),
               )
             : null,

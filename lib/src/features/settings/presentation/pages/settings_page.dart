@@ -53,112 +53,118 @@ class SettingsPage extends ConsumerWidget {
       right: context.rightPadding + MSpacing.md,
     );
 
+    final MAppBar appBar = MAppBar(
+      context: context,
+      title: MAppBarTitle(text: l10n.settingsTitle),
+      leading: <MAppBarButton>[
+        MAppBarButton(
+          onPressed: () => _onBack(context),
+          icon: LucideIcons.arrow_left,
+        ),
+      ],
+    );
+
     return MScaffold(
-      appBar: MAppBar(
-        context: context,
-        title: MAppBarTitle(text: l10n.settingsTitle),
-        leading: <MAppBarButton>[
-          MAppBarButton(
-            onPressed: () => _onBack(context),
-            icon: LucideIcons.arrow_left,
-          ),
-        ],
-      ),
-      body: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: <Widget>[
-          Expanded(
-            child: ListView(
-              padding: EdgeInsets.only(top: MSpacing.md),
-              children: <Widget>[
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: titlePadding,
-                    child: MText.h4(
-                      text: l10n.settingsSectionAppearance,
-                      style: TextStyle(color: MColors.gray100),
+      extendBodyBehindAppBar: true,
+      appBar: appBar,
+      body: Padding(
+        padding: EdgeInsets.only(top: appBar.preferredSize.height - 20.0),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: <Widget>[
+            Expanded(
+              child: ListView(
+                padding: EdgeInsets.only(top: 20.0 + MSpacing.md),
+                children: <Widget>[
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: titlePadding,
+                      child: MText.h4(
+                        text: l10n.settingsSectionAppearance,
+                        style: TextStyle(color: MColors.gray100),
+                      ),
                     ),
                   ),
-                ),
-                const MGap.sm(),
-                MListTile(
-                  onPressed: () {
-                    const LanguageModeRoute().push<void>(context);
-                  },
-                  title: l10n.languageModeTitle,
-                  description: _languageLabel(languagePreference, l10n),
-                  trailing: const Icon(
-                    LucideIcons.chevron_right,
-                    color: MColors.gray500,
-                    size: 24.0,
+                  const MGap.sm(),
+                  MListTile(
+                    onPressed: () {
+                      const LanguageModeRoute().push<void>(context);
+                    },
+                    title: l10n.languageModeTitle,
+                    description: _languageLabel(languagePreference, l10n),
+                    trailing: const Icon(
+                      LucideIcons.chevron_right,
+                      color: MColors.gray500,
+                      size: 24.0,
+                    ),
+                    padding: tilePadding,
                   ),
-                  padding: tilePadding,
-                ),
-                const MGap.lg(),
-                Align(
-                  alignment: Alignment.centerLeft,
-                  child: Padding(
-                    padding: titlePadding,
-                    child: MText.h4(
-                      text: l10n.settingsSectionAccountManagement,
-                      style: TextStyle(color: MColors.gray100),
+                  const MGap.lg(),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: titlePadding,
+                      child: MText.h4(
+                        text: l10n.settingsSectionAccountManagement,
+                        style: TextStyle(color: MColors.gray100),
+                      ),
                     ),
                   ),
-                ),
-                const MGap.sm(),
-                MListTile(
-                  onPressed: () {
-                    const ChangeEmailRoute().push<void>(context);
-                  },
-                  title: l10n.changeEmailListTileTitle,
-                  description: l10n.changeEmailListTileSubtitle,
-                  trailing: const Icon(
-                    LucideIcons.chevron_right,
-                    color: MColors.gray500,
-                    size: 24.0,
+                  const MGap.sm(),
+                  MListTile(
+                    onPressed: () {
+                      const ChangeEmailRoute().push<void>(context);
+                    },
+                    title: l10n.changeEmailListTileTitle,
+                    description: l10n.changeEmailListTileSubtitle,
+                    trailing: const Icon(
+                      LucideIcons.chevron_right,
+                      color: MColors.gray500,
+                      size: 24.0,
+                    ),
+                    padding: tilePadding,
                   ),
-                  padding: tilePadding,
-                ),
-                MListTile(
-                  onPressed: () {
-                    const ChangePasswordRoute().push<void>(context);
-                  },
-                  title: l10n.changePasswordListTileTitle,
-                  description: l10n.changePasswordListTileSubtitle,
-                  trailing: const Icon(
-                    LucideIcons.chevron_right,
-                    color: MColors.gray500,
-                    size: 24.0,
+                  MListTile(
+                    onPressed: () {
+                      const ChangePasswordRoute().push<void>(context);
+                    },
+                    title: l10n.changePasswordListTileTitle,
+                    description: l10n.changePasswordListTileSubtitle,
+                    trailing: const Icon(
+                      LucideIcons.chevron_right,
+                      color: MColors.gray500,
+                      size: 24.0,
+                    ),
+                    padding: tilePadding,
                   ),
-                  padding: tilePadding,
-                ),
-                MListTile(
-                  onPressed: () {
-                    const DeleteAccountRoute().push<void>(context);
-                  },
-                  title: l10n.deleteAccountListTileTitle,
-                  description: l10n.deleteAccountListTileSubtitle,
-                  trailing: const Icon(
-                    LucideIcons.chevron_right,
-                    color: MColors.gray500,
-                    size: 24.0,
+                  MListTile(
+                    onPressed: () {
+                      const DeleteAccountRoute().push<void>(context);
+                    },
+                    title: l10n.deleteAccountListTileTitle,
+                    description: l10n.deleteAccountListTileSubtitle,
+                    trailing: const Icon(
+                      LucideIcons.chevron_right,
+                      color: MColors.gray500,
+                      size: 24.0,
+                    ),
+                    padding: tilePadding,
                   ),
-                  padding: tilePadding,
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-          Padding(
-            padding: EdgeInsetsGeometry.only(
-              left: context.leftPadding + MSpacing.md,
-              right: context.rightPadding + MSpacing.md,
-              top: MSpacing.md,
-              bottom: context.bottomPadding + MSpacing.md,
+            Padding(
+              padding: EdgeInsets.only(
+                left: context.leftPadding + MSpacing.md,
+                right: context.rightPadding + MSpacing.md,
+                top: MSpacing.md,
+                bottom: context.bottomPadding + MSpacing.md,
+              ),
+              child: const SignOutButton(),
             ),
-            child: const SignOutButton(),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

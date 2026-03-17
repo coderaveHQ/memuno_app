@@ -9,6 +9,7 @@ import 'package:memuno_app/src/features/create_meme/application/providers/usecas
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/update_selected_meme_text_color_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/update_selected_meme_text_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_state_entity.dart';
+import 'package:memuno_app/src/features/create_meme/domain/entities/meme_recipient_target_type.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/add_meme_text_layer_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/clear_meme_recipient_selection_usecase.dart';
 import 'package:memuno_app/src/features/create_meme/domain/usecases/remove_meme_text_layer_by_id_usecase.dart';
@@ -124,12 +125,15 @@ class MemeEditorController extends _$MemeEditorController {
     state = nextState;
   }
 
-  /// Toggles selected recipient state for one friendship [userId].
-  void toggleRecipientSelection(String userId) {
+  /// Toggles selected recipient state for one polymorphic target.
+  void toggleRecipientSelection({
+    required MemeRecipientTargetType targetType,
+    required String targetId,
+  }) {
     final ToggleMemeRecipientSelectionUsecase usecase = ref.read(
       toggleMemeRecipientSelectionUsecaseProvider,
     );
-    state = usecase(state: state, userId: userId);
+    state = usecase(state: state, targetType: targetType, targetId: targetId);
   }
 
   /// Clears all selected recipients in the current send flow.

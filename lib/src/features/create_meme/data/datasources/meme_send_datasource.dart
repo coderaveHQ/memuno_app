@@ -15,5 +15,8 @@ abstract class MemeSendDatasource {
 
     /// Target recipient user identifiers.
     required List<String> recipientUserIds,
+
+    /// Target group identifiers.
+    required List<String> recipientGroupIds,
   });
 }

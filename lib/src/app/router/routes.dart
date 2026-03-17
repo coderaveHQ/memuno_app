@@ -4,6 +4,8 @@ part of 'app_router.dart';
 final GlobalKey<NavigatorState> rootNavigatorKey = GlobalKey<NavigatorState>();
 
 final GlobalKey<NavigatorState> shellNavigatorKey = GlobalKey<NavigatorState>();
+final GlobalKey<NavigatorState> groupCreateSheetNavigatorKey =
+    GlobalKey<NavigatorState>();
 
 /// Route shown when GoRouter catches an error.
 class ErrorRoute extends GoRouteData {
@@ -172,7 +174,26 @@ class VerifySignUpRoute extends GoRouteData with $VerifySignUpRoute {
 @TypedShellRoute<MainRoute>(
   routes: <TypedRoute<RouteData>>[
     TypedGoRoute<FeedRoute>(path: '/feed', name: FeedRoute.routeName),
-    TypedGoRoute<CommunityRoute>(path: '/m', name: CommunityRoute.routeName),
+    TypedGoRoute<FriendshipsRoute>(
+      path: '/friendships',
+      name: FriendshipsRoute.routeName,
+    ),
+    TypedGoRoute<GroupsRoute>(
+      path: '/groups',
+      name: GroupsRoute.routeName,
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<GroupDetailsRoute>(
+          path: ':groupId',
+          name: GroupDetailsRoute.routeName,
+          routes: <TypedRoute<RouteData>>[
+            TypedGoRoute<GroupDetailsInfoRoute>(
+              path: 'info',
+              name: GroupDetailsInfoRoute.routeName,
+            ),
+          ],
+        ),
+      ],
+    ),
   ],
 )
 class MainRoute extends ShellRouteData {
@@ -187,6 +208,98 @@ class MainRoute extends ShellRouteData {
     Widget navigator,
   ) {
     return NoTransitionPage(child: MainShellPage(navigator: navigator));
+  }
+}
+
+@TypedShellRoute<GroupCreateSheetRoute>(
+  routes: <TypedRoute<RouteData>>[
+    TypedGoRoute<GroupCreateNameSheetRoute>(
+      path: '/groups/create/name',
+      name: GroupCreateNameSheetRoute.routeName,
+      routes: <TypedRoute<RouteData>>[
+        TypedGoRoute<GroupCreateMembersSheetRoute>(
+          path: 'members',
+          name: GroupCreateMembersSheetRoute.routeName,
+        ),
+      ],
+    ),
+  ],
+)
+class GroupCreateSheetRoute extends ShellRouteData {
+  const GroupCreateSheetRoute();
+
+  static final GlobalKey<NavigatorState> $navigatorKey =
+      groupCreateSheetNavigatorKey;
+
+  @override
+  Page<void> pageBuilder(
+    BuildContext context,
+    GoRouterState state,
+    Widget navigator,
+  ) {
+    return ModalSheetPage<void>(
+      key: state.pageKey,
+      swipeDismissible: true,
+      viewportBuilder: (BuildContext context, Widget child) {
+        return SheetViewport(
+          padding: EdgeInsets.only(top: MediaQuery.viewPaddingOf(context).top),
+          child: child,
+        );
+      },
+      child: GroupCreateSheetShell(navigator: navigator),
+    );
+  }
+}
+
+class GroupCreateNameSheetRoute extends GoRouteData
+    with $GroupCreateNameSheetRoute {
+  const GroupCreateNameSheetRoute();
+
+  static const String routeName = 'groupCreateNameSheet';
+
+  static bool isLeaf(BuildContext context) =>
+      RouteUtils.isLeaf(context, routeName);
+
+  static bool isInStack(BuildContext context) =>
+      RouteUtils.isInStack(context, routeName);
+
+  static final GlobalKey<NavigatorState> $parentNavigatorKey =
+      groupCreateSheetNavigatorKey;
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return PagedSheetPage<void>(
+      key: state.pageKey,
+      initialOffset: const SheetOffset(0.6),
+      snapGrid: const SheetSnapGrid(
+        snaps: <SheetOffset>[SheetOffset(0.6), SheetOffset(1)],
+      ),
+      child: const GroupCreateNameSheetPage(),
+    );
+  }
+}
+
+class GroupCreateMembersSheetRoute extends GoRouteData
+    with $GroupCreateMembersSheetRoute {
+  const GroupCreateMembersSheetRoute();
+
+  static const String routeName = 'groupCreateMembersSheet';
+
+  static bool isLeaf(BuildContext context) =>
+      RouteUtils.isLeaf(context, routeName);
+
+  static bool isInStack(BuildContext context) =>
+      RouteUtils.isInStack(context, routeName);
+
+  static final GlobalKey<NavigatorState> $parentNavigatorKey =
+      groupCreateSheetNavigatorKey;
+
+  @override
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return PagedSheetPage<void>(
+      key: state.pageKey,
+      child: const GroupCreateMembersSheetPage(),
+    );
   }
 }
 
@@ -216,12 +329,15 @@ class FeedRoute extends GoRouteData with $FeedRoute {
   }
 }
 
-class CommunityRoute extends GoRouteData with $CommunityRoute {
-  /// Creates the community route.
-  const CommunityRoute();
+class FriendshipsRoute extends GoRouteData with $FriendshipsRoute {
+  /// Creates the friendships route.
+  const FriendshipsRoute({this.tab});
+
+  /// Optional initial tab query value (`friendships` or `requests`).
+  final String? tab;
 
   /// Route name used in navigation.
-  static const String routeName = 'm';
+  static const String routeName = 'friendships';
 
   /// Returns true if this route is the top-most leaf in the stack.
   static bool isLeaf(BuildContext context) =>
@@ -238,7 +354,98 @@ class CommunityRoute extends GoRouteData with $CommunityRoute {
   @override
   /// Builds the page for this route.
   Page<void> buildPage(BuildContext context, GoRouterState state) {
-    return NoTransitionPage<void>(child: const CommunityPage());
+    return NoTransitionPage<void>(
+      child: FriendshipsPage(
+        initialTab: FriendshipsPageTab.fromRouteValue(tab),
+      ),
+    );
+  }
+}
+
+class GroupsRoute extends GoRouteData with $GroupsRoute {
+  /// Creates the groups route.
+  const GroupsRoute({this.tab});
+
+  /// Optional initial tab query value (`groups` or `invitations`).
+  final String? tab;
+
+  /// Route name used in navigation.
+  static const String routeName = 'groups';
+
+  /// Returns true if this route is the top-most leaf in the stack.
+  static bool isLeaf(BuildContext context) =>
+      RouteUtils.isLeaf(context, routeName);
+
+  /// Returns true if this route exists anywhere in the stack.
+  static bool isInStack(BuildContext context) =>
+      RouteUtils.isInStack(context, routeName);
+
+  /// Parent navigator used by this route.
+  static final GlobalKey<NavigatorState> $parentNavigatorKey =
+      shellNavigatorKey;
+
+  @override
+  /// Builds the page for this route.
+  Page<void> buildPage(BuildContext context, GoRouterState state) {
+    return NoTransitionPage<void>(
+      child: GroupsPage(initialTab: GroupsPageTab.fromRouteValue(tab)),
+    );
+  }
+}
+
+class GroupDetailsRoute extends GoRouteData with $GroupDetailsRoute {
+  /// Creates the group details route.
+  const GroupDetailsRoute({required this.groupId});
+
+  /// Group id path parameter.
+  final String groupId;
+
+  /// Route name used in navigation.
+  static const String routeName = 'groupDetails';
+
+  /// Returns true if this route is the top-most leaf in the stack.
+  static bool isLeaf(BuildContext context) =>
+      RouteUtils.isLeaf(context, routeName);
+
+  /// Returns true if this route exists anywhere in the stack.
+  static bool isInStack(BuildContext context) =>
+      RouteUtils.isInStack(context, routeName);
+
+  /// Parent navigator used by this route.
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+
+  @override
+  /// Builds the page for this route.
+  Widget build(BuildContext context, GoRouterState state) {
+    return GroupDetailsPage(groupId: groupId);
+  }
+}
+
+class GroupDetailsInfoRoute extends GoRouteData with $GroupDetailsInfoRoute {
+  /// Creates the group details info route.
+  const GroupDetailsInfoRoute({required this.groupId});
+
+  /// Group id path parameter.
+  final String groupId;
+
+  /// Route name used in navigation.
+  static const String routeName = 'groupDetailsInfo';
+
+  /// Returns true if this route is the top-most leaf in the stack.
+  static bool isLeaf(BuildContext context) =>
+      RouteUtils.isLeaf(context, routeName);
+
+  /// Returns true if this route exists anywhere in the stack.
+  static bool isInStack(BuildContext context) =>
+      RouteUtils.isInStack(context, routeName);
+
+  /// Parent navigator used by this route.
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+
+  @override
+  /// Builds the page for this route.
+  Widget build(BuildContext context, GoRouterState state) {
+    return GroupDetailsInfoPage(groupId: groupId);
   }
 }
 
@@ -435,38 +642,6 @@ class UserDetailsRoute extends GoRouteData with $UserDetailsRoute {
   /// Builds the page for this route.
   Widget build(BuildContext context, GoRouterState state) {
     return UserDetailsPage(userId: userId);
-  }
-}
-
-@TypedGoRoute<FriendshipsRoute>(
-  path: '/friendships',
-  name: FriendshipsRoute.routeName,
-)
-class FriendshipsRoute extends GoRouteData with $FriendshipsRoute {
-  /// Creates the friendships route.
-  const FriendshipsRoute({this.tab});
-
-  /// Optional initial tab query value (`friendships` or `requests`).
-  final String? tab;
-
-  /// Route name used in navigation.
-  static const String routeName = 'friendships';
-
-  /// Returns true if this route is the top-most leaf in the stack.
-  static bool isLeaf(BuildContext context) =>
-      RouteUtils.isLeaf(context, routeName);
-
-  /// Returns true if this route exists anywhere in the stack.
-  static bool isInStack(BuildContext context) =>
-      RouteUtils.isInStack(context, routeName);
-
-  /// Parent navigator used by this route.
-  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
-
-  @override
-  /// Builds the page for this route.
-  Widget build(BuildContext context, GoRouterState state) {
-    return FriendshipsPage(initialTab: FriendshipsPageTab.fromRouteValue(tab));
   }
 }
 

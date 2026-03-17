@@ -68,4 +68,14 @@ final class MemeDetailsRepositoryImpl implements MemeDetailsRepository {
       throw _failureMapper.map(error);
     }
   }
+
+  @override
+  /// Deletes one meme owned by the current user.
+  Future<void> deleteMeme({required String memeId}) async {
+    try {
+      await _memeDetailsDatasource.deleteMeme(memeId: memeId);
+    } catch (error) {
+      throw _failureMapper.map(error);
+    }
+  }
 }

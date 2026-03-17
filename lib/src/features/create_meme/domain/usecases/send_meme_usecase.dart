@@ -41,9 +41,11 @@ final class SendMemeUsecase {
       throw bytesValidation;
     }
 
-    final Failure? recipientsValidation = _validator.validateRecipientUserIds(
-      state.selectedRecipientUserIds,
-    );
+    final Failure? recipientsValidation = _validator
+        .validateRecipientSelections(
+          recipientUserIds: state.selectedRecipientUserIds,
+          recipientGroupIds: state.selectedRecipientGroupIds,
+        );
     if (recipientsValidation != null) {
       throw recipientsValidation;
     }
@@ -51,10 +53,21 @@ final class SendMemeUsecase {
     final List<String> recipientUserIds = state.selectedRecipientUserIds.toList(
       growable: false,
     )..sort();
+    final List<String> recipientGroupIds =
+        state.selectedRecipientGroupIds.toList(growable: false)..sort();
 
     for (final String recipientUserId in recipientUserIds) {
       final Failure? recipientValidation = _validator.validateFriendUserId(
         recipientUserId,
+      );
+      if (recipientValidation != null) {
+        throw recipientValidation;
+      }
+    }
+
+    for (final String recipientGroupId in recipientGroupIds) {
+      final Failure? recipientValidation = _validator.validateGroupId(
+        recipientGroupId,
       );
       if (recipientValidation != null) {
         throw recipientValidation;
@@ -88,6 +101,7 @@ final class SendMemeUsecase {
       templateId: templateId,
       aspectRatio: aspectRatio,
       recipientUserIds: recipientUserIds,
+      recipientGroupIds: recipientGroupIds,
     );
   }
 }

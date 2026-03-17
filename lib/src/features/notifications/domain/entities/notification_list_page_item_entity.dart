@@ -43,6 +43,8 @@ extension NotificationListPageItemEntityX on NotificationListPageItemEntity {
         :final actorId,
       ) =>
         actorId,
+      GroupInvitationSentNotificationListPageItemDataEntity(:final actorId) =>
+        actorId,
       MemeReceivedNotificationListPageItemDataEntity(:final actorId) => actorId,
       MemeLaughedNotificationListPageItemDataEntity(:final actorId) => actorId,
     };
@@ -67,6 +69,8 @@ extension NotificationListPageItemEntityX on NotificationListPageItemEntity {
       FriendshipRequestAcceptedNotificationListPageItemDataEntity(
         :final actorName,
       ) =>
+        actorName,
+      GroupInvitationSentNotificationListPageItemDataEntity(:final actorName) =>
         actorName,
       MemeReceivedNotificationListPageItemDataEntity(:final actorName) =>
         actorName,
@@ -100,6 +104,15 @@ extension NotificationListPageItemEntityX on NotificationListPageItemEntity {
         memeAspectRatio,
       MemeLaughedNotificationListPageItemDataEntity(:final memeAspectRatio) =>
         memeAspectRatio,
+      _ => null,
+    };
+  }
+
+  /// Group name used by group invitation notifications.
+  String? get notificationGroupName {
+    return switch (data) {
+      GroupInvitationSentNotificationListPageItemDataEntity(:final groupName) =>
+        groupName,
       _ => null,
     };
   }

@@ -6,6 +6,9 @@ enum NotificationType {
   /// A recipient accepted a previously sent friendship request.
   friendshipRequestAccepted('friendship_request_accepted'),
 
+  /// A user invited the recipient to join a group.
+  groupInvitationSent('group_invitation_sent'),
+
   /// A friend sent a meme to the recipient.
   memeReceived('meme_received'),
 
@@ -23,6 +26,7 @@ enum NotificationType {
       'friendship_request_sent' => NotificationType.friendshipRequestSent,
       'friendship_request_accepted' =>
         NotificationType.friendshipRequestAccepted,
+      'group_invitation_sent' => NotificationType.groupInvitationSent,
       'meme_received' => NotificationType.memeReceived,
       'meme_laughed' => NotificationType.memeLaughed,
       _ => throw FormatException('Unknown notification type value: $rawValue'),

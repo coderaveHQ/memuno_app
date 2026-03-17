@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_state_entity.dart';
+import 'package:memuno_app/src/features/create_meme/domain/entities/meme_recipient_target_type.dart';
 import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_list_page_item_entity.dart';
 
 /// Repository contract for local meme-editor state transitions.
@@ -86,13 +87,16 @@ abstract class MemeEditorRepository {
     required Uint8List bytes,
   });
 
-  /// Toggles selected-recipient state for one friendship [userId].
+  /// Toggles selected-recipient state for one polymorphic recipient target.
   MemeEditorStateEntity toggleRecipientSelection({
     /// Current editor snapshot.
     required MemeEditorStateEntity state,
 
-    /// Friendship-user identifier to toggle.
-    required String userId,
+    /// Target recipient type to toggle.
+    required MemeRecipientTargetType targetType,
+
+    /// Recipient identifier to toggle.
+    required String targetId,
   });
 
   /// Clears all selected friendship recipients.

@@ -51,10 +51,7 @@ class MAsyncNotificationList extends StatelessWidget {
       childPadding: childPadding,
       listChildPadding: listChildPadding,
       itemBuilder:
-          (
-            BuildContext context,
-            NotificationListPageItemEntity notification,
-          ) {
+          (BuildContext context, NotificationListPageItemEntity notification) {
             return MAsyncNotificationListItem(
               notification: notification,
               onPressed: onPressed,

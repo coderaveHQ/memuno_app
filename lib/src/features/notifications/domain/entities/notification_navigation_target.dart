@@ -3,6 +3,9 @@ enum NotificationNavigationTargetKind {
   /// Opens friendships page.
   friendships,
 
+  /// Opens groups page.
+  groups,
+
   /// Opens a user details page.
   userDetails,
 
@@ -18,6 +21,7 @@ final class NotificationNavigationTarget {
   const NotificationNavigationTarget._({
     required this.kind,
     this.friendshipsTab,
+    this.groupsTab,
     this.userId,
     this.memeId,
   });
@@ -27,6 +31,9 @@ final class NotificationNavigationTarget {
 
   /// Optional friendships tab route value (`friendships` or `requests`).
   final String? friendshipsTab;
+
+  /// Optional groups tab route value (`groups` or `invitations`).
+  final String? groupsTab;
 
   /// Optional user id for user-details destinations.
   final String? userId;
@@ -39,6 +46,14 @@ final class NotificationNavigationTarget {
     return NotificationNavigationTarget._(
       kind: NotificationNavigationTargetKind.friendships,
       friendshipsTab: tab,
+    );
+  }
+
+  /// Creates a groups target.
+  factory NotificationNavigationTarget.groups({required String tab}) {
+    return NotificationNavigationTarget._(
+      kind: NotificationNavigationTargetKind.groups,
+      groupsTab: tab,
     );
   }
 

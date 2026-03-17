@@ -24,6 +24,13 @@ sealed class UserDetailsDto with _$UserDetailsDto {
 
     /// User-details update timestamp.
     @JsonKey(name: 'updated_at') required DateTime updatedAt,
+
+    /// Whether auth user and viewed user are friends.
+    @JsonKey(name: 'is_friend') required bool isFriend,
+
+    /// Whether a pending friendship request exists between both users.
+    @JsonKey(name: 'has_pending_friendship_request')
+    required bool hasPendingFriendshipRequest,
   }) = _UserDetailsDto;
 
   /// Builds a DTO from JSON.

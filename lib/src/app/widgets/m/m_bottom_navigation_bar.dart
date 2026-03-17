@@ -14,7 +14,7 @@ class MBottomNavigationBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: EdgeInsetsGeometry.only(
+      padding: EdgeInsets.only(
         bottom: context.bottomPadding + 2.0,
         left: context.leftPadding + MSpacing.md,
         right: context.rightPadding + MSpacing.md,
@@ -43,7 +43,7 @@ class MBottomNavigationBar extends StatelessWidget {
           ),
           if (action != null)
             Padding(
-              padding: EdgeInsetsGeometry.only(left: MSpacing.sm),
+              padding: EdgeInsets.only(left: MSpacing.sm),
               child: action,
             ),
         ],

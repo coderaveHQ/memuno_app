@@ -1,6 +1,7 @@
 import 'dart:typed_data';
 
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_state_entity.dart';
+import 'package:memuno_app/src/features/create_meme/domain/entities/meme_recipient_target_type.dart';
 import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_list_page_item_entity.dart';
 
 /// Datasource contract for local meme-editor state operations.
@@ -53,10 +54,11 @@ abstract class MemeEditorDatasource {
     required Uint8List bytes,
   });
 
-  /// Toggles recipient selection for one friendship [userId].
+  /// Toggles recipient selection for one polymorphic [targetId].
   MemeEditorStateEntity toggleRecipientSelection({
     required MemeEditorStateEntity state,
-    required String userId,
+    required MemeRecipientTargetType targetType,
+    required String targetId,
   });
 
   /// Clears all selected recipients.

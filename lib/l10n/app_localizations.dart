@@ -286,6 +286,24 @@ abstract class AppLocalizations {
   /// **'Your name was updated.'**
   String get userDetailsUpdateNameSuccessMessage;
 
+  /// No description provided for @userDetailsActionsTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Profile actions'**
+  String get userDetailsActionsTitle;
+
+  /// No description provided for @userDetailsActionRemoveFriend.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Remove friend'**
+  String get userDetailsActionRemoveFriend;
+
+  /// No description provided for @userDetailsRemoveFriendSuccessMessage.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Friend removed.'**
+  String get userDetailsRemoveFriendSuccessMessage;
+
   /// No description provided for @userDetailsMemesTabAll.
   ///
   /// In en_US, this message translates to:
@@ -412,6 +430,303 @@ abstract class AppLocalizations {
   /// **'Outgoing'**
   String get friendshipsRequestDirectionOutgoing;
 
+  /// No description provided for @groupsTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Groups'**
+  String get groupsTitle;
+
+  /// No description provided for @groupsTabGroups.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Groups'**
+  String get groupsTabGroups;
+
+  /// No description provided for @groupsTabInvitations.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Invitations'**
+  String get groupsTabInvitations;
+
+  /// No description provided for @groupsListEmpty.
+  ///
+  /// In en_US, this message translates to:
+  /// **'You are not in any groups yet.'**
+  String get groupsListEmpty;
+
+  /// No description provided for @groupsInvitationsListEmpty.
+  ///
+  /// In en_US, this message translates to:
+  /// **'No pending group invitations.'**
+  String get groupsInvitationsListEmpty;
+
+  /// No description provided for @groupsMemberCount.
+  ///
+  /// In en_US, this message translates to:
+  /// **'{count} members'**
+  String groupsMemberCount(Object count);
+
+  /// No description provided for @groupsInvitationFrom.
+  ///
+  /// In en_US, this message translates to:
+  /// **'From {sender_name} ({sender_friendship_code})'**
+  String groupsInvitationFrom(
+    Object sender_name,
+    Object sender_friendship_code,
+  );
+
+  /// No description provided for @groupsInvitationAcceptSuccessMessage.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Invitation accepted.'**
+  String get groupsInvitationAcceptSuccessMessage;
+
+  /// No description provided for @groupsInvitationRejectSuccessMessage.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Invitation rejected.'**
+  String get groupsInvitationRejectSuccessMessage;
+
+  /// No description provided for @groupsCreateNameTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Create a group'**
+  String get groupsCreateNameTitle;
+
+  /// No description provided for @groupsCreateNameSubtitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Choose a name for your group.'**
+  String get groupsCreateNameSubtitle;
+
+  /// No description provided for @groupsCreateNameFieldLabel.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Group name'**
+  String get groupsCreateNameFieldLabel;
+
+  /// No description provided for @groupsCreateNameFieldHint.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Weekend Legends'**
+  String get groupsCreateNameFieldHint;
+
+  /// No description provided for @groupsCreateNameContinueButton.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Continue'**
+  String get groupsCreateNameContinueButton;
+
+  /// No description provided for @groupsCreateMembersTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Invite members'**
+  String get groupsCreateMembersTitle;
+
+  /// No description provided for @groupsCreateMembersSubtitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'{count} selected'**
+  String groupsCreateMembersSubtitle(Object count);
+
+  /// No description provided for @groupsCreateMembersSubmitButton.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Create group'**
+  String get groupsCreateMembersSubmitButton;
+
+  /// No description provided for @groupsCreateSuccessMessage.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Group created successfully.'**
+  String get groupsCreateSuccessMessage;
+
+  /// No description provided for @groupDetailsTabAllMemes.
+  ///
+  /// In en_US, this message translates to:
+  /// **'All'**
+  String get groupDetailsTabAllMemes;
+
+  /// No description provided for @groupDetailsTabSentByMe.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Sent by me'**
+  String get groupDetailsTabSentByMe;
+
+  /// No description provided for @groupDetailsMemesAllEmpty.
+  ///
+  /// In en_US, this message translates to:
+  /// **'No memes sent to this group yet.'**
+  String get groupDetailsMemesAllEmpty;
+
+  /// No description provided for @groupDetailsMemesSentByMeEmpty.
+  ///
+  /// In en_US, this message translates to:
+  /// **'You have not sent memes to this group yet.'**
+  String get groupDetailsMemesSentByMeEmpty;
+
+  /// No description provided for @groupDetailsInfoTabMembers.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Members'**
+  String get groupDetailsInfoTabMembers;
+
+  /// No description provided for @groupDetailsInfoTabInvitations.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Invitations'**
+  String get groupDetailsInfoTabInvitations;
+
+  /// No description provided for @groupDetailsMembersEmpty.
+  ///
+  /// In en_US, this message translates to:
+  /// **'No members found.'**
+  String get groupDetailsMembersEmpty;
+
+  /// No description provided for @groupDetailsPendingInvitationsEmpty.
+  ///
+  /// In en_US, this message translates to:
+  /// **'No pending invitations.'**
+  String get groupDetailsPendingInvitationsEmpty;
+
+  /// No description provided for @groupDetailsMemberRoleCreator.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Creator'**
+  String get groupDetailsMemberRoleCreator;
+
+  /// No description provided for @groupDetailsMemberRoleAdmin.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Admin'**
+  String get groupDetailsMemberRoleAdmin;
+
+  /// No description provided for @groupDetailsMemberRoleMember.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Member'**
+  String get groupDetailsMemberRoleMember;
+
+  /// No description provided for @groupDetailsInviteMembersDialogTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Invite members'**
+  String get groupDetailsInviteMembersDialogTitle;
+
+  /// No description provided for @groupDetailsInviteMembersSelected.
+  ///
+  /// In en_US, this message translates to:
+  /// **'{count} selected'**
+  String groupDetailsInviteMembersSelected(Object count);
+
+  /// No description provided for @groupDetailsInviteMembersSubmitButton.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Send invitations'**
+  String get groupDetailsInviteMembersSubmitButton;
+
+  /// No description provided for @groupDetailsInviteMembersEmpty.
+  ///
+  /// In en_US, this message translates to:
+  /// **'No friends available to invite.'**
+  String get groupDetailsInviteMembersEmpty;
+
+  /// No description provided for @groupDetailsInviteMembersSuccessMessage.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Invitations sent.'**
+  String get groupDetailsInviteMembersSuccessMessage;
+
+  /// No description provided for @groupDetailsMemberActionsTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Member actions'**
+  String get groupDetailsMemberActionsTitle;
+
+  /// No description provided for @groupDetailsMemberActionPromoteToAdmin.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Make admin'**
+  String get groupDetailsMemberActionPromoteToAdmin;
+
+  /// No description provided for @groupDetailsMemberActionDemoteToMember.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Remove admin privileges'**
+  String get groupDetailsMemberActionDemoteToMember;
+
+  /// No description provided for @groupDetailsMemberActionRemove.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Remove member'**
+  String get groupDetailsMemberActionRemove;
+
+  /// No description provided for @groupDetailsGroupActionsTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Group actions'**
+  String get groupDetailsGroupActionsTitle;
+
+  /// No description provided for @groupDetailsGroupActionLeave.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Leave group'**
+  String get groupDetailsGroupActionLeave;
+
+  /// No description provided for @groupDetailsGroupActionDelete.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Delete group'**
+  String get groupDetailsGroupActionDelete;
+
+  /// No description provided for @groupDetailsMemberRoleUpdateSuccessMessage.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Member role updated.'**
+  String get groupDetailsMemberRoleUpdateSuccessMessage;
+
+  /// No description provided for @groupDetailsUpdateNameDialogTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Update group name'**
+  String get groupDetailsUpdateNameDialogTitle;
+
+  /// No description provided for @groupDetailsUpdateNameSubmitButton.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Save group name'**
+  String get groupDetailsUpdateNameSubmitButton;
+
+  /// No description provided for @groupDetailsUpdateNameSuccessMessage.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Group name updated.'**
+  String get groupDetailsUpdateNameSuccessMessage;
+
+  /// No description provided for @groupDetailsMemberRemoveSuccessMessage.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Member removed.'**
+  String get groupDetailsMemberRemoveSuccessMessage;
+
+  /// No description provided for @groupDetailsInvitationCancelSuccessMessage.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Invitation canceled.'**
+  String get groupDetailsInvitationCancelSuccessMessage;
+
+  /// No description provided for @groupDetailsLeaveSuccessMessage.
+  ///
+  /// In en_US, this message translates to:
+  /// **'You left the group.'**
+  String get groupDetailsLeaveSuccessMessage;
+
+  /// No description provided for @groupDetailsDeleteSuccessMessage.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Group deleted.'**
+  String get groupDetailsDeleteSuccessMessage;
+
   /// No description provided for @notificationsTitle.
   ///
   /// In en_US, this message translates to:
@@ -442,11 +757,17 @@ abstract class AppLocalizations {
   /// **'Feed'**
   String get mainShellTabFeed;
 
-  /// No description provided for @mainShellTabCommunity.
+  /// No description provided for @mainShellTabFriendships.
   ///
   /// In en_US, this message translates to:
-  /// **'Community'**
-  String get mainShellTabCommunity;
+  /// **'Friends'**
+  String get mainShellTabFriendships;
+
+  /// No description provided for @mainShellTabGroups.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Groups'**
+  String get mainShellTabGroups;
 
   /// No description provided for @feedListEmpty.
   ///
@@ -502,6 +823,24 @@ abstract class AppLocalizations {
   /// **'No laughs yet.'**
   String get memeDetailsLaughsEmpty;
 
+  /// No description provided for @memeDetailsActionsTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Meme actions'**
+  String get memeDetailsActionsTitle;
+
+  /// No description provided for @memeDetailsActionDelete.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Delete meme'**
+  String get memeDetailsActionDelete;
+
+  /// No description provided for @memeDetailsDeleteSuccessMessage.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Meme deleted.'**
+  String get memeDetailsDeleteSuccessMessage;
+
   /// No description provided for @notificationsItemFriendshipRequestSentTitle.
   ///
   /// In en_US, this message translates to:
@@ -525,6 +864,21 @@ abstract class AppLocalizations {
   /// In en_US, this message translates to:
   /// **'{sender_name} accepted your friendship request.'**
   String notificationsItemFriendshipRequestAccepted(Object sender_name);
+
+  /// No description provided for @notificationsItemGroupInvitationSentTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'New group invitation'**
+  String get notificationsItemGroupInvitationSentTitle;
+
+  /// No description provided for @notificationsItemGroupInvitationSent.
+  ///
+  /// In en_US, this message translates to:
+  /// **'{sender_name} invited you to join {group_name}.'**
+  String notificationsItemGroupInvitationSent(
+    Object sender_name,
+    Object group_name,
+  );
 
   /// No description provided for @notificationsItemMemeReceivedTitle.
   ///
@@ -627,6 +981,12 @@ abstract class AppLocalizations {
   /// In en_US, this message translates to:
   /// **'Send'**
   String get sendMemeSubmitButton;
+
+  /// No description provided for @sendMemeRecipientsListEmpty.
+  ///
+  /// In en_US, this message translates to:
+  /// **'No recipients available.'**
+  String get sendMemeRecipientsListEmpty;
 
   /// No description provided for @sendMemeSuccessMessage.
   ///

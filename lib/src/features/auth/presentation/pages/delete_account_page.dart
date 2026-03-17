@@ -65,41 +65,47 @@ class DeleteAccountPage extends ConsumerWidget {
       }
     });
 
+    final MAppBar appBar = MAppBar(
+      context: context,
+      title: MAppBarTitle(text: l10n.deleteAccountTitle),
+      leading: <MAppBarButton>[
+        MAppBarButton(
+          onPressed: () => _onBack(context),
+          isEnabled: !isLoading,
+          icon: LucideIcons.arrow_left,
+        ),
+      ],
+    );
+
     return MScaffold(
-      appBar: MAppBar(
-        context: context,
-        title: MAppBarTitle(text: l10n.deleteAccountTitle),
-        leading: <MAppBarButton>[
-          MAppBarButton(
-            onPressed: () => _onBack(context),
-            isEnabled: !isLoading,
-            icon: LucideIcons.arrow_left,
-          ),
-        ],
-      ),
-      body: MCenter(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.only(
-            top: MSpacing.md,
-            left: context.leftPadding + MSpacing.md,
-            right: context.rightPadding + MSpacing.md,
-            bottom: context.bottomPadding + MSpacing.md,
-          ),
-          child: Column(
-            children: <Widget>[
-              MText.p(
-                text: l10n.deleteAccountWarningBody,
-                alignment: TextAlign.center,
-                style: TextStyle(color: MColors.gray100),
-              ),
-              const MGap.md(),
-              MButton.primary(
-                onPressed: () => _submit(context, ref),
-                isLoading: isLoading,
-                isEnabled: !isLoading,
-                title: l10n.deleteAccountSubmitButton,
-              ),
-            ],
+      appBar: appBar,
+      extendBodyBehindAppBar: true,
+      body: Padding(
+        padding: EdgeInsets.only(top: appBar.preferredSize.height - 20.0),
+        child: MCenter(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(
+              top: 20.0 + MSpacing.md,
+              left: context.leftPadding + MSpacing.md,
+              right: context.rightPadding + MSpacing.md,
+              bottom: context.bottomPadding + MSpacing.md,
+            ),
+            child: Column(
+              children: <Widget>[
+                MText.p(
+                  text: l10n.deleteAccountWarningBody,
+                  alignment: TextAlign.center,
+                  style: TextStyle(color: MColors.gray100),
+                ),
+                const MGap.md(),
+                MButton.primary(
+                  onPressed: () => _submit(context, ref),
+                  isLoading: isLoading,
+                  isEnabled: !isLoading,
+                  title: l10n.deleteAccountSubmitButton,
+                ),
+              ],
+            ),
           ),
         ),
       ),

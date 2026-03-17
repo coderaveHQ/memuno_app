@@ -3,6 +3,7 @@ import 'dart:typed_data';
 
 import 'package:memuno_app/src/features/create_meme/data/datasources/meme_editor_datasource.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_state_entity.dart';
+import 'package:memuno_app/src/features/create_meme/domain/entities/meme_recipient_target_type.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_text_layer_entity.dart';
 import 'package:memuno_app/src/features/create_meme/domain/validators/meme_editor_validator.dart';
 import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_list_page_item_entity.dart';
@@ -36,6 +37,7 @@ final class InMemoryMemeEditorDatasourceImpl implements MemeEditorDatasource {
       textLayers: const <MemeTextLayerEntity>[],
       selectedTextLayerId: null,
       selectedRecipientUserIds: const <String>{},
+      selectedRecipientGroupIds: const <String>{},
       finalizedImageBytes: null,
     );
   }
@@ -171,20 +173,37 @@ final class InMemoryMemeEditorDatasourceImpl implements MemeEditorDatasource {
   @override
   MemeEditorStateEntity toggleRecipientSelection({
     required MemeEditorStateEntity state,
-    required String userId,
+    required MemeRecipientTargetType targetType,
+    required String targetId,
   }) {
+    if (targetType == MemeRecipientTargetType.user) {
+      final Set<String> nextSelection = Set<String>.from(
+        state.selectedRecipientUserIds,
+      );
+
+      if (nextSelection.contains(targetId)) {
+        nextSelection.remove(targetId);
+      } else {
+        nextSelection.add(targetId);
+      }
+
+      return state.copyWith(
+        selectedRecipientUserIds: Set<String>.unmodifiable(nextSelection),
+      );
+    }
+
     final Set<String> nextSelection = Set<String>.from(
-      state.selectedRecipientUserIds,
+      state.selectedRecipientGroupIds,
     );
 
-    if (nextSelection.contains(userId)) {
-      nextSelection.remove(userId);
+    if (nextSelection.contains(targetId)) {
+      nextSelection.remove(targetId);
     } else {
-      nextSelection.add(userId);
+      nextSelection.add(targetId);
     }
 
     return state.copyWith(
-      selectedRecipientUserIds: Set<String>.unmodifiable(nextSelection),
+      selectedRecipientGroupIds: Set<String>.unmodifiable(nextSelection),
     );
   }
 
@@ -192,11 +211,15 @@ final class InMemoryMemeEditorDatasourceImpl implements MemeEditorDatasource {
   MemeEditorStateEntity clearRecipientSelection({
     required MemeEditorStateEntity state,
   }) {
-    if (state.selectedRecipientUserIds.isEmpty) {
+    if (state.selectedRecipientUserIds.isEmpty &&
+        state.selectedRecipientGroupIds.isEmpty) {
       return state;
     }
 
-    return state.copyWith(selectedRecipientUserIds: const <String>{});
+    return state.copyWith(
+      selectedRecipientUserIds: const <String>{},
+      selectedRecipientGroupIds: const <String>{},
+    );
   }
 
   @override

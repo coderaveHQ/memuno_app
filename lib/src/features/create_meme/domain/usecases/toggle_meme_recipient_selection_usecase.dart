@@ -1,5 +1,6 @@
 import 'package:memuno_app/src/core/failures/failure.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_state_entity.dart';
+import 'package:memuno_app/src/features/create_meme/domain/entities/meme_recipient_target_type.dart';
 import 'package:memuno_app/src/features/create_meme/domain/repositories/meme_editor_repository.dart';
 import 'package:memuno_app/src/features/create_meme/domain/validators/meme_editor_validator.dart';
 
@@ -18,19 +19,29 @@ final class ToggleMemeRecipientSelectionUsecase {
   /// Validator used for input checks.
   final MemeEditorValidator _validator;
 
-  /// Toggles selection state for one friendship [userId].
+  /// Toggles selection state for one recipient target.
   MemeEditorStateEntity call({
     /// Current editor snapshot.
     required MemeEditorStateEntity state,
 
-    /// Friendship-user identifier to toggle.
-    required String userId,
+    /// Target recipient type to toggle.
+    required MemeRecipientTargetType targetType,
+
+    /// Recipient identifier to toggle.
+    required String targetId,
   }) {
-    final Failure? validation = _validator.validateFriendUserId(userId);
+    final Failure? validation = switch (targetType) {
+      MemeRecipientTargetType.user => _validator.validateFriendUserId(targetId),
+      MemeRecipientTargetType.group => _validator.validateGroupId(targetId),
+    };
     if (validation != null) {
       throw validation;
     }
 
-    return _repository.toggleRecipientSelection(state: state, userId: userId);
+    return _repository.toggleRecipientSelection(
+      state: state,
+      targetType: targetType,
+      targetId: targetId,
+    );
   }
 }

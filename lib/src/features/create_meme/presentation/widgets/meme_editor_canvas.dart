@@ -310,12 +310,15 @@ final class _MemeEditorCanvasState extends State<MemeEditorCanvas> {
     final MemeTemplateListPageItemEntity? currentTemplate = widget.template;
 
     if (currentTemplate == null) {
-      return ColoredBox(
-        color: MColors.gray900,
-        child: MCenter(
-          child: MText.small(
-            text: l10n.memeEditorCanvasSelectTemplateHint,
-            style: const TextStyle(color: MColors.gray300),
+      return Padding(
+        padding: EdgeInsets.only(top: 20.0),
+        child: ColoredBox(
+          color: MColors.gray900,
+          child: MCenter(
+            child: MText.small(
+              text: l10n.memeEditorCanvasSelectTemplateHint,
+              style: const TextStyle(color: MColors.gray300),
+            ),
           ),
         ),
       );
@@ -348,6 +351,7 @@ final class _MemeEditorCanvasState extends State<MemeEditorCanvas> {
             controller: widget.scrollController,
             physics: const NeverScrollableScrollPhysics(),
             clipBehavior: Clip.none,
+            padding: EdgeInsets.only(top: 20.0),
             child: SizedBox(
               width: canvasWidth,
               height: canvasHeight,

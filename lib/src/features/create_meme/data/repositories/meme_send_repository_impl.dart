@@ -25,6 +25,7 @@ final class MemeSendRepositoryImpl implements MemeSendRepository {
     required String templateId,
     required double aspectRatio,
     required List<String> recipientUserIds,
+    required List<String> recipientGroupIds,
   }) async {
     try {
       await _memeSendDatasource.sendMeme(
@@ -32,6 +33,7 @@ final class MemeSendRepositoryImpl implements MemeSendRepository {
         templateId: templateId,
         aspectRatio: aspectRatio,
         recipientUserIds: recipientUserIds,
+        recipientGroupIds: recipientGroupIds,
       );
     } catch (error) {
       throw _failureMapper.map(error);
