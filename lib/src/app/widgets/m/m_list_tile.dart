@@ -38,7 +38,7 @@ class MListTile extends StatelessWidget {
           children: <Widget>[
             if (leading != null)
               Padding(
-                padding: EdgeInsetsGeometry.only(right: MSpacing.md),
+                padding: EdgeInsets.only(right: MSpacing.md),
                 child: leading,
               ),
             Expanded(

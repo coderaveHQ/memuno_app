@@ -18,8 +18,12 @@ class MainShellPage extends StatelessWidget {
     const FeedRoute().go(context);
   }
 
-  void _onCommunity(BuildContext context) {
-    const CommunityRoute().go(context);
+  void _onFriendships(BuildContext context) {
+    const FriendshipsRoute().go(context);
+  }
+
+  void _onGroups(BuildContext context) {
+    const GroupsRoute().go(context);
   }
 
   Future<void> _onCreateMeme(BuildContext context) async {
@@ -43,10 +47,16 @@ class MainShellPage extends StatelessWidget {
             isSelected: topRouteName == FeedRoute.routeName,
           ),
           MBottomNavigationBarItem(
-            onPressed: () => _onCommunity(context),
+            onPressed: () => _onFriendships(context),
+            icon: LucideIcons.contact,
+            title: l10n.mainShellTabFriendships,
+            isSelected: topRouteName == FriendshipsRoute.routeName,
+          ),
+          MBottomNavigationBarItem(
+            onPressed: () => _onGroups(context),
             icon: LucideIcons.users,
-            title: l10n.mainShellTabCommunity,
-            isSelected: topRouteName == CommunityRoute.routeName,
+            title: l10n.mainShellTabGroups,
+            isSelected: topRouteName == GroupsRoute.routeName,
           ),
         ],
         action: MBottomNavigationBarAction(

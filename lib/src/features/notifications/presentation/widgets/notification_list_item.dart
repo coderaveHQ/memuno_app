@@ -48,11 +48,7 @@ class MAsyncNotificationListItem extends StatelessWidget {
         dimension: 48.0,
       ),
       title: _titleText(l10n, notification.notificationType),
-      description: _descriptionText(
-        l10n,
-        notification.notificationType,
-        notification.notificationActorName,
-      ),
+      description: _descriptionText(l10n, notification),
       details: relativeTime,
       trailing: _buildTrailing(),
       padding: EdgeInsets.only(
@@ -70,6 +66,8 @@ class MAsyncNotificationListItem extends StatelessWidget {
         l10n.notificationsItemFriendshipRequestSentTitle,
       NotificationType.friendshipRequestAccepted =>
         l10n.notificationsItemFriendshipRequestAcceptedTitle,
+      NotificationType.groupInvitationSent =>
+        l10n.notificationsItemGroupInvitationSentTitle,
       NotificationType.memeReceived => l10n.notificationsItemMemeReceivedTitle,
       NotificationType.memeLaughed => l10n.notificationsItemMemeLaughedTitle,
     };
@@ -77,14 +75,21 @@ class MAsyncNotificationListItem extends StatelessWidget {
 
   String _descriptionText(
     AppLocalizations l10n,
-    NotificationType type,
-    String actorName,
+    NotificationListPageItemEntity notification,
   ) {
+    final NotificationType type = notification.notificationType;
+    final String actorName = notification.notificationActorName;
+
     return switch (type) {
       NotificationType.friendshipRequestSent =>
         l10n.notificationsItemFriendshipRequestSent(actorName),
       NotificationType.friendshipRequestAccepted =>
         l10n.notificationsItemFriendshipRequestAccepted(actorName),
+      NotificationType.groupInvitationSent =>
+        l10n.notificationsItemGroupInvitationSent(
+          actorName,
+          notification.notificationGroupName ?? '',
+        ),
       NotificationType.memeReceived => l10n.notificationsItemMemeReceived(
         actorName,
       ),

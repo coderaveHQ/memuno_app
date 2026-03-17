@@ -79,6 +79,15 @@ final class SupabaseMemeDetailsDatasourceImpl implements MemeDetailsDatasource {
     );
   }
 
+  @override
+  /// Calls `meme_delete` to delete one owned meme.
+  Future<void> deleteMeme({required String memeId}) async {
+    await _supabaseClient.rpc<void>(
+      'meme_delete',
+      params: <String, dynamic>{'p_meme_id': memeId},
+    );
+  }
+
   /// Casts one RPC payload to `Map<String, Object?>`.
   Map<String, Object?> _asObjectMap(
     Object? payload, {

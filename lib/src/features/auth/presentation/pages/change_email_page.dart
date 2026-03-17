@@ -64,50 +64,56 @@ class ChangeEmailPage extends HookConsumerWidget {
       }
     });
 
+    final MAppBar appBar = MAppBar(
+      context: context,
+      title: MAppBarTitle(text: l10n.changeEmailTitle),
+      leading: <MAppBarButton>[
+        MAppBarButton(
+          onPressed: () => _onBack(context),
+          isEnabled: !isLoading,
+          icon: LucideIcons.arrow_left,
+        ),
+      ],
+    );
+
     return MScaffold(
-      appBar: MAppBar(
-        context: context,
-        title: MAppBarTitle(text: l10n.changeEmailTitle),
-        leading: <MAppBarButton>[
-          MAppBarButton(
-            onPressed: () => _onBack(context),
-            isEnabled: !isLoading,
-            icon: LucideIcons.arrow_left,
-          ),
-        ],
-      ),
-      body: MCenter(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.only(
-            top: MSpacing.md,
-            left: context.leftPadding + MSpacing.md,
-            right: context.rightPadding + MSpacing.md,
-            bottom: context.bottomPadding + MSpacing.md,
-          ),
-          child: Column(
-            children: <Widget>[
-              MText.p(
-                text: l10n.changeEmailCurrentEmail(currentUser?.email ?? '-'),
-              ),
-              const MGap.md(),
-              MTextField(
-                icon: LucideIcons.mail,
-                controller: emailController,
-                inputType: TextInputType.emailAddress,
-                textInputAction: TextInputAction.done,
-                autofillHints: const <String>[AutofillHints.email],
-                label: l10n.changeEmailNewEmailLabel,
-                isEnabled: !isLoading,
-                autofocus: true,
-              ),
-              const MGap.md(),
-              MButton.primary(
-                onPressed: () => _submit(ref, emailController.text),
-                isLoading: isLoading,
-                isEnabled: !isLoading,
-                title: l10n.changeEmailSubmitButton,
-              ),
-            ],
+      extendBodyBehindAppBar: true,
+      appBar: appBar,
+      body: Padding(
+        padding: EdgeInsets.only(top: appBar.preferredSize.height - 20.0),
+        child: MCenter(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.only(
+              top: 20.0 + MSpacing.md,
+              left: context.leftPadding + MSpacing.md,
+              right: context.rightPadding + MSpacing.md,
+              bottom: context.bottomPadding + MSpacing.md,
+            ),
+            child: Column(
+              children: <Widget>[
+                MText.p(
+                  text: l10n.changeEmailCurrentEmail(currentUser?.email ?? '-'),
+                ),
+                const MGap.md(),
+                MTextField(
+                  icon: LucideIcons.mail,
+                  controller: emailController,
+                  inputType: TextInputType.emailAddress,
+                  textInputAction: TextInputAction.done,
+                  autofillHints: const <String>[AutofillHints.email],
+                  label: l10n.changeEmailNewEmailLabel,
+                  isEnabled: !isLoading,
+                  autofocus: true,
+                ),
+                const MGap.md(),
+                MButton.primary(
+                  onPressed: () => _submit(ref, emailController.text),
+                  isLoading: isLoading,
+                  isEnabled: !isLoading,
+                  title: l10n.changeEmailSubmitButton,
+                ),
+              ],
+            ),
           ),
         ),
       ),

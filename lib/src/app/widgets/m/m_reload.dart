@@ -22,7 +22,7 @@ class MReload extends StatelessWidget {
         children: <Widget>[
           if (text != null)
             Padding(
-              padding: EdgeInsetsGeometry.only(bottom: MSpacing.md),
+              padding: EdgeInsets.only(bottom: MSpacing.md),
               child: MText.p(
                 text: text,
                 alignment: TextAlign.center,

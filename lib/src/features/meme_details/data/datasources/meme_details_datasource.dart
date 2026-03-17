@@ -29,4 +29,10 @@ abstract interface class MemeDetailsDatasource {
     /// Meme id to like/unlike.
     required String memeId,
   });
+
+  /// Deletes one meme owned by the current user.
+  Future<void> deleteMeme({
+    /// Meme id to delete.
+    required String memeId,
+  });
 }

@@ -34,15 +34,21 @@ class MAsyncFriendshipRequestListItem extends StatelessWidget {
       title: friendshipRequest.user.name,
       description:
           '${l10n.userDetailsFriendshipCodeLabel} ${friendshipRequest.user.friendshipCode}',
-      details: friendshipRequest.direction == FriendshipRequestDirection.incoming
+      details:
+          friendshipRequest.direction == FriendshipRequestDirection.incoming
           ? '${l10n.friendshipsRequestDirectionIncoming}: ${friendshipRequest.createdAt.formatDateOnly(fullDate: true)}'
           : '${l10n.friendshipsRequestDirectionOutgoing}: ${friendshipRequest.createdAt.formatDateOnly(fullDate: true)}',
-      trailing: friendshipRequest.direction == FriendshipRequestDirection.incoming
+      trailing:
+          friendshipRequest.direction == FriendshipRequestDirection.incoming
           ? Row(
               children: <Widget>[
-                AcceptFriendshipRequestButton(friendshipRequest: friendshipRequest),
+                AcceptFriendshipRequestButton(
+                  friendshipRequest: friendshipRequest,
+                ),
                 const MGap.sm(),
-                DeclineFriendshipRequestButton(friendshipRequest: friendshipRequest),
+                DeclineFriendshipRequestButton(
+                  friendshipRequest: friendshipRequest,
+                ),
               ],
             )
           : CancelFriendshipRequestButton(friendshipRequest: friendshipRequest),

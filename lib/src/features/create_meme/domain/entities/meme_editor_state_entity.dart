@@ -11,6 +11,7 @@ final class MemeEditorStateEntity {
     required this.textLayers,
     required this.selectedTextLayerId,
     required this.selectedRecipientUserIds,
+    required this.selectedRecipientGroupIds,
     required this.finalizedImageBytes,
   });
 
@@ -24,6 +25,7 @@ final class MemeEditorStateEntity {
       textLayers: <MemeTextLayerEntity>[],
       selectedTextLayerId: null,
       selectedRecipientUserIds: <String>{},
+      selectedRecipientGroupIds: <String>{},
       finalizedImageBytes: null,
     );
   }
@@ -39,6 +41,9 @@ final class MemeEditorStateEntity {
 
   /// Selected friendship-user identifiers for send flow.
   final Set<String> selectedRecipientUserIds;
+
+  /// Selected group identifiers for send flow.
+  final Set<String> selectedRecipientGroupIds;
 
   /// Last finalized meme bytes produced from the editor, if available.
   final Uint8List? finalizedImageBytes;
@@ -66,11 +71,18 @@ final class MemeEditorStateEntity {
   bool get canFinalize => hasTemplate;
 
   /// Returns whether one friendship user is selected for sending.
-  bool get hasSelectedRecipients => selectedRecipientUserIds.isNotEmpty;
+  bool get hasSelectedRecipients =>
+      selectedRecipientUserIds.isNotEmpty ||
+      selectedRecipientGroupIds.isNotEmpty;
 
   /// Returns whether [userId] is currently selected.
   bool isRecipientSelected(String userId) {
     return selectedRecipientUserIds.contains(userId);
+  }
+
+  /// Returns whether one group [groupId] is currently selected.
+  bool isGroupRecipientSelected(String groupId) {
+    return selectedRecipientGroupIds.contains(groupId);
   }
 
   /// Returns a new state with updated fields.
@@ -79,6 +91,7 @@ final class MemeEditorStateEntity {
     List<MemeTextLayerEntity>? textLayers,
     Object? selectedTextLayerId = _sentinel,
     Object? selectedRecipientUserIds = _sentinel,
+    Object? selectedRecipientGroupIds = _sentinel,
     Object? finalizedImageBytes = _sentinel,
   }) {
     return MemeEditorStateEntity(
@@ -92,6 +105,9 @@ final class MemeEditorStateEntity {
       selectedRecipientUserIds: selectedRecipientUserIds == _sentinel
           ? this.selectedRecipientUserIds
           : selectedRecipientUserIds as Set<String>,
+      selectedRecipientGroupIds: selectedRecipientGroupIds == _sentinel
+          ? this.selectedRecipientGroupIds
+          : selectedRecipientGroupIds as Set<String>,
       finalizedImageBytes: finalizedImageBytes == _sentinel
           ? this.finalizedImageBytes
           : finalizedImageBytes as Uint8List?,

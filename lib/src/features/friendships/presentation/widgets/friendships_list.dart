@@ -9,9 +9,6 @@ import 'package:memuno_app/src/features/friendships/domain/entities/friendship_l
 import 'package:memuno_app/src/features/friendships/presentation/widgets/m_async_friendship_list_item.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
-/// Visual variants supported by [MAsyncFriendshipList].
-enum MAsyncFriendshipListMode { manage, selection }
-
 /// Typed async list wrapper for friendship list pages.
 class MAsyncFriendshipList extends StatelessWidget {
   const MAsyncFriendshipList({
@@ -20,10 +17,6 @@ class MAsyncFriendshipList extends StatelessWidget {
     required this.emptyText,
     this.loadMoreExtent = 220.0,
     this.onRefresh,
-    this.mode = MAsyncFriendshipListMode.manage,
-    this.selectedUserIds = const <String>{},
-    this.onToggleSelection,
-    this.isSelectionEnabled = true,
     this.listPadding,
     this.childPadding,
     this.listChildPadding,
@@ -42,10 +35,6 @@ class MAsyncFriendshipList extends StatelessWidget {
     AppFeedback feedback,
   )?
   onRefresh;
-  final MAsyncFriendshipListMode mode;
-  final Set<String> selectedUserIds;
-  final ValueChanged<String>? onToggleSelection;
-  final bool isSelectionEnabled;
   final EdgeInsetsGeometry? listPadding;
   final EdgeInsetsGeometry? childPadding;
   final EdgeInsetsGeometry? listChildPadding;
@@ -62,17 +51,7 @@ class MAsyncFriendshipList extends StatelessWidget {
       listChildPadding: listChildPadding,
       itemBuilder:
           (BuildContext context, FriendshipListPageItemEntity friendship) {
-            return MAsyncFriendshipListItem(
-              friendship: friendship,
-              mode: mode,
-              isSelected: selectedUserIds.contains(friendship.user.id),
-              isSelectionEnabled: isSelectionEnabled,
-              onToggleSelection: onToggleSelection == null
-                  ? null
-                  : () {
-                      onToggleSelection!(friendship.user.id);
-                    },
-            );
+            return MAsyncFriendshipListItem(friendship: friendship);
           },
     );
   }

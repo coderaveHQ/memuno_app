@@ -41,6 +41,9 @@
   "userDetailsUpdateNameDialogTitle": "Namen aktualisieren",
   "userDetailsUpdateNameSubmitButton": "Namen speichern",
   "userDetailsUpdateNameSuccessMessage": "Dein Name wurde aktualisiert.",
+  "userDetailsActionsTitle": "Profilaktionen",
+  "userDetailsActionRemoveFriend": "Freund entfernen",
+  "userDetailsRemoveFriendSuccessMessage": "Freund entfernt.",
   "userDetailsMemesTabAll": "Alle",
   "userDetailsMemesTabSent": "Gesendet",
   "userDetailsMemesTabReceived": "Empfangen",
@@ -62,12 +65,83 @@
   "friendshipsFriendsSincePrefix": "Befreundet seit",
   "friendshipsRequestDirectionIncoming": "Eingehend",
   "friendshipsRequestDirectionOutgoing": "Ausgehend",
+  "groupsTitle": "Gruppen",
+  "groupsTabGroups": "Gruppen",
+  "groupsTabInvitations": "Einladungen",
+  "groupsListEmpty": "Du bist noch in keiner Gruppe.",
+  "groupsInvitationsListEmpty": "Keine ausstehenden Gruppeneinladungen.",
+  "groupsMemberCount": "{count} Mitglieder",
+  "@groupsMemberCount": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "groupsInvitationFrom": "Von {sender_name} ({sender_friendship_code})",
+  "@groupsInvitationFrom": {
+    "placeholders": {
+      "sender_name": {},
+      "sender_friendship_code": {}
+    }
+  },
+  "groupsInvitationAcceptSuccessMessage": "Einladung angenommen.",
+  "groupsInvitationRejectSuccessMessage": "Einladung abgelehnt.",
+  "groupsCreateNameTitle": "Gruppe erstellen",
+  "groupsCreateNameSubtitle": "Gib deiner Gruppe einen Namen.",
+  "groupsCreateNameFieldLabel": "Gruppenname",
+  "groupsCreateNameFieldHint": "Wochenend-Legenden",
+  "groupsCreateNameContinueButton": "Weiter",
+  "groupsCreateMembersTitle": "Mitglieder einladen",
+  "groupsCreateMembersSubtitle": "{count} ausgewählt",
+  "@groupsCreateMembersSubtitle": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "groupsCreateMembersSubmitButton": "Gruppe erstellen",
+  "groupsCreateSuccessMessage": "Gruppe erfolgreich erstellt.",
+  "groupDetailsTabAllMemes": "Alle",
+  "groupDetailsTabSentByMe": "Von mir gesendet",
+  "groupDetailsMemesAllEmpty": "Noch keine Memes in dieser Gruppe.",
+  "groupDetailsMemesSentByMeEmpty": "Du hast in diese Gruppe noch keine Memes gesendet.",
+  "groupDetailsInfoTabMembers": "Mitglieder",
+  "groupDetailsInfoTabInvitations": "Einladungen",
+  "groupDetailsMembersEmpty": "Keine Mitglieder gefunden.",
+  "groupDetailsPendingInvitationsEmpty": "Keine ausstehenden Einladungen.",
+  "groupDetailsMemberRoleCreator": "Ersteller",
+  "groupDetailsMemberRoleAdmin": "Admin",
+  "groupDetailsMemberRoleMember": "Mitglied",
+  "groupDetailsInviteMembersDialogTitle": "Mitglieder einladen",
+  "groupDetailsInviteMembersSelected": "{count} ausgewählt",
+  "@groupDetailsInviteMembersSelected": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "groupDetailsInviteMembersSubmitButton": "Einladungen senden",
+  "groupDetailsInviteMembersEmpty": "Keine Freunde zum Einladen verfügbar.",
+  "groupDetailsInviteMembersSuccessMessage": "Einladungen gesendet.",
+  "groupDetailsMemberActionsTitle": "Mitgliedsaktionen",
+  "groupDetailsMemberActionPromoteToAdmin": "Zum Admin machen",
+  "groupDetailsMemberActionDemoteToMember": "Admin-Rechte entziehen",
+  "groupDetailsMemberActionRemove": "Mitglied entfernen",
+  "groupDetailsGroupActionsTitle": "Gruppenaktionen",
+  "groupDetailsGroupActionLeave": "Gruppe verlassen",
+  "groupDetailsGroupActionDelete": "Gruppe löschen",
+  "groupDetailsMemberRoleUpdateSuccessMessage": "Mitgliedsrolle aktualisiert.",
+  "groupDetailsUpdateNameDialogTitle": "Gruppennamen bearbeiten",
+  "groupDetailsUpdateNameSubmitButton": "Gruppennamen speichern",
+  "groupDetailsUpdateNameSuccessMessage": "Gruppenname aktualisiert.",
+  "groupDetailsMemberRemoveSuccessMessage": "Mitglied entfernt.",
+  "groupDetailsInvitationCancelSuccessMessage": "Einladung abgebrochen.",
+  "groupDetailsLeaveSuccessMessage": "Du hast die Gruppe verlassen.",
+  "groupDetailsDeleteSuccessMessage": "Gruppe gelöscht.",
   "notificationsTitle": "Benachrichtigungen",
   "notificationsSearchLabel": "Benachrichtigungen suchen",
   "notificationsSearchHint": "Nach Name oder Freundschaftscode suchen",
   "notificationsListEmpty": "Noch keine Benachrichtigungen.",
   "mainShellTabFeed": "Feed",
-  "mainShellTabCommunity": "Community",
+  "mainShellTabFriendships": "Freunde",
+  "mainShellTabGroups": "Gruppen",
   "feedListEmpty": "Noch keine Memes in deinem Feed.",
   "widgetNoMemesYet": "Noch keine Memes.",
   "widgetSignInToDisplayMemes": "Melde dich an, um Memes anzuzeigen.",
@@ -77,6 +151,9 @@
   "memeDetailsTitle": "Meme-Details",
   "memeDetailsLaughsTitle": "Wer hat gelacht?",
   "memeDetailsLaughsEmpty": "Noch keine Lacher.",
+  "memeDetailsActionsTitle": "Meme-Aktionen",
+  "memeDetailsActionDelete": "Meme löschen",
+  "memeDetailsDeleteSuccessMessage": "Meme gelöscht.",
   "notificationsItemFriendshipRequestSentTitle": "Neue Freundschaftsanfrage",
   "notificationsItemFriendshipRequestSent": "{sender_name} hat dir eine Freundschaftsanfrage gesendet.",
   "@notificationsItemFriendshipRequestSent": {
@@ -89,6 +166,14 @@
   "@notificationsItemFriendshipRequestAccepted": {
     "placeholders": {
       "sender_name": {}
+    }
+  },
+  "notificationsItemGroupInvitationSentTitle": "Neue Gruppeneinladung",
+  "notificationsItemGroupInvitationSent": "{sender_name} hat dich zu {group_name} eingeladen.",
+  "@notificationsItemGroupInvitationSent": {
+    "placeholders": {
+      "sender_name": {},
+      "group_name": {}
     }
   },
   "notificationsItemMemeReceivedTitle": "Neues Meme erhalten",
@@ -118,6 +203,7 @@
   "memeEditorPngEncodeError": "Meme konnte nicht in PNG-Bytes konvertiert werden.",
   "sendMemeTitle": "Meme senden",
   "sendMemeSubmitButton": "Senden",
+  "sendMemeRecipientsListEmpty": "Keine Empfänger verfügbar.",
   "sendMemeSuccessMessage": "Meme erfolgreich gesendet.",
   "settingsTitle": "Einstellungen",
   "settingsSectionAppearance": "Darstellung",

@@ -221,168 +221,174 @@ class MemeEditorPage extends HookConsumerWidget {
       requestFocusOnNextFrame(retryFrames);
     }
 
+    final MAppBar appBar = MAppBar(
+      context: context,
+      title: MAppBarTitle(text: l10n.memeEditorTitle),
+      leading: <MAppBarButton>[
+        MAppBarButton(
+          onPressed: () => context.pop(),
+          icon: LucideIcons.arrow_left,
+          isEnabled: !isFinalizing,
+        ),
+      ],
+      trailing: <MAppBarButton>[
+        MAppBarButton(
+          onPressed: () {
+            unawaited(
+              _pickTemplate(
+                context: context,
+                controller: controller,
+                closePageOnCancel: false,
+                selectedTextFocusNode: selectedTextFocusNode,
+                shouldEditSelectedLayer: shouldEditSelectedLayer,
+                canvasScrollController: canvasScrollController,
+              ),
+            );
+          },
+          icon: LucideIcons.images,
+          isEnabled: !isFinalizing,
+        ),
+        MAppBarButton(
+          onPressed: () {
+            dismissTextEditing();
+            unawaited(
+              _submitFinalize(
+                ref: ref,
+                repaintBoundaryKey: repaintBoundaryKey,
+                unableToRenderMessage: l10n.memeEditorRenderError,
+                unableToConvertMessage: l10n.memeEditorPngEncodeError,
+              ),
+            );
+          },
+          icon: LucideIcons.check,
+          isEnabled: state.canFinalize && !isFinalizing,
+          isLoading: isFinalizing,
+        ),
+      ],
+    );
+
     return MScaffold(
       resizeToAvoidBottomInset: false,
-      appBar: MAppBar(
-        context: context,
-        title: MAppBarTitle(text: l10n.memeEditorTitle),
-        leading: <MAppBarButton>[
-          MAppBarButton(
-            onPressed: () => context.pop(),
-            icon: LucideIcons.arrow_left,
-            isEnabled: !isFinalizing,
-          ),
-        ],
-        trailing: <MAppBarButton>[
-          MAppBarButton(
-            onPressed: () {
-              unawaited(
-                _pickTemplate(
-                  context: context,
-                  controller: controller,
-                  closePageOnCancel: false,
-                  selectedTextFocusNode: selectedTextFocusNode,
-                  shouldEditSelectedLayer: shouldEditSelectedLayer,
-                  canvasScrollController: canvasScrollController,
-                ),
-              );
-            },
-            icon: LucideIcons.images,
-            isEnabled: !isFinalizing,
-          ),
-          MAppBarButton(
-            onPressed: () {
-              dismissTextEditing();
-              unawaited(
-                _submitFinalize(
-                  ref: ref,
-                  repaintBoundaryKey: repaintBoundaryKey,
-                  unableToRenderMessage: l10n.memeEditorRenderError,
-                  unableToConvertMessage: l10n.memeEditorPngEncodeError,
-                ),
-              );
-            },
-            icon: LucideIcons.check,
-            isEnabled: state.canFinalize && !isFinalizing,
-            isLoading: isFinalizing,
-          ),
-        ],
-      ),
-      body: Column(
-        children: <Widget>[
-          Expanded(
-            child: MemeEditorCanvas(
-              repaintBoundaryKey: repaintBoundaryKey,
-              scrollController: canvasScrollController,
-              template: state.template,
-              layers: state.textLayers,
-              selectedLayerId: state.selectedTextLayerId,
-              selectedTextController: selectedTextController,
-              selectedTextFocusNode: selectedTextFocusNode,
-              isSelectedLayerEditing: isSelectedLayerEditing,
-              isTextEditingActive: isTextEditingActive,
-              onTapCanvas: (double positionX, double positionY) {
-                try {
-                  controller.addTextLayer(
-                    initialText: '',
-                    positionX: positionX,
-                    positionY: positionY,
-                  );
-                  shouldEditSelectedLayer.value = true;
-                } catch (error) {
-                  feedback.resolveAndShowError(context, error);
-                }
-              },
-              onTapOutsideWhileEditing: () {
-                dismissTextEditing();
-              },
-              onTapLayer: (String layerId) {
-                try {
-                  controller.selectTextLayer(layerId);
-                  shouldEditSelectedLayer.value = true;
-                } catch (error) {
-                  feedback.resolveAndShowError(context, error);
-                }
-              },
-              onStartLayerTransform: (String _) {
-                dismissTextEditing();
-              },
-              onDeleteLayer: (String layerId) {
-                try {
-                  controller.removeTextLayerById(layerId);
-                } catch (error) {
-                  feedback.resolveAndShowError(context, error);
-                }
-              },
-              onTransformLayer:
-                  (
-                    String layerId,
-                    double positionX,
-                    double positionY,
-                    double fontSize,
-                    double rotationRadians,
-                  ) {
-                    try {
-                      controller.updateTextLayerTransform(
-                        layerId: layerId,
-                        positionX: positionX,
-                        positionY: positionY,
-                        fontSize: fontSize,
-                        rotationRadians: rotationRadians,
-                      );
-                    } catch (error) {
-                      feedback.resolveAndShowError(context, error);
-                    }
-                  },
-            ),
-          ),
-          if (isTextEditingActive && selectedLayer != null)
-            AnimatedPadding(
-              duration: const Duration(milliseconds: 180),
-              curve: Curves.easeOut,
-              padding: EdgeInsets.only(
-                left: MSpacing.md,
-                right: MSpacing.md,
-                top: MSpacing.md,
-                bottom:
-                    math.max(
-                      MediaQuery.viewInsetsOf(context).bottom,
-                      MediaQuery.paddingOf(context).bottom,
-                    ) +
-                    MSpacing.md,
+      extendBodyBehindAppBar: true,
+      appBar: appBar,
+      body: Padding(
+        padding: EdgeInsets.only(top: appBar.preferredSize.height - 20.0),
+        child: Column(
+          children: <Widget>[
+            Expanded(
+              child: MemeEditorCanvas(
+                repaintBoundaryKey: repaintBoundaryKey,
+                scrollController: canvasScrollController,
+                template: state.template,
+                layers: state.textLayers,
+                selectedLayerId: state.selectedTextLayerId,
+                selectedTextController: selectedTextController,
+                selectedTextFocusNode: selectedTextFocusNode,
+                isSelectedLayerEditing: isSelectedLayerEditing,
+                isTextEditingActive: isTextEditingActive,
+                onTapCanvas: (double positionX, double positionY) {
+                  try {
+                    controller.addTextLayer(
+                      initialText: '',
+                      positionX: positionX,
+                      positionY: positionY,
+                    );
+                    shouldEditSelectedLayer.value = true;
+                  } catch (error) {
+                    feedback.resolveAndShowError(context, error);
+                  }
+                },
+                onTapOutsideWhileEditing: () {
+                  dismissTextEditing();
+                },
+                onTapLayer: (String layerId) {
+                  try {
+                    controller.selectTextLayer(layerId);
+                    shouldEditSelectedLayer.value = true;
+                  } catch (error) {
+                    feedback.resolveAndShowError(context, error);
+                  }
+                },
+                onStartLayerTransform: (String _) {
+                  dismissTextEditing();
+                },
+                onDeleteLayer: (String layerId) {
+                  try {
+                    controller.removeTextLayerById(layerId);
+                  } catch (error) {
+                    feedback.resolveAndShowError(context, error);
+                  }
+                },
+                onTransformLayer:
+                    (
+                      String layerId,
+                      double positionX,
+                      double positionY,
+                      double fontSize,
+                      double rotationRadians,
+                    ) {
+                      try {
+                        controller.updateTextLayerTransform(
+                          layerId: layerId,
+                          positionX: positionX,
+                          positionY: positionY,
+                          fontSize: fontSize,
+                          rotationRadians: rotationRadians,
+                        );
+                      } catch (error) {
+                        feedback.resolveAndShowError(context, error);
+                      }
+                    },
               ),
-              child: TextFieldTapRegion(
-                child: Listener(
-                  behavior: HitTestBehavior.translucent,
-                  onPointerDown: (_) {
-                    keepTextEditingFocus();
-                  },
-                  child: MemeEditorControls(
-                    l10n: l10n,
-                    layer: selectedLayer,
-                    onTextColorChanged: (int colorValue) {
-                      try {
-                        keepTextEditingFocus();
-                        controller.updateSelectedTextColor(colorValue);
-                        keepTextEditingFocus();
-                      } catch (error) {
-                        feedback.resolveAndShowError(context, error);
-                      }
+            ),
+            if (isTextEditingActive && selectedLayer != null)
+              AnimatedPadding(
+                duration: const Duration(milliseconds: 180),
+                curve: Curves.easeOut,
+                padding: EdgeInsets.only(
+                  left: MSpacing.md,
+                  right: MSpacing.md,
+                  top: MSpacing.md,
+                  bottom:
+                      math.max(
+                        MediaQuery.viewInsetsOf(context).bottom,
+                        MediaQuery.paddingOf(context).bottom,
+                      ) +
+                      MSpacing.md,
+                ),
+                child: TextFieldTapRegion(
+                  child: Listener(
+                    behavior: HitTestBehavior.translucent,
+                    onPointerDown: (_) {
+                      keepTextEditingFocus();
                     },
-                    onToggleTextBackground: () {
-                      try {
-                        keepTextEditingFocus();
-                        controller.toggleSelectedTextBackground();
-                        keepTextEditingFocus();
-                      } catch (error) {
-                        feedback.resolveAndShowError(context, error);
-                      }
-                    },
+                    child: MemeEditorControls(
+                      l10n: l10n,
+                      layer: selectedLayer,
+                      onTextColorChanged: (int colorValue) {
+                        try {
+                          keepTextEditingFocus();
+                          controller.updateSelectedTextColor(colorValue);
+                          keepTextEditingFocus();
+                        } catch (error) {
+                          feedback.resolveAndShowError(context, error);
+                        }
+                      },
+                      onToggleTextBackground: () {
+                        try {
+                          keepTextEditingFocus();
+                          controller.toggleSelectedTextBackground();
+                          keepTextEditingFocus();
+                        } catch (error) {
+                          feedback.resolveAndShowError(context, error);
+                        }
+                      },
+                    ),
                   ),
                 ),
               ),
-            ),
-        ],
+          ],
+        ),
       ),
     );
   }

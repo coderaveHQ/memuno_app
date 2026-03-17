@@ -24,6 +24,17 @@ sealed class NotificationListPageItemDataEntity
     required String routeTab,
   }) = FriendshipRequestAcceptedNotificationListPageItemDataEntity;
 
+  /// Data payload for `group_invitation_sent`.
+  const factory NotificationListPageItemDataEntity.groupInvitationSent({
+    required String actorId,
+    required String actorName,
+    required String actorFriendshipCode,
+    required String invitationId,
+    required String groupId,
+    required String groupName,
+    required String routeTab,
+  }) = GroupInvitationSentNotificationListPageItemDataEntity;
+
   /// Data payload for `meme_received`.
   const factory NotificationListPageItemDataEntity.memeReceived({
     /// Actor user id of the meme sender.
