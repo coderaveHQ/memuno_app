@@ -1,0 +1,12 @@
+flutter_native_splash:
+  image: assets/logo-production.png
+  color: "#09090B"
+
+  android_12:
+    image: assets/logo-production.png
+    icon_background_color: "#09090B"
+
+  info_plist_files:
+    - 'ios/Runner/Info-Production.plist'
+
+  web: false

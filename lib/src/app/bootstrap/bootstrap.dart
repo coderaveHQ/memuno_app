@@ -4,6 +4,7 @@ import 'package:firebase_crashlytics/firebase_crashlytics.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_native_splash/flutter_native_splash.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:memuno_app/src/app/app.dart';
 import 'package:memuno_app/src/app/bootstrap/firebase/firebase_bootstrap.dart';
@@ -24,7 +25,10 @@ Future<void> bootstrap() async {
   await runZonedGuarded(
     () async {
       // Ensure Flutter engine is initialized.
-      final WidgetsBinding _ = WidgetsFlutterBinding.ensureInitialized();
+      final WidgetsBinding widgetsBinding =
+          WidgetsFlutterBinding.ensureInitialized();
+
+      FlutterNativeSplash.preserve(widgetsBinding: widgetsBinding);
 
       // -----------------------------------------------------------------------
       // Global error handling (pre-runApp)
@@ -83,6 +87,8 @@ Future<void> bootstrap() async {
           child: ToastProvider.create(child: const App()),
         ),
       );
+
+      FlutterNativeSplash.remove();
     },
     (final Object error, final StackTrace stackTrace) async {
       // A last-resort catch for anything escaping the guarded zone.
