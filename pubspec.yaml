@@ -63,7 +63,6 @@ dependencies:
 
   # --- Sharing / Platform utilities -----------------------------------------
   share_plus: ^12.0.1
-  home_widget: 0.9.0
 
   # --- Helpers --------------------------------------------------------------
   image: ^4.8.0

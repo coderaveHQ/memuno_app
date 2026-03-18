@@ -1,10 +1,7 @@
 import 'package:go_router/go_router.dart';
 import 'package:memuno_app/src/app/router/app_router.dart';
-import 'package:memuno_app/src/app/settings/language_resolution_provider.dart';
 import 'package:memuno_app/src/core/providers/logger_provider.dart';
 import 'package:memuno_app/src/core/utils/logger.dart';
-import 'package:memuno_app/src/features/meme_widget/application/providers/services/meme_widget_sync_service_provider.dart';
-import 'package:memuno_app/src/features/meme_widget/application/services/meme_widget_sync_service.dart';
 import 'package:memuno_app/src/features/notifications/application/providers/notification_target_route_mapper_provider.dart';
 import 'package:memuno_app/src/features/notifications/application/providers/notifications_unread_count_provider.dart';
 import 'package:memuno_app/src/features/notifications/application/providers/usecases/mark_notification_read_usecase_provider.dart';
@@ -45,9 +42,6 @@ PushNotificationsIntentService pushNotificationsIntentService(Ref ref) {
     markNotificationReadUsecaseProvider,
   );
   final GoRouter router = ref.watch(appRouterProvider);
-  final MemeWidgetSyncService memeWidgetSyncService = ref.watch(
-    memeWidgetSyncServiceProvider,
-  );
   final Logger logger = ref.watch(loggerProvider);
 
   final PushNotificationsIntentService service = PushNotificationsIntentService(
@@ -60,12 +54,6 @@ PushNotificationsIntentService pushNotificationsIntentService(Ref ref) {
     router: router,
     onUnreadCountChanged: () {
       ref.invalidate(notificationsUnreadCountProvider);
-    },
-    onMemeNotificationReceived: (Map<String, String> data) async {
-      await memeWidgetSyncService.applyPushData(
-        data: data,
-        locale: ref.read(languageResolutionProvider).resolvedLocale,
-      );
     },
     logger: logger,
   );
