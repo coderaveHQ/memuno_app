@@ -25,8 +25,6 @@ final class PushNotificationsIntentService {
     required MarkNotificationReadUsecase markNotificationReadUsecase,
     required GoRouter router,
     required void Function() onUnreadCountChanged,
-    required Future<void> Function(Map<String, String> data)
-    onMemeNotificationReceived,
     required Logger logger,
   }) : _pushMessagingGateway = pushMessagingGateway,
        _pushPlatformGateway = pushPlatformGateway,
@@ -37,7 +35,6 @@ final class PushNotificationsIntentService {
        _markNotificationReadUsecase = markNotificationReadUsecase,
        _router = router,
        _onUnreadCountChanged = onUnreadCountChanged,
-       _onMemeNotificationReceived = onMemeNotificationReceived,
        _logger = logger;
 
   final PushMessagingGateway _pushMessagingGateway;
@@ -49,8 +46,6 @@ final class PushNotificationsIntentService {
   final MarkNotificationReadUsecase _markNotificationReadUsecase;
   final GoRouter _router;
   final void Function() _onUnreadCountChanged;
-  final Future<void> Function(Map<String, String> data)
-  _onMemeNotificationReceived;
   final Logger _logger;
 
   StreamSubscription<PushIncomingMessage>? _messageSubscription;
@@ -156,8 +151,6 @@ final class PushNotificationsIntentService {
   }
 
   Future<void> _handleForegroundMessage(PushIncomingMessage message) async {
-    await _triggerWidgetSyncForMemeNotification(message.data);
-
     final String normalizedTitle = message.title?.trim() ?? '';
     final String normalizedBody = message.body?.trim() ?? '';
 
@@ -182,8 +175,6 @@ final class PushNotificationsIntentService {
   }
 
   Future<void> _handlePushTapMessage(PushIncomingMessage message) async {
-    await _triggerWidgetSyncForMemeNotification(message.data);
-
     if (message.data.isEmpty) {
       return;
     }
@@ -207,8 +198,6 @@ final class PushNotificationsIntentService {
 
     unawaited(
       _enqueue(() async {
-        await _triggerWidgetSyncForMemeNotification(data);
-
         final NotificationPushIntent intent =
             _resolveNotificationPushIntentUsecase.fromPushData(data);
         if (_currentUserId == null) {
@@ -273,25 +262,5 @@ final class PushNotificationsIntentService {
     }
 
     _router.go(signInLocation);
-  }
-
-  Future<void> _triggerWidgetSyncForMemeNotification(
-    Map<String, String> data,
-  ) async {
-    final String? notificationType = data['notification_type']?.trim();
-    if (notificationType != 'meme_received' &&
-        notificationType != 'meme_laughed') {
-      return;
-    }
-
-    try {
-      await _onMemeNotificationReceived(data);
-    } catch (error, stackTrace) {
-      _logger.warn(
-        message: 'Failed to sync widget from incoming meme notification.',
-        error: error,
-        stackTrace: stackTrace,
-      );
-    }
   }
 }

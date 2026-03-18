@@ -62,9 +62,7 @@ type HandlerDependencies = {
 };
 
 export const MEMES_PUSH_BUCKET = "memes_push";
-export const MEMES_FULL_BUCKET = "memes";
 export const PUSH_IMAGE_SIGNED_URL_TTL_SECONDS = 604800;
-export const WIDGET_IMAGE_SIGNED_URL_TTL_SECONDS = 604800;
 export const PUSH_IMAGE_PUBLIC_BASE_URL_ENV_KEY =
   ENV_SECRET.PUSH_IMAGE_PUBLIC_BASE_URL;
 
@@ -79,18 +77,6 @@ type ResolvedPushImageUrl = {
   host: string;
   hostname: string;
   source: PushImageUrlSource;
-};
-
-type MemeWidgetMetadata = {
-  memeId: string;
-  creatorId: string;
-  creatorName: string;
-  imagePath: string;
-  imageUrlFull: string;
-  aspectRatio: number;
-  laughCount: number;
-  isLaughed: boolean;
-  isOwnMeme: boolean;
 };
 
 const defaultDependencies: HandlerDependencies = {
@@ -481,142 +467,6 @@ async function createSignedStorageImageUrl(
   }
 
   return resolvePushImageUrl(signedUrl, supabaseUrl, pushImagePublicBaseUrl);
-}
-
-async function resolveMemeWidgetMetadata(
-  supabase: SupabaseClient,
-  supabaseUrl: string,
-  notification: NotificationRecord,
-  pushImagePublicBaseUrl: string | null,
-): Promise<MemeWidgetMetadata | null> {
-  if (
-    notification.type !== "meme_received" &&
-    notification.type !== "meme_laughed"
-  ) {
-    return null;
-  }
-
-  const memeId = asString(notification.data["meme_id"]);
-  if (memeId == null) {
-    return null;
-  }
-
-  const { data: memeData, error: memeError } = await supabase
-    .from("memes")
-    .select("id, user_id, image_path, aspect_ratio")
-    .eq("id", memeId)
-    .maybeSingle();
-
-  if (memeError != null) {
-    throw memeError;
-  }
-
-  if (!isRecord(memeData)) {
-    return null;
-  }
-
-  const creatorId = asString(memeData.user_id);
-  const imagePath = asString(memeData.image_path);
-  const rawAspectRatio = memeData.aspect_ratio;
-  const aspectRatio = typeof rawAspectRatio === "number"
-    ? rawAspectRatio
-    : Number.NaN;
-
-  if (
-    creatorId == null ||
-    imagePath == null ||
-    !Number.isFinite(aspectRatio) ||
-    aspectRatio <= 0
-  ) {
-    return null;
-  }
-
-  const { data: creatorData, error: creatorError } = await supabase
-    .from("users")
-    .select("id, name")
-    .eq("id", creatorId)
-    .maybeSingle();
-
-  if (creatorError != null) {
-    throw creatorError;
-  }
-
-  if (!isRecord(creatorData)) {
-    return null;
-  }
-
-  const creatorName = asString(creatorData.name);
-  if (creatorName == null) {
-    return null;
-  }
-
-  const { count: laughCount, error: laughCountError } = await supabase
-    .from("meme_laughs")
-    .select("meme_id", { count: "exact", head: true })
-    .eq("meme_id", memeId);
-
-  if (laughCountError != null) {
-    throw laughCountError;
-  }
-
-  const { count: isLaughedCount, error: isLaughedError } = await supabase
-    .from("meme_laughs")
-    .select("meme_id", { count: "exact", head: true })
-    .eq("meme_id", memeId)
-    .eq("user_id", notification.recipientId);
-
-  if (isLaughedError != null) {
-    throw isLaughedError;
-  }
-
-  const signedImage = await createSignedStorageImageUrl(
-    supabase,
-    supabaseUrl,
-    MEMES_FULL_BUCKET,
-    imagePath,
-    WIDGET_IMAGE_SIGNED_URL_TTL_SECONDS,
-    pushImagePublicBaseUrl,
-  );
-
-  return {
-    memeId,
-    creatorId,
-    creatorName,
-    imagePath,
-    imageUrlFull: signedImage.url,
-    aspectRatio,
-    laughCount: Math.max(0, laughCount ?? 0),
-    isLaughed: (isLaughedCount ?? 0) > 0,
-    isOwnMeme: creatorId === notification.recipientId,
-  };
-}
-
-function buildMemeWidgetDataPayload(
-  notification: NotificationRecord,
-  metadata: MemeWidgetMetadata | null,
-): Record<string, string> {
-  const isMemeNotification =
-    notification.type === "meme_received" ||
-    notification.type === "meme_laughed";
-  if (!isMemeNotification) {
-    return {};
-  }
-
-  if (metadata == null) {
-    return {};
-  }
-
-  return {
-    widget_meme_id: metadata.memeId,
-    widget_creator_id: metadata.creatorId,
-    widget_creator_name: metadata.creatorName,
-    widget_image_path_full: metadata.imagePath,
-    widget_image_url_full: metadata.imageUrlFull,
-    widget_aspect_ratio: String(metadata.aspectRatio),
-    widget_laugh_count: String(metadata.laughCount),
-    widget_is_laughed: String(metadata.isLaughed),
-    widget_is_own_meme: String(metadata.isOwnMeme),
-  };
 }
 
 export function buildFirebaseMessagePayload(
@@ -1048,35 +898,6 @@ export function createSendNotificationPushHandler(
         }
       }
 
-      let memeWidgetDataPayload: Record<string, string> = {};
-      if (
-        notification.type === "meme_received" ||
-        notification.type === "meme_laughed"
-      ) {
-        try {
-          const metadata = await resolveMemeWidgetMetadata(
-            supabase,
-            supabaseUrl,
-            notification,
-            pushImagePublicBaseUrl,
-          );
-          memeWidgetDataPayload = buildMemeWidgetDataPayload(
-            notification,
-            metadata,
-          );
-        } catch (error) {
-          memeWidgetDataPayload = buildMemeWidgetDataPayload(
-            notification,
-            null,
-          );
-          logEvent("warn", "send_notification_push.widget_payload_failed", {
-            notification_id: notification.id,
-            recipient_id: notification.recipientId,
-            error: error instanceof Error ? error.message : "unknown_error",
-          });
-        }
-      }
-
       let unreadCount = 0;
       try {
         unreadCount = await fetchUnreadNotificationCount(
@@ -1222,9 +1043,6 @@ export function createSendNotificationPushHandler(
           unreadCount,
           pushImageUrl,
         );
-        for (const [key, value] of Object.entries(memeWidgetDataPayload)) {
-          dataPayload[key] = value;
-        }
         const templateVariables = buildNotificationTemplateVariables(
           notification,
           template.languageCode,
