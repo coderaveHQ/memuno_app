@@ -50,7 +50,7 @@ dependencies:
   app_links: ^7.0.0
 
   # --- UI / Design system ----------------------------------------------------
-  zentoast: ^0.2.1
+  delightful_toast: ^1.1.0
   flutter_lucide: ^1.8.2
   gap: ^3.0.1
   skeletonizer: ^2.1.3

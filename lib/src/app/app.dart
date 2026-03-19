@@ -5,11 +5,9 @@ import 'package:memuno_app/l10n/app_localizations.dart';
 import 'package:memuno_app/src/app/app_effects.dart';
 import 'package:memuno_app/src/app/router/app_router.dart';
 import 'package:memuno_app/src/app/settings/language_resolution_provider.dart';
-import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/app/widgets/m/m_theme.dart';
 import 'package:memuno_app/src/infrastructure/platform/system_locale_provider.dart';
 import 'package:skeletonizer/skeletonizer.dart';
-import 'package:zentoast/zentoast.dart';
 
 /// Root widget of the application.
 ///
@@ -76,26 +74,7 @@ class _AppState extends ConsumerState<App> with WidgetsBindingObserver {
         builder: (BuildContext context, Widget? child) {
           return SkeletonizerConfig(
             data: MTheme.sekeltonizerDarkData,
-            child: ToastThemeProvider(
-              data: ToastTheme(
-                gap: MSpacing.xs,
-                viewerPadding: EdgeInsets.all(MSpacing.sm),
-              ),
-              child: Stack(
-                children: <Widget>[
-                  Positioned.fill(
-                    child: AppEffects(child: child ?? const SizedBox.shrink()),
-                  ),
-                  SafeArea(
-                    child: ToastViewer(
-                      alignment: Alignment.topRight,
-                      delay: Duration(seconds: 3),
-                      visibleCount: 3,
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            child: AppEffects(child: child ?? const SizedBox.shrink()),
           );
         },
       ),
