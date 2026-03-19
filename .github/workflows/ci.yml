@@ -214,6 +214,19 @@ jobs:
       - name: Supabase start
         run: supabase start
 
+      # Ensure the declarative public schema matches the local DB state.
+      #
+      # This checks that `supabase/schemas/*.sql` (via schema_paths) is in sync
+      # with the current local database for the public schema.
+      - name: Supabase declarative schema drift check (public)
+        run: |
+          DIFF_OUTPUT="$(supabase db diff --local --schema public)"
+          echo "$DIFF_OUTPUT"
+          if ! grep -q "No schema changes found" <<< "$DIFF_OUTPUT"; then
+            echo "Declarative schema drift detected for public schema."
+            exit 1
+          fi
+
       # Lint database migrations/schema for common issues.
       #
       # Examples of issues it can detect (varies by CLI version/config):
