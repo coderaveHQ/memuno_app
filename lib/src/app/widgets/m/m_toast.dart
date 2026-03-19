@@ -1,43 +1,21 @@
+import 'package:delightful_toast/delight_toast.dart';
+import 'package:delightful_toast/toast/components/toast_card.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:memuno_app/l10n/app_localizations.dart';
 import 'package:memuno_app/src/app/widgets/m/m_colors.dart';
-import 'package:memuno_app/src/app/widgets/m/m_gap.dart';
-import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/app/widgets/m/m_text.dart';
-import 'package:zentoast/zentoast.dart';
 
 enum MToastVariant {
-  success(
-    backgroundColor: MColors.green400,
-    foregroundColor: MColors.white,
-    icon: LucideIcons.check,
-  ),
-  info(
-    backgroundColor: MColors.blue400,
-    foregroundColor: MColors.white,
-    icon: LucideIcons.info,
-  ),
-  warning(
-    backgroundColor: MColors.orange400,
-    foregroundColor: MColors.white,
-    icon: LucideIcons.triangle_alert,
-  ),
-  error(
-    backgroundColor: MColors.red400,
-    foregroundColor: MColors.white,
-    icon: LucideIcons.skull,
-  );
+  success(color: MColors.green400, icon: LucideIcons.check),
+  info(color: MColors.blue400, icon: LucideIcons.info),
+  warning(color: MColors.orange400, icon: LucideIcons.triangle_alert),
+  error(color: MColors.red400, icon: LucideIcons.skull);
 
-  final Color backgroundColor;
-  final Color foregroundColor;
+  final Color color;
   final IconData icon;
 
-  const MToastVariant({
-    required this.backgroundColor,
-    required this.foregroundColor,
-    required this.icon,
-  });
+  const MToastVariant({required this.color, required this.icon});
 
   String title(BuildContext context) {
     final AppLocalizations l10n = AppLocalizations.of(context);
@@ -53,124 +31,19 @@ enum MToastVariant {
 void showMToast(BuildContext context, MToastVariant variant, String message) {
   final String resolvedTitle = variant.title(context);
 
-  Toast(
-    category: ToastCategory.success,
-    builder: (toast) => MToast(
-      variant: variant,
-      title: resolvedTitle,
-      message: message,
-      height: toast.height,
-      onClose: () => toast.hide(context),
+  DelightToastBar(
+    autoDismiss: true,
+    builder: (BuildContext _) => ToastCard(
+      color: MColors.gray800.withValues(alpha: 0.3),
+      leading: Icon(variant.icon, size: 32.0, color: variant.color),
+      title: MText.h5(
+        text: resolvedTitle,
+        style: TextStyle(color: MColors.gray100),
+      ),
+      subtitle: MText.p(
+        text: message,
+        style: TextStyle(color: MColors.gray100),
+      ),
     ),
   ).show(context);
-}
-
-class MToast extends StatelessWidget {
-  const MToast({
-    super.key,
-    required this.variant,
-    required this.title,
-    required this.message,
-    required this.height,
-    required this.onClose,
-  });
-
-  final MToastVariant variant;
-  final String title;
-  final String message;
-  final double height;
-  final void Function() onClose;
-
-  @override
-  Widget build(BuildContext context) {
-    return Material(
-      color: Colors.transparent,
-      child: Container(
-        height: height,
-        width: double.maxFinite,
-        padding: const EdgeInsets.symmetric(
-          horizontal: MSpacing.sm,
-          vertical: MSpacing.xs,
-        ),
-        decoration: BoxDecoration(
-          color: variant.backgroundColor,
-          border: Border.all(color: Colors.black, width: 3.0),
-          borderRadius: BorderRadius.zero,
-          boxShadow: const <BoxShadow>[
-            BoxShadow(
-              color: Colors.black,
-              offset: Offset(4.0, 4.0),
-              blurRadius: 0.0,
-              spreadRadius: 0.0,
-            ),
-          ],
-        ),
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Container(
-              width: 28.0,
-              height: 28.0,
-              alignment: Alignment.center,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.black, width: 2.0),
-              ),
-              child: Icon(variant.icon, size: 18.0, color: Colors.black),
-            ),
-            const MGap.sm(),
-            Expanded(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  MText.p(
-                    text: title.toUpperCase(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: variant.foregroundColor,
-                      fontWeight: FontWeight.w800,
-                      letterSpacing: 0.6,
-                    ),
-                  ),
-                  const MGap.xxs(),
-                  MText.small(
-                    text: message,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      color: variant.foregroundColor,
-                      height: 1.2,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            const MGap.sm(),
-            InkWell(
-              onTap: onClose,
-              child: Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: MSpacing.sm,
-                  vertical: MSpacing.xs,
-                ),
-                decoration: BoxDecoration(
-                  color: Colors.black,
-                  border: Border.all(color: Colors.black, width: 2.0),
-                ),
-                child: MText(
-                  text: 'X',
-                  style: TextStyle(
-                    color: variant.foregroundColor,
-                    fontWeight: FontWeight.w800,
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
