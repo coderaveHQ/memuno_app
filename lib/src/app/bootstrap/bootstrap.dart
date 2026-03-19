@@ -13,7 +13,6 @@ import 'package:memuno_app/src/core/utils/logger.dart';
 import 'package:memuno_app/src/infrastructure/shared_preferences/shared_preferences_provider.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:zentoast/zentoast.dart';
 
 /// Centralized app bootstrap.
 ///
@@ -96,7 +95,7 @@ Future<void> bootstrap() async {
           overrides: <Object>[
             sharedPreferencesProvider.overrideWithValue(sharedPreferences),
           ],
-          child: ToastProvider.create(child: const App()),
+          child: const App(),
         ),
       );
 

@@ -102,15 +102,18 @@ class MText extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Skeletonizer(
-      enabled: isLoading,
-      child: Text(
-        text ?? '',
-        maxLines: maxLines,
-        overflow: overflow,
-        textAlign: alignment,
-        style: style,
-      ),
+    final Text child = Text(
+      text ?? '',
+      maxLines: maxLines,
+      overflow: overflow,
+      textAlign: alignment,
+      style: style,
     );
+
+    if (isLoading) {
+      return Skeletonizer(enabled: true, child: child);
+    }
+
+    return child;
   }
 }
