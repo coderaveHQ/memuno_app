@@ -79,6 +79,8 @@ class MAsyncNotificationListItem extends StatelessWidget {
   ) {
     final NotificationType type = notification.notificationType;
     final String actorName = notification.notificationActorName;
+    final String? memeTargetGroupName =
+        notification.notificationMemeTargetGroupName;
 
     return switch (type) {
       NotificationType.friendshipRequestSent =>
@@ -90,9 +92,13 @@ class MAsyncNotificationListItem extends StatelessWidget {
           actorName,
           notification.notificationGroupName ?? '',
         ),
-      NotificationType.memeReceived => l10n.notificationsItemMemeReceived(
-        actorName,
-      ),
+      NotificationType.memeReceived =>
+        memeTargetGroupName == null || memeTargetGroupName.isEmpty
+            ? l10n.notificationsItemMemeReceivedDirect(actorName)
+            : l10n.notificationsItemMemeReceivedGroup(
+                actorName,
+                memeTargetGroupName,
+              ),
       NotificationType.memeLaughed => l10n.notificationsItemMemeLaughed(
         actorName,
       ),

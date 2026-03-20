@@ -148,6 +148,8 @@ final class SupabaseNotificationsDatasourceImpl
                 memeId: data.memeId,
                 memePushImagePath: data.memePushImagePath,
                 memeAspectRatio: data.memeAspectRatio,
+                groupId: data.groupId,
+                groupName: data.groupName,
                 signedMemeImageUrl: data.memePushImagePath == null
                     ? null
                     : signedUrlByPath[data.memePushImagePath],
