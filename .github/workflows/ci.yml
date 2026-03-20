@@ -220,9 +220,14 @@ jobs:
       # with the current local database for the public schema.
       - name: Supabase declarative schema drift check (public)
         run: |
-          DIFF_OUTPUT="$(supabase db diff --local --schema public)"
+          DIFF_OUTPUT="$(supabase db diff --local --schema public 2>&1)"
           echo "$DIFF_OUTPUT"
-          if ! grep -q "No schema changes found" <<< "$DIFF_OUTPUT"; then
+
+          # Supabase CLI output can include ANSI/control characters in CI.
+          # Normalize before matching to avoid false drift failures.
+          NORMALIZED_DIFF_OUTPUT="$(printf '%s' "$DIFF_OUTPUT" | sed -E 's/\x1B\[[0-9;?]*[[:alpha:]]//g' | tr -d '\r')"
+
+          if ! grep -Eqi "No[[:space:]]+schema[[:space:]]+changes[[:space:]]+found" <<< "$NORMALIZED_DIFF_OUTPUT"; then
             echo "Declarative schema drift detected for public schema."
             exit 1
           fi
