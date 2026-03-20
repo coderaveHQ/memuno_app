@@ -344,7 +344,7 @@ main() {
   echo "Using tags file: ${TAGS_FILE}" >&2
 
   for (( i = start; i <= end; i++ )); do
-    image_file="${i}.png"
+    image_file="${i}.jpg"
     image_path="${IMAGES_DIR}/${image_file}"
 
     if [[ ! -f "$image_path" ]]; then
