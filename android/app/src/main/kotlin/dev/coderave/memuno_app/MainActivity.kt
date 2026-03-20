@@ -20,10 +20,10 @@ class MainActivity : FlutterActivity() {
     val notificationManager = getSystemService(NotificationManager::class.java) ?: return
     val channel = NotificationChannel(
       DEFAULT_NOTIFICATION_CHANNEL_ID,
-      "Memuno notifications",
+      getString(R.string.push_notification_channel_name),
       NotificationManager.IMPORTANCE_HIGH
     ).apply {
-      description = "General notifications for the Memuno app."
+      description = getString(R.string.push_notification_channel_description)
     }
     notificationManager.createNotificationChannel(channel)
   }
