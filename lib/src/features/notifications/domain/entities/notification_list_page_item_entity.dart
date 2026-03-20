@@ -117,6 +117,15 @@ extension NotificationListPageItemEntityX on NotificationListPageItemEntity {
     };
   }
 
+  /// Recipient target group name for group-targeted meme notifications.
+  String? get notificationMemeTargetGroupName {
+    return switch (data) {
+      MemeReceivedNotificationListPageItemDataEntity(:final groupName) =>
+        groupName,
+      _ => null,
+    };
+  }
+
   /// Returns a copy marked as read.
   NotificationListPageItemEntity markRead() => copyWith(isRead: true);
 

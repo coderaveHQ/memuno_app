@@ -204,6 +204,18 @@ function sanitizeSenderName(
   return languageCode === "de" ? "Jemand" : "Someone";
 }
 
+function sanitizeRecipientTargetName(
+  recipientTargetNameValue: unknown,
+  languageCode: string,
+): string {
+  const recipientTargetName = asString(recipientTargetNameValue);
+  if (recipientTargetName != null) {
+    return recipientTargetName;
+  }
+
+  return languageCode === "de" ? "dich" : "you";
+}
+
 export function buildNotificationTemplateVariables(
   notification: NotificationRecord,
   languageCode: string,
@@ -220,6 +232,13 @@ export function buildNotificationTemplateVariables(
     variables["actor_name"] = senderName;
   }
   variables["sender_name"] = senderName;
+
+  if (notification.type === "meme_received") {
+    variables["recipient_target_name"] = sanitizeRecipientTargetName(
+      notification.data["group_name"],
+      languageCode,
+    );
+  }
 
   return variables;
 }

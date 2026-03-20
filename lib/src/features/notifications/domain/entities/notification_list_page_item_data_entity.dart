@@ -52,6 +52,12 @@ sealed class NotificationListPageItemDataEntity
     /// Persisted aspect ratio (`width / height`) from `public.memes`.
     required double memeAspectRatio,
 
+    /// Optional recipient target group id for group-targeted meme notifications.
+    required String? groupId,
+
+    /// Optional recipient target group name for group-targeted meme notifications.
+    required String? groupName,
+
     /// Frontend-signed URL for rendering private meme image previews.
     required String? signedMemeImageUrl,
 

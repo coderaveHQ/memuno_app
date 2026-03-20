@@ -438,6 +438,19 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String notificationsItemMemeReceivedDirect(Object sender_name) {
+    return '$sender_name hat ein Meme an dich gesendet.';
+  }
+
+  @override
+  String notificationsItemMemeReceivedGroup(
+    Object sender_name,
+    Object group_name,
+  ) {
+    return '$sender_name hat ein Meme an $group_name gesendet.';
+  }
+
+  @override
   String get notificationsItemMemeLaughedTitle =>
       'Dein Meme brachte jemanden zum Lachen';
 

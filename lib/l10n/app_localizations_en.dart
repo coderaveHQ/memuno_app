@@ -428,6 +428,19 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String notificationsItemMemeReceivedDirect(Object sender_name) {
+    return '$sender_name sent a meme to you.';
+  }
+
+  @override
+  String notificationsItemMemeReceivedGroup(
+    Object sender_name,
+    Object group_name,
+  ) {
+    return '$sender_name sent a meme to $group_name.';
+  }
+
+  @override
   String get notificationsItemMemeLaughedTitle => 'Your meme got a laugh';
 
   @override
@@ -1063,6 +1076,19 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   @override
   String notificationsItemMemeReceived(Object sender_name) {
     return '$sender_name sent you a meme.';
+  }
+
+  @override
+  String notificationsItemMemeReceivedDirect(Object sender_name) {
+    return '$sender_name sent a meme to you.';
+  }
+
+  @override
+  String notificationsItemMemeReceivedGroup(
+    Object sender_name,
+    Object group_name,
+  ) {
+    return '$sender_name sent a meme to $group_name.';
   }
 
   @override

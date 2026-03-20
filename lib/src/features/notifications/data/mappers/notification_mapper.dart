@@ -68,6 +68,8 @@ final class NotificationMapper {
           memeId: data.memeId,
           memePushImagePath: data.memePushImagePath,
           memeAspectRatio: data.memeAspectRatio,
+          groupId: data.groupId,
+          groupName: data.groupName,
           signedMemeImageUrl: data.signedMemeImageUrl,
           routeTab: data.routeTab,
         ),

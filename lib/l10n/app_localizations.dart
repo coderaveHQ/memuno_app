@@ -862,6 +862,21 @@ abstract class AppLocalizations {
   /// **'{sender_name} sent you a meme.'**
   String notificationsItemMemeReceived(Object sender_name);
 
+  /// No description provided for @notificationsItemMemeReceivedDirect.
+  ///
+  /// In en_US, this message translates to:
+  /// **'{sender_name} sent a meme to you.'**
+  String notificationsItemMemeReceivedDirect(Object sender_name);
+
+  /// No description provided for @notificationsItemMemeReceivedGroup.
+  ///
+  /// In en_US, this message translates to:
+  /// **'{sender_name} sent a meme to {group_name}.'**
+  String notificationsItemMemeReceivedGroup(
+    Object sender_name,
+    Object group_name,
+  );
+
   /// No description provided for @notificationsItemMemeLaughedTitle.
   ///
   /// In en_US, this message translates to:
