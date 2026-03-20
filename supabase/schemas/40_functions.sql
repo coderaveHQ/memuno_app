@@ -455,7 +455,7 @@ begin
     "data"
   )
   select
-    recipients."user_id",
+    recipients."recipient_id",
     'meme_received',
     jsonb_build_object(
       'actor_id',
@@ -468,22 +468,33 @@ begin
       v_push_image_path,
       'aspect_ratio',
       new."aspect_ratio",
+      'group_id',
+      recipients."group_id",
+      'group_name',
+      recipients."group_name",
       'route_tab',
       to_jsonb(null::text)
     )
   from (
-    select mr."user_id"
+    select
+      mr."user_id" as "recipient_id",
+      null::uuid as "group_id",
+      null::text as "group_name"
     from public.meme_recipients mr
     where mr."meme_id" = new."id"
       and mr."user_id" is not null
-    union
-    select gu."user_id"
+    union all
+    select
+      gu."user_id" as "recipient_id",
+      g."id" as "group_id",
+      g."name" as "group_name"
     from public.meme_recipients mr
+    join public.groups g on g."id" = mr."group_id"
     join public.group_users gu on gu."group_id" = mr."group_id"
     where mr."meme_id" = new."id"
       and mr."group_id" is not null
   ) recipients
-  where recipients."user_id" <> new."user_id"
+  where recipients."recipient_id" <> new."user_id"
   on conflict do nothing;
 
   return new;
@@ -4268,7 +4279,6 @@ CREATE OR REPLACE FUNCTION "public"."user_details_memes_own_sent_list"("p_limit"
   )::public.list_page
   from paged;
 $$;
-
 
 
 

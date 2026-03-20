@@ -44,7 +44,7 @@ CREATE INDEX "memes_created_at_id_idx" ON "public"."memes" USING "btree" ("creat
 
 CREATE INDEX "memes_user_id_created_at_id_idx" ON "public"."memes" USING "btree" ("user_id", "created_at" DESC, "id" DESC);
 
-CREATE UNIQUE INDEX "notifications_meme_received_recipient_meme_id_uidx" ON "public"."notifications" USING "btree" ("recipient_id", (("data" ->> 'meme_id'::"text"))) WHERE ("type" = 'meme_received'::"public"."notification_type");
+CREATE UNIQUE INDEX "notifications_meme_received_recipient_meme_id_uidx" ON "public"."notifications" USING "btree" ("recipient_id", (("data" ->> 'meme_id'::"text")), (COALESCE(("data" ->> 'group_id'::"text"), '__direct__'::"text"))) WHERE ("type" = 'meme_received'::"public"."notification_type");
 
 CREATE INDEX "notifications_recipient_created_at_id_idx" ON "public"."notifications" USING "btree" ("recipient_id", "created_at" DESC, "id" DESC);
 

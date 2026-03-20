@@ -178,6 +178,19 @@
       "sender_name": {}
     }
   },
+  "notificationsItemMemeReceivedDirect": "{sender_name} sent a meme to you.",
+  "@notificationsItemMemeReceivedDirect": {
+    "placeholders": {
+      "sender_name": {}
+    }
+  },
+  "notificationsItemMemeReceivedGroup": "{sender_name} sent a meme to {group_name}.",
+  "@notificationsItemMemeReceivedGroup": {
+    "placeholders": {
+      "sender_name": {},
+      "group_name": {}
+    }
+  },
   "notificationsItemMemeLaughedTitle": "Your meme got a laugh",
   "notificationsItemMemeLaughed": "{sender_name} laughed at your meme.",
   "@notificationsItemMemeLaughed": {
