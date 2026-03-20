@@ -91,6 +91,7 @@ CREATE TABLE IF NOT EXISTS "public"."meme_recipients" (
 CREATE TABLE IF NOT EXISTS "public"."meme_templates" (
     "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
     "image_path" "text" NOT NULL,
+    "image_path_low" "text" NOT NULL,
     "aspect_ratio" double precision NOT NULL,
     "tags" "text"[] DEFAULT '{}'::"text"[] NOT NULL,
     "is_active" boolean DEFAULT true NOT NULL,
@@ -541,6 +542,5 @@ ALTER TABLE ONLY "public"."push_device_tokens"
 
 ALTER TABLE ONLY "public"."users"
     ADD CONSTRAINT "fk_users__id__auth_users__id" FOREIGN KEY ("id") REFERENCES "auth"."users"("id") ON UPDATE CASCADE ON DELETE CASCADE;
-
 
 
