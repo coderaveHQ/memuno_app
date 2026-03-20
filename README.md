@@ -135,27 +135,3 @@ select public.upsert_vault_secret(
   'Hosted machine apikey used by webhook/cron invocations'
 );
 ```
-
-### Tools
-
-#### Meme Template Uploader
-
-This tool helps uploading meme templates to storage and linking them to the database.
-
-##### 1. Navigate into the folder
-
-```sh
-cd tools/memuno-template-uploader/
-```
-
-##### 2. Install packages
-
-```sh
-npm i
-```
-
-##### 3. Run the App
-
-```sh
-npm run dev
-```
