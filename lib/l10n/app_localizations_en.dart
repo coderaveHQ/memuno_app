@@ -647,6 +647,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'You can now change your password.';
 
   @override
+  String get pushNotificationChannelName => 'Memuno notifications';
+
+  @override
+  String get pushNotificationChannelDescription =>
+      'General notifications for the Memuno app.';
+
+  @override
   String get homeGreetingGeneric => 'Hey! 👋';
 
   @override
@@ -1296,6 +1303,13 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   @override
   String get authToastPasswordRecoveryMessage =>
       'You can now change your password.';
+
+  @override
+  String get pushNotificationChannelName => 'Memuno notifications';
+
+  @override
+  String get pushNotificationChannelDescription =>
+      'General notifications for the Memuno app.';
 
   @override
   String get homeGreetingGeneric => 'Hey! 👋';

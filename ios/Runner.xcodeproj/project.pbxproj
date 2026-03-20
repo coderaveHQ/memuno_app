@@ -104,7 +104,8 @@
 		7AFA3C8E1D35360C0083082E /* Release.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; name = Release.xcconfig; path = Flutter/Release.xcconfig; sourceTree = "<group>"; };
 		7E714C1F12B01308A5CDC65E /* LaunchScreenProduction.storyboard */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; path = Base.lproj/LaunchScreenProduction.storyboard; sourceTree = "<group>"; };
 		897EB7F16457A8A447BFA92A /* Pods-RunnerTests.release-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-RunnerTests.release-production.xcconfig"; path = "Target Support Files/Pods-RunnerTests/Pods-RunnerTests.release-production.xcconfig"; sourceTree = "<group>"; };
-		8B6A0E9D7C4544A3A07D7E17 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+			8B6A0E9D7C4544A3A07D7E17 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+			F1AA00112233445566778891 /* de-DE */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "de-DE"; path = "de-DE.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		94B79D78773C7BBBE3B96E8E /* Pods-ImageNotification.debug-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ImageNotification.debug-production.xcconfig"; path = "Target Support Files/Pods-ImageNotification/Pods-ImageNotification.debug-production.xcconfig"; sourceTree = "<group>"; };
 		9740EEB21CF90195004384FC /* Debug.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Debug.xcconfig; path = Flutter/Debug.xcconfig; sourceTree = "<group>"; };
 		9740EEB31CF90195004384FC /* Generated.xcconfig */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.xcconfig; name = Generated.xcconfig; path = Flutter/Generated.xcconfig; sourceTree = "<group>"; };
@@ -115,7 +116,8 @@
 		97C147021CF9000F007C117D /* Info-Production.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "Info-Production.plist"; sourceTree = "<group>"; };
 		9B34AE4394329773828C7E0B /* Runner-Debug-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/Runner-Debug-production.xcconfig"; sourceTree = "<group>"; };
 		A120B24EC3DCF72700D4D419 /* ImageNotification-Profile-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/ImageNotification-Profile-staging.xcconfig"; sourceTree = "<group>"; };
-		A5D76E9EE16B44BB8A4BDDF3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+			A5D76E9EE16B44BB8A4BDDF3 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
+			F1AA00112233445566778892 /* en-US */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = "en-US"; path = "en-US.lproj/InfoPlist.strings"; sourceTree = "<group>"; };
 		A6C6D564FFA8630FE32CAFFE /* Pods-Runner.profile-staging.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Runner.profile-staging.xcconfig"; path = "Target Support Files/Pods-Runner/Pods-Runner.profile-staging.xcconfig"; sourceTree = "<group>"; };
 		A7E8AA497EE8D483B0313537 /* ImageNotification-Profile-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/ImageNotification-Profile-production.xcconfig"; sourceTree = "<group>"; };
 		A82DBF46B7027C99816B1927 /* Runner-Profile-production.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; path = "Flutter/Runner-Profile-production.xcconfig"; sourceTree = "<group>"; };
@@ -413,11 +415,13 @@
 			compatibilityVersion = "Xcode 9.3";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
-			knownRegions = (
-				en,
-				de,
-				Base,
-			);
+				knownRegions = (
+					en,
+					de,
+					"en-US",
+					"de-DE",
+					Base,
+				);
 			mainGroup = 97C146E51CF9000F007C117D;
 			productRefGroup = 97C146EF1CF9000F007C117D /* Products */;
 			projectDirPath = "";
@@ -674,15 +678,17 @@
 			name = LaunchScreen.storyboard;
 			sourceTree = "<group>";
 		};
-		A1F2D3C4E5F60718293A4B5C /* InfoPlist.strings */ = {
-			isa = PBXVariantGroup;
-			children = (
-				A5D76E9EE16B44BB8A4BDDF3 /* en */,
-				8B6A0E9D7C4544A3A07D7E17 /* de */,
-			);
-			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
+			A1F2D3C4E5F60718293A4B5C /* InfoPlist.strings */ = {
+				isa = PBXVariantGroup;
+				children = (
+					A5D76E9EE16B44BB8A4BDDF3 /* en */,
+					8B6A0E9D7C4544A3A07D7E17 /* de */,
+					F1AA00112233445566778892 /* en-US */,
+					F1AA00112233445566778891 /* de-DE */,
+				);
+				name = InfoPlist.strings;
+				sourceTree = "<group>";
+			};
 /* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */

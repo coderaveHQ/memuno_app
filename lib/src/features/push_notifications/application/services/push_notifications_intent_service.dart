@@ -56,6 +56,8 @@ final class PushNotificationsIntentService {
 
   bool _isInitialized = false;
   String? _currentUserId;
+  String? _resolvedChannelName;
+  String? _resolvedChannelDescription;
 
   /// Initializes push handlers and foreground local-notification callbacks.
   Future<void> initialize() async {
@@ -126,6 +128,33 @@ final class PushNotificationsIntentService {
       _pendingIntent = null;
       unawaited(_enqueue(() => _executeIntent(pendingIntent)));
     }
+  }
+
+  /// Updates localized Android notification-channel copy.
+  void handleResolvedLocale({
+    required String channelName,
+    required String channelDescription,
+  }) {
+    final String normalizedName = channelName.trim();
+    final String normalizedDescription = channelDescription.trim();
+    if (normalizedName.isEmpty || normalizedDescription.isEmpty) {
+      return;
+    }
+
+    if (_resolvedChannelName == normalizedName &&
+        _resolvedChannelDescription == normalizedDescription) {
+      return;
+    }
+
+    _resolvedChannelName = normalizedName;
+    _resolvedChannelDescription = normalizedDescription;
+
+    _pushLocalNotificationsGateway.configureChannelLocalization(
+      channelLocalization: PushNotificationChannelLocalization(
+        name: normalizedName,
+        description: normalizedDescription,
+      ),
+    );
   }
 
   /// Releases stream subscriptions.

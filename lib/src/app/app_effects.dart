@@ -52,17 +52,22 @@ class _AppEffectsState extends ConsumerState<AppEffects> {
       final PushNotificationsIntentService intentService = ref.read(
         pushNotificationsIntentServiceProvider,
       );
+      final LanguageResolution languageResolution = ref.read(
+        languageResolutionProvider,
+      );
+
+      lifecycleService.handleResolvedLocale(languageResolution.resolvedLocale);
+      _handlePushIntentResolvedLocale(
+        intentService: intentService,
+        locale: languageResolution.resolvedLocale,
+      );
+
       unawaited(lifecycleService.initialize());
       unawaited(intentService.initialize());
 
       // App-global listeners that keep unread count + app-icon badge in sync.
       ref.read(notificationsRealtimeSyncProvider);
       ref.read(notificationsBadgeSyncProvider);
-
-      final LanguageResolution languageResolution = ref.read(
-        languageResolutionProvider,
-      );
-      lifecycleService.handleResolvedLocale(languageResolution.resolvedLocale);
 
       final AuthStateEntity? initialAuthState = ref
           .read(authStateProvider)
@@ -93,6 +98,14 @@ class _AppEffectsState extends ConsumerState<AppEffects> {
         pushNotificationsLifecycleServiceProvider,
       );
       lifecycleService.handleResolvedLocale(next.resolvedLocale);
+
+      final PushNotificationsIntentService intentService = ref.read(
+        pushNotificationsIntentServiceProvider,
+      );
+      _handlePushIntentResolvedLocale(
+        intentService: intentService,
+        locale: next.resolvedLocale,
+      );
     });
 
     // Listen to external deep links and route them through the central handler.
@@ -299,6 +312,17 @@ class _AppEffectsState extends ConsumerState<AppEffects> {
       return PushAuthLifecycleEvent.sessionAvailable;
     }
     return null;
+  }
+
+  void _handlePushIntentResolvedLocale({
+    required PushNotificationsIntentService intentService,
+    required Locale locale,
+  }) {
+    final AppLocalizations l10n = lookupAppLocalizations(locale);
+    intentService.handleResolvedLocale(
+      channelName: l10n.pushNotificationChannelName,
+      channelDescription: l10n.pushNotificationChannelDescription,
+    );
   }
 
   /// Resolves an overlay context that can host toast notifications.

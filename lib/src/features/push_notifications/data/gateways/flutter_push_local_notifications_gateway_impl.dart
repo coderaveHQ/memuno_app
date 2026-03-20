@@ -14,13 +14,34 @@ final class FlutterPushLocalNotificationsGatewayImpl
   }) : _localNotificationsPlugin = localNotificationsPlugin;
 
   static const String _channelId = 'memuno_foreground_messages';
-  static const String _channelName = 'Memuno notifications';
-  static const String _channelDescription =
-      'General notifications for the Memuno app.';
+  static const PushNotificationChannelLocalization _defaultChannelLocalization =
+      PushNotificationChannelLocalization(
+        name: 'Memuno notifications',
+        description: 'General notifications for the Memuno app.',
+      );
 
   final FlutterLocalNotificationsPlugin _localNotificationsPlugin;
   bool _isInitialized = false;
   void Function(Map<String, String> data)? _tapHandler;
+  PushNotificationChannelLocalization _channelLocalization =
+      _defaultChannelLocalization;
+
+  @override
+  void configureChannelLocalization({
+    required PushNotificationChannelLocalization channelLocalization,
+  }) {
+    final String normalizedName = channelLocalization.name.trim();
+    final String normalizedDescription = channelLocalization.description.trim();
+
+    _channelLocalization = PushNotificationChannelLocalization(
+      name: normalizedName.isEmpty
+          ? _defaultChannelLocalization.name
+          : normalizedName,
+      description: normalizedDescription.isEmpty
+          ? _defaultChannelLocalization.description
+          : normalizedDescription,
+    );
+  }
 
   @override
   Future<void> initialize({
@@ -99,8 +120,8 @@ final class FlutterPushLocalNotificationsGatewayImpl
 
     return AndroidNotificationDetails(
       _channelId,
-      _channelName,
-      channelDescription: _channelDescription,
+      _channelLocalization.name,
+      channelDescription: _channelLocalization.description,
       importance: Importance.high,
       priority: Priority.high,
       styleInformation: styleInformation,
