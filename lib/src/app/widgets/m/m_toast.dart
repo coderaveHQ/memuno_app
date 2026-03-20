@@ -34,7 +34,7 @@ void showMToast(BuildContext context, MToastVariant variant, String message) {
   DelightToastBar(
     autoDismiss: true,
     builder: (BuildContext _) => ToastCard(
-      color: MColors.gray800.withValues(alpha: 0.3),
+      color: MColors.gray900,
       leading: Icon(variant.icon, size: 32.0, color: variant.color),
       title: MText.h5(
         text: resolvedTitle,
