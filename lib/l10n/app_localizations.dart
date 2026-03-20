@@ -1255,6 +1255,18 @@ abstract class AppLocalizations {
   /// **'You can now change your password.'**
   String get authToastPasswordRecoveryMessage;
 
+  /// Android notification channel title shown in system settings.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Memuno notifications'**
+  String get pushNotificationChannelName;
+
+  /// Android notification channel description shown in system settings.
+  ///
+  /// In en_US, this message translates to:
+  /// **'General notifications for the Memuno app.'**
+  String get pushNotificationChannelDescription;
+
   /// No description provided for @homeGreetingGeneric.
   ///
   /// In en_US, this message translates to:

@@ -269,6 +269,14 @@
   "authToastSignedInMessage": "Du wurdest erfolgreich angemeldet.",
   "authToastSignedOutMessage": "Du wurdest erfolgreich abgemeldet.",
   "authToastPasswordRecoveryMessage": "Du kannst nun dein Passwort ändern.",
+  "pushNotificationChannelName": "Memuno-Benachrichtigungen",
+  "@pushNotificationChannelName": {
+    "description": "Titel des Android-Benachrichtigungskanals in den Systemeinstellungen."
+  },
+  "pushNotificationChannelDescription": "Allgemeine Benachrichtigungen für die Memuno-App.",
+  "@pushNotificationChannelDescription": {
+    "description": "Beschreibung des Android-Benachrichtigungskanals in den Systemeinstellungen."
+  },
   "homeGreetingGeneric": "Hey! 👋",
   "homeGreetingWithName": "Hey, {name}! 👋",
   "@homeGreetingWithName": {
