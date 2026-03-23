@@ -55,7 +55,11 @@ final class FlutterPushLocalNotificationsGatewayImpl
 
     const InitializationSettings settings = InitializationSettings(
       android: AndroidInitializationSettings('@mipmap/ic_launcher'),
-      iOS: DarwinInitializationSettings(),
+      iOS: DarwinInitializationSettings(
+        requestAlertPermission: false,
+        requestSoundPermission: false,
+        requestBadgePermission: false,
+      ),
     );
 
     await _localNotificationsPlugin.initialize(

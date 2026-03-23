@@ -1,6 +1,8 @@
 import 'dart:async';
 
 import 'package:flutter/widgets.dart';
+import 'package:memuno_app/src/core/failures/failure.dart';
+import 'package:memuno_app/src/core/failures/supabase_failure.dart';
 import 'package:memuno_app/src/core/utils/logger.dart';
 import 'package:memuno_app/src/features/push_notifications/application/entities/push_auth_lifecycle_event.dart';
 import 'package:memuno_app/src/features/push_notifications/application/ports/push_messaging_gateway.dart';
@@ -45,6 +47,10 @@ final class PushNotificationsLifecycleService {
   AppLifecycleListener? _appLifecycleListener;
 
   Future<void> _serializedOperation = Future<void>.value();
+
+  static const String _postgresUniqueViolationCode = '23505';
+  static const String _activeInstallationConstraintName =
+      'push_device_tokens_one_active_per_installation_idx';
 
   bool _isInitialized = false;
   String? _currentUserId;
@@ -231,6 +237,17 @@ final class PushNotificationsLifecycleService {
       await _pushSyncStateStore.saveSyncPending(false);
     } catch (error, stackTrace) {
       await _pushSyncStateStore.saveSyncPending(true);
+      if (_isDuplicateActiveInstallationConflict(error)) {
+        _logger.warn(
+          message:
+              'Push token sync hit duplicate active-installation conflict '
+              '(23505). Marking retry as pending.',
+          error: error,
+          stackTrace: stackTrace,
+        );
+        return;
+      }
+
       _logger.warn(
         message: 'Push token sync failed. Marking retry as pending.',
         error: error,
@@ -257,5 +274,36 @@ final class PushNotificationsLifecycleService {
         stackTrace: stackTrace,
       );
     }
+  }
+
+  bool _isDuplicateActiveInstallationConflict(Object error) {
+    if (error is! Failure) {
+      return false;
+    }
+
+    return error.maybeWhen(
+      supabase: (SupabaseFailure failure) {
+        return failure.maybeWhen(
+          postgres:
+              (
+                String? code,
+                String? message,
+                Object? details,
+                String? hint,
+                Map<String, Object?>? _,
+              ) {
+                if (code != _postgresUniqueViolationCode) {
+                  return false;
+                }
+
+                final String payload =
+                    '${message ?? ''} ${details?.toString() ?? ''} ${hint ?? ''}';
+                return payload.contains(_activeInstallationConstraintName);
+              },
+          orElse: () => false,
+        );
+      },
+      orElse: () => false,
+    );
   }
 }
