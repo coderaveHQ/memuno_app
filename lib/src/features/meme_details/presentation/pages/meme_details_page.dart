@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
 import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/experimental/mutation.dart';
@@ -25,24 +26,29 @@ import 'package:memuno_app/src/app/widgets/m/m_refresh_indicator.dart';
 import 'package:memuno_app/src/app/widgets/m/m_reload.dart';
 import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
+import 'package:memuno_app/src/app/widgets/m/m_tab_bar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_tappable.dart';
 import 'package:memuno_app/src/app/widgets/m/m_text.dart';
 import 'package:memuno_app/src/core/state/pagination/paginated_list_state.dart';
 import 'package:memuno_app/src/features/auth/application/providers/current_user_provider.dart';
 import 'package:memuno_app/src/features/meme_details/application/mutations/delete_meme_details_mutation.dart';
 import 'package:memuno_app/src/features/meme_details/application/mutations/toggle_meme_details_laugh_mutation.dart';
+import 'package:memuno_app/src/features/meme_details/application/providers/meme_addable_recipient_targets_list_provider.dart';
 import 'package:memuno_app/src/features/meme_details/application/providers/meme_details_provider.dart';
 import 'package:memuno_app/src/features/meme_details/application/providers/meme_laughs_list_provider.dart';
+import 'package:memuno_app/src/features/meme_details/application/providers/meme_recipients_list_provider.dart';
 import 'package:memuno_app/src/features/meme_details/application/providers/usecases/delete_meme_usecase_provider.dart';
 import 'package:memuno_app/src/features/meme_details/domain/entities/meme_details_entity.dart';
 import 'package:memuno_app/src/features/meme_details/domain/entities/meme_laugh_cursor_entity.dart';
 import 'package:memuno_app/src/features/meme_details/domain/entities/meme_laugh_list_page_item_entity.dart';
 import 'package:memuno_app/src/features/meme_details/domain/usecases/delete_meme_usecase.dart';
+import 'package:memuno_app/src/features/meme_details/presentation/widgets/add_meme_recipients_sheet.dart';
 import 'package:memuno_app/src/features/meme_details/presentation/widgets/meme_laugh_list_item.dart';
+import 'package:memuno_app/src/features/meme_details/presentation/widgets/meme_recipients_list.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
 
 /// Page that displays one meme and all users who laughed at it.
-class MemeDetailsPage extends ConsumerWidget {
+class MemeDetailsPage extends HookConsumerWidget {
   /// Creates the meme-details page.
   const MemeDetailsPage({super.key, required this.memeId});
 
@@ -54,8 +60,9 @@ class MemeDetailsPage extends ConsumerWidget {
   }
 
   /// Retries loading meme details and meme-laugh list.
-  Future<void> _onReload(WidgetRef ref) {
-    return ref.read(memeLaughsListProvider(memeId).notifier).refresh();
+  Future<void> _onReload(WidgetRef ref) async {
+    await ref.read(memeLaughsListProvider(memeId).notifier).refresh();
+    await ref.read(memeRecipientsListProvider(memeId).notifier).refresh();
   }
 
   /// Refreshes meme details and meme-laugh list from page 1.
@@ -112,6 +119,72 @@ class MemeDetailsPage extends ConsumerWidget {
       final DeleteMemeUsecase usecase = tx.get(deleteMemeUsecaseProvider);
       await usecase(memeId: memeId);
     });
+  }
+
+  /// Refreshes recipient tab data and all laugh/detail visibility surfaces.
+  Future<void> _refreshRecipientScopedData(
+    WidgetRef ref,
+    BuildContext context,
+    AppFeedback feedback,
+  ) async {
+    try {
+      ref.invalidate(memeAddableRecipientTargetsListProvider(memeId));
+      await ref.read(memeRecipientsListProvider(memeId).notifier).refresh();
+      await ref.read(memeLaughsListProvider(memeId).notifier).refresh();
+    } catch (error) {
+      if (!context.mounted) {
+        return;
+      }
+      feedback.resolveAndShowError(context, error);
+    }
+  }
+
+  /// Opens the add-recipient sheet and refreshes dependent providers on success.
+  Future<void> _onAddRecipients(
+    WidgetRef ref,
+    BuildContext context,
+    AppFeedback feedback,
+  ) async {
+    final bool didAdd = await showAddMemeRecipientsSheet(
+      context,
+      memeId: memeId,
+    );
+    if (!didAdd) {
+      return;
+    }
+
+    if (!context.mounted) {
+      return;
+    }
+
+    await _refreshRecipientScopedData(ref, context, feedback);
+  }
+
+  /// Handles one completed recipient removal flow from the recipients tab.
+  Future<void> _onRecipientRemoved(
+    WidgetRef ref,
+    BuildContext context,
+    AppFeedback feedback,
+    AppLocalizations l10n, {
+    required bool memeDeleted,
+  }) async {
+    if (memeDeleted) {
+      feedback.showSuccess(
+        context,
+        message: l10n.memeDetailsDeleteSuccessMessage,
+      );
+      if (!context.mounted) {
+        return;
+      }
+      context.pop();
+      return;
+    }
+
+    feedback.showSuccess(
+      context,
+      message: l10n.memeDetailsRecipientRemoveSuccessMessage,
+    );
+    await _refreshRecipientScopedData(ref, context, feedback);
   }
 
   Future<void> _onOpenMemeActions(
@@ -198,6 +271,7 @@ class MemeDetailsPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final AppLocalizations l10n = AppLocalizations.of(context);
     final AppFeedback feedback = ref.read(appFeedbackProvider);
+    final TabController tabController = useTabController(initialLength: 2);
     final String? currentUserId = ref.watch(currentUserProvider)?.id;
 
     final AsyncValue<MemeDetailsEntity> detailsState = ref.watch(
@@ -208,6 +282,7 @@ class MemeDetailsPage extends ConsumerWidget {
         details != null &&
         currentUserId != null &&
         details.user.id == currentUserId;
+    final bool canManageRecipients = canDeleteMeme;
 
     final AsyncValue<
       PaginatedListState<MemeLaughListPageItemEntity, MemeLaughCursorEntity>
@@ -269,6 +344,13 @@ class MemeDetailsPage extends ConsumerWidget {
           icon: LucideIcons.ellipsis_vertical,
         ),
       ],
+      bottom: MTabBar(
+        controller: tabController,
+        titles: <String>[
+          l10n.memeDetailsTabDetails,
+          l10n.memeDetailsTabRecipients,
+        ],
+      ),
     );
 
     return MScaffold(
@@ -276,305 +358,371 @@ class MemeDetailsPage extends ConsumerWidget {
       appBar: appBar,
       body: Padding(
         padding: EdgeInsets.only(top: appBar.preferredSize.height - 20.0),
-        child: detailsState.when(
-          data: (MemeDetailsEntity details) {
-            final bool isOwnMeme =
-                currentUserId != null && details.user.id == currentUserId;
-            final bool isLiked = details.isLaughed;
+        child: TabBarView(
+          controller: tabController,
+          children: <Widget>[
+            detailsState.when(
+              data: (MemeDetailsEntity details) {
+                final bool isOwnMeme =
+                    currentUserId != null && details.user.id == currentUserId;
+                final bool isLiked = details.isLaughed;
 
-            return NotificationListener<ScrollNotification>(
-              onNotification: (ScrollNotification notification) {
-                if (notification.metrics.axis != Axis.vertical) {
-                  return false;
-                }
+                return NotificationListener<ScrollNotification>(
+                  onNotification: (ScrollNotification notification) {
+                    if (notification.metrics.axis != Axis.vertical) {
+                      return false;
+                    }
 
-                final PaginatedListState<
-                  MemeLaughListPageItemEntity,
-                  MemeLaughCursorEntity
-                >?
-                state = laughsState.asData?.value;
+                    final PaginatedListState<
+                      MemeLaughListPageItemEntity,
+                      MemeLaughCursorEntity
+                    >?
+                    state = laughsState.asData?.value;
 
-                if (state == null || !state.hasMore || state.isLoadingMore) {
-                  return false;
-                }
+                    if (state == null ||
+                        !state.hasMore ||
+                        state.isLoadingMore) {
+                      return false;
+                    }
 
-                if (notification.metrics.extentAfter < 220.0) {
-                  unawaited(_onLoadMore(ref, context, feedback));
-                }
+                    if (notification.metrics.extentAfter < 220.0) {
+                      unawaited(_onLoadMore(ref, context, feedback));
+                    }
 
-                return false;
-              },
-              child: MRefreshIndicator(
-                onRefresh: () => _onRefresh(ref, context, feedback),
-                child: CustomScrollView(
-                  physics: const AlwaysScrollableScrollPhysics(),
-                  slivers: <Widget>[
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          top: 20.0 + MSpacing.md,
-                          left: context.leftPadding + MSpacing.md,
-                          right: context.rightPadding + MSpacing.md,
-                          bottom: MSpacing.md,
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            MAvatar(
-                              onPressed: () {
-                                UserDetailsRoute(
-                                  userId: details.user.id,
-                                ).push<void>(context);
-                              },
-                              name: details.user.name,
-                              dimension: kToolbarHeight - 4.0,
+                    return false;
+                  },
+                  child: MRefreshIndicator(
+                    onRefresh: () => _onRefresh(ref, context, feedback),
+                    child: CustomScrollView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      slivers: <Widget>[
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              top: 20.0 + MSpacing.md,
+                              left: context.leftPadding + MSpacing.md,
+                              right: context.rightPadding + MSpacing.md,
+                              bottom: MSpacing.md,
                             ),
-                            const MGap.md(),
-                            Expanded(
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: <Widget>[
-                                  MTappable(
-                                    onPressed: () {
-                                      UserDetailsRoute(
-                                        userId: details.user.id,
-                                      ).push<void>(context);
-                                    },
-                                    child: MText.h4(
-                                      text: details.user.name,
-                                      maxLines: 1,
-                                      overflow: TextOverflow.ellipsis,
-                                      style: const TextStyle(
-                                        color: MColors.gray100,
+                            child: Row(
+                              children: <Widget>[
+                                MAvatar(
+                                  onPressed: () {
+                                    UserDetailsRoute(
+                                      userId: details.user.id,
+                                    ).push<void>(context);
+                                  },
+                                  name: details.user.name,
+                                  dimension: kToolbarHeight - 4.0,
+                                ),
+                                const MGap.md(),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    children: <Widget>[
+                                      MTappable(
+                                        onPressed: () {
+                                          UserDetailsRoute(
+                                            userId: details.user.id,
+                                          ).push<void>(context);
+                                        },
+                                        child: MText.h4(
+                                          text: details.user.name,
+                                          maxLines: 1,
+                                          overflow: TextOverflow.ellipsis,
+                                          style: const TextStyle(
+                                            color: MColors.gray100,
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                  MText.small(
-                                    text: details.createdAt
-                                        .formatHumanReadable(),
-                                    maxLines: 1,
-                                    overflow: TextOverflow.ellipsis,
-                                    style: const TextStyle(
-                                      color: MColors.gray400,
-                                      fontStyle: FontStyle.italic,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: SizedBox(
-                        width: context.screenWidth,
-                        child: MImage.url(
-                          details.signedImageUrl,
-                          aspectRatio: details.aspectRatio,
-                        ),
-                      ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          top: MSpacing.md,
-                          left: context.leftPadding + MSpacing.md,
-                          right: context.rightPadding + MSpacing.md,
-                          bottom: MSpacing.md,
-                        ),
-                        child: Row(
-                          children: <Widget>[
-                            MTappable(
-                              onPressed: () => _onToggleLaugh(ref),
-                              isEnabled:
-                                  !isOwnMeme && !toggleLaughState.isPending,
-                              child: Container(
-                                height: 40.0,
-                                decoration: BoxDecoration(
-                                  color: isLiked
-                                      ? MColors.yellow400.withValues(alpha: 0.1)
-                                      : MColors.gray100,
-                                  borderRadius: BorderRadius.circular(20.0),
-                                ),
-                                padding: EdgeInsets.symmetric(
-                                  horizontal: MSpacing.sm,
-                                ),
-                                child: Row(
-                                  children: <Widget>[
-                                    MText.h3(text: '😂'),
-                                    const MGap.xs(),
-                                    MText.p(
-                                      text: '${details.laughCount}',
-                                      style: TextStyle(
-                                        color: isLiked
-                                            ? MColors.yellow400
-                                            : MColors.gray900,
-                                        fontWeight: FontWeight.w600,
+                                      MText.small(
+                                        text: details.createdAt
+                                            .formatHumanReadable(),
+                                        maxLines: 1,
+                                        overflow: TextOverflow.ellipsis,
+                                        style: const TextStyle(
+                                          color: MColors.gray400,
+                                          fontStyle: FontStyle.italic,
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              ),
+                              ],
                             ),
-                          ],
-                        ),
-                      ),
-                    ),
-                    SliverToBoxAdapter(
-                      child: Padding(
-                        padding: EdgeInsets.only(
-                          left: context.leftPadding + MSpacing.md,
-                          right: context.rightPadding + MSpacing.md,
-                        ),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: MText.h4(
-                            text: l10n.memeDetailsLaughsTitle,
-                            style: const TextStyle(color: MColors.gray100),
                           ),
                         ),
-                      ),
-                    ),
-                    ...laughsState.when<List<Widget>>(
-                      data:
-                          (
-                            PaginatedListState<
-                              MemeLaughListPageItemEntity,
-                              MemeLaughCursorEntity
-                            >
-                            state,
-                          ) {
-                            if (state.items.isEmpty) {
-                              return <Widget>[
-                                SliverPadding(
+                        SliverToBoxAdapter(
+                          child: SizedBox(
+                            width: context.screenWidth,
+                            child: MImage.url(
+                              details.signedImageUrl,
+                              aspectRatio: details.aspectRatio,
+                            ),
+                          ),
+                        ),
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              top: MSpacing.md,
+                              left: context.leftPadding + MSpacing.md,
+                              right: context.rightPadding + MSpacing.md,
+                              bottom: MSpacing.md,
+                            ),
+                            child: Row(
+                              children: <Widget>[
+                                MTappable(
+                                  onPressed: () => _onToggleLaugh(ref),
+                                  isEnabled:
+                                      !isOwnMeme && !toggleLaughState.isPending,
+                                  child: Container(
+                                    height: 40.0,
+                                    decoration: BoxDecoration(
+                                      color: isLiked
+                                          ? MColors.yellow400.withValues(
+                                              alpha: 0.1,
+                                            )
+                                          : MColors.gray100,
+                                      borderRadius: BorderRadius.circular(20.0),
+                                    ),
+                                    padding: EdgeInsets.symmetric(
+                                      horizontal: MSpacing.sm,
+                                    ),
+                                    child: Row(
+                                      children: <Widget>[
+                                        MText.h3(text: '😂'),
+                                        const MGap.xs(),
+                                        MText.p(
+                                          text: '${details.laughCount}',
+                                          style: TextStyle(
+                                            color: isLiked
+                                                ? MColors.yellow400
+                                                : MColors.gray900,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ),
+                        SliverToBoxAdapter(
+                          child: Padding(
+                            padding: EdgeInsets.only(
+                              left: context.leftPadding + MSpacing.md,
+                              right: context.rightPadding + MSpacing.md,
+                            ),
+                            child: Align(
+                              alignment: Alignment.centerLeft,
+                              child: MText.h4(
+                                text: l10n.memeDetailsLaughsTitle,
+                                style: const TextStyle(color: MColors.gray100),
+                              ),
+                            ),
+                          ),
+                        ),
+                        ...laughsState.when<List<Widget>>(
+                          data:
+                              (
+                                PaginatedListState<
+                                  MemeLaughListPageItemEntity,
+                                  MemeLaughCursorEntity
+                                >
+                                state,
+                              ) {
+                                if (state.items.isEmpty) {
+                                  return <Widget>[
+                                    SliverPadding(
+                                      padding: EdgeInsets.only(
+                                        top: MSpacing.md,
+                                        bottom:
+                                            context.bottomPadding + MSpacing.md,
+                                        left: context.leftPadding + MSpacing.md,
+                                        right:
+                                            context.rightPadding + MSpacing.md,
+                                      ),
+                                      sliver: SliverToBoxAdapter(
+                                        child: Align(
+                                          alignment: Alignment.centerLeft,
+                                          child: MText.p(
+                                            text: l10n.memeDetailsLaughsEmpty,
+                                            style: TextStyle(
+                                              color: MColors.gray100,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ];
+                                }
+
+                                return <Widget>[
+                                  SliverList(
+                                    delegate: SliverChildBuilderDelegate(
+                                      (BuildContext context, int index) {
+                                        if (index >= state.items.length) {
+                                          return MCenter(
+                                            padding: EdgeInsets.only(
+                                              top: MSpacing.md,
+                                              bottom:
+                                                  context.bottomPadding +
+                                                  MSpacing.md,
+                                              left:
+                                                  context.leftPadding +
+                                                  MSpacing.md,
+                                              right:
+                                                  context.rightPadding +
+                                                  MSpacing.md,
+                                            ),
+                                            child:
+                                                const MCircularProgressIndicator(),
+                                          );
+                                        }
+
+                                        return Column(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: <Widget>[
+                                            if (index > 0) const MDivider(),
+                                            MAsyncMemeLaughListItem(
+                                              item: state.items[index],
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                      childCount:
+                                          state.items.length +
+                                          (state.isLoadingMore ? 1 : 0),
+                                    ),
+                                  ),
+                                  SliverToBoxAdapter(
+                                    child: SizedBox(
+                                      height:
+                                          context.bottomPadding + MSpacing.md,
+                                    ),
+                                  ),
+                                ];
+                              },
+                          error: (Object error, StackTrace _) {
+                            return <Widget>[
+                              SliverToBoxAdapter(
+                                child: MReload(
+                                  onReload: () =>
+                                      _onRefresh(ref, context, feedback),
                                   padding: EdgeInsets.only(
                                     top: MSpacing.md,
                                     bottom: context.bottomPadding + MSpacing.md,
                                     left: context.leftPadding + MSpacing.md,
                                     right: context.rightPadding + MSpacing.md,
                                   ),
-                                  sliver: SliverToBoxAdapter(
-                                    child: Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: MText.p(
-                                        text: l10n.memeDetailsLaughsEmpty,
-                                        style: TextStyle(
-                                          color: MColors.gray100,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                              ];
-                            }
-
-                            return <Widget>[
-                              SliverList(
-                                delegate: SliverChildBuilderDelegate(
-                                  (BuildContext context, int index) {
-                                    if (index >= state.items.length) {
-                                      return MCenter(
-                                        padding: EdgeInsets.only(
-                                          top: MSpacing.md,
-                                          bottom:
-                                              context.bottomPadding +
-                                              MSpacing.md,
-                                          left:
-                                              context.leftPadding + MSpacing.md,
-                                          right:
-                                              context.rightPadding +
-                                              MSpacing.md,
-                                        ),
-                                        child:
-                                            const MCircularProgressIndicator(),
-                                      );
-                                    }
-
-                                    return Column(
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: <Widget>[
-                                        if (index > 0) const MDivider(),
-                                        MAsyncMemeLaughListItem(
-                                          item: state.items[index],
-                                        ),
-                                      ],
-                                    );
-                                  },
-                                  childCount:
-                                      state.items.length +
-                                      (state.isLoadingMore ? 1 : 0),
-                                ),
-                              ),
-                              SliverToBoxAdapter(
-                                child: SizedBox(
-                                  height: context.bottomPadding + MSpacing.md,
+                                  text: feedback.resolve(context, error),
                                 ),
                               ),
                             ];
                           },
-                      error: (Object error, StackTrace _) {
-                        return <Widget>[
-                          SliverToBoxAdapter(
-                            child: MReload(
-                              onReload: () =>
-                                  _onRefresh(ref, context, feedback),
-                              padding: EdgeInsets.only(
-                                top: MSpacing.md,
-                                bottom: context.bottomPadding + MSpacing.md,
-                                left: context.leftPadding + MSpacing.md,
-                                right: context.rightPadding + MSpacing.md,
+                          loading: () {
+                            return <Widget>[
+                              SliverToBoxAdapter(
+                                child: MCenter(
+                                  padding: EdgeInsets.only(
+                                    top: MSpacing.md,
+                                    bottom: context.bottomPadding + MSpacing.md,
+                                    left: context.leftPadding + MSpacing.md,
+                                    right: context.rightPadding + MSpacing.md,
+                                  ),
+                                  child: const MCircularProgressIndicator(),
+                                ),
                               ),
-                              text: feedback.resolve(context, error),
-                            ),
-                          ),
-                        ];
-                      },
-                      loading: () {
-                        return <Widget>[
-                          SliverToBoxAdapter(
-                            child: MCenter(
-                              padding: EdgeInsets.only(
-                                top: MSpacing.md,
-                                bottom: context.bottomPadding + MSpacing.md,
-                                left: context.leftPadding + MSpacing.md,
-                                right: context.rightPadding + MSpacing.md,
-                              ),
-                              child: const MCircularProgressIndicator(),
-                            ),
-                          ),
-                        ];
-                      },
+                            ];
+                          },
+                        ),
+                      ],
                     ),
-                  ],
+                  ),
+                );
+              },
+              error: (Object error, StackTrace _) {
+                final String message = feedback.resolve(context, error);
+                return MReload(
+                  onReload: () => _onReload(ref),
+                  padding: EdgeInsets.only(
+                    top: 20.0 + MSpacing.md,
+                    bottom: context.bottomPadding + MSpacing.md,
+                    left: context.leftPadding + MSpacing.md,
+                    right: context.rightPadding + MSpacing.md,
+                  ),
+                  text: message,
+                );
+              },
+              loading: () {
+                return MCenter(
+                  padding: EdgeInsets.only(
+                    top: 20.0 + MSpacing.md,
+                    bottom: context.bottomPadding + MSpacing.md,
+                    left: context.leftPadding + MSpacing.md,
+                    right: context.rightPadding + MSpacing.md,
+                  ),
+                  child: const MCircularProgressIndicator(),
+                );
+              },
+            ),
+            Column(
+              children: <Widget>[
+                if (canManageRecipients)
+                  Padding(
+                    padding: EdgeInsets.only(
+                      top: 20.0 + MSpacing.md,
+                      left: context.leftPadding + MSpacing.md,
+                      right: context.rightPadding + MSpacing.md,
+                      bottom: MSpacing.md,
+                    ),
+                    child: MButton.secondary(
+                      onPressed: () {
+                        unawaited(_onAddRecipients(ref, context, feedback));
+                      },
+                      title: l10n.memeDetailsAddRecipientsButton,
+                    ),
+                  ),
+                Expanded(
+                  child: MemeRecipientsListView(
+                    memeId: memeId,
+                    canEditRecipients: canManageRecipients,
+                    onRecipientRemoved: (bool memeDeleted) {
+                      return _onRecipientRemoved(
+                        ref,
+                        context,
+                        feedback,
+                        l10n,
+                        memeDeleted: memeDeleted,
+                      );
+                    },
+                    listPadding: EdgeInsets.only(
+                      top: canManageRecipients ? 0.0 : 20.0,
+                      bottom: context.bottomPadding + MSpacing.md,
+                    ),
+                    childPadding: EdgeInsets.only(
+                      top: canManageRecipients
+                          ? MSpacing.md
+                          : 20.0 + MSpacing.md,
+                      bottom: context.bottomPadding + MSpacing.md,
+                      left: context.leftPadding + MSpacing.md,
+                      right: context.rightPadding + MSpacing.md,
+                    ),
+                    listChildPadding: EdgeInsets.only(
+                      top: MSpacing.md,
+                      bottom: context.bottomPadding + MSpacing.md,
+                      left: context.leftPadding + MSpacing.md,
+                      right: context.rightPadding + MSpacing.md,
+                    ),
+                  ),
                 ),
-              ),
-            );
-          },
-          error: (Object error, StackTrace _) {
-            final String message = feedback.resolve(context, error);
-            return MReload(
-              onReload: () => _onReload(ref),
-              padding: EdgeInsets.only(
-                top: 20.0 + MSpacing.md,
-                bottom: context.bottomPadding + MSpacing.md,
-                left: context.leftPadding + MSpacing.md,
-                right: context.rightPadding + MSpacing.md,
-              ),
-              text: message,
-            );
-          },
-          loading: () {
-            return MCenter(
-              padding: EdgeInsets.only(
-                top: 20.0 + MSpacing.md,
-                bottom: context.bottomPadding + MSpacing.md,
-                left: context.leftPadding + MSpacing.md,
-                right: context.rightPadding + MSpacing.md,
-              ),
-              child: const MCircularProgressIndicator(),
-            );
-          },
+              ],
+            ),
+          ],
         ),
       ),
     );

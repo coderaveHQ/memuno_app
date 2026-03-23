@@ -811,6 +811,66 @@ abstract class AppLocalizations {
   /// **'Meme deleted.'**
   String get memeDetailsDeleteSuccessMessage;
 
+  /// No description provided for @memeDetailsTabDetails.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Details'**
+  String get memeDetailsTabDetails;
+
+  /// No description provided for @memeDetailsTabRecipients.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Recipients'**
+  String get memeDetailsTabRecipients;
+
+  /// No description provided for @memeDetailsRecipientsEmpty.
+  ///
+  /// In en_US, this message translates to:
+  /// **'No recipients yet.'**
+  String get memeDetailsRecipientsEmpty;
+
+  /// No description provided for @memeDetailsAddRecipientsButton.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Add recipients'**
+  String get memeDetailsAddRecipientsButton;
+
+  /// No description provided for @memeDetailsRecipientRemoveSuccessMessage.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Recipient removed.'**
+  String get memeDetailsRecipientRemoveSuccessMessage;
+
+  /// No description provided for @memeDetailsAddRecipientsTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Add recipients'**
+  String get memeDetailsAddRecipientsTitle;
+
+  /// No description provided for @memeDetailsAddRecipientsSelected.
+  ///
+  /// In en_US, this message translates to:
+  /// **'{count} selected'**
+  String memeDetailsAddRecipientsSelected(Object count);
+
+  /// No description provided for @memeDetailsAddRecipientsEmpty.
+  ///
+  /// In en_US, this message translates to:
+  /// **'No addable recipients found.'**
+  String get memeDetailsAddRecipientsEmpty;
+
+  /// No description provided for @memeDetailsAddRecipientsSubmitButton.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Add selected'**
+  String get memeDetailsAddRecipientsSubmitButton;
+
+  /// No description provided for @memeDetailsRecipientsAddSuccessMessage.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Recipients added.'**
+  String get memeDetailsRecipientsAddSuccessMessage;
+
   /// No description provided for @notificationsItemFriendshipRequestSentTitle.
   ///
   /// In en_US, this message translates to:
