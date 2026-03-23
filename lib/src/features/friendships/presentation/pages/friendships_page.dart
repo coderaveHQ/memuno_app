@@ -13,7 +13,7 @@ import 'package:memuno_app/src/app/widgets/m/m_tab_bar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_text_field.dart';
 import 'package:memuno_app/src/features/friendships/application/providers/friendship_requests_list_provider.dart';
 import 'package:memuno_app/src/features/friendships/application/providers/friendships_list_provider.dart';
-import 'package:memuno_app/src/features/friendships/presentation/widgets/friendship_request_dialog.dart';
+import 'package:memuno_app/src/features/friendships/presentation/widgets/friendship_request_sheet.dart';
 import 'package:memuno_app/src/features/friendships/presentation/widgets/friendship_requests_list.dart';
 import 'package:memuno_app/src/features/friendships/presentation/widgets/friendships_list.dart';
 
@@ -54,9 +54,9 @@ class FriendshipsPage extends HookConsumerWidget {
   /// Initial tab selected when opening this page.
   final FriendshipsPageTab initialTab;
 
-  /// Opens the add-friend dialog.
-  Future<void> _onShowFriendshipRequestDialog(BuildContext context) async {
-    await showFriendshipRequestDialog(context);
+  /// Opens the add-friend sheet.
+  Future<void> _onShowFriendshipRequestSheet(BuildContext context) async {
+    await showFriendshipRequestSheet(context);
   }
 
   @override
@@ -109,7 +109,7 @@ class FriendshipsPage extends HookConsumerWidget {
       title: MAppBarTitle(text: l10n.friendshipsTitle),
       trailing: <MAppBarButton>[
         MAppBarButton(
-          onPressed: () => unawaited(_onShowFriendshipRequestDialog(context)),
+          onPressed: () => unawaited(_onShowFriendshipRequestSheet(context)),
           icon: LucideIcons.plus,
         ),
       ],
