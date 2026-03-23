@@ -3472,6 +3472,12 @@ begin
     raise exception 'invalid country_code format';
   end if;
 
+  -- Serialize concurrent writes for one installation to avoid unique-index races.
+  perform pg_advisory_xact_lock(
+    hashtext('push_token_upsert'),
+    hashtext(v_installation_id)
+  );
+
   update public.push_device_tokens
   set
     "is_active" = false,
@@ -4279,7 +4285,6 @@ CREATE OR REPLACE FUNCTION "public"."user_details_memes_own_sent_list"("p_limit"
   )::public.list_page
   from paged;
 $$;
-
 
 
 
