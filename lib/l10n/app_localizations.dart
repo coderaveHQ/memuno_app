@@ -412,6 +412,30 @@ abstract class AppLocalizations {
   /// **'No pending friendship requests.'**
   String get friendshipsRequestsListEmpty;
 
+  /// No description provided for @friendshipsSearchLabel.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Search friendships'**
+  String get friendshipsSearchLabel;
+
+  /// No description provided for @friendshipsSearchHint.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Search by name'**
+  String get friendshipsSearchHint;
+
+  /// No description provided for @friendshipsRequestsSearchLabel.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Search requests'**
+  String get friendshipsRequestsSearchLabel;
+
+  /// No description provided for @friendshipsRequestsSearchHint.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Search by name'**
+  String get friendshipsRequestsSearchHint;
+
   /// No description provided for @friendshipsFriendsSincePrefix.
   ///
   /// In en_US, this message translates to:
@@ -459,6 +483,30 @@ abstract class AppLocalizations {
   /// In en_US, this message translates to:
   /// **'No pending group invitations.'**
   String get groupsInvitationsListEmpty;
+
+  /// No description provided for @groupsSearchLabel.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Search groups'**
+  String get groupsSearchLabel;
+
+  /// No description provided for @groupsSearchHint.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Search by name'**
+  String get groupsSearchHint;
+
+  /// No description provided for @groupsInvitationsSearchLabel.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Search invitations'**
+  String get groupsInvitationsSearchLabel;
+
+  /// No description provided for @groupsInvitationsSearchHint.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Search by name'**
+  String get groupsInvitationsSearchHint;
 
   /// No description provided for @groupsMemberCount.
   ///
@@ -529,6 +577,18 @@ abstract class AppLocalizations {
   /// **'{count} selected'**
   String groupsCreateMembersSubtitle(Object count);
 
+  /// No description provided for @groupsCreateMembersSearchLabel.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Search friends'**
+  String get groupsCreateMembersSearchLabel;
+
+  /// No description provided for @groupsCreateMembersSearchHint.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Search by name'**
+  String get groupsCreateMembersSearchHint;
+
   /// No description provided for @groupsCreateMembersSubmitButton.
   ///
   /// In en_US, this message translates to:
@@ -583,11 +643,35 @@ abstract class AppLocalizations {
   /// **'No members found.'**
   String get groupDetailsMembersEmpty;
 
+  /// No description provided for @groupDetailsMembersSearchLabel.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Search members'**
+  String get groupDetailsMembersSearchLabel;
+
+  /// No description provided for @groupDetailsMembersSearchHint.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Search by name'**
+  String get groupDetailsMembersSearchHint;
+
   /// No description provided for @groupDetailsPendingInvitationsEmpty.
   ///
   /// In en_US, this message translates to:
   /// **'No pending invitations.'**
   String get groupDetailsPendingInvitationsEmpty;
+
+  /// No description provided for @groupDetailsInvitationsSearchLabel.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Search invitations'**
+  String get groupDetailsInvitationsSearchLabel;
+
+  /// No description provided for @groupDetailsInvitationsSearchHint.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Search by name'**
+  String get groupDetailsInvitationsSearchHint;
 
   /// No description provided for @groupDetailsMemberRoleCreator.
   ///
@@ -630,6 +714,18 @@ abstract class AppLocalizations {
   /// In en_US, this message translates to:
   /// **'No friends available to invite.'**
   String get groupDetailsInviteMembersEmpty;
+
+  /// No description provided for @groupDetailsInviteMembersSearchLabel.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Search friends'**
+  String get groupDetailsInviteMembersSearchLabel;
+
+  /// No description provided for @groupDetailsInviteMembersSearchHint.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Search by name'**
+  String get groupDetailsInviteMembersSearchHint;
 
   /// No description provided for @groupDetailsInviteMembersSuccessMessage.
   ///
@@ -742,7 +838,7 @@ abstract class AppLocalizations {
   /// No description provided for @notificationsSearchHint.
   ///
   /// In en_US, this message translates to:
-  /// **'Search by name or friendship code'**
+  /// **'Search by name'**
   String get notificationsSearchHint;
 
   /// No description provided for @notificationsListEmpty.
@@ -1032,6 +1128,18 @@ abstract class AppLocalizations {
   /// In en_US, this message translates to:
   /// **'No recipients available.'**
   String get sendMemeRecipientsListEmpty;
+
+  /// No description provided for @sendMemeRecipientsSearchLabel.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Search recipients'**
+  String get sendMemeRecipientsSearchLabel;
+
+  /// No description provided for @sendMemeRecipientsSearchHint.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Search by name'**
+  String get sendMemeRecipientsSearchHint;
 
   /// No description provided for @sendMemeSuccessMessage.
   ///

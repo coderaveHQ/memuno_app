@@ -14,7 +14,7 @@ final class ListFriendshipRequestsUsecase {
 
   /// Executes one friendship-request-list page query.
   Future<FriendshipRequestListPageEntity> call({
-    /// Optional search term applied to user name/code.
+    /// Optional search term applied to other-user name.
     String? search,
 
     /// Requested backend page size.

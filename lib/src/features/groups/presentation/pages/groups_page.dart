@@ -11,6 +11,9 @@ import 'package:memuno_app/src/app/widgets/m/m_app_bar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/app/widgets/m/m_tab_bar.dart';
+import 'package:memuno_app/src/app/widgets/m/m_text_field.dart';
+import 'package:memuno_app/src/features/groups/application/providers/group_invitations_list_provider.dart';
+import 'package:memuno_app/src/features/groups/application/providers/groups_list_provider.dart';
 import 'package:memuno_app/src/features/groups/presentation/widgets/group_invitations_list.dart';
 import 'package:memuno_app/src/features/groups/presentation/widgets/groups_list.dart';
 
@@ -57,6 +60,40 @@ class GroupsPage extends HookConsumerWidget {
       initialLength: 2,
       initialIndex: initialTab.tabIndex,
     );
+    final TextEditingController groupsSearchController =
+        useTextEditingController();
+    final TextEditingController invitationsSearchController =
+        useTextEditingController();
+
+    useEffect(() {
+      final GroupsList groupsNotifier = ref.read(groupsListProvider.notifier);
+      final GroupInvitationsList invitationsNotifier = ref.read(
+        groupInvitationsListProvider.notifier,
+      );
+
+      unawaited(groupsNotifier.clearSearch());
+      unawaited(invitationsNotifier.clearSearch());
+
+      void groupsListener() {
+        groupsNotifier.applySearchDebounced(groupsSearchController.text);
+      }
+
+      void invitationsListener() {
+        invitationsNotifier.applySearchDebounced(
+          invitationsSearchController.text,
+        );
+      }
+
+      groupsSearchController.addListener(groupsListener);
+      invitationsSearchController.addListener(invitationsListener);
+
+      return () {
+        groupsNotifier.cancelPendingSearch();
+        invitationsNotifier.cancelPendingSearch();
+        groupsSearchController.removeListener(groupsListener);
+        invitationsSearchController.removeListener(invitationsListener);
+      };
+    }, <Object?>[groupsSearchController, invitationsSearchController]);
 
     final MAppBar appBar = MAppBar(
       context: context,
@@ -81,31 +118,65 @@ class GroupsPage extends HookConsumerWidget {
         child: TabBarView(
           controller: tabController,
           children: <Widget>[
-            MAsyncGroupsList(
-              emptyText: l10n.groupsListEmpty,
-              listPadding: EdgeInsets.only(
-                top: 20.0,
-                bottom: context.bottomPadding,
-              ),
-              childPadding: EdgeInsets.only(
-                top: 20.0,
-                bottom: context.bottomPadding,
-                left: context.leftPadding + MSpacing.md,
-                right: context.rightPadding + MSpacing.md,
-              ),
+            Column(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: 20.0 + MSpacing.md,
+                    left: context.leftPadding + MSpacing.md,
+                    right: context.rightPadding + MSpacing.md,
+                    bottom: MSpacing.md,
+                  ),
+                  child: MTextField(
+                    controller: groupsSearchController,
+                    icon: LucideIcons.search,
+                    label: l10n.groupsSearchLabel,
+                    hint: l10n.groupsSearchHint,
+                  ),
+                ),
+                Expanded(
+                  child: MAsyncGroupsList(
+                    emptyText: l10n.groupsListEmpty,
+                    listPadding: EdgeInsets.only(bottom: context.bottomPadding),
+                    childPadding: EdgeInsets.only(
+                      top: MSpacing.md,
+                      bottom: context.bottomPadding,
+                      left: context.leftPadding + MSpacing.md,
+                      right: context.rightPadding + MSpacing.md,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            MAsyncGroupInvitationsList(
-              emptyText: l10n.groupsInvitationsListEmpty,
-              listPadding: EdgeInsets.only(
-                top: 20.0,
-                bottom: context.bottomPadding,
-              ),
-              childPadding: EdgeInsets.only(
-                top: 20.0,
-                bottom: context.bottomPadding,
-                left: context.leftPadding + MSpacing.md,
-                right: context.rightPadding + MSpacing.md,
-              ),
+            Column(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: 20.0 + MSpacing.md,
+                    left: context.leftPadding + MSpacing.md,
+                    right: context.rightPadding + MSpacing.md,
+                    bottom: MSpacing.md,
+                  ),
+                  child: MTextField(
+                    controller: invitationsSearchController,
+                    icon: LucideIcons.search,
+                    label: l10n.groupsInvitationsSearchLabel,
+                    hint: l10n.groupsInvitationsSearchHint,
+                  ),
+                ),
+                Expanded(
+                  child: MAsyncGroupInvitationsList(
+                    emptyText: l10n.groupsInvitationsListEmpty,
+                    listPadding: EdgeInsets.only(bottom: context.bottomPadding),
+                    childPadding: EdgeInsets.only(
+                      top: MSpacing.md,
+                      bottom: context.bottomPadding,
+                      left: context.leftPadding + MSpacing.md,
+                      right: context.rightPadding + MSpacing.md,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

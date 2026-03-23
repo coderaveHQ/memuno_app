@@ -12,7 +12,7 @@ final class ListNotificationsUsecase {
 
   /// Executes a paginated notifications query.
   Future<NotificationListPageEntity> call({
-    /// Optional search term applied to actor name/code.
+    /// Optional search term applied to actor name.
     String? search,
 
     /// Requested backend page size.

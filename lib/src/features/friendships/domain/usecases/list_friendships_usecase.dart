@@ -13,7 +13,7 @@ final class ListFriendshipsUsecase {
 
   /// Executes one friendship-list page query.
   Future<FriendshipListPageEntity> call({
-    /// Optional search term applied to friend name/code.
+    /// Optional search term applied to friend name.
     String? search,
 
     /// Requested backend page size.

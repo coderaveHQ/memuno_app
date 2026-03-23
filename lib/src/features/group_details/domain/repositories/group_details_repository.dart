@@ -29,6 +29,7 @@ abstract interface class GroupDetailsRepository {
   /// Loads one page of group members.
   Future<ListPageEntity<GroupMemberItemEntity>> listGroupDetailsMembers({
     required String groupId,
+    String? search,
     required int limit,
     ListCursorEntity? cursor,
   });
@@ -37,6 +38,7 @@ abstract interface class GroupDetailsRepository {
   Future<ListPageEntity<GroupPendingInvitationItemEntity>>
   listGroupDetailsPendingInvitations({
     required String groupId,
+    String? search,
     required int limit,
     ListCursorEntity? cursor,
   });
@@ -44,6 +46,7 @@ abstract interface class GroupDetailsRepository {
   /// Loads one page of current-user friends that can be invited.
   Future<ListPageEntity<UserItemEntity>> listGroupInvitableFriends({
     required String groupId,
+    String? search,
     required int limit,
     ListCursorEntity? cursor,
   });

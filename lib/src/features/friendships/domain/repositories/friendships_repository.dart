@@ -9,7 +9,7 @@ import 'package:memuno_app/src/features/friendships/domain/entities/friendship_r
 abstract interface class FriendshipsRepository {
   /// Loads one friendship-list page.
   Future<FriendshipListPageEntity> listFriendships({
-    /// Optional search term applied to friend name/code.
+    /// Optional search term applied to friend name.
     String? search,
 
     /// Requested backend page size.
@@ -21,7 +21,7 @@ abstract interface class FriendshipsRepository {
 
   /// Loads one friendship-request-list page.
   Future<FriendshipRequestListPageEntity> listFriendshipRequests({
-    /// Optional search term applied to name/code.
+    /// Optional search term applied to other-user name.
     String? search,
 
     /// Requested backend page size.

@@ -73,6 +73,7 @@ final class SupabaseGroupDetailsDatasourceImpl
   @override
   Future<ListPageDto<GroupMemberItemDto>> listGroupDetailsMembers({
     required String groupId,
+    String? search,
     required int limit,
     DateTime? cursorCreatedAt,
     String? cursorId,
@@ -81,6 +82,7 @@ final class SupabaseGroupDetailsDatasourceImpl
       'group_details_members_list',
       params: <String, dynamic>{
         'p_group_id': groupId,
+        'p_search': search,
         'p_limit': limit,
         'p_cursor_created_at': cursorCreatedAt?.toIso8601String(),
         'p_cursor_id': cursorId,
@@ -97,6 +99,7 @@ final class SupabaseGroupDetailsDatasourceImpl
   Future<ListPageDto<GroupPendingInvitationItemDto>>
   listGroupDetailsPendingInvitations({
     required String groupId,
+    String? search,
     required int limit,
     DateTime? cursorCreatedAt,
     String? cursorId,
@@ -105,6 +108,7 @@ final class SupabaseGroupDetailsDatasourceImpl
       'group_details_pending_invitations_list',
       params: <String, dynamic>{
         'p_group_id': groupId,
+        'p_search': search,
         'p_limit': limit,
         'p_cursor_created_at': cursorCreatedAt?.toIso8601String(),
         'p_cursor_id': cursorId,
@@ -120,6 +124,7 @@ final class SupabaseGroupDetailsDatasourceImpl
   @override
   Future<ListPageDto<UserItemDto>> listGroupInvitableFriends({
     required String groupId,
+    String? search,
     required int limit,
     DateTime? cursorCreatedAt,
     String? cursorId,
@@ -128,6 +133,7 @@ final class SupabaseGroupDetailsDatasourceImpl
       'group_invitable_friends_list',
       params: <String, dynamic>{
         'p_group_id': groupId,
+        'p_search': search,
         'p_limit': limit,
         'p_cursor_created_at': cursorCreatedAt?.toIso8601String(),
         'p_cursor_id': cursorId,
