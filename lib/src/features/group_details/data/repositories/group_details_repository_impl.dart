@@ -86,6 +86,7 @@ final class GroupDetailsRepositoryImpl implements GroupDetailsRepository {
   @override
   Future<ListPageEntity<GroupMemberItemEntity>> listGroupDetailsMembers({
     required String groupId,
+    String? search,
     required int limit,
     ListCursorEntity? cursor,
   }) async {
@@ -93,6 +94,7 @@ final class GroupDetailsRepositoryImpl implements GroupDetailsRepository {
       final ListPageDto<GroupMemberItemDto> dto = await _groupDetailsDatasource
           .listGroupDetailsMembers(
             groupId: groupId,
+            search: search,
             limit: limit,
             cursorCreatedAt: cursor?.createdAt,
             cursorId: cursor?.id,
@@ -107,6 +109,7 @@ final class GroupDetailsRepositoryImpl implements GroupDetailsRepository {
   Future<ListPageEntity<GroupPendingInvitationItemEntity>>
   listGroupDetailsPendingInvitations({
     required String groupId,
+    String? search,
     required int limit,
     ListCursorEntity? cursor,
   }) async {
@@ -114,6 +117,7 @@ final class GroupDetailsRepositoryImpl implements GroupDetailsRepository {
       final ListPageDto<GroupPendingInvitationItemDto> dto =
           await _groupDetailsDatasource.listGroupDetailsPendingInvitations(
             groupId: groupId,
+            search: search,
             limit: limit,
             cursorCreatedAt: cursor?.createdAt,
             cursorId: cursor?.id,
@@ -127,6 +131,7 @@ final class GroupDetailsRepositoryImpl implements GroupDetailsRepository {
   @override
   Future<ListPageEntity<UserItemEntity>> listGroupInvitableFriends({
     required String groupId,
+    String? search,
     required int limit,
     ListCursorEntity? cursor,
   }) async {
@@ -134,6 +139,7 @@ final class GroupDetailsRepositoryImpl implements GroupDetailsRepository {
       final ListPageDto<UserItemDto> dto = await _groupDetailsDatasource
           .listGroupInvitableFriends(
             groupId: groupId,
+            search: search,
             limit: limit,
             cursorCreatedAt: cursor?.createdAt,
             cursorId: cursor?.id,

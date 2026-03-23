@@ -176,6 +176,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get friendshipsRequestsListEmpty => 'No pending friendship requests.';
 
   @override
+  String get friendshipsSearchLabel => 'Search friendships';
+
+  @override
+  String get friendshipsSearchHint => 'Search by name';
+
+  @override
+  String get friendshipsRequestsSearchLabel => 'Search requests';
+
+  @override
+  String get friendshipsRequestsSearchHint => 'Search by name';
+
+  @override
   String get friendshipsFriendsSincePrefix => 'Friends since';
 
   @override
@@ -198,6 +210,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get groupsInvitationsListEmpty => 'No pending group invitations.';
+
+  @override
+  String get groupsSearchLabel => 'Search groups';
+
+  @override
+  String get groupsSearchHint => 'Search by name';
+
+  @override
+  String get groupsInvitationsSearchLabel => 'Search invitations';
+
+  @override
+  String get groupsInvitationsSearchHint => 'Search by name';
 
   @override
   String groupsMemberCount(Object count) {
@@ -242,6 +266,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get groupsCreateMembersSearchLabel => 'Search friends';
+
+  @override
+  String get groupsCreateMembersSearchHint => 'Search by name';
+
+  @override
   String get groupsCreateMembersSubmitButton => 'Create group';
 
   @override
@@ -270,7 +300,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get groupDetailsMembersEmpty => 'No members found.';
 
   @override
+  String get groupDetailsMembersSearchLabel => 'Search members';
+
+  @override
+  String get groupDetailsMembersSearchHint => 'Search by name';
+
+  @override
   String get groupDetailsPendingInvitationsEmpty => 'No pending invitations.';
+
+  @override
+  String get groupDetailsInvitationsSearchLabel => 'Search invitations';
+
+  @override
+  String get groupDetailsInvitationsSearchHint => 'Search by name';
 
   @override
   String get groupDetailsMemberRoleCreator => 'Creator';
@@ -295,6 +337,12 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get groupDetailsInviteMembersEmpty =>
       'No friends available to invite.';
+
+  @override
+  String get groupDetailsInviteMembersSearchLabel => 'Search friends';
+
+  @override
+  String get groupDetailsInviteMembersSearchHint => 'Search by name';
 
   @override
   String get groupDetailsInviteMembersSuccessMessage => 'Invitations sent.';
@@ -354,7 +402,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get notificationsSearchLabel => 'Search notifications';
 
   @override
-  String get notificationsSearchHint => 'Search by name or friendship code';
+  String get notificationsSearchHint => 'Search by name';
 
   @override
   String get notificationsListEmpty => 'No notifications yet.';
@@ -521,6 +569,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get sendMemeRecipientsListEmpty => 'No recipients available.';
+
+  @override
+  String get sendMemeRecipientsSearchLabel => 'Search recipients';
+
+  @override
+  String get sendMemeRecipientsSearchHint => 'Search by name';
 
   @override
   String get sendMemeSuccessMessage => 'Meme sent successfully.';
@@ -866,6 +920,18 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   String get friendshipsRequestsListEmpty => 'No pending friendship requests.';
 
   @override
+  String get friendshipsSearchLabel => 'Search friendships';
+
+  @override
+  String get friendshipsSearchHint => 'Search by name';
+
+  @override
+  String get friendshipsRequestsSearchLabel => 'Search requests';
+
+  @override
+  String get friendshipsRequestsSearchHint => 'Search by name';
+
+  @override
   String get friendshipsFriendsSincePrefix => 'Friends since';
 
   @override
@@ -888,6 +954,18 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
 
   @override
   String get groupsInvitationsListEmpty => 'No pending group invitations.';
+
+  @override
+  String get groupsSearchLabel => 'Search groups';
+
+  @override
+  String get groupsSearchHint => 'Search by name';
+
+  @override
+  String get groupsInvitationsSearchLabel => 'Search invitations';
+
+  @override
+  String get groupsInvitationsSearchHint => 'Search by name';
 
   @override
   String groupsMemberCount(Object count) {
@@ -932,6 +1010,12 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   }
 
   @override
+  String get groupsCreateMembersSearchLabel => 'Search friends';
+
+  @override
+  String get groupsCreateMembersSearchHint => 'Search by name';
+
+  @override
   String get groupsCreateMembersSubmitButton => 'Create group';
 
   @override
@@ -960,7 +1044,19 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   String get groupDetailsMembersEmpty => 'No members found.';
 
   @override
+  String get groupDetailsMembersSearchLabel => 'Search members';
+
+  @override
+  String get groupDetailsMembersSearchHint => 'Search by name';
+
+  @override
   String get groupDetailsPendingInvitationsEmpty => 'No pending invitations.';
+
+  @override
+  String get groupDetailsInvitationsSearchLabel => 'Search invitations';
+
+  @override
+  String get groupDetailsInvitationsSearchHint => 'Search by name';
 
   @override
   String get groupDetailsMemberRoleCreator => 'Creator';
@@ -985,6 +1081,12 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   @override
   String get groupDetailsInviteMembersEmpty =>
       'No friends available to invite.';
+
+  @override
+  String get groupDetailsInviteMembersSearchLabel => 'Search friends';
+
+  @override
+  String get groupDetailsInviteMembersSearchHint => 'Search by name';
 
   @override
   String get groupDetailsInviteMembersSuccessMessage => 'Invitations sent.';
@@ -1044,7 +1146,7 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   String get notificationsSearchLabel => 'Search notifications';
 
   @override
-  String get notificationsSearchHint => 'Search by name or friendship code';
+  String get notificationsSearchHint => 'Search by name';
 
   @override
   String get notificationsListEmpty => 'No notifications yet.';
@@ -1211,6 +1313,12 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
 
   @override
   String get sendMemeRecipientsListEmpty => 'No recipients available.';
+
+  @override
+  String get sendMemeRecipientsSearchLabel => 'Search recipients';
+
+  @override
+  String get sendMemeRecipientsSearchHint => 'Search by name';
 
   @override
   String get sendMemeSuccessMessage => 'Meme sent successfully.';

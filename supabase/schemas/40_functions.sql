@@ -1010,7 +1010,6 @@ CREATE OR REPLACE FUNCTION "public"."friendship_requests_list"("p_search" "text"
     from base
     where (select "search_term" from params) is null
       or lower("other_user_name") like '%' || lower((select "search_term" from params)) || '%'
-      or "other_user_friendship_code" like '%' || (select "search_term" from params) || '%'
   ),
   ordered as (
     select
@@ -1089,7 +1088,6 @@ CREATE OR REPLACE FUNCTION "public"."friendships_list"("p_search" "text" DEFAULT
     from base
     where (select "search_term" from params) is null
       or lower("friend_name") like '%' || lower((select "search_term" from params)) || '%'
-      or "friendship_code" like '%' || (select "search_term" from params) || '%'
   ),
   ordered as (
     select
@@ -1462,12 +1460,14 @@ $$;
 
 
 
-CREATE OR REPLACE FUNCTION "public"."group_details_members_list"("p_group_id" "uuid", "p_limit" integer DEFAULT 30, "p_cursor_created_at" timestamp with time zone DEFAULT NULL::timestamp with time zone, "p_cursor_id" "uuid" DEFAULT NULL::"uuid") RETURNS "public"."list_page"
+CREATE OR REPLACE FUNCTION "public"."group_details_members_list"("p_group_id" "uuid", "p_search" "text" DEFAULT NULL::"text", "p_limit" integer DEFAULT 30, "p_cursor_created_at" timestamp with time zone DEFAULT NULL::timestamp with time zone, "p_cursor_id" "uuid" DEFAULT NULL::"uuid") RETURNS "public"."list_page"
     LANGUAGE "sql" SECURITY DEFINER
     SET "search_path" TO 'public'
     AS $$
   with params as (
-    select (select auth.uid()) as "user_id"
+    select
+      (select auth.uid()) as "user_id",
+      nullif(trim(p_search), '') as "search_term"
   ),
   access_check as (
     select public.can_access_group(
@@ -1490,6 +1490,12 @@ CREATE OR REPLACE FUNCTION "public"."group_details_members_list"("p_group_id" "u
     where (select "allowed" from access_check)
       and gu."group_id" = p_group_id
   ),
+  filtered as (
+    select *
+    from base
+    where (select "search_term" from params) is null
+      or lower("user_name") like '%' || lower((select "search_term" from params)) || '%'
+  ),
   ordered as (
     select
       row(
@@ -1506,7 +1512,7 @@ CREATE OR REPLACE FUNCTION "public"."group_details_members_list"("p_group_id" "u
       )::public.group_member_item as "item",
       "member_created_at" as "sort_created_at",
       "user_id" as "sort_id"
-    from base
+    from filtered
   ),
   paged as (
     select *
@@ -1754,12 +1760,14 @@ $$;
 
 
 
-CREATE OR REPLACE FUNCTION "public"."group_details_pending_invitations_list"("p_group_id" "uuid", "p_limit" integer DEFAULT 30, "p_cursor_created_at" timestamp with time zone DEFAULT NULL::timestamp with time zone, "p_cursor_id" "uuid" DEFAULT NULL::"uuid") RETURNS "public"."list_page"
+CREATE OR REPLACE FUNCTION "public"."group_details_pending_invitations_list"("p_group_id" "uuid", "p_search" "text" DEFAULT NULL::"text", "p_limit" integer DEFAULT 30, "p_cursor_created_at" timestamp with time zone DEFAULT NULL::timestamp with time zone, "p_cursor_id" "uuid" DEFAULT NULL::"uuid") RETURNS "public"."list_page"
     LANGUAGE "sql" SECURITY DEFINER
     SET "search_path" TO 'public'
     AS $$
   with params as (
-    select (select auth.uid()) as "user_id"
+    select
+      (select auth.uid()) as "user_id",
+      nullif(trim(p_search), '') as "search_term"
   ),
   access_check as (
     select public.can_access_group(
@@ -1790,6 +1798,13 @@ CREATE OR REPLACE FUNCTION "public"."group_details_pending_invitations_list"("p_
       and gi."group_id" = p_group_id
       and gi."status" = 'pending'
   ),
+  filtered as (
+    select *
+    from base
+    where (select "search_term" from params) is null
+      or lower("invitee_name") like '%' || lower((select "search_term" from params)) || '%'
+      or lower("inviter_name") like '%' || lower((select "search_term" from params)) || '%'
+  ),
   ordered as (
     select
       row(
@@ -1814,7 +1829,7 @@ CREATE OR REPLACE FUNCTION "public"."group_details_pending_invitations_list"("p_
       )::public.group_pending_invitation_item as "item",
       "created_at" as "sort_created_at",
       "id" as "sort_id"
-    from base
+    from filtered
   ),
   paged as (
     select *
@@ -1849,7 +1864,7 @@ $$;
 
 
 
-CREATE OR REPLACE FUNCTION "public"."group_invitable_friends_list"("p_group_id" "uuid", "p_limit" integer DEFAULT 30, "p_cursor_created_at" timestamp with time zone DEFAULT NULL::timestamp with time zone, "p_cursor_id" "uuid" DEFAULT NULL::"uuid") RETURNS "public"."list_page"
+CREATE OR REPLACE FUNCTION "public"."group_invitable_friends_list"("p_group_id" "uuid", "p_search" "text" DEFAULT NULL::"text", "p_limit" integer DEFAULT 30, "p_cursor_created_at" timestamp with time zone DEFAULT NULL::timestamp with time zone, "p_cursor_id" "uuid" DEFAULT NULL::"uuid") RETURNS "public"."list_page"
     LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO 'public'
     AS $$
@@ -1877,7 +1892,10 @@ begin
   end if;
 
   return (
-    with base as (
+    with params as (
+      select nullif(trim(p_search), '') as "search_term"
+    ),
+    base as (
       select
         f."created_at" as "friendship_created_at",
         u."id" as "user_id",
@@ -1902,6 +1920,12 @@ begin
             and gi_pending."status" = 'pending'
         )
     ),
+    filtered as (
+      select *
+      from base
+      where (select "search_term" from params) is null
+        or lower("user_name") like '%' || lower((select "search_term" from params)) || '%'
+    ),
     ordered as (
       select
         row(
@@ -1913,7 +1937,7 @@ begin
         )::public.user_item as "item",
         "friendship_created_at" as "sort_created_at",
         "user_id" as "sort_id"
-      from base
+      from filtered
     ),
     paged as (
       select *
@@ -3639,7 +3663,6 @@ CREATE OR REPLACE FUNCTION "public"."meme_recipient_targets_list"("p_search" "te
     from base
     where (select "search_term" from params) is null
       or lower("name") like '%' || lower((select "search_term" from params)) || '%'
-      or coalesce("friendship_code", '') like '%' || (select "search_term" from params) || '%'
   ),
   ordered as (
     select
@@ -3855,8 +3878,7 @@ CREATE OR REPLACE FUNCTION "public"."notifications_list"("p_search" "text" DEFAU
       n."is_read",
       n."created_at",
       n."updated_at",
-      lower(coalesce(n."data"->>'actor_name', '')) as "actor_name",
-      coalesce(n."data"->>'actor_friendship_code', '') as "actor_friendship_code"
+      lower(coalesce(n."data"->>'actor_name', '')) as "actor_name"
     from public.notifications n
     where n."recipient_id" = (select "user_id" from params)
   ),
@@ -3865,7 +3887,6 @@ CREATE OR REPLACE FUNCTION "public"."notifications_list"("p_search" "text" DEFAU
     from base
     where (select "search_term" from params) is null
       or "actor_name" like '%' || lower((select "search_term" from params)) || '%'
-      or "actor_friendship_code" like '%' || (select "search_term" from params) || '%'
   ),
   ordered as (
     select

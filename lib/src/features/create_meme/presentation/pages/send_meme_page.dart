@@ -17,8 +17,10 @@ import 'package:memuno_app/src/app/widgets/m/m_app_bar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_button.dart';
 import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
+import 'package:memuno_app/src/app/widgets/m/m_text_field.dart';
 import 'package:memuno_app/src/features/create_meme/application/mutations/send_meme_mutation.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/meme_editor_controller_provider.dart';
+import 'package:memuno_app/src/features/create_meme/application/providers/meme_recipient_targets_list_provider.dart';
 import 'package:memuno_app/src/features/create_meme/application/providers/usecases/send_meme_usecase_provider.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_editor_state_entity.dart';
 import 'package:memuno_app/src/features/create_meme/domain/entities/meme_recipient_target_item_entity.dart';
@@ -79,6 +81,7 @@ class SendMemePage extends HookConsumerWidget {
     final Mutation<void> sendMutation = ref.watch(sendMemeMutationProvider);
     final MutationState<void> sendState = ref.watch(sendMutation);
     final bool isSending = sendState is MutationPending<void>;
+    final TextEditingController searchController = useTextEditingController();
 
     final MemeEditorStateEntity editorState = ref.watch(
       memeEditorControllerProvider,
@@ -87,6 +90,24 @@ class SendMemePage extends HookConsumerWidget {
       () => Uint8List.fromList(memeBytes),
       <Object?>[memeBytes],
     );
+
+    useEffect(() {
+      final MemeRecipientTargetsList notifier = ref.read(
+        memeRecipientTargetsListProvider.notifier,
+      );
+
+      unawaited(notifier.clearSearch());
+
+      void listener() {
+        notifier.applySearchDebounced(searchController.text);
+      }
+
+      searchController.addListener(listener);
+      return () {
+        notifier.cancelPendingSearch();
+        searchController.removeListener(listener);
+      };
+    }, <Object?>[searchController]);
 
     ref.listen<MutationState<void>>(sendMutation, (previous, next) {
       if (next is MutationError<void>) {
@@ -138,6 +159,20 @@ class SendMemePage extends HookConsumerWidget {
         padding: EdgeInsets.only(top: appBar.preferredSize.height - 20.0),
         child: Column(
           children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(
+                top: 20.0 + MSpacing.md,
+                left: context.leftPadding + MSpacing.md,
+                right: context.rightPadding + MSpacing.md,
+                bottom: MSpacing.md,
+              ),
+              child: MTextField(
+                controller: searchController,
+                icon: LucideIcons.search,
+                label: l10n.sendMemeRecipientsSearchLabel,
+                hint: l10n.sendMemeRecipientsSearchHint,
+              ),
+            ),
             Expanded(
               child: MAsyncMemeRecipientTargetsList(
                 emptyText: l10n.sendMemeRecipientsListEmpty,
@@ -148,9 +183,9 @@ class SendMemePage extends HookConsumerWidget {
                   _onToggleRecipient(ref, context, feedback, target);
                 },
                 loadMoreExtent: 220.0,
-                listPadding: EdgeInsets.only(top: 20.0),
+                listPadding: EdgeInsets.zero,
                 childPadding: EdgeInsets.only(
-                  top: 20.0 + MSpacing.md,
+                  top: MSpacing.md,
                   left: context.leftPadding + MSpacing.md,
                   right: context.rightPadding + MSpacing.md,
                   bottom: MSpacing.md,
