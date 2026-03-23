@@ -400,6 +400,39 @@ class AppLocalizationsDe extends AppLocalizations {
   String get memeDetailsDeleteSuccessMessage => 'Meme gelöscht.';
 
   @override
+  String get memeDetailsTabDetails => 'Details';
+
+  @override
+  String get memeDetailsTabRecipients => 'Empfänger';
+
+  @override
+  String get memeDetailsRecipientsEmpty => 'Keine Empfänger vorhanden.';
+
+  @override
+  String get memeDetailsAddRecipientsButton => 'Empfänger hinzufügen';
+
+  @override
+  String get memeDetailsRecipientRemoveSuccessMessage => 'Empfänger entfernt.';
+
+  @override
+  String get memeDetailsAddRecipientsTitle => 'Empfänger hinzufügen';
+
+  @override
+  String memeDetailsAddRecipientsSelected(Object count) {
+    return '$count ausgewählt';
+  }
+
+  @override
+  String get memeDetailsAddRecipientsEmpty =>
+      'Keine zusätzlichen Empfänger verfügbar.';
+
+  @override
+  String get memeDetailsAddRecipientsSubmitButton => 'Auswahl hinzufügen';
+
+  @override
+  String get memeDetailsRecipientsAddSuccessMessage => 'Empfänger hinzugefügt.';
+
+  @override
   String get notificationsItemFriendshipRequestSentTitle =>
       'Neue Freundschaftsanfrage';
 
@@ -1072,6 +1105,39 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
   String get memeDetailsDeleteSuccessMessage => 'Meme gelöscht.';
 
   @override
+  String get memeDetailsTabDetails => 'Details';
+
+  @override
+  String get memeDetailsTabRecipients => 'Empfänger';
+
+  @override
+  String get memeDetailsRecipientsEmpty => 'Keine Empfänger vorhanden.';
+
+  @override
+  String get memeDetailsAddRecipientsButton => 'Empfänger hinzufügen';
+
+  @override
+  String get memeDetailsRecipientRemoveSuccessMessage => 'Empfänger entfernt.';
+
+  @override
+  String get memeDetailsAddRecipientsTitle => 'Empfänger hinzufügen';
+
+  @override
+  String memeDetailsAddRecipientsSelected(Object count) {
+    return '$count ausgewählt';
+  }
+
+  @override
+  String get memeDetailsAddRecipientsEmpty =>
+      'Keine zusätzlichen Empfänger verfügbar.';
+
+  @override
+  String get memeDetailsAddRecipientsSubmitButton => 'Auswahl hinzufügen';
+
+  @override
+  String get memeDetailsRecipientsAddSuccessMessage => 'Empfänger hinzugefügt.';
+
+  @override
   String get notificationsItemFriendshipRequestSentTitle =>
       'Neue Freundschaftsanfrage';
 
@@ -1107,6 +1173,19 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
   @override
   String notificationsItemMemeReceived(Object sender_name) {
     return '$sender_name hat dir ein Meme gesendet.';
+  }
+
+  @override
+  String notificationsItemMemeReceivedDirect(Object sender_name) {
+    return '$sender_name hat ein Meme an dich gesendet.';
+  }
+
+  @override
+  String notificationsItemMemeReceivedGroup(
+    Object sender_name,
+    Object group_name,
+  ) {
+    return '$sender_name hat ein Meme an $group_name gesendet.';
   }
 
   @override

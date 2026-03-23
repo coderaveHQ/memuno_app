@@ -149,6 +149,21 @@
   "memeDetailsActionsTitle": "Meme-Aktionen",
   "memeDetailsActionDelete": "Meme löschen",
   "memeDetailsDeleteSuccessMessage": "Meme gelöscht.",
+  "memeDetailsTabDetails": "Details",
+  "memeDetailsTabRecipients": "Empfänger",
+  "memeDetailsRecipientsEmpty": "Keine Empfänger vorhanden.",
+  "memeDetailsAddRecipientsButton": "Empfänger hinzufügen",
+  "memeDetailsRecipientRemoveSuccessMessage": "Empfänger entfernt.",
+  "memeDetailsAddRecipientsTitle": "Empfänger hinzufügen",
+  "memeDetailsAddRecipientsSelected": "{count} ausgewählt",
+  "@memeDetailsAddRecipientsSelected": {
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "memeDetailsAddRecipientsEmpty": "Keine zusätzlichen Empfänger verfügbar.",
+  "memeDetailsAddRecipientsSubmitButton": "Auswahl hinzufügen",
+  "memeDetailsRecipientsAddSuccessMessage": "Empfänger hinzugefügt.",
   "notificationsItemFriendshipRequestSentTitle": "Neue Freundschaftsanfrage",
   "notificationsItemFriendshipRequestSent": "{sender_name} hat dir eine Freundschaftsanfrage gesendet.",
   "@notificationsItemFriendshipRequestSent": {
