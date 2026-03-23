@@ -30,6 +30,7 @@ abstract interface class GroupDetailsDatasource {
   /// Loads one page of members.
   Future<ListPageDto<GroupMemberItemDto>> listGroupDetailsMembers({
     required String groupId,
+    String? search,
     required int limit,
     DateTime? cursorCreatedAt,
     String? cursorId,
@@ -39,6 +40,7 @@ abstract interface class GroupDetailsDatasource {
   Future<ListPageDto<GroupPendingInvitationItemDto>>
   listGroupDetailsPendingInvitations({
     required String groupId,
+    String? search,
     required int limit,
     DateTime? cursorCreatedAt,
     String? cursorId,
@@ -47,6 +49,7 @@ abstract interface class GroupDetailsDatasource {
   /// Loads one page of current-user friends that can be invited to this group.
   Future<ListPageDto<UserItemDto>> listGroupInvitableFriends({
     required String groupId,
+    String? search,
     required int limit,
     DateTime? cursorCreatedAt,
     String? cursorId,

@@ -14,11 +14,13 @@ final class ListGroupDetailsMembersUsecase {
   /// Loads one members page.
   Future<ListPageEntity<GroupMemberItemEntity>> call({
     required String groupId,
+    String? search,
     required int limit,
     ListCursorEntity? cursor,
   }) {
     return _repository.listGroupDetailsMembers(
       groupId: groupId,
+      search: search,
       limit: limit,
       cursor: cursor,
     );

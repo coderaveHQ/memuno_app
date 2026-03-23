@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_hooks/flutter_hooks.dart';
 import 'package:flutter_lucide/flutter_lucide.dart';
@@ -18,6 +20,7 @@ import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/app/widgets/m/m_tab_bar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_text.dart';
+import 'package:memuno_app/src/app/widgets/m/m_text_field.dart';
 import 'package:memuno_app/src/features/auth/application/providers/current_user_provider.dart';
 import 'package:memuno_app/src/features/group_details/application/mutations/group_details_delete_mutation.dart';
 import 'package:memuno_app/src/features/group_details/application/mutations/group_details_leave_mutation.dart';
@@ -308,6 +311,46 @@ class GroupDetailsInfoPage extends HookConsumerWidget {
     final AppLocalizations l10n = AppLocalizations.of(context);
     final AppFeedback feedback = ref.read(appFeedbackProvider);
     final TabController tabController = useTabController(initialLength: 2);
+    final TextEditingController membersSearchController =
+        useTextEditingController();
+    final TextEditingController invitationsSearchController =
+        useTextEditingController();
+
+    useEffect(
+      () {
+        final GroupDetailsMembersList membersNotifier = ref.read(
+          groupDetailsMembersListProvider(groupId).notifier,
+        );
+        final GroupDetailsPendingInvitationsList invitationsNotifier = ref.read(
+          groupDetailsPendingInvitationsListProvider(groupId).notifier,
+        );
+
+        unawaited(membersNotifier.clearSearch());
+        unawaited(invitationsNotifier.clearSearch());
+
+        void membersListener() {
+          membersNotifier.applySearchDebounced(membersSearchController.text);
+        }
+
+        void invitationsListener() {
+          invitationsNotifier.applySearchDebounced(
+            invitationsSearchController.text,
+          );
+        }
+
+        membersSearchController.addListener(membersListener);
+        invitationsSearchController.addListener(invitationsListener);
+
+        return () {
+          membersNotifier.cancelPendingSearch();
+          invitationsNotifier.cancelPendingSearch();
+          membersSearchController.removeListener(membersListener);
+          invitationsSearchController.removeListener(invitationsListener);
+        };
+      },
+      <Object?>[groupId, membersSearchController, invitationsSearchController],
+    );
+
     final String? currentUserId = ref.watch(currentUserProvider)?.id;
     final AsyncValue<GroupDetailsEntity> groupDetailsState = ref.watch(
       groupDetailsProvider(groupId),
@@ -420,24 +463,70 @@ class GroupDetailsInfoPage extends HookConsumerWidget {
         child: TabBarView(
           controller: tabController,
           children: <Widget>[
-            GroupDetailsMembersListView(
-              groupId: groupId,
-              currentUserId: currentUserId,
-              canManageMembers: canManageMembers,
-              onMemberMutated: () =>
-                  ref.invalidate(groupDetailsProvider(groupId)),
-              onRefresh:
-                  (WidgetRef ref, BuildContext context, AppFeedback feedback) =>
-                      _onRefresh(ref, context, feedback),
+            Column(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: 20.0 + MSpacing.md,
+                    left: context.leftPadding + MSpacing.md,
+                    right: context.rightPadding + MSpacing.md,
+                    bottom: MSpacing.md,
+                  ),
+                  child: MTextField(
+                    controller: membersSearchController,
+                    icon: LucideIcons.search,
+                    label: l10n.groupDetailsMembersSearchLabel,
+                    hint: l10n.groupDetailsMembersSearchHint,
+                  ),
+                ),
+                Expanded(
+                  child: GroupDetailsMembersListView(
+                    groupId: groupId,
+                    currentUserId: currentUserId,
+                    canManageMembers: canManageMembers,
+                    onMemberMutated: () =>
+                        ref.invalidate(groupDetailsProvider(groupId)),
+                    onRefresh:
+                        (
+                          WidgetRef ref,
+                          BuildContext context,
+                          AppFeedback feedback,
+                        ) => _onRefresh(ref, context, feedback),
+                  ),
+                ),
+              ],
             ),
-            GroupDetailsPendingInvitationsListView(
-              groupId: groupId,
-              canManageInvitations: canManageMembers,
-              onInvitationMutated: () =>
-                  ref.invalidate(groupDetailsProvider(groupId)),
-              onRefresh:
-                  (WidgetRef ref, BuildContext context, AppFeedback feedback) =>
-                      _onRefresh(ref, context, feedback),
+            Column(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: 20.0 + MSpacing.md,
+                    left: context.leftPadding + MSpacing.md,
+                    right: context.rightPadding + MSpacing.md,
+                    bottom: MSpacing.md,
+                  ),
+                  child: MTextField(
+                    controller: invitationsSearchController,
+                    icon: LucideIcons.search,
+                    label: l10n.groupDetailsInvitationsSearchLabel,
+                    hint: l10n.groupDetailsInvitationsSearchHint,
+                  ),
+                ),
+                Expanded(
+                  child: GroupDetailsPendingInvitationsListView(
+                    groupId: groupId,
+                    canManageInvitations: canManageMembers,
+                    onInvitationMutated: () =>
+                        ref.invalidate(groupDetailsProvider(groupId)),
+                    onRefresh:
+                        (
+                          WidgetRef ref,
+                          BuildContext context,
+                          AppFeedback feedback,
+                        ) => _onRefresh(ref, context, feedback),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

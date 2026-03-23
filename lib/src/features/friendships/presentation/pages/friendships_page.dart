@@ -10,6 +10,9 @@ import 'package:memuno_app/src/app/widgets/m/m_app_bar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/app/widgets/m/m_tab_bar.dart';
+import 'package:memuno_app/src/app/widgets/m/m_text_field.dart';
+import 'package:memuno_app/src/features/friendships/application/providers/friendship_requests_list_provider.dart';
+import 'package:memuno_app/src/features/friendships/application/providers/friendships_list_provider.dart';
 import 'package:memuno_app/src/features/friendships/presentation/widgets/friendship_request_dialog.dart';
 import 'package:memuno_app/src/features/friendships/presentation/widgets/friendship_requests_list.dart';
 import 'package:memuno_app/src/features/friendships/presentation/widgets/friendships_list.dart';
@@ -64,6 +67,42 @@ class FriendshipsPage extends HookConsumerWidget {
       initialLength: 2,
       initialIndex: initialTab.tabIndex,
     );
+    final TextEditingController friendshipsSearchController =
+        useTextEditingController();
+    final TextEditingController requestsSearchController =
+        useTextEditingController();
+
+    useEffect(() {
+      final FriendshipsList friendshipsNotifier = ref.read(
+        friendshipsListProvider.notifier,
+      );
+      final FriendshipRequestsList requestsNotifier = ref.read(
+        friendshipRequestsListProvider.notifier,
+      );
+
+      unawaited(friendshipsNotifier.clearSearch());
+      unawaited(requestsNotifier.clearSearch());
+
+      void friendshipsListener() {
+        friendshipsNotifier.applySearchDebounced(
+          friendshipsSearchController.text,
+        );
+      }
+
+      void requestsListener() {
+        requestsNotifier.applySearchDebounced(requestsSearchController.text);
+      }
+
+      friendshipsSearchController.addListener(friendshipsListener);
+      requestsSearchController.addListener(requestsListener);
+
+      return () {
+        friendshipsNotifier.cancelPendingSearch();
+        requestsNotifier.cancelPendingSearch();
+        friendshipsSearchController.removeListener(friendshipsListener);
+        requestsSearchController.removeListener(requestsListener);
+      };
+    }, <Object?>[friendshipsSearchController, requestsSearchController]);
 
     final MAppBar appBar = MAppBar(
       context: context,
@@ -91,31 +130,65 @@ class FriendshipsPage extends HookConsumerWidget {
         child: TabBarView(
           controller: tabController,
           children: <Widget>[
-            MAsyncFriendshipList(
-              emptyText: l10n.friendshipsListEmpty,
-              listPadding: EdgeInsets.only(
-                top: 20.0,
-                bottom: context.bottomPadding,
-              ),
-              childPadding: EdgeInsets.only(
-                top: 20.0,
-                bottom: context.bottomPadding,
-                left: context.leftPadding + MSpacing.md,
-                right: context.rightPadding + MSpacing.md,
-              ),
+            Column(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: 20.0 + MSpacing.md,
+                    left: context.leftPadding + MSpacing.md,
+                    right: context.rightPadding + MSpacing.md,
+                    bottom: MSpacing.md,
+                  ),
+                  child: MTextField(
+                    controller: friendshipsSearchController,
+                    icon: LucideIcons.search,
+                    label: l10n.friendshipsSearchLabel,
+                    hint: l10n.friendshipsSearchHint,
+                  ),
+                ),
+                Expanded(
+                  child: MAsyncFriendshipList(
+                    emptyText: l10n.friendshipsListEmpty,
+                    listPadding: EdgeInsets.only(bottom: context.bottomPadding),
+                    childPadding: EdgeInsets.only(
+                      top: MSpacing.md,
+                      bottom: context.bottomPadding,
+                      left: context.leftPadding + MSpacing.md,
+                      right: context.rightPadding + MSpacing.md,
+                    ),
+                  ),
+                ),
+              ],
             ),
-            MAsyncFriendshipRequestList(
-              emptyText: l10n.friendshipsRequestsListEmpty,
-              listPadding: EdgeInsets.only(
-                top: 20.0,
-                bottom: context.bottomPadding,
-              ),
-              childPadding: EdgeInsets.only(
-                top: 20.0,
-                bottom: context.bottomPadding,
-                left: context.leftPadding + MSpacing.md,
-                right: context.rightPadding + MSpacing.md,
-              ),
+            Column(
+              children: <Widget>[
+                Padding(
+                  padding: EdgeInsets.only(
+                    top: 20.0 + MSpacing.md,
+                    left: context.leftPadding + MSpacing.md,
+                    right: context.rightPadding + MSpacing.md,
+                    bottom: MSpacing.md,
+                  ),
+                  child: MTextField(
+                    controller: requestsSearchController,
+                    icon: LucideIcons.search,
+                    label: l10n.friendshipsRequestsSearchLabel,
+                    hint: l10n.friendshipsRequestsSearchHint,
+                  ),
+                ),
+                Expanded(
+                  child: MAsyncFriendshipRequestList(
+                    emptyText: l10n.friendshipsRequestsListEmpty,
+                    listPadding: EdgeInsets.only(bottom: context.bottomPadding),
+                    childPadding: EdgeInsets.only(
+                      top: MSpacing.md,
+                      bottom: context.bottomPadding,
+                      left: context.leftPadding + MSpacing.md,
+                      right: context.rightPadding + MSpacing.md,
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),

@@ -5,7 +5,7 @@ import 'package:memuno_app/src/features/notifications/domain/entities/notificati
 abstract interface class NotificationsRepository {
   /// Loads one paginated notifications page.
   Future<NotificationListPageEntity> listNotifications({
-    /// Optional search term applied to actor name/friendship code.
+    /// Optional search term applied to actor name.
     String? search,
 
     /// Requested backend page size.

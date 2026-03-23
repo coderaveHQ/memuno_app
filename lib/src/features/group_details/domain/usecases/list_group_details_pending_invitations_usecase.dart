@@ -14,11 +14,13 @@ final class ListGroupDetailsPendingInvitationsUsecase {
   /// Loads one pending-invitations page.
   Future<ListPageEntity<GroupPendingInvitationItemEntity>> call({
     required String groupId,
+    String? search,
     required int limit,
     ListCursorEntity? cursor,
   }) {
     return _repository.listGroupDetailsPendingInvitations(
       groupId: groupId,
+      search: search,
       limit: limit,
       cursor: cursor,
     );

@@ -4,6 +4,7 @@ import 'package:memuno_app/src/core/models/pagination/list_page_entity.dart';
 import 'package:memuno_app/src/core/state/pagination/async_pagination_mixin.dart';
 import 'package:memuno_app/src/core/state/pagination/paginated_list_state.dart';
 import 'package:memuno_app/src/core/state/pagination/paginated_page.dart';
+import 'package:memuno_app/src/core/state/search/async_pagination_search_mixin.dart';
 import 'package:memuno_app/src/features/group_details/application/providers/usecases/list_group_details_invitable_friends_usecase_provider.dart';
 import 'package:memuno_app/src/features/group_details/domain/usecases/list_group_details_invitable_friends_usecase.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -14,12 +15,14 @@ part 'group_details_invitable_friends_list_provider.g.dart';
 @Riverpod(keepAlive: true)
 class GroupDetailsInvitableFriendsList
     extends _$GroupDetailsInvitableFriendsList
-    with AsyncPaginationMixin<UserItemEntity, ListCursorEntity> {
+    with
+        AsyncPaginationMixin<UserItemEntity, ListCursorEntity>,
+        AsyncPaginationSearchMixin<UserItemEntity, ListCursorEntity> {
   @override
   Future<PaginatedListState<UserItemEntity, ListCursorEntity>> build(
     String groupId,
   ) {
-    return buildPaginatedState();
+    return buildSearchPaginatedState();
   }
 
   @override
@@ -32,6 +35,7 @@ class GroupDetailsInvitableFriendsList
     );
     final ListPageEntity<UserItemEntity> page = await usecase(
       groupId: groupId,
+      search: searchQuery,
       limit: limit,
       cursor: cursor,
     );

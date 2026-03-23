@@ -14,11 +14,13 @@ final class ListGroupDetailsInvitableFriendsUsecase {
   /// Loads one invitable-friends page.
   Future<ListPageEntity<UserItemEntity>> call({
     required String groupId,
+    String? search,
     required int limit,
     ListCursorEntity? cursor,
   }) {
     return _repository.listGroupInvitableFriends(
       groupId: groupId,
+      search: search,
       limit: limit,
       cursor: cursor,
     );

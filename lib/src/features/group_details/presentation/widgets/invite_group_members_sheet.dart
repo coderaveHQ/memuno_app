@@ -17,7 +17,10 @@ import 'package:memuno_app/src/app/widgets/m/m_gap.dart';
 import 'package:memuno_app/src/app/widgets/m/m_icon_button.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/app/widgets/m/m_text.dart';
+import 'package:memuno_app/src/app/widgets/m/m_text_field.dart';
 import 'package:memuno_app/src/features/group_details/application/mutations/group_details_invite_members_mutation.dart';
+import 'package:memuno_app/src/features/group_details/application/providers/group_details_invitable_friends_list_provider.dart'
+    show groupDetailsInvitableFriendsListProvider;
 import 'package:memuno_app/src/features/group_details/application/providers/usecases/invite_group_members_usecase_provider.dart';
 import 'package:memuno_app/src/features/group_details/domain/usecases/invite_group_members_usecase.dart';
 import 'package:memuno_app/src/features/group_details/presentation/widgets/group_details_invitable_friends_list.dart';
@@ -74,6 +77,25 @@ class InviteGroupMembersSheet extends HookConsumerWidget {
     final ValueNotifier<Set<String>> selectedUserIds = useState<Set<String>>(
       <String>{},
     );
+    final TextEditingController searchController = useTextEditingController();
+
+    useEffect(() {
+      final notifier = ref.read(
+        groupDetailsInvitableFriendsListProvider(groupId).notifier,
+      );
+
+      unawaited(notifier.clearSearch());
+
+      void listener() {
+        notifier.applySearchDebounced(searchController.text);
+      }
+
+      searchController.addListener(listener);
+      return () {
+        notifier.cancelPendingSearch();
+        searchController.removeListener(listener);
+      };
+    }, <Object?>[groupId, searchController]);
 
     final Mutation<void> mutation = ref.watch(
       groupDetailsInviteMembersMutationProvider(groupId),
@@ -115,32 +137,44 @@ class InviteGroupMembersSheet extends HookConsumerWidget {
                   left: context.leftPadding + MSpacing.md,
                   right: context.rightPadding + MSpacing.md,
                 ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+                child: Column(
                   children: <Widget>[
-                    Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: <Widget>[
-                          MText.h3(
-                            text: l10n.groupDetailsInviteMembersDialogTitle,
-                            style: const TextStyle(color: MColors.gray100),
+                    Row(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: <Widget>[
+                        Expanded(
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: <Widget>[
+                              MText.h3(
+                                text: l10n.groupDetailsInviteMembersDialogTitle,
+                                style: const TextStyle(color: MColors.gray100),
+                              ),
+                              const MGap.xs(),
+                              MText.small(
+                                text: l10n.groupDetailsInviteMembersSelected(
+                                  selectedUserIds.value.length,
+                                ),
+                                style: const TextStyle(color: MColors.gray400),
+                              ),
+                            ],
                           ),
-                          const MGap.xs(),
-                          MText.small(
-                            text: l10n.groupDetailsInviteMembersSelected(
-                              selectedUserIds.value.length,
-                            ),
-                            style: const TextStyle(color: MColors.gray400),
-                          ),
-                        ],
-                      ),
+                        ),
+                        const MGap.md(),
+                        MIconButton.secondary(
+                          onPressed: () => context.pop(),
+                          icon: LucideIcons.x,
+                          dimension: kToolbarHeight - 4.0,
+                          isEnabled: !isSubmitting,
+                        ),
+                      ],
                     ),
                     const MGap.md(),
-                    MIconButton.secondary(
-                      onPressed: () => context.pop(),
-                      icon: LucideIcons.x,
-                      dimension: kToolbarHeight - 4.0,
+                    MTextField(
+                      controller: searchController,
+                      icon: LucideIcons.search,
+                      label: l10n.groupDetailsInviteMembersSearchLabel,
+                      hint: l10n.groupDetailsInviteMembersSearchHint,
                       isEnabled: !isSubmitting,
                     ),
                   ],

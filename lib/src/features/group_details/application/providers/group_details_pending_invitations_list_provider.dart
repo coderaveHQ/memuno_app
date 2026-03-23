@@ -4,6 +4,7 @@ import 'package:memuno_app/src/core/state/optimistic/optimistic_async_state_mixi
 import 'package:memuno_app/src/core/state/pagination/async_pagination_mixin.dart';
 import 'package:memuno_app/src/core/state/pagination/paginated_list_state.dart';
 import 'package:memuno_app/src/core/state/pagination/paginated_page.dart';
+import 'package:memuno_app/src/core/state/search/async_pagination_search_mixin.dart';
 import 'package:memuno_app/src/features/group_details/application/providers/usecases/list_group_details_pending_invitations_usecase_provider.dart';
 import 'package:memuno_app/src/features/group_details/domain/entities/group_pending_invitation_item_entity.dart';
 import 'package:memuno_app/src/features/group_details/domain/usecases/list_group_details_pending_invitations_usecase.dart';
@@ -22,13 +23,17 @@ class GroupDetailsPendingInvitationsList
           GroupPendingInvitationItemEntity,
           ListCursorEntity
         >,
+        AsyncPaginationSearchMixin<
+          GroupPendingInvitationItemEntity,
+          ListCursorEntity
+        >,
         OptimisticAsyncStateMixin<
           PaginatedListState<GroupPendingInvitationItemEntity, ListCursorEntity>
         > {
   @override
   Future<PaginatedListState<GroupPendingInvitationItemEntity, ListCursorEntity>>
   build(String groupId) {
-    return buildPaginatedState();
+    return buildSearchPaginatedState();
   }
 
   @override
@@ -39,6 +44,7 @@ class GroupDetailsPendingInvitationsList
     );
     final ListPageEntity<GroupPendingInvitationItemEntity> page = await usecase(
       groupId: groupId,
+      search: searchQuery,
       limit: limit,
       cursor: cursor,
     );
