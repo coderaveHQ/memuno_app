@@ -1,6 +1,9 @@
+import 'package:memuno_app/src/core/models/pagination/list_page_dto.dart';
 import 'package:memuno_app/src/features/meme_details/data/datasources/meme_details_datasource.dart';
 import 'package:memuno_app/src/features/meme_details/data/dto/meme_details_dto.dart';
 import 'package:memuno_app/src/features/meme_details/data/dto/meme_laugh_list_page_dto.dart';
+import 'package:memuno_app/src/features/meme_details/data/dto/meme_recipient_target_item_dto.dart';
+import 'package:memuno_app/src/features/meme_details/domain/entities/meme_recipient_target_type.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Supabase-backed implementation of [MemeDetailsDatasource].
@@ -60,6 +63,109 @@ final class SupabaseMemeDetailsDatasourceImpl implements MemeDetailsDatasource {
     );
 
     return MemeLaughListPageDto.fromJson(json);
+  }
+
+  @override
+  /// Loads one page of selected recipients from `meme_recipients_list` RPC.
+  Future<ListPageDto<MemeRecipientTargetItemDto>> listMemeRecipients({
+    required String memeId,
+    required int limit,
+    DateTime? cursorCreatedAt,
+    String? cursorId,
+  }) async {
+    final Object? payload = await _supabaseClient.rpc<Object?>(
+      'meme_recipients_list',
+      params: <String, dynamic>{
+        'p_meme_id': memeId,
+        'p_limit': limit,
+        'p_cursor_created_at': cursorCreatedAt?.toIso8601String(),
+        'p_cursor_id': cursorId,
+      },
+    );
+
+    final Map<String, Object?> json = _asObjectMap(
+      payload,
+      rpcName: 'meme_recipients_list',
+    );
+
+    return ListPageDto<MemeRecipientTargetItemDto>.fromJson(
+      json,
+      itemFromJson: MemeRecipientTargetItemDto.fromJson,
+    );
+  }
+
+  @override
+  /// Loads one page of addable recipients from `meme_addable_recipient_targets_list`.
+  Future<ListPageDto<MemeRecipientTargetItemDto>>
+  listMemeAddableRecipientTargets({
+    required String memeId,
+    String? search,
+    required int limit,
+    DateTime? cursorCreatedAt,
+    String? cursorId,
+  }) async {
+    final Object? payload = await _supabaseClient.rpc<Object?>(
+      'meme_addable_recipient_targets_list',
+      params: <String, dynamic>{
+        'p_meme_id': memeId,
+        'p_search': search,
+        'p_limit': limit,
+        'p_cursor_created_at': cursorCreatedAt?.toIso8601String(),
+        'p_cursor_id': cursorId,
+      },
+    );
+
+    final Map<String, Object?> json = _asObjectMap(
+      payload,
+      rpcName: 'meme_addable_recipient_targets_list',
+    );
+
+    return ListPageDto<MemeRecipientTargetItemDto>.fromJson(
+      json,
+      itemFromJson: MemeRecipientTargetItemDto.fromJson,
+    );
+  }
+
+  @override
+  /// Calls `meme_recipients_add` to add one or more recipient targets.
+  Future<void> addMemeRecipients({
+    required String memeId,
+    required List<String> recipientUserIds,
+    required List<String> recipientGroupIds,
+  }) async {
+    await _supabaseClient.rpc<void>(
+      'meme_recipients_add',
+      params: <String, dynamic>{
+        'p_meme_id': memeId,
+        'p_recipient_ids': recipientUserIds,
+        'p_group_ids': recipientGroupIds,
+      },
+    );
+  }
+
+  @override
+  /// Calls `meme_recipient_remove` and returns the DB deletion flag.
+  Future<bool> removeMemeRecipient({
+    required String memeId,
+    required MemeRecipientTargetType targetType,
+    required String targetId,
+  }) async {
+    final Object? payload = await _supabaseClient.rpc<Object?>(
+      'meme_recipient_remove',
+      params: <String, dynamic>{
+        'p_meme_id': memeId,
+        'p_target_type': targetType.databaseValue,
+        'p_target_id': targetId,
+      },
+    );
+
+    if (payload is bool) {
+      return payload;
+    }
+
+    throw const FormatException(
+      'Expected `meme_recipient_remove` to return a boolean payload.',
+    );
   }
 
   @override

@@ -28,6 +28,8 @@ CREATE INDEX "meme_laughs_user_id_meme_id_idx" ON "public"."meme_laughs" USING "
 
 CREATE INDEX "meme_recipients_group_id_meme_id_idx" ON "public"."meme_recipients" USING "btree" ("group_id", "meme_id") WHERE ("group_id" IS NOT NULL);
 
+CREATE INDEX "meme_recipients_meme_id_created_at_id_idx" ON "public"."meme_recipients" USING "btree" ("meme_id", "created_at" DESC, "id" DESC);
+
 CREATE UNIQUE INDEX "meme_recipients_meme_id_group_id_uidx" ON "public"."meme_recipients" USING "btree" ("meme_id", "group_id") WHERE ("group_id" IS NOT NULL);
 
 CREATE UNIQUE INDEX "meme_recipients_meme_id_user_id_uidx" ON "public"."meme_recipients" USING "btree" ("meme_id", "user_id") WHERE ("user_id" IS NOT NULL);

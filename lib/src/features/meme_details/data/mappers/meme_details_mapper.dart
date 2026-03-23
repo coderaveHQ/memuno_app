@@ -1,13 +1,17 @@
+import 'package:memuno_app/src/core/models/pagination/list_page_dto.dart';
+import 'package:memuno_app/src/core/models/pagination/list_page_entity.dart';
 import 'package:memuno_app/src/features/meme_details/data/dto/meme_details_dto.dart';
 import 'package:memuno_app/src/features/meme_details/data/dto/meme_details_user_dto.dart';
 import 'package:memuno_app/src/features/meme_details/data/dto/meme_laugh_list_page_dto.dart';
 import 'package:memuno_app/src/features/meme_details/data/dto/meme_laugh_list_page_item_dto.dart';
 import 'package:memuno_app/src/features/meme_details/data/dto/meme_laugh_list_page_item_user_dto.dart';
+import 'package:memuno_app/src/features/meme_details/data/dto/meme_recipient_target_item_dto.dart';
 import 'package:memuno_app/src/features/meme_details/domain/entities/meme_details_entity.dart';
 import 'package:memuno_app/src/features/meme_details/domain/entities/meme_details_user_entity.dart';
 import 'package:memuno_app/src/features/meme_details/domain/entities/meme_laugh_list_page_entity.dart';
 import 'package:memuno_app/src/features/meme_details/domain/entities/meme_laugh_list_page_item_entity.dart';
 import 'package:memuno_app/src/features/meme_details/domain/entities/meme_laugh_list_page_item_user_entity.dart';
+import 'package:memuno_app/src/features/meme_details/domain/entities/meme_recipient_target_item_entity.dart';
 
 /// Maps meme-details DTOs into domain entities.
 final class MemeDetailsMapper {
@@ -56,6 +60,17 @@ final class MemeDetailsMapper {
     );
   }
 
+  /// Maps one recipient-target list page DTO to the domain entity.
+  ListPageEntity<MemeRecipientTargetItemEntity> recipientTargetPageToDomain(
+    ListPageDto<MemeRecipientTargetItemDto> dto,
+  ) {
+    return ListPageEntity<MemeRecipientTargetItemEntity>(
+      items: dto.items.map(_recipientTargetToDomain).toList(growable: false),
+      nextCursorCreatedAt: dto.nextCursorCreatedAt,
+      nextCursorId: dto.nextCursorId,
+    );
+  }
+
   MemeDetailsUserEntity _detailsUserToDomain(MemeDetailsUserDto dto) {
     return MemeDetailsUserEntity(
       id: dto.id,
@@ -81,6 +96,20 @@ final class MemeDetailsMapper {
       id: dto.id,
       name: dto.name,
       friendshipCode: dto.friendshipCode,
+      createdAt: dto.createdAt,
+      updatedAt: dto.updatedAt,
+    );
+  }
+
+  MemeRecipientTargetItemEntity _recipientTargetToDomain(
+    MemeRecipientTargetItemDto dto,
+  ) {
+    return MemeRecipientTargetItemEntity(
+      type: dto.type,
+      id: dto.id,
+      name: dto.name,
+      friendshipCode: dto.friendshipCode,
+      memberCount: dto.memberCount,
       createdAt: dto.createdAt,
       updatedAt: dto.updatedAt,
     );

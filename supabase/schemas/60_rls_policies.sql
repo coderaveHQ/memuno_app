@@ -64,7 +64,7 @@ CREATE POLICY "meme_laughs:insert:self_viewable_meme:authenticated" ON "public".
 
 
 
-CREATE POLICY "meme_laughs:select:viewable_meme:authenticated" ON "public"."meme_laughs" FOR SELECT TO "authenticated" USING ("public"."can_view_meme"("meme_id", ( SELECT "auth"."uid"() AS "uid")));
+CREATE POLICY "meme_laughs:select:viewable_meme:authenticated" ON "public"."meme_laughs" FOR SELECT TO "authenticated" USING ("public"."can_view_meme_laugh_actor"("meme_id", ( SELECT "auth"."uid"() AS "uid"), "user_id"));
 
 
 
@@ -136,6 +136,5 @@ CREATE POLICY "users:select:self:authenticated" ON "public"."users" FOR SELECT T
 
 
 CREATE POLICY "users:update:self:authenticated" ON "public"."users" FOR UPDATE TO "authenticated" USING (("id" = ( SELECT "auth"."uid"() AS "uid"))) WITH CHECK (("id" = ( SELECT "auth"."uid"() AS "uid")));
-
 
 

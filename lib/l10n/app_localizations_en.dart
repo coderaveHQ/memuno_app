@@ -390,6 +390,38 @@ class AppLocalizationsEn extends AppLocalizations {
   String get memeDetailsDeleteSuccessMessage => 'Meme deleted.';
 
   @override
+  String get memeDetailsTabDetails => 'Details';
+
+  @override
+  String get memeDetailsTabRecipients => 'Recipients';
+
+  @override
+  String get memeDetailsRecipientsEmpty => 'No recipients yet.';
+
+  @override
+  String get memeDetailsAddRecipientsButton => 'Add recipients';
+
+  @override
+  String get memeDetailsRecipientRemoveSuccessMessage => 'Recipient removed.';
+
+  @override
+  String get memeDetailsAddRecipientsTitle => 'Add recipients';
+
+  @override
+  String memeDetailsAddRecipientsSelected(Object count) {
+    return '$count selected';
+  }
+
+  @override
+  String get memeDetailsAddRecipientsEmpty => 'No addable recipients found.';
+
+  @override
+  String get memeDetailsAddRecipientsSubmitButton => 'Add selected';
+
+  @override
+  String get memeDetailsRecipientsAddSuccessMessage => 'Recipients added.';
+
+  @override
   String get notificationsItemFriendshipRequestSentTitle =>
       'New friendship request';
 
@@ -1046,6 +1078,38 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
 
   @override
   String get memeDetailsDeleteSuccessMessage => 'Meme deleted.';
+
+  @override
+  String get memeDetailsTabDetails => 'Details';
+
+  @override
+  String get memeDetailsTabRecipients => 'Recipients';
+
+  @override
+  String get memeDetailsRecipientsEmpty => 'No recipients yet.';
+
+  @override
+  String get memeDetailsAddRecipientsButton => 'Add recipients';
+
+  @override
+  String get memeDetailsRecipientRemoveSuccessMessage => 'Recipient removed.';
+
+  @override
+  String get memeDetailsAddRecipientsTitle => 'Add recipients';
+
+  @override
+  String memeDetailsAddRecipientsSelected(Object count) {
+    return '$count selected';
+  }
+
+  @override
+  String get memeDetailsAddRecipientsEmpty => 'No addable recipients found.';
+
+  @override
+  String get memeDetailsAddRecipientsSubmitButton => 'Add selected';
+
+  @override
+  String get memeDetailsRecipientsAddSuccessMessage => 'Recipients added.';
 
   @override
   String get notificationsItemFriendshipRequestSentTitle =>
