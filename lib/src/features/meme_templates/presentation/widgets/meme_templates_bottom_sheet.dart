@@ -12,25 +12,33 @@ import 'package:memuno_app/src/app/feedback/app_feedback.dart';
 import 'package:memuno_app/src/app/feedback/app_feedback_provider.dart';
 import 'package:memuno_app/src/app/widgets/m/m_center.dart';
 import 'package:memuno_app/src/app/widgets/m/m_circular_progress_indicator.dart';
+import 'package:memuno_app/src/app/widgets/m/m_colors.dart';
+import 'package:memuno_app/src/app/widgets/m/m_gap.dart';
+import 'package:memuno_app/src/app/widgets/m/m_icon_button.dart';
 import 'package:memuno_app/src/app/widgets/m/m_image.dart';
-import 'package:memuno_app/src/app/widgets/m/m_modal_bottom_sheet.dart';
 import 'package:memuno_app/src/app/widgets/m/m_refresh_indicator.dart';
 import 'package:memuno_app/src/app/widgets/m/m_reload.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/app/widgets/m/m_tappable.dart';
+import 'package:memuno_app/src/app/widgets/m/m_text.dart';
 import 'package:memuno_app/src/app/widgets/m/m_text_field.dart';
 import 'package:memuno_app/src/core/state/pagination/paginated_list_state.dart';
 import 'package:memuno_app/src/features/meme_templates/application/providers/meme_templates_list_provider.dart';
 import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_cursor_entity.dart';
 import 'package:memuno_app/src/features/meme_templates/domain/entities/meme_template_list_page_item_entity.dart';
+import 'package:smooth_sheets/smooth_sheets.dart';
 
 /// Opens the meme-template picker and returns the selected template.
 Future<MemeTemplateListPageItemEntity?> showMemeTemplatesBottomSheet(
   BuildContext context,
 ) async {
-  return showMModalBottomSheet<MemeTemplateListPageItemEntity>(
-    context,
-    isScrollControlled: true,
+  return showModalSheet<MemeTemplateListPageItemEntity>(
+    context: context,
+    useRootNavigator: true,
+    swipeDismissible: true,
+    viewportPadding: EdgeInsets.only(
+      top: MediaQuery.viewPaddingOf(context).top,
+    ),
     builder: (BuildContext _) {
       return const MemeTemplatesBottomSheet();
     },
@@ -130,101 +138,138 @@ class MemeTemplatesBottomSheet extends HookConsumerWidget {
     final EdgeInsets paddingWithBottom = paddingWithoutBottom.copyWith(
       bottom: context.bottomPadding + MSpacing.md,
     );
-    return MModalBottomSheet(
-      title: l10n.memeTemplatePickerTitle,
-      child: Column(
-        children: <Widget>[
-          Padding(
-            padding: paddingWithoutBottom.copyWith(top: 0.0),
-            child: MTextField(
-              controller: searchController,
-              icon: LucideIcons.search,
-              label: l10n.memeTemplatePickerSearchLabel,
-              hint: l10n.memeTemplatePickerSearchHint,
-            ),
-          ),
-          Expanded(
-            child: asyncTemplates.when(
-              data:
-                  (
-                    PaginatedListState<
-                      MemeTemplateListPageItemEntity,
-                      MemeTemplateCursorEntity
-                    >
-                    templatesState,
-                  ) {
-                    final List<MemeTemplateListPageItemEntity> templates =
-                        templatesState.items;
-                    return NotificationListener<ScrollNotification>(
-                      onNotification: (ScrollNotification notification) {
-                        if (notification.metrics.extentAfter < 500.0) {
-                          unawaited(_onLoadMore(ref, context, feedback));
-                        }
-                        return false;
-                      },
-                      child: MRefreshIndicator(
-                        onRefresh: () => _onRefresh(ref, context, feedback),
-                        child: MasonryGridView.builder(
-                          physics: const AlwaysScrollableScrollPhysics(),
-                          padding: EdgeInsets.only(
-                            bottom: context.bottomPadding + MSpacing.md,
-                          ),
-                          gridDelegate:
-                              SliverSimpleGridDelegateWithFixedCrossAxisCount(
-                                crossAxisCount: 2,
-                              ),
-                          crossAxisSpacing: MSpacing.xs,
-                          mainAxisSpacing: MSpacing.xs,
-                          itemCount: _itemCount(templatesState),
-                          itemBuilder: (BuildContext context, int index) {
-                            if (templates.isEmpty) {
-                              return MReload(
-                                onReload: () =>
-                                    _onRefresh(ref, context, feedback),
-                                padding: paddingWithoutBottom,
-                                text: l10n.memeTemplatePickerEmpty,
-                              );
-                            }
-
-                            if (index >= templates.length) {
-                              if (!templatesState.isLoadingMore) {
-                                return const SizedBox.shrink();
-                              }
-
-                              return MCenter(
-                                padding: paddingWithoutBottom,
-                                child: const MCircularProgressIndicator(),
-                              );
-                            }
-
-                            final MemeTemplateListPageItemEntity template =
-                                templates[index];
-                            return _MemeTemplateGridItem(
-                              template: template,
-                              isEnabled: true,
-                            );
-                          },
+    return Sheet(
+      initialOffset: const SheetOffset(1),
+      snapGrid: const SheetSnapGrid.single(snap: SheetOffset(1)),
+      decoration: const MaterialSheetDecoration(
+        size: SheetSize.stretch,
+        color: MColors.gray900,
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
+        clipBehavior: Clip.antiAlias,
+      ),
+      child: SafeArea(
+        top: false,
+        child: Column(
+          children: <Widget>[
+            Padding(
+              padding: EdgeInsets.only(
+                top: MSpacing.md,
+                bottom: MSpacing.md,
+                left: context.leftPadding + MSpacing.md,
+                right: context.rightPadding + MSpacing.md,
+              ),
+              child: Column(
+                children: <Widget>[
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Expanded(
+                        child: MText.h4(
+                          text: l10n.memeTemplatePickerTitle,
+                          style: const TextStyle(color: MColors.gray100),
                         ),
                       ),
-                    );
-                  },
-              error: (Object e, StackTrace _) {
-                final String message = feedback.resolve(context, e);
-                return MReload(
-                  onReload: () => _onRefresh(ref, context, feedback),
-                  padding: paddingWithBottom,
-                  text: message,
-                );
-              },
-              loading: () {
-                return MCenter(
-                  padding: paddingWithBottom,
-                  child: const MCircularProgressIndicator(),
-                );
-              },
+                      const MGap.md(),
+                      MIconButton.secondary(
+                        onPressed: () => context.pop(),
+                        icon: LucideIcons.x,
+                        dimension: kToolbarHeight - 4.0,
+                      ),
+                    ],
+                  ),
+                  const MGap.md(),
+                  MTextField(
+                    controller: searchController,
+                    icon: LucideIcons.search,
+                    label: l10n.memeTemplatePickerSearchLabel,
+                    hint: l10n.memeTemplatePickerSearchHint,
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+            Expanded(
+              child: asyncTemplates.when(
+                data:
+                    (
+                      PaginatedListState<
+                        MemeTemplateListPageItemEntity,
+                        MemeTemplateCursorEntity
+                      >
+                      templatesState,
+                    ) {
+                      final List<MemeTemplateListPageItemEntity> templates =
+                          templatesState.items;
+                      return NotificationListener<ScrollNotification>(
+                        onNotification: (ScrollNotification notification) {
+                          if (notification.metrics.extentAfter < 500.0) {
+                            unawaited(_onLoadMore(ref, context, feedback));
+                          }
+                          return false;
+                        },
+                        child: MRefreshIndicator(
+                          onRefresh: () => _onRefresh(ref, context, feedback),
+                          child: MasonryGridView.builder(
+                            physics: const AlwaysScrollableScrollPhysics(),
+                            padding: EdgeInsets.only(
+                              bottom: context.bottomPadding + MSpacing.md,
+                            ),
+                            gridDelegate:
+                                SliverSimpleGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                ),
+                            crossAxisSpacing: MSpacing.xs,
+                            mainAxisSpacing: MSpacing.xs,
+                            itemCount: _itemCount(templatesState),
+                            itemBuilder: (BuildContext context, int index) {
+                              if (templates.isEmpty) {
+                                return MReload(
+                                  onReload: () =>
+                                      _onRefresh(ref, context, feedback),
+                                  padding: paddingWithoutBottom,
+                                  text: l10n.memeTemplatePickerEmpty,
+                                );
+                              }
+
+                              if (index >= templates.length) {
+                                if (!templatesState.isLoadingMore) {
+                                  return const SizedBox.shrink();
+                                }
+
+                                return MCenter(
+                                  padding: paddingWithoutBottom,
+                                  child: const MCircularProgressIndicator(),
+                                );
+                              }
+
+                              final MemeTemplateListPageItemEntity template =
+                                  templates[index];
+                              return _MemeTemplateGridItem(
+                                template: template,
+                                isEnabled: true,
+                              );
+                            },
+                          ),
+                        ),
+                      );
+                    },
+                error: (Object e, StackTrace _) {
+                  final String message = feedback.resolve(context, e);
+                  return MReload(
+                    onReload: () => _onRefresh(ref, context, feedback),
+                    padding: paddingWithBottom,
+                    text: message,
+                  );
+                },
+                loading: () {
+                  return MCenter(
+                    padding: paddingWithBottom,
+                    child: const MCircularProgressIndicator(),
+                  );
+                },
+              ),
+            ),
+          ],
+        ),
       ),
     );
   }
