@@ -31,13 +31,19 @@ import 'package:memuno_app/src/features/friendships/application/providers/usecas
 import 'package:memuno_app/src/features/friendships/domain/entities/friendship_request_list_page_item_entity.dart';
 import 'package:memuno_app/src/features/friendships/domain/usecases/create_friendship_request_usecase.dart';
 import 'package:memuno_app/src/features/friendships/domain/usecases/delete_friendship_usecase.dart';
+import 'package:memuno_app/src/features/moderation/domain/entities/ugc_report_reason.dart';
+import 'package:memuno_app/src/features/moderation/domain/entities/ugc_report_target_type.dart';
+import 'package:memuno_app/src/features/moderation/presentation/widgets/moderation_report_reason_sheet.dart';
 import 'package:memuno_app/src/features/user_details/application/providers/user_details_other_all_memes_list_provider.dart';
 import 'package:memuno_app/src/features/user_details/application/providers/user_details_other_received_memes_list_provider.dart';
 import 'package:memuno_app/src/features/user_details/application/providers/user_details_other_sent_memes_list_provider.dart';
+import 'package:memuno_app/src/features/user_details/application/providers/user_block_status_provider.dart';
+import 'package:memuno_app/src/features/user_details/application/providers/user_report_can_create_provider.dart';
 import 'package:memuno_app/src/features/user_details/application/providers/user_details_own_all_memes_list_provider.dart';
 import 'package:memuno_app/src/features/user_details/application/providers/user_details_own_received_memes_list_provider.dart';
 import 'package:memuno_app/src/features/user_details/application/providers/user_details_own_sent_memes_list_provider.dart';
 import 'package:memuno_app/src/features/user_details/application/providers/user_details_provider.dart';
+import 'package:memuno_app/src/features/user_details/application/mutations/user_moderation_mutations.dart';
 import 'package:memuno_app/src/features/user_details/domain/entities/user_details_entity.dart';
 import 'package:memuno_app/src/features/user_details/presentation/widgets/update_current_user_details_name_dialog.dart';
 import 'package:memuno_app/src/features/user_details/presentation/widgets/user_details_other_all_memes_list.dart';
@@ -46,6 +52,8 @@ import 'package:memuno_app/src/features/user_details/presentation/widgets/user_d
 import 'package:memuno_app/src/features/user_details/presentation/widgets/user_details_own_all_memes_list.dart';
 import 'package:memuno_app/src/features/user_details/presentation/widgets/user_details_own_received_memes_list.dart';
 import 'package:memuno_app/src/features/user_details/presentation/widgets/user_details_own_sent_memes_list.dart';
+import 'package:memuno_app/src/infrastructure/supabase/supabase_client_provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
 
 /// User-details page for viewing account-level user data.
@@ -152,6 +160,83 @@ class UserDetailsPage extends HookConsumerWidget {
     });
   }
 
+  Future<void> _reportUser(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) async {
+    final AppFeedback feedback = ref.read(appFeedbackProvider);
+    final SupabaseClient supabaseClient = ref.read(supabaseClientProvider);
+    final UgcReportReason? reason;
+    try {
+      reason = await showModerationReportReasonPicker(
+        context,
+        supabaseClient: supabaseClient,
+        title: l10n.moderationReportDialogTitleUser,
+      );
+    } catch (error) {
+      if (!context.mounted) {
+        return;
+      }
+      feedback.resolveAndShowError(context, error);
+      return;
+    }
+    if (!context.mounted) {
+      return;
+    }
+    if (reason == null) {
+      return;
+    }
+    final UgcReportReason selectedReason = reason;
+
+    final Mutation<void> mutation = ref.read(
+      reportUserMutationProvider(userId),
+    );
+    await mutation.runSafely(ref, (MutationTransaction tx) async {
+      final SupabaseClient txSupabaseClient = tx.get(supabaseClientProvider);
+      await txSupabaseClient.rpc<void>(
+        'ugc_report_create',
+        params: <String, dynamic>{
+          'p_target_type': UgcReportTargetType.user.databaseValue,
+          'p_target_id': userId,
+          'p_reason': selectedReason.databaseValue,
+        },
+      );
+    });
+  }
+
+  Future<void> _blockUser(WidgetRef ref) async {
+    final Mutation<void> mutation = ref.read(blockUserMutationProvider(userId));
+    await mutation.runSafely(ref, (MutationTransaction tx) async {
+      final SupabaseClient supabaseClient = tx.get(supabaseClientProvider);
+      await supabaseClient.rpc<void>(
+        'user_block',
+        params: <String, dynamic>{'p_target_user_id': userId},
+      );
+      ref.invalidate(userBlockStatusProvider(userId));
+      ref.invalidate(userDetailsProvider(userId));
+      ref.invalidate(friendshipsListProvider);
+      ref.invalidate(friendshipRequestsListProvider);
+    });
+  }
+
+  Future<void> _unblockUser(WidgetRef ref) async {
+    final Mutation<void> mutation = ref.read(
+      unblockUserMutationProvider(userId),
+    );
+    await mutation.runSafely(ref, (MutationTransaction tx) async {
+      final SupabaseClient supabaseClient = tx.get(supabaseClientProvider);
+      await supabaseClient.rpc<void>(
+        'user_unblock',
+        params: <String, dynamic>{'p_target_user_id': userId},
+      );
+      ref.invalidate(userBlockStatusProvider(userId));
+      ref.invalidate(userDetailsProvider(userId));
+      ref.invalidate(friendshipsListProvider);
+      ref.invalidate(friendshipRequestsListProvider);
+    });
+  }
+
   Future<void> _onOpenUserActions(
     BuildContext context,
     WidgetRef ref,
@@ -159,6 +244,9 @@ class UserDetailsPage extends HookConsumerWidget {
     required bool canUpdateName,
     required bool canRemoveFriend,
     required bool canCreateFriendRequest,
+    required bool canReportUser,
+    required bool canBlockUser,
+    required bool canUnblockUser,
     required UserDetailsEntity? userDetails,
   }) async {
     final _UserDetailsAction? action = await _showUserDetailsActionsSheet(
@@ -167,6 +255,9 @@ class UserDetailsPage extends HookConsumerWidget {
       canUpdateName: canUpdateName,
       canRemoveFriend: canRemoveFriend,
       canCreateFriendRequest: canCreateFriendRequest,
+      canReportUser: canReportUser,
+      canBlockUser: canBlockUser,
+      canUnblockUser: canUnblockUser,
     );
     if (action == null) {
       return;
@@ -197,6 +288,21 @@ class UserDetailsPage extends HookConsumerWidget {
         ref,
         addresseeFriendshipCode: userDetails.friendshipCode,
       );
+      return;
+    }
+
+    if (action == _UserDetailsAction.reportUser) {
+      await _reportUser(context, ref, l10n);
+      return;
+    }
+
+    if (action == _UserDetailsAction.blockUser) {
+      await _blockUser(ref);
+      return;
+    }
+
+    if (action == _UserDetailsAction.unblockUser) {
+      await _unblockUser(ref);
     }
   }
 
@@ -206,6 +312,9 @@ class UserDetailsPage extends HookConsumerWidget {
     required bool canUpdateName,
     required bool canRemoveFriend,
     required bool canCreateFriendRequest,
+    required bool canReportUser,
+    required bool canBlockUser,
+    required bool canUnblockUser,
   }) {
     final List<Widget> actions = <Widget>[];
 
@@ -245,6 +354,39 @@ class UserDetailsPage extends HookConsumerWidget {
             Navigator.of(context).pop(_UserDetailsAction.createFriendRequest);
           },
           title: l10n.friendshipsAddDialogTitle,
+        ),
+      );
+    }
+
+    if (canReportUser) {
+      addAction(
+        MButton.secondary(
+          onPressed: () {
+            Navigator.of(context).pop(_UserDetailsAction.reportUser);
+          },
+          title: l10n.moderationActionReportUser,
+        ),
+      );
+    }
+
+    if (canBlockUser) {
+      addAction(
+        MButton.destructive(
+          onPressed: () {
+            Navigator.of(context).pop(_UserDetailsAction.blockUser);
+          },
+          title: l10n.moderationActionBlockUser,
+        ),
+      );
+    }
+
+    if (canUnblockUser) {
+      addAction(
+        MButton.secondary(
+          onPressed: () {
+            Navigator.of(context).pop(_UserDetailsAction.unblockUser);
+          },
+          title: l10n.moderationActionUnblockUser,
         ),
       );
     }
@@ -291,6 +433,10 @@ class UserDetailsPage extends HookConsumerWidget {
     );
   }
 
+  bool _isUserReportConflictError(Object error) {
+    return error is PostgrestException && error.code == '23505';
+  }
+
   @override
   /// Builds the page UI.
   Widget build(BuildContext context, WidgetRef ref) {
@@ -302,6 +448,14 @@ class UserDetailsPage extends HookConsumerWidget {
       CurrentUserDetailsRoute.routeName,
     );
     final bool isCurrentUser = ref.watch(currentUserProvider)?.id == userId;
+    final bool canModerateOtherUser = !isProfileRoute && !isCurrentUser;
+    final AsyncValue<bool> blockedState = canModerateOtherUser
+        ? ref.watch(userBlockStatusProvider(userId))
+        : const AsyncValue<bool>.data(false);
+    final AsyncValue<bool> reportCanCreateState = canModerateOtherUser
+        ? ref.watch(userReportCanCreateProvider(userId))
+        : const AsyncValue<bool>.data(false);
+    final bool isBlocked = blockedState.value ?? false;
 
     final AsyncValue<UserDetailsEntity> userDetailsState = ref.watch(
       userDetailsProvider(userId),
@@ -312,15 +466,26 @@ class UserDetailsPage extends HookConsumerWidget {
         !isProfileRoute &&
         !isCurrentUser &&
         userDetails != null &&
-        userDetails.isFriend;
+        userDetails.isFriend &&
+        !isBlocked;
     final bool canCreateFriendRequest =
         !isProfileRoute &&
         !isCurrentUser &&
         userDetails != null &&
         !userDetails.isFriend &&
-        !userDetails.hasPendingFriendshipRequest;
+        !userDetails.hasPendingFriendshipRequest &&
+        !isBlocked;
+    final bool canReportUser =
+        canModerateOtherUser && (reportCanCreateState.value ?? false);
+    final bool canBlockUser = canModerateOtherUser && !isBlocked;
+    final bool canUnblockUser = canModerateOtherUser && isBlocked;
     final bool hasAvailableActions =
-        canUpdateName || canRemoveFriend || canCreateFriendRequest;
+        canUpdateName ||
+        canRemoveFriend ||
+        canCreateFriendRequest ||
+        canReportUser ||
+        canBlockUser ||
+        canUnblockUser;
 
     final Mutation<void> deleteFriendshipMutation = ref.watch(
       deleteFriendshipMutationProvider(userId),
@@ -339,7 +504,27 @@ class UserDetailsPage extends HookConsumerWidget {
     final bool isCreatingFriendRequest =
         createFriendshipRequestState
             is MutationPending<FriendshipRequestListPageItemEntity>;
-    final bool isAnyActionPending = isRemovingFriend || isCreatingFriendRequest;
+    final Mutation<void> reportUserMutation = ref.watch(
+      reportUserMutationProvider(userId),
+    );
+    final MutationState<void> reportUserState = ref.watch(reportUserMutation);
+    final bool isReportingUser = reportUserState is MutationPending<void>;
+    final Mutation<void> blockUserMutation = ref.watch(
+      blockUserMutationProvider(userId),
+    );
+    final MutationState<void> blockUserState = ref.watch(blockUserMutation);
+    final bool isBlockingUser = blockUserState is MutationPending<void>;
+    final Mutation<void> unblockUserMutation = ref.watch(
+      unblockUserMutationProvider(userId),
+    );
+    final MutationState<void> unblockUserState = ref.watch(unblockUserMutation);
+    final bool isUnblockingUser = unblockUserState is MutationPending<void>;
+    final bool isAnyActionPending =
+        isRemovingFriend ||
+        isCreatingFriendRequest ||
+        isReportingUser ||
+        isBlockingUser ||
+        isUnblockingUser;
     final bool isActionButtonEnabled =
         hasAvailableActions && !isAnyActionPending;
 
@@ -372,6 +557,40 @@ class UserDetailsPage extends HookConsumerWidget {
         }
       },
     );
+    ref.listen<MutationState<void>>(reportUserMutation, (previous, next) {
+      if (next is MutationError<void>) {
+        if (_isUserReportConflictError(next.error)) {
+          ref.invalidate(userReportCanCreateProvider(userId));
+        }
+        feedback.resolveAndShowError(context, next.error);
+      } else if (next is MutationSuccess<void>) {
+        ref.invalidate(userReportCanCreateProvider(userId));
+        feedback.showSuccess(
+          context,
+          message: l10n.moderationReportSuccessMessage,
+        );
+      }
+    });
+    ref.listen<MutationState<void>>(blockUserMutation, (previous, next) {
+      if (next is MutationError<void>) {
+        feedback.resolveAndShowError(context, next.error);
+      } else if (next is MutationSuccess<void>) {
+        feedback.showSuccess(
+          context,
+          message: l10n.moderationBlockSuccessMessage,
+        );
+      }
+    });
+    ref.listen<MutationState<void>>(unblockUserMutation, (previous, next) {
+      if (next is MutationError<void>) {
+        feedback.resolveAndShowError(context, next.error);
+      } else if (next is MutationSuccess<void>) {
+        feedback.showSuccess(
+          context,
+          message: l10n.moderationUnblockSuccessMessage,
+        );
+      }
+    });
 
     final MAppBar appBar = MAppBar(
       context: context,
@@ -424,6 +643,9 @@ class UserDetailsPage extends HookConsumerWidget {
                   canUpdateName: canUpdateName,
                   canRemoveFriend: canRemoveFriend,
                   canCreateFriendRequest: canCreateFriendRequest,
+                  canReportUser: canReportUser,
+                  canBlockUser: canBlockUser,
+                  canUnblockUser: canUnblockUser,
                   userDetails: userDetails,
                 ),
           isEnabled: isActionButtonEnabled,
@@ -528,4 +750,11 @@ class UserDetailsPage extends HookConsumerWidget {
   }
 }
 
-enum _UserDetailsAction { updateName, removeFriend, createFriendRequest }
+enum _UserDetailsAction {
+  updateName,
+  removeFriend,
+  createFriendRequest,
+  reportUser,
+  blockUser,
+  unblockUser,
+}

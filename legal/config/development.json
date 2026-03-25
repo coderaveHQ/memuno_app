@@ -1,0 +1,13 @@
+{
+  "site_name": "Memuno (Development)",
+  "site_url": "http://192.168.2.169:8080/development/legal",
+  "supabase_url": "http://192.168.2.169:54321",
+  "supabase_publishable_key": "sb_publishable_ACJWlzQHlZjBrEguHvfOxg_3BJgxAaH",
+  "version": "1.0.0",
+  "effective_date": "2026-03-24",
+  "support_email": "support.dev@coderave.dev",
+  "support_phone": "+49-176-43474934",
+  "privacy_contact_email": "privacy.dev@coderave.dev",
+  "legal_entity": "Florian Leeser Softwareentwicklung",
+  "legal_address": "Eintrachtstraße 50, 42655 Solingen, Germany"
+}

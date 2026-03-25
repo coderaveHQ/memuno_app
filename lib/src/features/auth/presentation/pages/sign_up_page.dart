@@ -13,11 +13,14 @@ import 'package:memuno_app/src/app/router/app_router.dart';
 import 'package:memuno_app/src/app/widgets/m/m_app_bar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_button.dart';
 import 'package:memuno_app/src/app/widgets/m/m_center.dart';
+import 'package:memuno_app/src/app/widgets/m/m_colors.dart';
 import 'package:memuno_app/src/app/widgets/m/m_gap.dart';
 import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/app/widgets/m/m_text_field.dart';
 import 'package:memuno_app/src/core/config/app_env.dart';
+import 'package:memuno_app/src/core/config/legal_urls.dart';
+import 'package:memuno_app/src/core/external/external_url_launcher.dart';
 import 'package:memuno_app/src/features/auth/application/mutations/sign_up_with_email_mutation.dart';
 import 'package:memuno_app/src/features/auth/application/providers/usecases/sign_up_with_email_usecase_provider.dart';
 import 'package:memuno_app/src/features/auth/domain/usecases/sign_up_with_email_usecase.dart';
@@ -52,6 +55,51 @@ class SignUpPage extends HookConsumerWidget {
     });
   }
 
+  Future<void> _openLegalDocument(
+    BuildContext context,
+    WidgetRef ref,
+    LegalDocument document,
+  ) async {
+    final AppFeedback feedback = ref.read(appFeedbackProvider);
+    final AppLocalizations l10n = AppLocalizations.of(context);
+    final Uri uri = LegalUrls.resolve(
+      document: document,
+      locale: Localizations.localeOf(context),
+    );
+
+    try {
+      final bool opened = await ref.read(externalUrlLauncherProvider).open(uri);
+      if (!opened && context.mounted) {
+        feedback.showError(context, message: l10n.genericErrorMessage);
+      }
+    } catch (error) {
+      if (!context.mounted) {
+        return;
+      }
+      feedback.resolveAndShowError(context, error);
+    }
+  }
+
+  Widget _legalLink({
+    required String text,
+    required VoidCallback onPressed,
+    required bool isEnabled,
+  }) {
+    return InkWell(
+      onTap: isEnabled ? onPressed : null,
+      borderRadius: BorderRadius.circular(4.0),
+      child: Text(
+        text,
+        style: TextStyle(
+          color: isEnabled ? MColors.blue400 : MColors.gray500,
+          decoration: TextDecoration.underline,
+          decorationColor: isEnabled ? MColors.blue400 : MColors.gray500,
+          fontWeight: FontWeight.w600,
+        ),
+      ),
+    );
+  }
+
   @override
   /// Builds and returns the widget tree for this component.
   Widget build(BuildContext context, WidgetRef ref) {
@@ -59,6 +107,7 @@ class SignUpPage extends HookConsumerWidget {
     final TextEditingController emailController = useTextEditingController();
     final TextEditingController passwordController = useTextEditingController();
     final ValueNotifier<bool> passwordVisible = useState<bool>(false);
+    final ValueNotifier<bool> hasAcceptedLegal = useState<bool>(false);
 
     final Mutation<void> signUpMutation = ref.watch(
       signUpWithEmailMutationProvider,
@@ -148,6 +197,74 @@ class SignUpPage extends HookConsumerWidget {
                   isEnabled: !isLoading,
                 ),
                 const MGap.md(),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.all(MSpacing.sm),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(MSpacing.sm),
+                    border: Border.all(color: MColors.gray700),
+                    color: MColors.gray800.withValues(alpha: 0.4),
+                  ),
+                  child: Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: <Widget>[
+                      Checkbox(
+                        value: hasAcceptedLegal.value,
+                        onChanged: isLoading
+                            ? null
+                            : (bool? nextValue) {
+                                hasAcceptedLegal.value = nextValue ?? false;
+                              },
+                      ),
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.only(top: 12.0),
+                          child: Wrap(
+                            spacing: 4.0,
+                            runSpacing: 4.0,
+                            children: <Widget>[
+                              Text(
+                                l10n.signUpLegalConsentPrefix,
+                                style: const TextStyle(color: MColors.gray100),
+                              ),
+                              _legalLink(
+                                text: l10n.signUpLegalTermsLink,
+                                isEnabled: !isLoading,
+                                onPressed: () {
+                                  _openLegalDocument(
+                                    context,
+                                    ref,
+                                    LegalDocument.termsOfUse,
+                                  );
+                                },
+                              ),
+                              Text(
+                                l10n.signUpLegalConsentAnd,
+                                style: const TextStyle(color: MColors.gray100),
+                              ),
+                              _legalLink(
+                                text: l10n.signUpLegalPrivacyLink,
+                                isEnabled: !isLoading,
+                                onPressed: () {
+                                  _openLegalDocument(
+                                    context,
+                                    ref,
+                                    LegalDocument.privacyPolicy,
+                                  );
+                                },
+                              ),
+                              Text(
+                                '.',
+                                style: const TextStyle(color: MColors.gray100),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const MGap.md(),
                 MButton.primary(
                   onPressed: () => _submit(
                     ref,
@@ -157,7 +274,7 @@ class SignUpPage extends HookConsumerWidget {
                   ),
                   isLoading: isLoading,
                   title: l10n.signUpCreateAccountButton,
-                  isEnabled: !isLoading,
+                  isEnabled: !isLoading && hasAcceptedLegal.value,
                 ),
               ],
             ),

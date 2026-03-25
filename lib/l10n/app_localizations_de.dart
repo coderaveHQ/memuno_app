@@ -603,6 +603,30 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsSectionAccountManagement => 'Kontoverwaltung';
 
   @override
+  String get settingsSectionLegal => 'Rechtliches';
+
+  @override
+  String get settingsBlockedUsersTitle => 'Blockierte Nutzer';
+
+  @override
+  String get settingsBlockedUsersSubtitle =>
+      'Verwalte Nutzer, die du blockiert hast.';
+
+  @override
+  String get settingsBlockedUsersSearchLabel => 'Blockierte Nutzer suchen';
+
+  @override
+  String get settingsBlockedUsersSearchHint =>
+      'Nach Namen oder Freundschaftscode suchen';
+
+  @override
+  String get settingsBlockedUsersEmpty => 'Du hast keine Nutzer blockiert.';
+
+  @override
+  String get settingsBlockedUsersActionsTitle =>
+      'Aktionen für blockierte Nutzer';
+
+  @override
   String get languageModeTitle => 'Sprache';
 
   @override
@@ -633,6 +657,46 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get deleteAccountListTileSubtitle =>
       'Löscht dein Konto und deine Daten dauerhaft.';
+
+  @override
+  String get settingsLegalPrivacyTitle => 'Datenschutz';
+
+  @override
+  String get settingsLegalPrivacySubtitle => 'Datenschutzerklärung lesen.';
+
+  @override
+  String get settingsLegalTermsTitle => 'Nutzungsbedingungen';
+
+  @override
+  String get settingsLegalTermsSubtitle => 'Nutzungsbedingungen lesen.';
+
+  @override
+  String get settingsLegalCommunityTitle => 'Community-Richtlinien';
+
+  @override
+  String get settingsLegalCommunitySubtitle =>
+      'Regeln für das Verhalten in der Community.';
+
+  @override
+  String get settingsLegalAccountDeletionHelpTitle => 'Hilfe zur Kontolöschung';
+
+  @override
+  String get settingsLegalAccountDeletionHelpSubtitle =>
+      'Anleitung zur Kontolöschung öffnen.';
+
+  @override
+  String get settingsLegalImpressumTitle => 'Impressum / Rechtliche Hinweise';
+
+  @override
+  String get settingsLegalImpressumSubtitle =>
+      'Anbieter- und Rechtsinformationen ansehen.';
+
+  @override
+  String get settingsLegalSupportTitle => 'Support';
+
+  @override
+  String get settingsLegalSupportSubtitle =>
+      'Support- und Moderationskontakt öffnen.';
 
   @override
   String get changeEmailTitle => 'E-Mail-Adresse ändern';
@@ -704,7 +768,86 @@ class AppLocalizationsDe extends AppLocalizations {
   String get signUpPasswordLabel => 'Passwort';
 
   @override
+  String get signUpLegalConsentPrefix => 'Ich stimme den';
+
+  @override
+  String get signUpLegalConsentAnd => 'und der';
+
+  @override
+  String get signUpLegalTermsLink => 'Nutzungsbedingungen';
+
+  @override
+  String get signUpLegalPrivacyLink => 'Datenschutzerklärung';
+
+  @override
   String get signUpCreateAccountButton => 'Konto erstellen';
+
+  @override
+  String get moderationActionReportUser => 'Nutzer melden';
+
+  @override
+  String get moderationActionReportMeme => 'Meme melden';
+
+  @override
+  String get moderationActionReportGroup => 'Gruppe melden';
+
+  @override
+  String get moderationActionBlockUser => 'Nutzer blockieren';
+
+  @override
+  String get moderationActionUnblockUser => 'Nutzer entsperren';
+
+  @override
+  String get moderationReportDialogTitleUser => 'Diesen Nutzer melden';
+
+  @override
+  String get moderationReportDialogTitleMeme => 'Dieses Meme melden';
+
+  @override
+  String get moderationReportDialogTitleGroup => 'Diese Gruppe melden';
+
+  @override
+  String get moderationReportReasonLabel => 'Grund';
+
+  @override
+  String get moderationReportReasonSpam => 'Spam';
+
+  @override
+  String get moderationReportReasonHarassment => 'Belästigung';
+
+  @override
+  String get moderationReportReasonHateSpeech => 'Hassrede';
+
+  @override
+  String get moderationReportReasonSexualContent => 'Sexuelle Inhalte';
+
+  @override
+  String get moderationReportReasonViolence => 'Gewalt';
+
+  @override
+  String get moderationReportReasonScam => 'Betrug';
+
+  @override
+  String get moderationReportReasonOther => 'Sonstiges';
+
+  @override
+  String get moderationReportReasonRequiredMessage =>
+      'Bitte gib einen Meldegrund an.';
+
+  @override
+  String get moderationReportCancelButton => 'Abbrechen';
+
+  @override
+  String get moderationReportSubmitButton => 'Meldung senden';
+
+  @override
+  String get moderationReportSuccessMessage => 'Meldung gesendet.';
+
+  @override
+  String get moderationBlockSuccessMessage => 'Nutzer blockiert.';
+
+  @override
+  String get moderationUnblockSuccessMessage => 'Nutzer entsperrt.';
 
   @override
   String get verifySignInResentCodeMessage =>
@@ -1361,6 +1504,30 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
   String get settingsSectionAccountManagement => 'Kontoverwaltung';
 
   @override
+  String get settingsSectionLegal => 'Rechtliches';
+
+  @override
+  String get settingsBlockedUsersTitle => 'Blockierte Nutzer';
+
+  @override
+  String get settingsBlockedUsersSubtitle =>
+      'Verwalte Nutzer, die du blockiert hast.';
+
+  @override
+  String get settingsBlockedUsersSearchLabel => 'Blockierte Nutzer suchen';
+
+  @override
+  String get settingsBlockedUsersSearchHint =>
+      'Nach Namen oder Freundschaftscode suchen';
+
+  @override
+  String get settingsBlockedUsersEmpty => 'Du hast keine Nutzer blockiert.';
+
+  @override
+  String get settingsBlockedUsersActionsTitle =>
+      'Aktionen für blockierte Nutzer';
+
+  @override
   String get languageModeTitle => 'Sprache';
 
   @override
@@ -1391,6 +1558,46 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
   @override
   String get deleteAccountListTileSubtitle =>
       'Löscht dein Konto und deine Daten dauerhaft.';
+
+  @override
+  String get settingsLegalPrivacyTitle => 'Datenschutz';
+
+  @override
+  String get settingsLegalPrivacySubtitle => 'Datenschutzerklärung lesen.';
+
+  @override
+  String get settingsLegalTermsTitle => 'Nutzungsbedingungen';
+
+  @override
+  String get settingsLegalTermsSubtitle => 'Nutzungsbedingungen lesen.';
+
+  @override
+  String get settingsLegalCommunityTitle => 'Community-Richtlinien';
+
+  @override
+  String get settingsLegalCommunitySubtitle =>
+      'Regeln für das Verhalten in der Community.';
+
+  @override
+  String get settingsLegalAccountDeletionHelpTitle => 'Hilfe zur Kontolöschung';
+
+  @override
+  String get settingsLegalAccountDeletionHelpSubtitle =>
+      'Anleitung zur Kontolöschung öffnen.';
+
+  @override
+  String get settingsLegalImpressumTitle => 'Impressum / Rechtliche Hinweise';
+
+  @override
+  String get settingsLegalImpressumSubtitle =>
+      'Anbieter- und Rechtsinformationen ansehen.';
+
+  @override
+  String get settingsLegalSupportTitle => 'Support';
+
+  @override
+  String get settingsLegalSupportSubtitle =>
+      'Support- und Moderationskontakt öffnen.';
 
   @override
   String get changeEmailTitle => 'E-Mail-Adresse ändern';
@@ -1462,7 +1669,86 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
   String get signUpPasswordLabel => 'Passwort';
 
   @override
+  String get signUpLegalConsentPrefix => 'Ich stimme den';
+
+  @override
+  String get signUpLegalConsentAnd => 'und der';
+
+  @override
+  String get signUpLegalTermsLink => 'Nutzungsbedingungen';
+
+  @override
+  String get signUpLegalPrivacyLink => 'Datenschutzerklärung';
+
+  @override
   String get signUpCreateAccountButton => 'Konto erstellen';
+
+  @override
+  String get moderationActionReportUser => 'Nutzer melden';
+
+  @override
+  String get moderationActionReportMeme => 'Meme melden';
+
+  @override
+  String get moderationActionReportGroup => 'Gruppe melden';
+
+  @override
+  String get moderationActionBlockUser => 'Nutzer blockieren';
+
+  @override
+  String get moderationActionUnblockUser => 'Nutzer entsperren';
+
+  @override
+  String get moderationReportDialogTitleUser => 'Diesen Nutzer melden';
+
+  @override
+  String get moderationReportDialogTitleMeme => 'Dieses Meme melden';
+
+  @override
+  String get moderationReportDialogTitleGroup => 'Diese Gruppe melden';
+
+  @override
+  String get moderationReportReasonLabel => 'Grund';
+
+  @override
+  String get moderationReportReasonSpam => 'Spam';
+
+  @override
+  String get moderationReportReasonHarassment => 'Belästigung';
+
+  @override
+  String get moderationReportReasonHateSpeech => 'Hassrede';
+
+  @override
+  String get moderationReportReasonSexualContent => 'Sexuelle Inhalte';
+
+  @override
+  String get moderationReportReasonViolence => 'Gewalt';
+
+  @override
+  String get moderationReportReasonScam => 'Betrug';
+
+  @override
+  String get moderationReportReasonOther => 'Sonstiges';
+
+  @override
+  String get moderationReportReasonRequiredMessage =>
+      'Bitte gib einen Meldegrund an.';
+
+  @override
+  String get moderationReportCancelButton => 'Abbrechen';
+
+  @override
+  String get moderationReportSubmitButton => 'Meldung senden';
+
+  @override
+  String get moderationReportSuccessMessage => 'Meldung gesendet.';
+
+  @override
+  String get moderationBlockSuccessMessage => 'Nutzer blockiert.';
+
+  @override
+  String get moderationUnblockSuccessMessage => 'Nutzer entsperrt.';
 
   @override
   String get verifySignInResentCodeMessage =>

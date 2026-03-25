@@ -55,6 +55,10 @@ final class SendMemeUsecase {
     )..sort();
     final List<String> recipientGroupIds =
         state.selectedRecipientGroupIds.toList(growable: false)..sort();
+    final List<String> textLayers = state.textLayers
+        .map((layer) => layer.text.trim())
+        .where((String text) => text.isNotEmpty)
+        .toList(growable: false);
 
     for (final String recipientUserId in recipientUserIds) {
       final Failure? recipientValidation = _validator.validateFriendUserId(
@@ -96,12 +100,22 @@ final class SendMemeUsecase {
       throw aspectRatioValidation;
     }
 
+    for (final String textLayer in textLayers) {
+      final Failure? textLayerValidation = _validator.validateTextLayerText(
+        textLayer,
+      );
+      if (textLayerValidation != null) {
+        throw textLayerValidation;
+      }
+    }
+
     await _repository.sendMeme(
       memeBytes: memeBytes,
       templateId: templateId,
       aspectRatio: aspectRatio,
       recipientUserIds: recipientUserIds,
       recipientGroupIds: recipientGroupIds,
+      textLayers: textLayers,
     );
   }
 }

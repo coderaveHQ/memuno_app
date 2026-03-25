@@ -649,6 +649,10 @@ class UserDetailsRoute extends GoRouteData with $UserDetailsRoute {
   path: '/settings',
   name: SettingsRoute.routeName,
   routes: <TypedRoute<RouteData>>[
+    TypedGoRoute<BlockedUsersRoute>(
+      path: 'blocked-users',
+      name: BlockedUsersRoute.routeName,
+    ),
     TypedGoRoute<LanguageModeRoute>(
       path: 'language-mode',
       name: LanguageModeRoute.routeName,
@@ -689,6 +693,31 @@ class SettingsRoute extends GoRouteData with $SettingsRoute {
   /// Builds the page for this route.
   Widget build(BuildContext context, GoRouterState state) {
     return const SettingsPage();
+  }
+}
+
+class BlockedUsersRoute extends GoRouteData with $BlockedUsersRoute {
+  /// Creates the settings blocked-users route.
+  const BlockedUsersRoute();
+
+  /// Route name used in navigation.
+  static const String routeName = 'blockedUsers';
+
+  /// Returns true if this route is the top-most leaf in the stack.
+  static bool isLeaf(BuildContext context) =>
+      RouteUtils.isLeaf(context, routeName);
+
+  /// Returns true if this route exists anywhere in the stack.
+  static bool isInStack(BuildContext context) =>
+      RouteUtils.isInStack(context, routeName);
+
+  /// Parent navigator used by this route.
+  static final GlobalKey<NavigatorState> $parentNavigatorKey = rootNavigatorKey;
+
+  @override
+  /// Builds the page for this route.
+  Widget build(BuildContext context, GoRouterState state) {
+    return const BlockedUsersPage();
   }
 }
 

@@ -21,10 +21,33 @@ final class MemeEditorValidator {
   /// Upper inclusive bound for valid ARGB color values.
   static const int maxColorValue = 0xFFFFFFFF;
 
+  static const Set<String> _prohibitedTerms = <String>{
+    'kill',
+    'kys',
+    'nazi',
+    'rape',
+    'suicide',
+  };
+
   /// Validates one text-layer value.
   ///
   /// Returns a [Failure.validation] when invalid, otherwise `null`.
   Failure? validateTextLayerText(String text) {
+    final String normalized = text.trim();
+    if (normalized.isEmpty) {
+      return null;
+    }
+
+    final String lower = normalized.toLowerCase();
+    for (final String prohibitedTerm in _prohibitedTerms) {
+      if (lower.contains(prohibitedTerm)) {
+        return const Failure.validation(
+          code: 'invalid_format',
+          field: 'text_layer_text',
+        );
+      }
+    }
+
     return null;
   }
 

@@ -32,6 +32,13 @@ final class AddMemeTextLayerUsecase {
     /// Vertical center position normalized between 0.0 and 1.0.
     required double positionY,
   }) {
+    final Failure? textValidation = _validator.validateTextLayerText(
+      initialText,
+    );
+    if (textValidation != null) {
+      throw textValidation;
+    }
+
     final Failure? positionXValidation = _validator.validateNormalizedPosition(
       positionX,
     );

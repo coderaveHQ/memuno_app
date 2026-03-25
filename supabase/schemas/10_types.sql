@@ -253,6 +253,38 @@ CREATE TYPE "public"."push_token_deactivation_reason" AS ENUM (
 
 
 
+CREATE TYPE "public"."ugc_report_target_type" AS ENUM (
+    'user',
+    'group',
+    'meme'
+);
+
+
+
+
+CREATE TYPE "public"."ugc_report_reason" AS ENUM (
+    'spam',
+    'harassment',
+    'hate_speech',
+    'sexual_content',
+    'violence',
+    'scam',
+    'other'
+);
+
+
+
+
+CREATE TYPE "public"."ugc_report_status" AS ENUM (
+    'open',
+    'in_review',
+    'resolved',
+    'rejected'
+);
+
+
+
+
 CREATE TYPE "public"."user_profile_item" AS (
 	"id" "uuid",
 	"name" "text",
@@ -262,7 +294,6 @@ CREATE TYPE "public"."user_profile_item" AS (
 	"is_friend" boolean,
 	"has_pending_friendship_request" boolean
 );
-
 
 
 
