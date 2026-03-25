@@ -338,10 +338,14 @@ jobs:
       contents: write
 
     steps:
-      # Download all artifacts from previous jobs into ./dist
+      # Download only Android distributables.
+      # The iOS artifact is an unpacked no-codesign build directory intended for CI
+      # validation, not a release binary, and would otherwise cause thousands of
+      # upload calls when globbing dist/**/*.
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
+          name: android-production-${{ github.ref_name }}
           path: dist
 
       # Release Please already created the GitHub Release for this tag.
@@ -355,7 +359,8 @@ jobs:
         with:
           tag_name: ${{ github.ref_name }}
           files: |
-            dist/**/*
+            dist/**/*.apk
+            dist/**/*.aab
           fail_on_unmatched_files: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
