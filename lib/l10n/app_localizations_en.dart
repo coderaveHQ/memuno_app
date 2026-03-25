@@ -589,6 +589,28 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsSectionAccountManagement => 'Account management';
 
   @override
+  String get settingsSectionLegal => 'Legal';
+
+  @override
+  String get settingsBlockedUsersTitle => 'Blocked users';
+
+  @override
+  String get settingsBlockedUsersSubtitle => 'Manage users you have blocked.';
+
+  @override
+  String get settingsBlockedUsersSearchLabel => 'Search blocked users';
+
+  @override
+  String get settingsBlockedUsersSearchHint =>
+      'Search by name or friendship code';
+
+  @override
+  String get settingsBlockedUsersEmpty => 'You have not blocked any users.';
+
+  @override
+  String get settingsBlockedUsersActionsTitle => 'Blocked user actions';
+
+  @override
   String get languageModeTitle => 'Language mode';
 
   @override
@@ -619,6 +641,45 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get deleteAccountListTileSubtitle =>
       'Permanently delete your account and data.';
+
+  @override
+  String get settingsLegalPrivacyTitle => 'Privacy';
+
+  @override
+  String get settingsLegalPrivacySubtitle => 'Read the privacy policy.';
+
+  @override
+  String get settingsLegalTermsTitle => 'Terms of Use';
+
+  @override
+  String get settingsLegalTermsSubtitle => 'Read the terms of use.';
+
+  @override
+  String get settingsLegalCommunityTitle => 'Community Guidelines';
+
+  @override
+  String get settingsLegalCommunitySubtitle => 'Read community behavior rules.';
+
+  @override
+  String get settingsLegalAccountDeletionHelpTitle => 'Account deletion help';
+
+  @override
+  String get settingsLegalAccountDeletionHelpSubtitle =>
+      'Open account deletion instructions.';
+
+  @override
+  String get settingsLegalImpressumTitle => 'Impressum / Legal notice';
+
+  @override
+  String get settingsLegalImpressumSubtitle =>
+      'View provider and legal notice details.';
+
+  @override
+  String get settingsLegalSupportTitle => 'Support';
+
+  @override
+  String get settingsLegalSupportSubtitle =>
+      'Open support and moderation contact details.';
 
   @override
   String get changeEmailTitle => 'Change email';
@@ -690,7 +751,86 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signUpPasswordLabel => 'Password';
 
   @override
+  String get signUpLegalConsentPrefix => 'I agree to the';
+
+  @override
+  String get signUpLegalConsentAnd => 'and';
+
+  @override
+  String get signUpLegalTermsLink => 'Terms of Use';
+
+  @override
+  String get signUpLegalPrivacyLink => 'Privacy Policy';
+
+  @override
   String get signUpCreateAccountButton => 'Create account';
+
+  @override
+  String get moderationActionReportUser => 'Report user';
+
+  @override
+  String get moderationActionReportMeme => 'Report meme';
+
+  @override
+  String get moderationActionReportGroup => 'Report group';
+
+  @override
+  String get moderationActionBlockUser => 'Block user';
+
+  @override
+  String get moderationActionUnblockUser => 'Unblock user';
+
+  @override
+  String get moderationReportDialogTitleUser => 'Report this user';
+
+  @override
+  String get moderationReportDialogTitleMeme => 'Report this meme';
+
+  @override
+  String get moderationReportDialogTitleGroup => 'Report this group';
+
+  @override
+  String get moderationReportReasonLabel => 'Reason';
+
+  @override
+  String get moderationReportReasonSpam => 'Spam';
+
+  @override
+  String get moderationReportReasonHarassment => 'Harassment';
+
+  @override
+  String get moderationReportReasonHateSpeech => 'Hate speech';
+
+  @override
+  String get moderationReportReasonSexualContent => 'Sexual content';
+
+  @override
+  String get moderationReportReasonViolence => 'Violence';
+
+  @override
+  String get moderationReportReasonScam => 'Scam';
+
+  @override
+  String get moderationReportReasonOther => 'Other';
+
+  @override
+  String get moderationReportReasonRequiredMessage =>
+      'Please provide a report reason.';
+
+  @override
+  String get moderationReportCancelButton => 'Cancel';
+
+  @override
+  String get moderationReportSubmitButton => 'Send report';
+
+  @override
+  String get moderationReportSuccessMessage => 'Report submitted.';
+
+  @override
+  String get moderationBlockSuccessMessage => 'User blocked.';
+
+  @override
+  String get moderationUnblockSuccessMessage => 'User unblocked.';
 
   @override
   String get verifySignInResentCodeMessage => 'We sent you another code.';
@@ -1333,6 +1473,28 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   String get settingsSectionAccountManagement => 'Account management';
 
   @override
+  String get settingsSectionLegal => 'Legal';
+
+  @override
+  String get settingsBlockedUsersTitle => 'Blocked users';
+
+  @override
+  String get settingsBlockedUsersSubtitle => 'Manage users you have blocked.';
+
+  @override
+  String get settingsBlockedUsersSearchLabel => 'Search blocked users';
+
+  @override
+  String get settingsBlockedUsersSearchHint =>
+      'Search by name or friendship code';
+
+  @override
+  String get settingsBlockedUsersEmpty => 'You have not blocked any users.';
+
+  @override
+  String get settingsBlockedUsersActionsTitle => 'Blocked user actions';
+
+  @override
   String get languageModeTitle => 'Language mode';
 
   @override
@@ -1363,6 +1525,45 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   @override
   String get deleteAccountListTileSubtitle =>
       'Permanently delete your account and data.';
+
+  @override
+  String get settingsLegalPrivacyTitle => 'Privacy';
+
+  @override
+  String get settingsLegalPrivacySubtitle => 'Read the privacy policy.';
+
+  @override
+  String get settingsLegalTermsTitle => 'Terms of Use';
+
+  @override
+  String get settingsLegalTermsSubtitle => 'Read the terms of use.';
+
+  @override
+  String get settingsLegalCommunityTitle => 'Community Guidelines';
+
+  @override
+  String get settingsLegalCommunitySubtitle => 'Read community behavior rules.';
+
+  @override
+  String get settingsLegalAccountDeletionHelpTitle => 'Account deletion help';
+
+  @override
+  String get settingsLegalAccountDeletionHelpSubtitle =>
+      'Open account deletion instructions.';
+
+  @override
+  String get settingsLegalImpressumTitle => 'Impressum / Legal notice';
+
+  @override
+  String get settingsLegalImpressumSubtitle =>
+      'View provider and legal notice details.';
+
+  @override
+  String get settingsLegalSupportTitle => 'Support';
+
+  @override
+  String get settingsLegalSupportSubtitle =>
+      'Open support and moderation contact details.';
 
   @override
   String get changeEmailTitle => 'Change email';
@@ -1434,7 +1635,86 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
   String get signUpPasswordLabel => 'Password';
 
   @override
+  String get signUpLegalConsentPrefix => 'I agree to the';
+
+  @override
+  String get signUpLegalConsentAnd => 'and';
+
+  @override
+  String get signUpLegalTermsLink => 'Terms of Use';
+
+  @override
+  String get signUpLegalPrivacyLink => 'Privacy Policy';
+
+  @override
   String get signUpCreateAccountButton => 'Create account';
+
+  @override
+  String get moderationActionReportUser => 'Report user';
+
+  @override
+  String get moderationActionReportMeme => 'Report meme';
+
+  @override
+  String get moderationActionReportGroup => 'Report group';
+
+  @override
+  String get moderationActionBlockUser => 'Block user';
+
+  @override
+  String get moderationActionUnblockUser => 'Unblock user';
+
+  @override
+  String get moderationReportDialogTitleUser => 'Report this user';
+
+  @override
+  String get moderationReportDialogTitleMeme => 'Report this meme';
+
+  @override
+  String get moderationReportDialogTitleGroup => 'Report this group';
+
+  @override
+  String get moderationReportReasonLabel => 'Reason';
+
+  @override
+  String get moderationReportReasonSpam => 'Spam';
+
+  @override
+  String get moderationReportReasonHarassment => 'Harassment';
+
+  @override
+  String get moderationReportReasonHateSpeech => 'Hate speech';
+
+  @override
+  String get moderationReportReasonSexualContent => 'Sexual content';
+
+  @override
+  String get moderationReportReasonViolence => 'Violence';
+
+  @override
+  String get moderationReportReasonScam => 'Scam';
+
+  @override
+  String get moderationReportReasonOther => 'Other';
+
+  @override
+  String get moderationReportReasonRequiredMessage =>
+      'Please provide a report reason.';
+
+  @override
+  String get moderationReportCancelButton => 'Cancel';
+
+  @override
+  String get moderationReportSubmitButton => 'Send report';
+
+  @override
+  String get moderationReportSuccessMessage => 'Report submitted.';
+
+  @override
+  String get moderationBlockSuccessMessage => 'User blocked.';
+
+  @override
+  String get moderationUnblockSuccessMessage => 'User unblocked.';
 
   @override
   String get verifySignInResentCodeMessage => 'We sent you another code.';

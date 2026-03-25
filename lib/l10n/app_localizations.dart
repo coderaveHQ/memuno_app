@@ -1165,6 +1165,48 @@ abstract class AppLocalizations {
   /// **'Account management'**
   String get settingsSectionAccountManagement;
 
+  /// No description provided for @settingsSectionLegal.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Legal'**
+  String get settingsSectionLegal;
+
+  /// No description provided for @settingsBlockedUsersTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Blocked users'**
+  String get settingsBlockedUsersTitle;
+
+  /// No description provided for @settingsBlockedUsersSubtitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Manage users you have blocked.'**
+  String get settingsBlockedUsersSubtitle;
+
+  /// No description provided for @settingsBlockedUsersSearchLabel.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Search blocked users'**
+  String get settingsBlockedUsersSearchLabel;
+
+  /// No description provided for @settingsBlockedUsersSearchHint.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Search by name or friendship code'**
+  String get settingsBlockedUsersSearchHint;
+
+  /// No description provided for @settingsBlockedUsersEmpty.
+  ///
+  /// In en_US, this message translates to:
+  /// **'You have not blocked any users.'**
+  String get settingsBlockedUsersEmpty;
+
+  /// No description provided for @settingsBlockedUsersActionsTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Blocked user actions'**
+  String get settingsBlockedUsersActionsTitle;
+
   /// No description provided for @languageModeTitle.
   ///
   /// In en_US, this message translates to:
@@ -1218,6 +1260,78 @@ abstract class AppLocalizations {
   /// In en_US, this message translates to:
   /// **'Permanently delete your account and data.'**
   String get deleteAccountListTileSubtitle;
+
+  /// No description provided for @settingsLegalPrivacyTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Privacy'**
+  String get settingsLegalPrivacyTitle;
+
+  /// No description provided for @settingsLegalPrivacySubtitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Read the privacy policy.'**
+  String get settingsLegalPrivacySubtitle;
+
+  /// No description provided for @settingsLegalTermsTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Terms of Use'**
+  String get settingsLegalTermsTitle;
+
+  /// No description provided for @settingsLegalTermsSubtitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Read the terms of use.'**
+  String get settingsLegalTermsSubtitle;
+
+  /// No description provided for @settingsLegalCommunityTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Community Guidelines'**
+  String get settingsLegalCommunityTitle;
+
+  /// No description provided for @settingsLegalCommunitySubtitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Read community behavior rules.'**
+  String get settingsLegalCommunitySubtitle;
+
+  /// No description provided for @settingsLegalAccountDeletionHelpTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Account deletion help'**
+  String get settingsLegalAccountDeletionHelpTitle;
+
+  /// No description provided for @settingsLegalAccountDeletionHelpSubtitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Open account deletion instructions.'**
+  String get settingsLegalAccountDeletionHelpSubtitle;
+
+  /// No description provided for @settingsLegalImpressumTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Impressum / Legal notice'**
+  String get settingsLegalImpressumTitle;
+
+  /// No description provided for @settingsLegalImpressumSubtitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'View provider and legal notice details.'**
+  String get settingsLegalImpressumSubtitle;
+
+  /// No description provided for @settingsLegalSupportTitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Support'**
+  String get settingsLegalSupportTitle;
+
+  /// No description provided for @settingsLegalSupportSubtitle.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Open support and moderation contact details.'**
+  String get settingsLegalSupportSubtitle;
 
   /// No description provided for @changeEmailTitle.
   ///
@@ -1345,11 +1459,167 @@ abstract class AppLocalizations {
   /// **'Password'**
   String get signUpPasswordLabel;
 
+  /// No description provided for @signUpLegalConsentPrefix.
+  ///
+  /// In en_US, this message translates to:
+  /// **'I agree to the'**
+  String get signUpLegalConsentPrefix;
+
+  /// No description provided for @signUpLegalConsentAnd.
+  ///
+  /// In en_US, this message translates to:
+  /// **'and'**
+  String get signUpLegalConsentAnd;
+
+  /// No description provided for @signUpLegalTermsLink.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Terms of Use'**
+  String get signUpLegalTermsLink;
+
+  /// No description provided for @signUpLegalPrivacyLink.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Privacy Policy'**
+  String get signUpLegalPrivacyLink;
+
   /// No description provided for @signUpCreateAccountButton.
   ///
   /// In en_US, this message translates to:
   /// **'Create account'**
   String get signUpCreateAccountButton;
+
+  /// No description provided for @moderationActionReportUser.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Report user'**
+  String get moderationActionReportUser;
+
+  /// No description provided for @moderationActionReportMeme.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Report meme'**
+  String get moderationActionReportMeme;
+
+  /// No description provided for @moderationActionReportGroup.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Report group'**
+  String get moderationActionReportGroup;
+
+  /// No description provided for @moderationActionBlockUser.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Block user'**
+  String get moderationActionBlockUser;
+
+  /// No description provided for @moderationActionUnblockUser.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Unblock user'**
+  String get moderationActionUnblockUser;
+
+  /// No description provided for @moderationReportDialogTitleUser.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Report this user'**
+  String get moderationReportDialogTitleUser;
+
+  /// No description provided for @moderationReportDialogTitleMeme.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Report this meme'**
+  String get moderationReportDialogTitleMeme;
+
+  /// No description provided for @moderationReportDialogTitleGroup.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Report this group'**
+  String get moderationReportDialogTitleGroup;
+
+  /// No description provided for @moderationReportReasonLabel.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Reason'**
+  String get moderationReportReasonLabel;
+
+  /// No description provided for @moderationReportReasonSpam.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Spam'**
+  String get moderationReportReasonSpam;
+
+  /// No description provided for @moderationReportReasonHarassment.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Harassment'**
+  String get moderationReportReasonHarassment;
+
+  /// No description provided for @moderationReportReasonHateSpeech.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Hate speech'**
+  String get moderationReportReasonHateSpeech;
+
+  /// No description provided for @moderationReportReasonSexualContent.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Sexual content'**
+  String get moderationReportReasonSexualContent;
+
+  /// No description provided for @moderationReportReasonViolence.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Violence'**
+  String get moderationReportReasonViolence;
+
+  /// No description provided for @moderationReportReasonScam.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Scam'**
+  String get moderationReportReasonScam;
+
+  /// No description provided for @moderationReportReasonOther.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Other'**
+  String get moderationReportReasonOther;
+
+  /// No description provided for @moderationReportReasonRequiredMessage.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Please provide a report reason.'**
+  String get moderationReportReasonRequiredMessage;
+
+  /// No description provided for @moderationReportCancelButton.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Cancel'**
+  String get moderationReportCancelButton;
+
+  /// No description provided for @moderationReportSubmitButton.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Send report'**
+  String get moderationReportSubmitButton;
+
+  /// No description provided for @moderationReportSuccessMessage.
+  ///
+  /// In en_US, this message translates to:
+  /// **'Report submitted.'**
+  String get moderationReportSuccessMessage;
+
+  /// No description provided for @moderationBlockSuccessMessage.
+  ///
+  /// In en_US, this message translates to:
+  /// **'User blocked.'**
+  String get moderationBlockSuccessMessage;
+
+  /// No description provided for @moderationUnblockSuccessMessage.
+  ///
+  /// In en_US, this message translates to:
+  /// **'User unblocked.'**
+  String get moderationUnblockSuccessMessage;
 
   /// No description provided for @verifySignInResentCodeMessage.
   ///

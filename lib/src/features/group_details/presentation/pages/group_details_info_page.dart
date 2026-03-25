@@ -24,11 +24,13 @@ import 'package:memuno_app/src/app/widgets/m/m_text_field.dart';
 import 'package:memuno_app/src/features/auth/application/providers/current_user_provider.dart';
 import 'package:memuno_app/src/features/group_details/application/mutations/group_details_delete_mutation.dart';
 import 'package:memuno_app/src/features/group_details/application/mutations/group_details_leave_mutation.dart';
+import 'package:memuno_app/src/features/group_details/application/mutations/group_details_report_mutation.dart';
 import 'package:memuno_app/src/features/group_details/application/providers/group_details_members_list_provider.dart';
 import 'package:memuno_app/src/features/group_details/application/providers/group_details_pending_invitations_list_provider.dart';
 import 'package:memuno_app/src/features/group_details/application/providers/group_details_provider.dart';
 import 'package:memuno_app/src/features/group_details/application/providers/usecases/delete_group_usecase_provider.dart';
 import 'package:memuno_app/src/features/group_details/domain/entities/group_details_entity.dart';
+import 'package:memuno_app/src/features/group_details/domain/entities/group_user_type.dart';
 import 'package:memuno_app/src/features/group_details/domain/usecases/delete_group_usecase.dart';
 import 'package:memuno_app/src/features/group_details/presentation/widgets/group_details_members_list.dart';
 import 'package:memuno_app/src/features/group_details/presentation/widgets/group_details_pending_invitations_list.dart';
@@ -38,7 +40,12 @@ import 'package:memuno_app/src/features/groups/application/providers/groups_list
 import 'package:memuno_app/src/features/groups/application/providers/usecases/leave_group_usecase_provider.dart';
 import 'package:memuno_app/src/features/groups/domain/usecases/leave_group_usecase.dart';
 import 'package:memuno_app/src/features/groups/presentation/pages/groups_page.dart';
+import 'package:memuno_app/src/features/moderation/domain/entities/ugc_report_reason.dart';
+import 'package:memuno_app/src/features/moderation/domain/entities/ugc_report_target_type.dart';
+import 'package:memuno_app/src/features/moderation/presentation/widgets/moderation_report_reason_sheet.dart';
+import 'package:memuno_app/src/infrastructure/supabase/supabase_client_provider.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 class GroupDetailsInfoPage extends HookConsumerWidget {
   final String groupId;
@@ -100,6 +107,48 @@ class GroupDetailsInfoPage extends HookConsumerWidget {
     });
   }
 
+  Future<void> _reportGroup(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) async {
+    final AppFeedback feedback = ref.read(appFeedbackProvider);
+    final SupabaseClient supabaseClient = ref.read(supabaseClientProvider);
+    final UgcReportReason? reason;
+    try {
+      reason = await showModerationReportReasonPicker(
+        context,
+        supabaseClient: supabaseClient,
+        title: l10n.moderationReportDialogTitleGroup,
+      );
+    } catch (error) {
+      if (!context.mounted) {
+        return;
+      }
+      feedback.resolveAndShowError(context, error);
+      return;
+    }
+    if (!context.mounted || reason == null) {
+      return;
+    }
+    final UgcReportReason selectedReason = reason;
+
+    final Mutation<void> mutation = ref.read(
+      groupDetailsReportMutationProvider(groupId),
+    );
+    await mutation.runSafely(ref, (MutationTransaction tx) async {
+      final SupabaseClient txSupabaseClient = tx.get(supabaseClientProvider);
+      await txSupabaseClient.rpc<void>(
+        'ugc_report_create',
+        params: <String, dynamic>{
+          'p_target_type': UgcReportTargetType.group.databaseValue,
+          'p_target_id': groupId,
+          'p_reason': selectedReason.databaseValue,
+        },
+      );
+    });
+  }
+
   Future<void> _onInviteMembers(
     BuildContext context,
     WidgetRef ref,
@@ -155,6 +204,7 @@ class GroupDetailsInfoPage extends HookConsumerWidget {
     required GroupDetailsEntity? details,
     required bool canAddMembers,
     required bool canUpdateName,
+    required bool canReportGroup,
     required bool canShowLeave,
     required bool canShowDelete,
   }) async {
@@ -163,6 +213,7 @@ class GroupDetailsInfoPage extends HookConsumerWidget {
       l10n,
       canAddMembers: canAddMembers,
       canUpdateName: canUpdateName,
+      canReportGroup: canReportGroup,
       canShowLeave: canShowLeave,
       canShowDelete: canShowDelete,
     );
@@ -193,6 +244,11 @@ class GroupDetailsInfoPage extends HookConsumerWidget {
       return;
     }
 
+    if (action == _GroupAction.reportGroup) {
+      await _reportGroup(context, ref, l10n);
+      return;
+    }
+
     if (action == _GroupAction.leaveGroup) {
       await _leaveGroup(ref);
       return;
@@ -208,6 +264,7 @@ class GroupDetailsInfoPage extends HookConsumerWidget {
     AppLocalizations l10n, {
     required bool canAddMembers,
     required bool canUpdateName,
+    required bool canReportGroup,
     required bool canShowLeave,
     required bool canShowDelete,
   }) {
@@ -238,6 +295,17 @@ class GroupDetailsInfoPage extends HookConsumerWidget {
             Navigator.of(context).pop(_GroupAction.updateName);
           },
           title: l10n.groupDetailsUpdateNameDialogTitle,
+        ),
+      );
+    }
+
+    if (canReportGroup) {
+      addAction(
+        MButton.secondary(
+          onPressed: () {
+            Navigator.of(context).pop(_GroupAction.reportGroup);
+          },
+          title: l10n.moderationActionReportGroup,
         ),
       );
     }
@@ -363,8 +431,16 @@ class GroupDetailsInfoPage extends HookConsumerWidget {
     final bool canManageMembers = details?.canManageMembers == true;
     final bool canAddMembers = details?.canAddMembers == true;
     final bool canUpdateName = canManageMembers && details != null;
+    final bool canReportGroup =
+        details != null &&
+        currentUserId != null &&
+        details.myUserType != GroupUserType.creator;
     final bool canShowGroupActions =
-        canAddMembers || canUpdateName || canShowLeave || canShowDelete;
+        canAddMembers ||
+        canUpdateName ||
+        canReportGroup ||
+        canShowLeave ||
+        canShowDelete;
 
     final Mutation<void> leaveMutation = ref.watch(
       groupDetailsLeaveMutationProvider(groupId),
@@ -377,7 +453,12 @@ class GroupDetailsInfoPage extends HookConsumerWidget {
     );
     final MutationState<void> deleteState = ref.watch(deleteMutation);
     final bool isDeleting = deleteState is MutationPending<void>;
-    final bool isActionPending = isLeaving || isDeleting;
+    final Mutation<void> reportMutation = ref.watch(
+      groupDetailsReportMutationProvider(groupId),
+    );
+    final MutationState<void> reportState = ref.watch(reportMutation);
+    final bool isReporting = reportState is MutationPending<void>;
+    final bool isActionPending = isLeaving || isDeleting || isReporting;
 
     ref.listen<MutationState<void>>(leaveMutation, (previous, next) {
       if (next is MutationError<void>) {
@@ -406,6 +487,17 @@ class GroupDetailsInfoPage extends HookConsumerWidget {
         ref.read(groupsListProvider.notifier).refresh();
         if (!context.mounted) return;
         GroupsRoute(tab: GroupsPageTab.groups.routeValue).go(context);
+      }
+    });
+
+    ref.listen<MutationState<void>>(reportMutation, (previous, next) {
+      if (next is MutationError<void>) {
+        feedback.resolveAndShowError(context, next.error);
+      } else if (next is MutationSuccess<void>) {
+        feedback.showSuccess(
+          context,
+          message: l10n.moderationReportSuccessMessage,
+        );
       }
     });
 
@@ -438,6 +530,7 @@ class GroupDetailsInfoPage extends HookConsumerWidget {
                     details: details,
                     canAddMembers: canAddMembers,
                     canUpdateName: canUpdateName,
+                    canReportGroup: canReportGroup,
                     canShowLeave: canShowLeave,
                     canShowDelete: canShowDelete,
                   ),
@@ -535,4 +628,10 @@ class GroupDetailsInfoPage extends HookConsumerWidget {
   }
 }
 
-enum _GroupAction { inviteMembers, updateName, leaveGroup, deleteGroup }
+enum _GroupAction {
+  inviteMembers,
+  updateName,
+  reportGroup,
+  leaveGroup,
+  deleteGroup,
+}

@@ -32,6 +32,7 @@ import 'package:memuno_app/src/app/widgets/m/m_text.dart';
 import 'package:memuno_app/src/core/state/pagination/paginated_list_state.dart';
 import 'package:memuno_app/src/features/auth/application/providers/current_user_provider.dart';
 import 'package:memuno_app/src/features/meme_details/application/mutations/delete_meme_details_mutation.dart';
+import 'package:memuno_app/src/features/meme_details/application/mutations/report_meme_mutation.dart';
 import 'package:memuno_app/src/features/meme_details/application/mutations/toggle_meme_details_laugh_mutation.dart';
 import 'package:memuno_app/src/features/meme_details/application/providers/meme_addable_recipient_targets_list_provider.dart';
 import 'package:memuno_app/src/features/meme_details/application/providers/meme_details_provider.dart';
@@ -45,6 +46,11 @@ import 'package:memuno_app/src/features/meme_details/domain/usecases/delete_meme
 import 'package:memuno_app/src/features/meme_details/presentation/widgets/add_meme_recipients_sheet.dart';
 import 'package:memuno_app/src/features/meme_details/presentation/widgets/meme_laugh_list_item.dart';
 import 'package:memuno_app/src/features/meme_details/presentation/widgets/meme_recipients_list.dart';
+import 'package:memuno_app/src/features/moderation/domain/entities/ugc_report_reason.dart';
+import 'package:memuno_app/src/features/moderation/domain/entities/ugc_report_target_type.dart';
+import 'package:memuno_app/src/features/moderation/presentation/widgets/moderation_report_reason_sheet.dart';
+import 'package:memuno_app/src/infrastructure/supabase/supabase_client_provider.dart';
+import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:smooth_sheets/smooth_sheets.dart';
 
 /// Page that displays one meme and all users who laughed at it.
@@ -121,6 +127,51 @@ class MemeDetailsPage extends HookConsumerWidget {
     });
   }
 
+  Future<void> _onReportMeme(
+    BuildContext context,
+    WidgetRef ref,
+    AppLocalizations l10n,
+  ) async {
+    final AppFeedback feedback = ref.read(appFeedbackProvider);
+    final SupabaseClient supabaseClient = ref.read(supabaseClientProvider);
+    final UgcReportReason? reason;
+    try {
+      reason = await showModerationReportReasonPicker(
+        context,
+        supabaseClient: supabaseClient,
+        title: l10n.moderationReportDialogTitleMeme,
+      );
+    } catch (error) {
+      if (!context.mounted) {
+        return;
+      }
+      feedback.resolveAndShowError(context, error);
+      return;
+    }
+    if (!context.mounted) {
+      return;
+    }
+    if (reason == null) {
+      return;
+    }
+    final UgcReportReason selectedReason = reason;
+
+    final Mutation<void> mutation = ref.read(
+      reportMemeMutationProvider(memeId),
+    );
+    await mutation.runSafely(ref, (MutationTransaction tx) async {
+      final SupabaseClient txSupabaseClient = tx.get(supabaseClientProvider);
+      await txSupabaseClient.rpc<void>(
+        'ugc_report_create',
+        params: <String, dynamic>{
+          'p_target_type': UgcReportTargetType.meme.databaseValue,
+          'p_target_id': memeId,
+          'p_reason': selectedReason.databaseValue,
+        },
+      );
+    });
+  }
+
   /// Refreshes recipient tab data and all laugh/detail visibility surfaces.
   Future<void> _refreshRecipientScopedData(
     WidgetRef ref,
@@ -192,11 +243,13 @@ class MemeDetailsPage extends HookConsumerWidget {
     WidgetRef ref,
     AppLocalizations l10n, {
     required bool canDeleteMeme,
+    required bool canReportMeme,
   }) async {
     final _MemeDetailsAction? action = await _showMemeActionsSheet(
       context,
       l10n,
       canDeleteMeme: canDeleteMeme,
+      canReportMeme: canReportMeme,
     );
     if (action == null) {
       return;
@@ -208,6 +261,11 @@ class MemeDetailsPage extends HookConsumerWidget {
 
     if (action == _MemeDetailsAction.deleteMeme) {
       await _onDeleteMeme(ref);
+      return;
+    }
+
+    if (action == _MemeDetailsAction.reportMeme) {
+      await _onReportMeme(context, ref, l10n);
     }
   }
 
@@ -215,6 +273,7 @@ class MemeDetailsPage extends HookConsumerWidget {
     BuildContext context,
     AppLocalizations l10n, {
     required bool canDeleteMeme,
+    required bool canReportMeme,
   }) {
     return showModalSheet<_MemeDetailsAction>(
       context: context,
@@ -257,6 +316,16 @@ class MemeDetailsPage extends HookConsumerWidget {
                       },
                       title: l10n.memeDetailsActionDelete,
                     ),
+                  if (canDeleteMeme && canReportMeme) const MGap.sm(),
+                  if (canReportMeme)
+                    MButton.secondary(
+                      onPressed: () {
+                        Navigator.of(
+                          context,
+                        ).pop(_MemeDetailsAction.reportMeme);
+                      },
+                      title: l10n.moderationActionReportMeme,
+                    ),
                 ],
               ),
             ),
@@ -282,6 +351,11 @@ class MemeDetailsPage extends HookConsumerWidget {
         details != null &&
         currentUserId != null &&
         details.user.id == currentUserId;
+    final bool canReportMeme =
+        details != null &&
+        currentUserId != null &&
+        details.user.id != currentUserId;
+    final bool hasMemeActions = canDeleteMeme || canReportMeme;
     final bool canManageRecipients = canDeleteMeme;
 
     final AsyncValue<
@@ -298,10 +372,25 @@ class MemeDetailsPage extends HookConsumerWidget {
     );
     final MutationState<void> deleteMemeState = ref.watch(deleteMemeMutation);
     final bool isDeletingMeme = deleteMemeState is MutationPending<void>;
+    final Mutation<void> reportMemeMutation = ref.watch(
+      reportMemeMutationProvider(memeId),
+    );
+    final MutationState<void> reportMemeState = ref.watch(reportMemeMutation);
+    final bool isReportingMeme = reportMemeState is MutationPending<void>;
 
     ref.listen<MutationState<void>>(toggleLaughMutation, (previous, next) {
       if (next is MutationError<void>) {
         feedback.resolveAndShowError(context, next.error);
+      }
+    });
+    ref.listen<MutationState<void>>(reportMemeMutation, (previous, next) {
+      if (next is MutationError<void>) {
+        feedback.resolveAndShowError(context, next.error);
+      } else if (next is MutationSuccess<void>) {
+        feedback.showSuccess(
+          context,
+          message: l10n.moderationReportSuccessMessage,
+        );
       }
     });
 
@@ -331,16 +420,17 @@ class MemeDetailsPage extends HookConsumerWidget {
       ],
       trailing: <MAppBarButton>[
         MAppBarButton(
-          onPressed: !canDeleteMeme || isDeletingMeme
+          onPressed: !hasMemeActions || isDeletingMeme || isReportingMeme
               ? null
               : () => _onOpenMemeActions(
                   context,
                   ref,
                   l10n,
                   canDeleteMeme: canDeleteMeme,
+                  canReportMeme: canReportMeme,
                 ),
-          isEnabled: canDeleteMeme && !isDeletingMeme,
-          isLoading: isDeletingMeme,
+          isEnabled: hasMemeActions && !isDeletingMeme && !isReportingMeme,
+          isLoading: isDeletingMeme || isReportingMeme,
           icon: LucideIcons.ellipsis_vertical,
         ),
       ],
@@ -729,4 +819,4 @@ class MemeDetailsPage extends HookConsumerWidget {
   }
 }
 
-enum _MemeDetailsAction { deleteMeme }
+enum _MemeDetailsAction { deleteMeme, reportMeme }

@@ -23,6 +23,7 @@ final class SupabaseMemeSendDatasourceImpl implements MemeSendDatasource {
     required double aspectRatio,
     required List<String> recipientUserIds,
     required List<String> recipientGroupIds,
+    required List<String> textLayers,
   }) async {
     final String? userId = _supabaseClient.auth.currentUser?.id;
     if (userId == null || userId.isEmpty) {
@@ -49,6 +50,7 @@ final class SupabaseMemeSendDatasourceImpl implements MemeSendDatasource {
         'p_aspect_ratio': aspectRatio,
         'p_recipient_ids': recipientUserIds,
         'p_group_ids': recipientGroupIds,
+        'p_text_layers': textLayers,
       },
     );
   }

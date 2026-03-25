@@ -543,3 +543,35 @@ ALTER TABLE ONLY "public"."push_device_tokens"
 ALTER TABLE ONLY "public"."users"
     ADD CONSTRAINT "fk_users__id__auth_users__id" FOREIGN KEY ("id") REFERENCES "auth"."users"("id") ON UPDATE CASCADE ON DELETE CASCADE;
 
+
+
+CREATE TABLE IF NOT EXISTS "public"."user_blocks" (
+    "blocker_id" "uuid" NOT NULL,
+    "blocked_id" "uuid" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "pk_user_blocks" PRIMARY KEY ("blocker_id", "blocked_id"),
+    CONSTRAINT "ck_user_blocks_not_self" CHECK (("blocker_id" <> "blocked_id")),
+    CONSTRAINT "fk_user_blocks_blocker_id__auth_users__id" FOREIGN KEY ("blocker_id") REFERENCES "auth"."users"("id") ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT "fk_user_blocks_blocked_id__auth_users__id" FOREIGN KEY ("blocked_id") REFERENCES "auth"."users"("id") ON UPDATE CASCADE ON DELETE CASCADE
+);
+
+
+CREATE TABLE IF NOT EXISTS "public"."ugc_reports" (
+    "id" "uuid" DEFAULT "gen_random_uuid"() NOT NULL,
+    "reporter_id" "uuid" NOT NULL,
+    "target_type" "public"."ugc_report_target_type" NOT NULL,
+    "target_user_id" "uuid",
+    "target_group_id" "uuid",
+    "target_meme_id" "uuid",
+    "reason" "public"."ugc_report_reason" NOT NULL,
+    "status" "public"."ugc_report_status" DEFAULT 'open'::"public"."ugc_report_status" NOT NULL,
+    "created_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    "updated_at" timestamp with time zone DEFAULT "now"() NOT NULL,
+    CONSTRAINT "pk_ugc_reports" PRIMARY KEY ("id"),
+    CONSTRAINT "ck_ugc_reports_target_shape" CHECK ((((("target_type" = 'user'::"public"."ugc_report_target_type") AND ("target_user_id" IS NOT NULL) AND ("target_group_id" IS NULL) AND ("target_meme_id" IS NULL)) OR (("target_type" = 'group'::"public"."ugc_report_target_type") AND ("target_user_id" IS NULL) AND ("target_group_id" IS NOT NULL) AND ("target_meme_id" IS NULL)) OR (("target_type" = 'meme'::"public"."ugc_report_target_type") AND ("target_user_id" IS NULL) AND ("target_group_id" IS NULL) AND ("target_meme_id" IS NOT NULL))))),
+    CONSTRAINT "fk_ugc_reports_reporter" FOREIGN KEY ("reporter_id") REFERENCES "public"."users"("id") ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT "fk_ugc_reports_target_user" FOREIGN KEY ("target_user_id") REFERENCES "public"."users"("id") ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT "fk_ugc_reports_target_group" FOREIGN KEY ("target_group_id") REFERENCES "public"."groups"("id") ON UPDATE CASCADE ON DELETE CASCADE,
+    CONSTRAINT "fk_ugc_reports_target_meme" FOREIGN KEY ("target_meme_id") REFERENCES "public"."memes"("id") ON UPDATE CASCADE ON DELETE CASCADE
+);

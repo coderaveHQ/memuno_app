@@ -56,15 +56,26 @@ Do not rely on declarative `schema_paths` for these:
 - `.env.development.example` -> `.env.development`
 - `.env.staging.example` -> `.env.staging`
 - `.env.production.example` -> `.env.production`
+
 - `supabase/.env.local.example` -> `supabase/.env.local`
 
-##### 2. Start local Supabase
+- `meme_templates/.env.development.example` -> `meme_templates/.env.development`
+- `meme_templates/.env.staging.example` -> `meme_templates/.env.staging`
+- `meme_templates/.env.production.example` -> `meme_templates/.env.production`
+
+##### 2. Update Supabase configuration
+
+Navigate into `supabase/config.toml` and update your local LAN IP in:
+
+- `auth.additional_redirect_urls`
+
+##### 3. Start local Supabase
 
 ```sh
 supabase start
 ```
 
-##### 3. Ensure local Vault secrets are set
+##### 4. Ensure local Vault secrets are set
 
 The migration creates helper `public.upsert_vault_secret(...)` and manages triggers + cron schedules.
 Set environment-specific values after migrations are applied:
@@ -84,13 +95,34 @@ select public.upsert_vault_secret(
 );
 ```
 
-##### 4. Serve Edge Functions
+##### 5. Serve Edge Functions
 
 ```sh
 supabase functions serve --env-file supabase/.env.local
 ```
 
-##### 5. Install and run app
+##### 6. Serve legal pages locally (optional for development)
+
+Ensure `.env.development` contains:
+
+- `LEGAL_BASE_URL=http://<YOUR-LAN-IP>:8080/development/legal`
+
+Build the legal site:
+
+```sh
+legal/scripts/build_legal_site.sh
+```
+
+Serve the generated static files on all interfaces:
+
+```sh
+cd legal/dist
+python3 -m http.server 8080 --bind 0.0.0.0
+```
+
+Use the same LAN IP in `LEGAL_BASE_URL` so emulators and real devices can reach the host machine.
+
+##### 7. Install and run app
 
 ```sh
 flutter pub get
@@ -117,6 +149,7 @@ Set secrets per project (staging and production each separately):
 - **SB_PUBLISHABLE_KEY**: <SB_PUBLISHABLE_KEY>
 - **SB_SECRET_KEY**: <SB_SECRET_KEY>
 - **FIREBASE_SERVICE_ACCOUNT_JSON**: <ONE_LINE_JSON>
+- **LEGAL_CALLBACK_BASE_URL**: <URL>
 
 ##### 2. Set hosted Vault secrets
 

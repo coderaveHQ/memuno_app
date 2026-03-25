@@ -68,6 +68,7 @@ jobs:
     env:
       SUPABASE_URL: ${{ vars.SUPABASE_URL }}
       SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+      LEGAL_BASE_URL: ${{ vars.LEGAL_BASE_URL }}
 
       # Optional (recommended) for later store tooling:
       # ANDROID_PACKAGE_NAME: dev.coderave.memunoapp.stg
@@ -145,6 +146,7 @@ jobs:
           --build-number=$BUILD_NUMBER
           --dart-define=SUPABASE_URL=$SUPABASE_URL
           --dart-define=SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY
+          --dart-define=LEGAL_BASE_URL=$LEGAL_BASE_URL
 
       # Build an AAB (Android App Bundle) for Play Store distribution.
       - name: Build AppBundle (staging)
@@ -155,6 +157,7 @@ jobs:
           --build-number=$BUILD_NUMBER
           --dart-define=SUPABASE_URL=$SUPABASE_URL
           --dart-define=SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY
+          --dart-define=LEGAL_BASE_URL=$LEGAL_BASE_URL
 
       # Upload build outputs as workflow artifacts for download.
       - name: Upload Android artifacts
@@ -205,6 +208,7 @@ jobs:
     env:
       SUPABASE_URL: ${{ vars.SUPABASE_URL }}
       SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+      LEGAL_BASE_URL: ${{ vars.LEGAL_BASE_URL }}
 
       # Optional (recommended) for later store tooling:
       # IOS_BUNDLE_ID: dev.coderave.memunoapp.stg
@@ -292,6 +296,7 @@ jobs:
           --build-number=$BUILD_NUMBER
           --dart-define=SUPABASE_URL=$SUPABASE_URL
           --dart-define=SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY
+          --dart-define=LEGAL_BASE_URL=$LEGAL_BASE_URL
 
       # Upload iOS build products as artifacts (compile validation output).
       - name: Upload iOS artifacts (no codesign)
@@ -312,6 +317,9 @@ jobs:
       # - ASC_PRIVATE_KEY
       # - MATCH_GIT_URL
       # - MATCH_PASSWORD
+      #
+      # Vars:
+      # - LEGAL_BASE_URL = https://coderavehq.github.io/memuno_app/staging/legal
       #
       # Vars (recommended):
       # - IOS_BUNDLE_ID = dev.coderave.memunoapp.stg

@@ -45,6 +45,7 @@ final class AppSecrets {
   const AppSecrets({
     required this.supabaseUrl,
     required this.supabasePublishableKey,
+    required this.legalBaseUrl,
   });
 
   /// Supabase project URL (e.g. https://xxxx.supabase.co).
@@ -54,6 +55,9 @@ final class AppSecrets {
   ///
   /// Note: This is safe to ship in the app, but must match your RLS policies.
   final String supabasePublishableKey;
+
+  /// Base URL for hosted legal pages.
+  final String legalBaseUrl;
 
   /// Validates that required secrets are present.
   ///
@@ -66,6 +70,9 @@ final class AppSecrets {
       }
       if (supabasePublishableKey.isEmpty) {
         throw FlutterError('Missing dart-define: SUPABASE_PUBLISHABLE_KEY');
+      }
+      if (legalBaseUrl.isEmpty) {
+        throw FlutterError('Missing dart-define: LEGAL_BASE_URL');
       }
       return true;
     }());
@@ -83,6 +90,7 @@ final class AppConfig {
   const AppConfig({
     required this.environment,
     required this.authCallbackRedirect,
+    required this.legalBaseUrl,
     required this.secrets,
     required this.firebaseOptions,
   });
@@ -91,6 +99,9 @@ final class AppConfig {
   final AppEnvironment environment;
 
   final String authCallbackRedirect;
+
+  /// Base URL for hosted legal pages.
+  final String legalBaseUrl;
 
   /// Secrets for the resolved environment.
   final AppSecrets secrets;
@@ -179,10 +190,12 @@ final class AppEnv {
     const String supabasePublishableKey = String.fromEnvironment(
       'SUPABASE_PUBLISHABLE_KEY',
     );
+    const String legalBaseUrl = String.fromEnvironment('LEGAL_BASE_URL');
 
     final AppSecrets result = AppSecrets(
       supabaseUrl: supabaseUrl,
       supabasePublishableKey: supabasePublishableKey,
+      legalBaseUrl: legalBaseUrl,
     );
 
     // Fail fast for developers. In release, your CI/build should guarantee this.
@@ -195,6 +208,9 @@ final class AppEnv {
 
   /// Returns the resolved secrets.
   static AppSecrets get secrets => _secrets;
+
+  /// Returns the legal site base URL for the active environment.
+  static String get legalBaseUrl => _secrets.legalBaseUrl;
 
   /// Returns the correct Firebase options for the current environment and platform.
   ///
@@ -216,6 +232,7 @@ final class AppEnv {
     return AppConfig(
       environment: env,
       authCallbackRedirect: authCallbackRedirect,
+      legalBaseUrl: legalBaseUrl,
       secrets: secrets,
       firebaseOptions: firebaseOptions,
     );

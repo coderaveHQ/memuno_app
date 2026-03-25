@@ -53,6 +53,7 @@ final Map<bool, _AuthRoutingPolicy> _authRoutingPolicies =
           ChangeEmailRoute.routeName,
           ChangePasswordRoute.routeName,
           DeleteAccountRoute.routeName,
+          BlockedUsersRoute.routeName,
         },
       ),
     };

@@ -68,6 +68,7 @@ jobs:
     env:
       SUPABASE_URL: ${{ vars.SUPABASE_URL }}
       SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+      LEGAL_BASE_URL: ${{ vars.LEGAL_BASE_URL }}
 
       # Optional (recommended) for later Play tooling:
       # ANDROID_PACKAGE_NAME: dev.coderave.memunoapp
@@ -135,6 +136,7 @@ jobs:
           --build-number=$BUILD_NUMBER
           --dart-define=SUPABASE_URL=$SUPABASE_URL
           --dart-define=SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY
+          --dart-define=LEGAL_BASE_URL=$LEGAL_BASE_URL
 
       # AAB is the required format for Google Play releases.
       - name: Build AppBundle (production)
@@ -145,6 +147,7 @@ jobs:
           --build-number=$BUILD_NUMBER
           --dart-define=SUPABASE_URL=$SUPABASE_URL
           --dart-define=SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY
+          --dart-define=LEGAL_BASE_URL=$LEGAL_BASE_URL
 
       - name: Upload Android artifacts
         uses: actions/upload-artifact@v4
@@ -161,6 +164,9 @@ jobs:
       # Requirements (GitHub Environment "production" secrets):
       # - GOOGLE_PLAY_SERVICE_ACCOUNT_JSON (service account json for Play)
       # - (optional) SIGNING config if needed for local signing
+      #
+      # Vars:
+      # - LEGAL_BASE_URL = https://coderavehq.github.io/memuno_app/legal
       #
       # Preferred approach:
       # - Use Fastlane `supply` to upload AAB to the Production track.
@@ -187,6 +193,7 @@ jobs:
     env:
       SUPABASE_URL: ${{ vars.SUPABASE_URL }}
       SUPABASE_PUBLISHABLE_KEY: ${{ secrets.SUPABASE_PUBLISHABLE_KEY }}
+      LEGAL_BASE_URL: ${{ vars.LEGAL_BASE_URL }}
 
       # Optional (recommended) for later ASC tooling:
       # IOS_BUNDLE_ID: dev.coderave.memunoapp
@@ -270,6 +277,7 @@ jobs:
           --build-number=$BUILD_NUMBER
           --dart-define=SUPABASE_URL=$SUPABASE_URL
           --dart-define=SUPABASE_PUBLISHABLE_KEY=$SUPABASE_PUBLISHABLE_KEY
+          --dart-define=LEGAL_BASE_URL=$LEGAL_BASE_URL
 
       - name: Upload iOS artifacts (no codesign)
         uses: actions/upload-artifact@v4
@@ -287,6 +295,9 @@ jobs:
       # - ASC_PRIVATE_KEY
       # - MATCH_GIT_URL (if using match)
       # - MATCH_PASSWORD
+      #
+      # Vars:
+      # - LEGAL_BASE_URL = https://coderavehq.github.io/memuno_app/legal
       #
       # Typical approach:
       # 1) Setup Ruby + Fastlane

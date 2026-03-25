@@ -1,0 +1,13 @@
+{
+  "site_name": "Memuno",
+  "site_url": "https://coderavehq.github.io/memuno_app/legal",
+  "supabase_url": "https://sudmqupgtiundrjmvzrv.supabase.co",
+  "supabase_publishable_key": "sb_publishable_w3Oji2jBtDww1HcIJkOkTQ_39W84nWE",
+  "version": "1.0.0",
+  "effective_date": "2026-03-23",
+  "support_email": "support@coderave.dev",
+  "support_phone": "+49-176-43474934",
+  "privacy_contact_email": "privacy@coderave.dev",
+  "legal_entity": "Florian Leeser Softwareentwicklung",
+  "legal_address": "Eintrachtstraße 50, 42655 Solingen, Germany"
+}

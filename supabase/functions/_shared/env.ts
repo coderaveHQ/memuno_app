@@ -4,6 +4,7 @@ export const ENV_SECRET = {
   SB_SECRET_KEY: "SB_SECRET_KEY",
   FIREBASE_SERVICE_ACCOUNT_JSON: "FIREBASE_SERVICE_ACCOUNT_JSON",
   PUSH_IMAGE_PUBLIC_BASE_URL: "PUSH_IMAGE_PUBLIC_BASE_URL",
+  LEGAL_CALLBACK_BASE_URL: "LEGAL_CALLBACK_BASE_URL",
 } as const;
 
 export type EnvSecretKey = typeof ENV_SECRET[keyof typeof ENV_SECRET];
@@ -20,6 +21,9 @@ export type EdgeSecrets = {
   };
   pushImage: {
     publicBaseUrl: string | null;
+  };
+  legal: {
+    callbackBaseUrl: string | null;
   };
 };
 
@@ -76,6 +80,12 @@ export function getEdgeSecrets(
     pushImage: {
       publicBaseUrl: getOptionalSecret(
         ENV_SECRET.PUSH_IMAGE_PUBLIC_BASE_URL,
+        getEnv,
+      ),
+    },
+    legal: {
+      callbackBaseUrl: getOptionalSecret(
+        ENV_SECRET.LEGAL_CALLBACK_BASE_URL,
         getEnv,
       ),
     },

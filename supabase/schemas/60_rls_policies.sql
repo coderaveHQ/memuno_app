@@ -138,3 +138,17 @@ CREATE POLICY "users:select:self:authenticated" ON "public"."users" FOR SELECT T
 CREATE POLICY "users:update:self:authenticated" ON "public"."users" FOR UPDATE TO "authenticated" USING (("id" = ( SELECT "auth"."uid"() AS "uid"))) WITH CHECK (("id" = ( SELECT "auth"."uid"() AS "uid")));
 
 
+
+ALTER TABLE "public"."user_blocks" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "user_blocks:insert:self:authenticated" ON "public"."user_blocks" FOR INSERT TO "authenticated" WITH CHECK (("blocker_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+CREATE POLICY "user_blocks:select:self:authenticated" ON "public"."user_blocks" FOR SELECT TO "authenticated" USING (("blocker_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+CREATE POLICY "user_blocks:delete:self:authenticated" ON "public"."user_blocks" FOR DELETE TO "authenticated" USING (("blocker_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+ALTER TABLE "public"."ugc_reports" ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "ugc_reports:insert:self:authenticated" ON "public"."ugc_reports" FOR INSERT TO "authenticated" WITH CHECK (("reporter_id" = ( SELECT "auth"."uid"() AS "uid")));
+
+CREATE POLICY "ugc_reports:select:self:authenticated" ON "public"."ugc_reports" FOR SELECT TO "authenticated" USING (("reporter_id" = ( SELECT "auth"."uid"() AS "uid")));

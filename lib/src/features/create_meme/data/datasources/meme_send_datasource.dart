@@ -18,5 +18,8 @@ abstract class MemeSendDatasource {
 
     /// Target group identifiers.
     required List<String> recipientGroupIds,
+
+    /// Plain-text meme layer values for server-side validation.
+    required List<String> textLayers,
   });
 }
