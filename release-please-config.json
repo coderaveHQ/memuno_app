@@ -1,10 +1,15 @@
 {
   "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "bootstrap-sha": "4fa7638477f241d0a3c422ce1251ca42ec644653",
+  "include-component-in-tag": false,
+  "release-search-depth": 100,
+  "commit-search-depth": 100,
   "packages": {
     ".": {
       "release-type": "dart",
       "package-name": "memuno_app",
       "changelog-path": "CHANGELOG.md",
+      "include-component-in-tag": false,
       "include-v-in-tag": true
     }
   }
