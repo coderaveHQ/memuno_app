@@ -4,6 +4,7 @@
   "include-component-in-tag": false,
   "release-search-depth": 100,
   "commit-search-depth": 100,
+  "commit-batch-size": 1,
   "packages": {
     ".": {
       "release-type": "dart",

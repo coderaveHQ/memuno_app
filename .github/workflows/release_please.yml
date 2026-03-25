@@ -91,18 +91,7 @@ jobs:
       #
       # - target-branch:
       #   Explicitly declare which branch is considered the release base.
-      - name: Run Release Please (attempt 1)
-        id: release_please_attempt_1
-        continue-on-error: true
-        uses: googleapis/release-please-action@v4.4.0
-        with:
-          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
-          config-file: release-please-config.json
-          manifest-file: .release-please-manifest.json
-          target-branch: production
-
-      - name: Run Release Please (retry on transient failure)
-        if: steps.release_please_attempt_1.outcome == 'failure'
+      - name: Run Release Please
         uses: googleapis/release-please-action@v4.4.0
         with:
           token: ${{ secrets.RELEASE_PLEASE_TOKEN }}

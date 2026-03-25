@@ -33,7 +33,6 @@ on:
   push:
     tags:
       - "v*"
-      - "memuno_app-v*"
   workflow_dispatch:
 
 # We generally do NOT cancel production release builds.
@@ -123,8 +122,7 @@ jobs:
       - name: Determine build name/number from tag
         run: |
           TAG="${{ github.ref_name }}"
-          VERSION_NAME="${TAG#memuno_app-v}"
-          VERSION_NAME="${VERSION_NAME#v}"
+          VERSION_NAME="${TAG#v}"
           echo "VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
           echo "BUILD_NUMBER=${{ github.run_number }}" >> "$GITHUB_ENV"
           echo "Using tag=$TAG -> build-name=$VERSION_NAME, build-number=${{ github.run_number }}"
@@ -239,8 +237,7 @@ jobs:
       - name: Determine build name/number from tag
         run: |
           TAG="${{ github.ref_name }}"
-          VERSION_NAME="${TAG#memuno_app-v}"
-          VERSION_NAME="${VERSION_NAME#v}"
+          VERSION_NAME="${TAG#v}"
           echo "VERSION_NAME=$VERSION_NAME" >> "$GITHUB_ENV"
           echo "BUILD_NUMBER=${{ github.run_number }}" >> "$GITHUB_ENV"
           echo "Using tag=$TAG -> build-name=$VERSION_NAME, build-number=${{ github.run_number }}"
