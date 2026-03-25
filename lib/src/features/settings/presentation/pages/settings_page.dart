@@ -4,6 +4,8 @@ import 'package:go_router/go_router.dart';
 import 'package:hooks_riverpod/hooks_riverpod.dart';
 import 'package:memuno_app/l10n/app_localizations.dart';
 import 'package:memuno_app/src/app/extensions/build_context_x.dart';
+import 'package:memuno_app/src/app/feedback/app_feedback.dart';
+import 'package:memuno_app/src/app/feedback/app_feedback_provider.dart';
 import 'package:memuno_app/src/app/router/app_router.dart';
 import 'package:memuno_app/src/app/widgets/m/m_app_bar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_colors.dart';
@@ -13,6 +15,8 @@ import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
 import 'package:memuno_app/src/app/widgets/m/m_text.dart';
 import 'package:memuno_app/src/app/widgets/sign_out_button.dart';
+import 'package:memuno_app/src/core/config/legal_urls.dart';
+import 'package:memuno_app/src/core/external/external_url_launcher.dart';
 import 'package:memuno_app/src/features/settings/application/providers/language_preference_provider.dart';
 import 'package:memuno_app/src/features/settings/domain/entities/app_language.dart';
 
@@ -31,6 +35,31 @@ class SettingsPage extends ConsumerWidget {
       return l10n.languageModeSystemOption;
     }
     return language.nativeLabel;
+  }
+
+  Future<void> _openLegalDocument(
+    BuildContext context,
+    WidgetRef ref,
+    LegalDocument document,
+  ) async {
+    final AppFeedback feedback = ref.read(appFeedbackProvider);
+    final AppLocalizations l10n = AppLocalizations.of(context);
+    final Uri uri = LegalUrls.resolve(
+      document: document,
+      locale: Localizations.localeOf(context),
+    );
+
+    try {
+      final bool opened = await ref.read(externalUrlLauncherProvider).open(uri);
+      if (!opened && context.mounted) {
+        feedback.showError(context, message: l10n.genericErrorMessage);
+      }
+    } catch (error) {
+      if (!context.mounted) {
+        return;
+      }
+      feedback.resolveAndShowError(context, error);
+    }
   }
 
   @override
@@ -80,7 +109,7 @@ class SettingsPage extends ConsumerWidget {
                     alignment: Alignment.centerLeft,
                     child: Padding(
                       padding: titlePadding,
-                      child: MText.h4(
+                      child: MText.h3(
                         text: l10n.settingsSectionAppearance,
                         style: TextStyle(color: MColors.gray100),
                       ),
@@ -105,7 +134,7 @@ class SettingsPage extends ConsumerWidget {
                     alignment: Alignment.centerLeft,
                     child: Padding(
                       padding: titlePadding,
-                      child: MText.h4(
+                      child: MText.h3(
                         text: l10n.settingsSectionAccountManagement,
                         style: TextStyle(color: MColors.gray100),
                       ),
@@ -144,6 +173,125 @@ class SettingsPage extends ConsumerWidget {
                     },
                     title: l10n.deleteAccountListTileTitle,
                     description: l10n.deleteAccountListTileSubtitle,
+                    trailing: const Icon(
+                      LucideIcons.chevron_right,
+                      color: MColors.gray500,
+                      size: 24.0,
+                    ),
+                    padding: tilePadding,
+                  ),
+                  MListTile(
+                    onPressed: () {
+                      const BlockedUsersRoute().push<void>(context);
+                    },
+                    title: l10n.settingsBlockedUsersTitle,
+                    description: l10n.settingsBlockedUsersSubtitle,
+                    trailing: const Icon(
+                      LucideIcons.chevron_right,
+                      color: MColors.gray500,
+                      size: 24.0,
+                    ),
+                    padding: tilePadding,
+                  ),
+                  const MGap.lg(),
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: titlePadding,
+                      child: MText.h3(
+                        text: l10n.settingsSectionLegal,
+                        style: TextStyle(color: MColors.gray100),
+                      ),
+                    ),
+                  ),
+                  const MGap.sm(),
+                  MListTile(
+                    onPressed: () {
+                      _openLegalDocument(
+                        context,
+                        ref,
+                        LegalDocument.privacyPolicy,
+                      );
+                    },
+                    title: l10n.settingsLegalPrivacyTitle,
+                    description: l10n.settingsLegalPrivacySubtitle,
+                    trailing: const Icon(
+                      LucideIcons.chevron_right,
+                      color: MColors.gray500,
+                      size: 24.0,
+                    ),
+                    padding: tilePadding,
+                  ),
+                  MListTile(
+                    onPressed: () {
+                      _openLegalDocument(
+                        context,
+                        ref,
+                        LegalDocument.termsOfUse,
+                      );
+                    },
+                    title: l10n.settingsLegalTermsTitle,
+                    description: l10n.settingsLegalTermsSubtitle,
+                    trailing: const Icon(
+                      LucideIcons.chevron_right,
+                      color: MColors.gray500,
+                      size: 24.0,
+                    ),
+                    padding: tilePadding,
+                  ),
+                  MListTile(
+                    onPressed: () {
+                      _openLegalDocument(
+                        context,
+                        ref,
+                        LegalDocument.communityGuidelines,
+                      );
+                    },
+                    title: l10n.settingsLegalCommunityTitle,
+                    description: l10n.settingsLegalCommunitySubtitle,
+                    trailing: const Icon(
+                      LucideIcons.chevron_right,
+                      color: MColors.gray500,
+                      size: 24.0,
+                    ),
+                    padding: tilePadding,
+                  ),
+                  MListTile(
+                    onPressed: () {
+                      _openLegalDocument(
+                        context,
+                        ref,
+                        LegalDocument.accountDeletion,
+                      );
+                    },
+                    title: l10n.settingsLegalAccountDeletionHelpTitle,
+                    description: l10n.settingsLegalAccountDeletionHelpSubtitle,
+                    trailing: const Icon(
+                      LucideIcons.chevron_right,
+                      color: MColors.gray500,
+                      size: 24.0,
+                    ),
+                    padding: tilePadding,
+                  ),
+                  MListTile(
+                    onPressed: () {
+                      _openLegalDocument(context, ref, LegalDocument.impressum);
+                    },
+                    title: l10n.settingsLegalImpressumTitle,
+                    description: l10n.settingsLegalImpressumSubtitle,
+                    trailing: const Icon(
+                      LucideIcons.chevron_right,
+                      color: MColors.gray500,
+                      size: 24.0,
+                    ),
+                    padding: tilePadding,
+                  ),
+                  MListTile(
+                    onPressed: () {
+                      _openLegalDocument(context, ref, LegalDocument.support);
+                    },
+                    title: l10n.settingsLegalSupportTitle,
+                    description: l10n.settingsLegalSupportSubtitle,
                     trailing: const Icon(
                       LucideIcons.chevron_right,
                       color: MColors.gray500,

@@ -63,6 +63,7 @@ dependencies:
 
   # --- Sharing / Platform utilities -----------------------------------------
   share_plus: ^12.0.1
+  url_launcher: ^6.3.2
 
   # --- Helpers --------------------------------------------------------------
   image: ^4.8.0

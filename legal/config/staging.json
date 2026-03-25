@@ -1,0 +1,13 @@
+{
+  "site_name": "Memuno (Staging)",
+  "site_url": "https://coderavehq.github.io/memuno_app/staging/legal",
+  "supabase_url": "https://bhwsuraepcmnurgqvuzj.supabase.co",
+  "supabase_publishable_key": "sb_publishable_Qv28XF4-ehhFqOraI98mDQ_e6t3Ed2E",
+  "version": "1.0.0",
+  "effective_date": "2026-03-23",
+  "support_email": "support.stg@coderave.dev",
+  "support_phone": "+49-176-43474934",
+  "privacy_contact_email": "privacy.stg@coderave.dev",
+  "legal_entity": "Florian Leeser Softwareentwicklung",
+  "legal_address": "Eintrachtstraße 50, 42655 Solingen, Germany"
+}

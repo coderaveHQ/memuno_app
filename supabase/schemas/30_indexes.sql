@@ -57,3 +57,17 @@ CREATE INDEX "push_device_tokens_cleanup_idx" ON "public"."push_device_tokens" U
 CREATE UNIQUE INDEX "push_device_tokens_one_active_per_installation_idx" ON "public"."push_device_tokens" USING "btree" ("installation_id") WHERE ("is_active" = true);
 
 CREATE INDEX "push_device_tokens_user_active_last_seen_idx" ON "public"."push_device_tokens" USING "btree" ("user_id", "is_active", "last_seen_at" DESC);
+
+CREATE INDEX "user_blocks_blocked_id_idx" ON "public"."user_blocks" USING "btree" ("blocked_id");
+
+CREATE INDEX "user_blocks_blocker_created_at_blocked_id_idx" ON "public"."user_blocks" USING "btree" ("blocker_id", "created_at" DESC, "blocked_id" DESC);
+
+CREATE INDEX "ugc_reports_reporter_created_at_idx" ON "public"."ugc_reports" USING "btree" ("reporter_id", "created_at" DESC, "id" DESC);
+
+CREATE UNIQUE INDEX "ugc_reports_active_user_report_per_reporter_target_uidx" ON "public"."ugc_reports" USING "btree" ("reporter_id", "target_user_id") WHERE (("target_type" = 'user'::"public"."ugc_report_target_type") AND ("target_user_id" IS NOT NULL) AND ("status" = ANY (ARRAY['open'::"public"."ugc_report_status", 'in_review'::"public"."ugc_report_status"])));
+
+CREATE INDEX "ugc_reports_target_user_created_at_idx" ON "public"."ugc_reports" USING "btree" ("target_user_id", "created_at" DESC, "id" DESC) WHERE ("target_user_id" IS NOT NULL);
+
+CREATE INDEX "ugc_reports_target_group_created_at_idx" ON "public"."ugc_reports" USING "btree" ("target_group_id", "created_at" DESC, "id" DESC) WHERE ("target_group_id" IS NOT NULL);
+
+CREATE INDEX "ugc_reports_target_meme_created_at_idx" ON "public"."ugc_reports" USING "btree" ("target_meme_id", "created_at" DESC, "id" DESC) WHERE ("target_meme_id" IS NOT NULL);

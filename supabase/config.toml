@@ -159,8 +159,13 @@ enabled = true
 site_url = "dev.coderave.memunoapp.dev://"
 # A list of *exact* URLs that auth providers are permitted to redirect to post authentication.
 additional_redirect_urls = [
-  "dev.coderave.memunoapp.dev://auth/callback"
+  "dev.coderave.memunoapp.dev://auth/callback",
+  "http://127.0.0.1:8080/development/legal/en-US/account-deletion-confirm/",
+  "http://127.0.0.1:8080/development/legal/de-DE/account-deletion-confirm/",
+  "http://127.0.0.1:8080/development/legal/en/account-deletion-confirm/",
+  "http://127.0.0.1:8080/development/legal/de/account-deletion-confirm/"
 ]
+
 # How long tokens are valid for, in seconds. Defaults to 3600 (1 hour), maximum 604,800 (1 week).
 jwt_expiry = 3600
 # JWT issuer URL. If not set, defaults to the local API URL (http://127.0.0.1:<port>/auth/v1).
@@ -426,6 +431,9 @@ deno_version = 2
 # secret_key = "env(SECRET_VALUE)"
 
 [functions.delete-own-account]
+verify_jwt = false
+
+[functions.request-account-deletion-link]
 verify_jwt = false
 
 [functions.generate-meme-push-preview]

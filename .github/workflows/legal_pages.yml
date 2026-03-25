@@ -1,0 +1,63 @@
+name: Legal Pages
+
+on:
+  push:
+    branches:
+      - production
+      - staging
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: legal-pages-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Dart
+        uses: dart-lang/setup-dart@v1
+
+      - name: Resolve app version from pubspec
+        run: |
+          APP_VERSION_LINE="$(grep -E '^version:' pubspec.yaml | awk '{print $2}')"
+          APP_VERSION="${APP_VERSION_LINE%%+*}"
+          echo "APP_VERSION=$APP_VERSION" >> "$GITHUB_ENV"
+          echo "Using legal-site version: $APP_VERSION"
+
+      - name: Build legal site
+        env:
+          LEGAL_SITE_VERSION: ${{ env.APP_VERSION }}
+        run: legal/scripts/build_legal_site.sh
+      # Note: the build also produces /development/legal for local usage,
+      # but deploy steps below intentionally publish only staging + production.
+
+      - name: Check legal links
+        run: legal/scripts/check_legal_links.sh
+
+      - name: Deploy production legal pages
+        if: github.ref == 'refs/heads/production'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: legal/dist/legal
+          destination_dir: legal
+          keep_files: true
+
+      - name: Deploy staging legal pages
+        if: github.ref == 'refs/heads/staging'
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: legal/dist/staging/legal
+          destination_dir: staging/legal
+          keep_files: true

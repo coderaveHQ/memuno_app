@@ -127,7 +127,7 @@ $$;
 
 
 CREATE OR REPLACE FUNCTION "public"."cleanup_group_after_user_removed"() RETURNS "trigger"
-    LANGUAGE "plpgsql"
+    LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO 'public'
     AS $$
 begin
@@ -166,7 +166,7 @@ $$;
 
 
 CREATE OR REPLACE FUNCTION "public"."cleanup_meme_after_recipient_removed"() RETURNS "trigger"
-    LANGUAGE "plpgsql"
+    LANGUAGE "plpgsql" SECURITY DEFINER
     SET "search_path" TO 'public'
     AS $$
 begin
@@ -4879,4 +4879,1354 @@ CREATE OR REPLACE FUNCTION "public"."user_details_memes_own_sent_list"("p_limit"
     (select "next_id" from next_cursor)
   )::public.list_page
   from paged;
+$$;
+create or replace function public.is_user_blocked(
+  p_user_id uuid,
+  p_other_user_id uuid
+)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select
+    p_user_id is not null
+    and p_other_user_id is not null
+    and p_user_id <> p_other_user_id
+    and exists (
+      select 1
+      from public.user_blocks ub
+      where (
+        ub.blocker_id = p_user_id
+        and ub.blocked_id = p_other_user_id
+      )
+      or (
+        ub.blocker_id = p_other_user_id
+        and ub.blocked_id = p_user_id
+      )
+    );
+$$;
+
+create or replace function public.user_is_blocked(
+  p_target_user_id uuid
+)
+returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.user_blocks ub
+    where ub.blocker_id = (select auth.uid())
+      and ub.blocked_id = p_target_user_id
+  );
+$$;
+
+create or replace function public.user_block(
+  p_target_user_id uuid
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_user_id uuid := (select auth.uid());
+begin
+  if v_user_id is null then
+    raise exception 'not authenticated';
+  end if;
+
+  if p_target_user_id is null then
+    raise exception 'target_user_id is required';
+  end if;
+
+  if p_target_user_id = v_user_id then
+    raise exception 'cannot block yourself';
+  end if;
+
+  insert into public.user_blocks (blocker_id, blocked_id)
+  values (v_user_id, p_target_user_id)
+  on conflict (blocker_id, blocked_id)
+  do update
+    set updated_at = now();
+
+  delete from public.friendship_requests r
+  where r.status = 'pending'
+    and (
+      (
+        r.requester_id = v_user_id
+        and r.addressee_id = p_target_user_id
+      )
+      or (
+        r.requester_id = p_target_user_id
+        and r.addressee_id = v_user_id
+      )
+    );
+
+  delete from public.friendships f
+  where (
+    f.user_id = v_user_id
+    and f.friend_id = p_target_user_id
+  )
+  or (
+    f.user_id = p_target_user_id
+    and f.friend_id = v_user_id
+  );
+end;
+$$;
+
+create or replace function public.user_unblock(
+  p_target_user_id uuid
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_user_id uuid := (select auth.uid());
+begin
+  if v_user_id is null then
+    raise exception 'not authenticated';
+  end if;
+
+  if p_target_user_id is null then
+    raise exception 'target_user_id is required';
+  end if;
+
+  delete from public.user_blocks ub
+  where ub.blocker_id = v_user_id
+    and ub.blocked_id = p_target_user_id;
+end;
+$$;
+
+create or replace function public.user_blocked_users_list(
+  p_search text default null,
+  p_limit integer default 30,
+  p_cursor_created_at timestamptz default null,
+  p_cursor_id uuid default null
+)
+returns public.list_page
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_user_id uuid := (select auth.uid());
+begin
+  if v_user_id is null then
+    raise exception 'not authenticated';
+  end if;
+
+  return (
+    with params as (
+      select
+        v_user_id as user_id,
+        nullif(trim(p_search), '') as search_term
+    ),
+    base as (
+      select
+        ub.blocked_id,
+        u.name as blocked_name,
+        u.friendship_code,
+        u.created_at as blocked_user_created_at,
+        u.updated_at as blocked_user_updated_at,
+        ub.created_at as blocked_at
+      from public.user_blocks ub
+      join public.users u on u.id = ub.blocked_id
+      where ub.blocker_id = (select user_id from params)
+    ),
+    filtered as (
+      select *
+      from base
+      where (select search_term from params) is null
+        or lower(blocked_name) like '%' || lower((select search_term from params)) || '%'
+        or friendship_code like '%' || (select search_term from params) || '%'
+    ),
+    ordered as (
+      select
+        row(
+          blocked_id,
+          blocked_name,
+          friendship_code,
+          blocked_user_created_at,
+          blocked_user_updated_at
+        )::public.user_item as item,
+        blocked_at as sort_created_at,
+        blocked_id as sort_id
+      from filtered
+    ),
+    paged as (
+      select *
+      from ordered
+      where (
+        p_cursor_created_at is null
+        or p_cursor_id is null
+        or (sort_created_at, sort_id) < (p_cursor_created_at, p_cursor_id)
+      )
+      order by sort_created_at desc, sort_id desc
+      limit coalesce(p_limit, 30)
+    ),
+    next_cursor as (
+      select
+        sort_created_at as next_created_at,
+        sort_id as next_id
+      from paged
+      order by sort_created_at asc, sort_id asc
+      limit 1
+    )
+    select row(
+      coalesce(jsonb_agg(to_jsonb(paged.item)), '[]'::jsonb),
+      (select next_created_at from next_cursor),
+      (select next_id from next_cursor)
+    )::public.list_page
+    from paged
+  );
+end;
+$$;
+
+create or replace function public.ugc_report_user_can_create(
+  p_target_user_id uuid
+)
+returns boolean
+language sql
+security definer
+set search_path = public
+as $$
+  select
+    (select auth.uid()) is not null
+    and p_target_user_id is not null
+    and not exists (
+      select 1
+      from public.ugc_reports ur
+      where ur.reporter_id = (select auth.uid())
+        and ur.target_type = 'user'::public.ugc_report_target_type
+        and ur.target_user_id = p_target_user_id
+        and ur.status in (
+          'open'::public.ugc_report_status,
+          'in_review'::public.ugc_report_status
+        )
+    );
+$$;
+
+create or replace function public.ugc_report_create(
+  p_target_type public.ugc_report_target_type,
+  p_target_id uuid,
+  p_reason public.ugc_report_reason
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_reporter_id uuid := (select auth.uid());
+begin
+  if v_reporter_id is null then
+    raise exception 'not authenticated';
+  end if;
+
+  if p_target_type is null then
+    raise exception 'target_type is required';
+  end if;
+
+  if p_target_id is null then
+    raise exception 'target_id is required';
+  end if;
+
+  if p_reason is null then
+    raise exception 'reason is required';
+  end if;
+
+  if p_target_type = 'user'::public.ugc_report_target_type then
+    if not exists (
+      select 1
+      from public.users u
+      where u.id = p_target_id
+    ) then
+      raise exception 'target user not found';
+    end if;
+
+    if not public.ugc_report_user_can_create(p_target_id) then
+      raise exception using
+        errcode = '23505',
+        message = 'active user report already exists';
+    end if;
+
+    insert into public.ugc_reports (
+      reporter_id,
+      target_type,
+      target_user_id,
+      reason
+    )
+    values (
+      v_reporter_id,
+      'user'::public.ugc_report_target_type,
+      p_target_id,
+      p_reason
+    );
+
+    return;
+  end if;
+
+  if p_target_type = 'group'::public.ugc_report_target_type then
+    if not exists (
+      select 1
+      from public.groups g
+      where g.id = p_target_id
+    ) then
+      raise exception 'target group not found';
+    end if;
+
+    insert into public.ugc_reports (
+      reporter_id,
+      target_type,
+      target_group_id,
+      reason
+    )
+    values (
+      v_reporter_id,
+      'group'::public.ugc_report_target_type,
+      p_target_id,
+      p_reason
+    );
+
+    return;
+  end if;
+
+  if p_target_type = 'meme'::public.ugc_report_target_type then
+    if not exists (
+      select 1
+      from public.memes m
+      where m.id = p_target_id
+    ) then
+      raise exception 'target meme not found';
+    end if;
+
+    insert into public.ugc_reports (
+      reporter_id,
+      target_type,
+      target_meme_id,
+      reason
+    )
+    values (
+      v_reporter_id,
+      'meme'::public.ugc_report_target_type,
+      p_target_id,
+      p_reason
+    );
+
+    return;
+  end if;
+
+  raise exception 'target_type must be `user`, `group`, or `meme`';
+end;
+$$;
+
+create or replace function public.ugc_report_reason_list()
+returns table(reason text)
+language sql
+stable
+set search_path = public
+as $$
+  select enum_value::text as reason
+  from unnest(enum_range(null::public.ugc_report_reason)) as enum_value
+$$;
+
+create or replace function public.contains_prohibited_text(
+  p_values text[]
+)
+returns boolean
+language sql
+immutable
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from unnest(coalesce(p_values, '{}'::text[])) as value
+    where lower(coalesce(value, '')) ~ '(kill|kys|nazi|rape|suicide)'
+  );
+$$;
+
+create or replace function public.is_meme_recipient(
+  p_meme_id uuid,
+  p_user_id uuid
+)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $$
+  select exists (
+    select 1
+    from public.meme_recipients mr
+    join public.memes m on m.id = mr.meme_id
+    where mr.meme_id = p_meme_id
+      and not public.is_user_blocked(m.user_id, p_user_id)
+      and (
+        mr.user_id = p_user_id
+        or (
+          mr.group_id is not null
+          and (
+            exists (
+              select 1
+              from public.group_users gu
+              where gu.group_id = mr.group_id
+                and gu.user_id = p_user_id
+            )
+            or exists (
+              select 1
+              from public.group_invitations gi
+              where gi.group_id = mr.group_id
+                and gi.invitee_id = p_user_id
+                and gi.status = 'pending'
+            )
+          )
+        )
+      )
+  );
+$$;
+
+drop function if exists public.meme_create(text, uuid, uuid[], uuid[], double precision);
+
+create function public.meme_create(
+  p_image_path text,
+  p_template_id uuid,
+  p_recipient_ids uuid[],
+  p_group_ids uuid[] default '{}'::uuid[],
+  p_aspect_ratio double precision default null,
+  p_text_layers text[] default '{}'::text[]
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_user_id uuid := (select auth.uid());
+  v_meme public.memes;
+  v_direct_recipient_ids uuid[];
+  v_group_ids uuid[];
+begin
+  if v_user_id is null then
+    raise exception 'not authenticated';
+  end if;
+
+  if p_image_path is null or length(trim(p_image_path)) = 0 then
+    raise exception 'image_path is required';
+  end if;
+
+  if p_template_id is null then
+    raise exception 'template_id is required';
+  end if;
+
+  if p_aspect_ratio is null or p_aspect_ratio <= 0 then
+    raise exception 'aspect_ratio must be positive';
+  end if;
+
+  if public.contains_prohibited_text(p_text_layers) then
+    raise exception 'meme text contains prohibited terms';
+  end if;
+
+  select coalesce(array_agg(distinct recipient_id), '{}'::uuid[])
+  into v_direct_recipient_ids
+  from (
+    select recipient_id
+    from unnest(coalesce(p_recipient_ids, '{}'::uuid[])) as recipient_id
+    where recipient_id is not null
+      and recipient_id <> v_user_id
+  ) normalized;
+
+  select coalesce(array_agg(distinct group_id), '{}'::uuid[])
+  into v_group_ids
+  from (
+    select group_id
+    from unnest(coalesce(p_group_ids, '{}'::uuid[])) as group_id
+    where group_id is not null
+  ) normalized;
+
+  if array_length(v_direct_recipient_ids, 1) is null
+     and array_length(v_group_ids, 1) is null then
+    raise exception 'recipient_ids is required';
+  end if;
+
+  if exists (
+    select 1
+    from unnest(v_direct_recipient_ids) as recipient_id
+    where not exists (
+      select 1
+      from public.friendships f
+      where f.user_id = v_user_id
+        and f.friend_id = recipient_id
+    )
+  ) then
+    raise exception 'all direct recipients must be friends';
+  end if;
+
+  if exists (
+    select 1
+    from unnest(v_direct_recipient_ids) as recipient_id
+    where public.is_user_blocked(v_user_id, recipient_id)
+  ) then
+    raise exception 'cannot send memes to blocked users';
+  end if;
+
+  if exists (
+    select 1
+    from unnest(v_group_ids) as group_id
+    where not exists (
+      select 1
+      from public.group_users gu
+      where gu.group_id = group_id
+        and gu.user_id = v_user_id
+    )
+  ) then
+    raise exception 'all groups must include the sender';
+  end if;
+
+  if exists (
+    select 1
+    from unnest(v_group_ids) as group_id
+    where exists (
+      select 1
+      from public.group_users gu
+      where gu.group_id = group_id
+        and public.is_user_blocked(v_user_id, gu.user_id)
+    )
+    or exists (
+      select 1
+      from public.group_invitations gi
+      where gi.group_id = group_id
+        and gi.status = 'pending'
+        and public.is_user_blocked(v_user_id, gi.invitee_id)
+    )
+  ) then
+    raise exception 'cannot send memes to groups containing blocked users';
+  end if;
+
+  insert into public.memes (user_id, template_id, image_path, aspect_ratio)
+  values (v_user_id, p_template_id, p_image_path, p_aspect_ratio)
+  returning *
+  into v_meme;
+
+  insert into public.meme_recipients (meme_id, user_id)
+  select v_meme.id, recipient_id
+  from unnest(v_direct_recipient_ids) as recipient_id
+  on conflict do nothing;
+
+  insert into public.meme_recipients (meme_id, group_id)
+  select v_meme.id, group_id
+  from unnest(v_group_ids) as group_id
+  on conflict do nothing;
+end;
+$$;
+
+create or replace function public.meme_recipients_add(
+  p_meme_id uuid,
+  p_recipient_ids uuid[],
+  p_group_ids uuid[]
+)
+returns void
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_user_id uuid := (select auth.uid());
+  v_direct_recipient_ids uuid[];
+  v_group_ids uuid[];
+  v_actor_name text;
+  v_push_preview_status public.push_preview_status;
+  v_push_image_path text;
+  v_meme_aspect_ratio double precision;
+begin
+  if v_user_id is null then
+    raise exception 'not authenticated';
+  end if;
+
+  if p_meme_id is null then
+    raise exception 'meme_id is required';
+  end if;
+
+  select coalesce(array_agg(distinct recipient_id), '{}'::uuid[])
+  into v_direct_recipient_ids
+  from (
+    select recipient_id
+    from unnest(coalesce(p_recipient_ids, '{}'::uuid[])) as recipient_id
+    where recipient_id is not null
+      and recipient_id <> v_user_id
+  ) normalized;
+
+  select coalesce(array_agg(distinct group_id), '{}'::uuid[])
+  into v_group_ids
+  from (
+    select group_id
+    from unnest(coalesce(p_group_ids, '{}'::uuid[])) as group_id
+    where group_id is not null
+  ) normalized;
+
+  if array_length(v_direct_recipient_ids, 1) is null
+     and array_length(v_group_ids, 1) is null then
+    raise exception 'recipient_ids is required';
+  end if;
+
+  if exists (
+    select 1
+    from unnest(v_direct_recipient_ids) as recipient_id
+    where not exists (
+      select 1
+      from public.friendships f
+      where f.user_id = v_user_id
+        and f.friend_id = recipient_id
+    )
+  ) then
+    raise exception 'all direct recipients must be friends';
+  end if;
+
+  if exists (
+    select 1
+    from unnest(v_direct_recipient_ids) as recipient_id
+    where public.is_user_blocked(v_user_id, recipient_id)
+  ) then
+    raise exception 'cannot send memes to blocked users';
+  end if;
+
+  if exists (
+    select 1
+    from unnest(v_group_ids) as group_id
+    where not public.can_access_group(group_id, v_user_id)
+  ) then
+    raise exception 'all groups must be accessible to sender';
+  end if;
+
+  if exists (
+    select 1
+    from unnest(v_group_ids) as group_id
+    where exists (
+      select 1
+      from public.group_users gu
+      where gu.group_id = group_id
+        and public.is_user_blocked(v_user_id, gu.user_id)
+    )
+    or exists (
+      select 1
+      from public.group_invitations gi
+      where gi.group_id = group_id
+        and gi.status = 'pending'
+        and public.is_user_blocked(v_user_id, gi.invitee_id)
+    )
+  ) then
+    raise exception 'cannot send memes to groups containing blocked users';
+  end if;
+
+  select
+    u.name,
+    m.push_preview_status,
+    nullif(trim(m.push_image_path), ''),
+    m.aspect_ratio
+  into
+    v_actor_name,
+    v_push_preview_status,
+    v_push_image_path,
+    v_meme_aspect_ratio
+  from public.memes m
+  join public.users u on u.id = m.user_id
+  where m.id = p_meme_id
+    and m.user_id = v_user_id
+  limit 1;
+
+  if v_actor_name is null then
+    raise exception 'meme not found or not owned by user';
+  end if;
+
+  if v_meme_aspect_ratio is null or v_meme_aspect_ratio <= 0 then
+    raise exception 'meme aspect_ratio not found for meme notification';
+  end if;
+
+  if v_push_preview_status = 'ready' and v_push_image_path is null then
+    raise exception 'meme push_image_path not found for ready meme notification';
+  end if;
+
+  if v_push_preview_status <> 'ready' then
+    v_push_image_path := null;
+  end if;
+
+  with inserted_direct as (
+    insert into public.meme_recipients (meme_id, user_id)
+    select p_meme_id, recipient_id
+    from unnest(v_direct_recipient_ids) as recipient_id
+    on conflict do nothing
+    returning user_id
+  )
+  insert into public.notifications (
+    recipient_id,
+    type,
+    data
+  )
+  select
+    inserted_direct.user_id,
+    'meme_received',
+    jsonb_build_object(
+      'actor_id',
+      v_user_id,
+      'actor_name',
+      v_actor_name,
+      'meme_id',
+      p_meme_id,
+      'push_image_path',
+      v_push_image_path,
+      'aspect_ratio',
+      v_meme_aspect_ratio,
+      'group_id',
+      to_jsonb(null::uuid),
+      'group_name',
+      to_jsonb(null::text),
+      'route_tab',
+      to_jsonb(null::text)
+    )
+  from inserted_direct
+  where inserted_direct.user_id <> v_user_id
+  on conflict do nothing;
+
+  with inserted_groups as (
+    insert into public.meme_recipients (meme_id, group_id)
+    select p_meme_id, group_id
+    from unnest(v_group_ids) as group_id
+    on conflict do nothing
+    returning group_id
+  ),
+  group_recipients as (
+    select
+      gu.user_id as recipient_id,
+      g.id as group_id,
+      g.name as group_name
+    from inserted_groups ig
+    join public.groups g on g.id = ig.group_id
+    join public.group_users gu on gu.group_id = ig.group_id
+
+    union
+
+    select
+      gi.invitee_id as recipient_id,
+      g.id as group_id,
+      g.name as group_name
+    from inserted_groups ig
+    join public.groups g on g.id = ig.group_id
+    join public.group_invitations gi
+      on gi.group_id = ig.group_id
+     and gi.status = 'pending'
+  )
+  insert into public.notifications (
+    recipient_id,
+    type,
+    data
+  )
+  select
+    gr.recipient_id,
+    'meme_received',
+    jsonb_build_object(
+      'actor_id',
+      v_user_id,
+      'actor_name',
+      v_actor_name,
+      'meme_id',
+      p_meme_id,
+      'push_image_path',
+      v_push_image_path,
+      'aspect_ratio',
+      v_meme_aspect_ratio,
+      'group_id',
+      gr.group_id,
+      'group_name',
+      gr.group_name,
+      'route_tab',
+      to_jsonb(null::text)
+    )
+  from group_recipients gr
+  where gr.recipient_id <> v_user_id
+  on conflict do nothing;
+end;
+$$;
+
+create or replace function public.friendship_requests_list(
+  p_search text default null,
+  p_limit integer default 30,
+  p_cursor_created_at timestamptz default null,
+  p_cursor_id uuid default null
+)
+returns public.list_page
+language sql
+security definer
+set search_path = public
+as $$
+  with params as (
+    select
+      (select auth.uid()) as user_id,
+      nullif(trim(p_search), '') as search_term
+  ),
+  base as (
+    select
+      r.id as request_id,
+      r.status,
+      r.created_at,
+      r.updated_at,
+      case
+        when r.requester_id = (select user_id from params)
+          then 'outgoing'::public.friendship_request_direction
+        else 'incoming'::public.friendship_request_direction
+      end as direction,
+      case
+        when r.requester_id = (select user_id from params)
+          then r.addressee_id
+        else r.requester_id
+      end as other_user_id,
+      case
+        when r.requester_id = (select user_id from params)
+          then ua.name
+        else ur.name
+      end as other_user_name,
+      case
+        when r.requester_id = (select user_id from params)
+          then ua.friendship_code
+        else ur.friendship_code
+      end as other_user_friendship_code,
+      case
+        when r.requester_id = (select user_id from params)
+          then ua.created_at
+        else ur.created_at
+      end as other_user_created_at,
+      case
+        when r.requester_id = (select user_id from params)
+          then ua.updated_at
+        else ur.updated_at
+      end as other_user_updated_at
+    from public.friendship_requests r
+    join public.users ur on ur.id = r.requester_id
+    join public.users ua on ua.id = r.addressee_id
+    where (
+      r.requester_id = (select user_id from params)
+      or r.addressee_id = (select user_id from params)
+    )
+      and r.status = 'pending'
+      and not public.is_user_blocked(
+        (select user_id from params),
+        case
+          when r.requester_id = (select user_id from params)
+            then r.addressee_id
+          else r.requester_id
+        end
+      )
+  ),
+  filtered as (
+    select *
+    from base
+    where (select search_term from params) is null
+      or lower(other_user_name) like '%' || lower((select search_term from params)) || '%'
+  ),
+  ordered as (
+    select
+      row(
+        request_id,
+        status,
+        created_at,
+        updated_at,
+        direction,
+        row(
+          other_user_id,
+          other_user_name,
+          other_user_friendship_code,
+          other_user_created_at,
+          other_user_updated_at
+        )::public.user_item
+      )::public.friendship_request_item as item,
+      created_at as sort_created_at,
+      request_id as sort_id
+    from filtered
+  ),
+  paged as (
+    select *
+    from ordered
+    where (
+      p_cursor_created_at is null
+      or p_cursor_id is null
+      or (sort_created_at, sort_id) < (p_cursor_created_at, p_cursor_id)
+    )
+    order by sort_created_at desc, sort_id desc
+    limit coalesce(p_limit, 30)
+  ),
+  next_cursor as (
+    select
+      sort_created_at as next_created_at,
+      sort_id as next_id
+    from paged
+    order by sort_created_at asc, sort_id asc
+    limit 1
+  )
+  select row(
+    coalesce(jsonb_agg(to_jsonb(paged.item)), '[]'::jsonb),
+    (select next_created_at from next_cursor),
+    (select next_id from next_cursor)
+  )::public.list_page
+  from paged;
+$$;
+
+create or replace function public.friendships_list(
+  p_search text default null,
+  p_limit integer default 30,
+  p_cursor_created_at timestamptz default null,
+  p_cursor_id uuid default null
+)
+returns public.list_page
+language sql
+security definer
+set search_path = public
+as $$
+  with params as (
+    select
+      (select auth.uid()) as user_id,
+      nullif(trim(p_search), '') as search_term
+  ),
+  base as (
+    select
+      f.friend_id,
+      u.name as friend_name,
+      u.friendship_code as friendship_code,
+      u.created_at as friend_created_at,
+      u.updated_at as friend_updated_at,
+      f.created_at,
+      f.updated_at
+    from public.friendships f
+    join public.users u on u.id = f.friend_id
+    where f.user_id = (select user_id from params)
+      and not public.is_user_blocked((select user_id from params), f.friend_id)
+  ),
+  filtered as (
+    select *
+    from base
+    where (select search_term from params) is null
+      or lower(friend_name) like '%' || lower((select search_term from params)) || '%'
+  ),
+  ordered as (
+    select
+      row(
+        row(
+          friend_id,
+          friend_name,
+          friendship_code,
+          friend_created_at,
+          friend_updated_at
+        )::public.user_item,
+        created_at,
+        updated_at
+      )::public.friendship_item as item,
+      created_at as sort_created_at,
+      friend_id as sort_id
+    from filtered
+  ),
+  paged as (
+    select *
+    from ordered
+    where (
+      p_cursor_created_at is null
+      or p_cursor_id is null
+      or (sort_created_at, sort_id) < (p_cursor_created_at, p_cursor_id)
+    )
+    order by sort_created_at desc, sort_id desc
+    limit coalesce(p_limit, 30)
+  ),
+  next_cursor as (
+    select
+      sort_created_at as next_created_at,
+      sort_id as next_id
+    from paged
+    order by sort_created_at asc, sort_id asc
+    limit 1
+  )
+  select row(
+    coalesce(jsonb_agg(to_jsonb(paged.item)), '[]'::jsonb),
+    (select next_created_at from next_cursor),
+    (select next_id from next_cursor)
+  )::public.list_page
+  from paged;
+$$;
+
+create or replace function public.meme_recipient_targets_list(
+  p_search text default null,
+  p_limit integer default 30,
+  p_cursor_created_at timestamptz default null,
+  p_cursor_id uuid default null
+)
+returns public.list_page
+language sql
+security definer
+set search_path = public
+as $$
+  with params as (
+    select
+      (select auth.uid()) as user_id,
+      nullif(trim(p_search), '') as search_term
+  ),
+  user_targets as (
+    select
+      'user'::public.meme_recipient_target_type as type,
+      u.id,
+      u.name,
+      u.friendship_code,
+      null::integer as member_count,
+      f.created_at,
+      f.updated_at
+    from public.friendships f
+    join public.users u on u.id = f.friend_id
+    where f.user_id = (select user_id from params)
+      and not public.is_user_blocked((select user_id from params), u.id)
+  ),
+  group_targets as (
+    select
+      'group'::public.meme_recipient_target_type as type,
+      g.id,
+      g.name,
+      null::text as friendship_code,
+      (
+        select count(*)::integer
+        from public.group_users gu_count
+        where gu_count.group_id = g.id
+      ) as member_count,
+      gu_me.created_at,
+      g.updated_at
+    from public.group_users gu_me
+    join public.groups g on g.id = gu_me.group_id
+    where gu_me.user_id = (select user_id from params)
+      and not exists (
+        select 1
+        from public.group_users gu
+        where gu.group_id = g.id
+          and public.is_user_blocked((select user_id from params), gu.user_id)
+      )
+      and not exists (
+        select 1
+        from public.group_invitations gi
+        where gi.group_id = g.id
+          and gi.status = 'pending'
+          and public.is_user_blocked((select user_id from params), gi.invitee_id)
+      )
+  ),
+  base as (
+    select * from user_targets
+    union all
+    select * from group_targets
+  ),
+  filtered as (
+    select *
+    from base
+    where (select search_term from params) is null
+      or lower(name) like '%' || lower((select search_term from params)) || '%'
+  ),
+  ordered as (
+    select
+      row(
+        type,
+        id,
+        name,
+        friendship_code,
+        member_count,
+        created_at,
+        updated_at
+      )::public.meme_recipient_target_item as item,
+      created_at as sort_created_at,
+      id as sort_id
+    from filtered
+  ),
+  paged as (
+    select *
+    from ordered
+    where (
+      p_cursor_created_at is null
+      or p_cursor_id is null
+      or (sort_created_at, sort_id) < (p_cursor_created_at, p_cursor_id)
+    )
+    order by sort_created_at desc, sort_id desc
+    limit coalesce(p_limit, 30)
+  ),
+  next_cursor as (
+    select
+      sort_created_at as next_created_at,
+      sort_id as next_id
+    from paged
+    order by sort_created_at asc, sort_id asc
+    limit 1
+  )
+  select row(
+    coalesce(jsonb_agg(to_jsonb(paged.item)), '[]'::jsonb),
+    (select next_created_at from next_cursor),
+    (select next_id from next_cursor)
+  )::public.list_page
+  from paged;
+$$;
+
+create or replace function public.meme_addable_recipient_targets_list(
+  p_meme_id uuid,
+  p_search text default null,
+  p_limit integer default 30,
+  p_cursor_created_at timestamptz default null,
+  p_cursor_id uuid default null
+)
+returns public.list_page
+language plpgsql
+security definer
+set search_path = public
+as $$
+declare
+  v_user_id uuid := (select auth.uid());
+begin
+  if v_user_id is null then
+    raise exception 'not authenticated';
+  end if;
+
+  if p_meme_id is null then
+    raise exception 'meme_id is required';
+  end if;
+
+  if not public.is_meme_creator(p_meme_id, v_user_id) then
+    raise exception 'meme not found or not owned by user';
+  end if;
+
+  return (
+    with params as (
+      select
+        v_user_id as user_id,
+        nullif(trim(p_search), '') as search_term
+    ),
+    group_access as (
+      select
+        gu.group_id,
+        gu.created_at
+      from public.group_users gu
+      where gu.user_id = (select user_id from params)
+
+      union all
+
+      select
+        gi.group_id,
+        gi.created_at
+      from public.group_invitations gi
+      where gi.invitee_id = (select user_id from params)
+        and gi.status = 'pending'
+    ),
+    user_targets as (
+      select
+        'user'::public.meme_recipient_target_type as type,
+        u.id,
+        u.name,
+        u.friendship_code,
+        null::integer as member_count,
+        f.created_at,
+        f.updated_at
+      from public.friendships f
+      join public.users u on u.id = f.friend_id
+      where f.user_id = (select user_id from params)
+        and not public.is_user_blocked((select user_id from params), u.id)
+        and not exists (
+          select 1
+          from public.meme_recipients mr
+          where mr.meme_id = p_meme_id
+            and mr.user_id = u.id
+        )
+    ),
+    group_targets as (
+      select
+        'group'::public.meme_recipient_target_type as type,
+        g.id,
+        g.name,
+        null::text as friendship_code,
+        (
+          select count(*)::integer
+          from public.group_users gu_count
+          where gu_count.group_id = g.id
+        ) as member_count,
+        min(ga.created_at) as created_at,
+        g.updated_at
+      from group_access ga
+      join public.groups g on g.id = ga.group_id
+      where not exists (
+        select 1
+        from public.meme_recipients mr
+        where mr.meme_id = p_meme_id
+          and mr.group_id = g.id
+      )
+        and not exists (
+          select 1
+          from public.group_users gu
+          where gu.group_id = g.id
+            and public.is_user_blocked((select user_id from params), gu.user_id)
+        )
+        and not exists (
+          select 1
+          from public.group_invitations gi
+          where gi.group_id = g.id
+            and gi.status = 'pending'
+            and public.is_user_blocked((select user_id from params), gi.invitee_id)
+        )
+      group by g.id, g.name, g.updated_at
+    ),
+    base as (
+      select * from user_targets
+      union all
+      select * from group_targets
+    ),
+    filtered as (
+      select *
+      from base
+      where (select search_term from params) is null
+        or lower(name) like '%' || lower((select search_term from params)) || '%'
+        or coalesce(friendship_code, '') like '%' || (select search_term from params) || '%'
+    ),
+    ordered as (
+      select
+        row(
+          type,
+          id,
+          name,
+          friendship_code,
+          member_count,
+          created_at,
+          updated_at
+        )::public.meme_recipient_target_item as item,
+        created_at as sort_created_at,
+        id as sort_id
+      from filtered
+    ),
+    paged as (
+      select *
+      from ordered
+      where (
+        p_cursor_created_at is null
+        or p_cursor_id is null
+        or (sort_created_at, sort_id) < (p_cursor_created_at, p_cursor_id)
+      )
+      order by sort_created_at desc, sort_id desc
+      limit coalesce(p_limit, 30)
+    ),
+    next_cursor as (
+      select
+        sort_created_at as next_created_at,
+        sort_id as next_id
+      from paged
+      order by sort_created_at asc, sort_id asc
+      limit 1
+    )
+    select row(
+      coalesce(jsonb_agg(to_jsonb(paged.item)), '[]'::jsonb),
+      (select next_created_at from next_cursor),
+      (select next_id from next_cursor)
+    )::public.list_page
+    from paged
+  );
+end;
+$$;
+
+create or replace function public.notifications_list(
+  p_search text default null,
+  p_limit integer default 30,
+  p_cursor_created_at timestamptz default null,
+  p_cursor_id uuid default null
+)
+returns public.list_page
+language sql
+security definer
+set search_path = public
+as $$
+  with params as (
+    select
+      (select auth.uid()) as user_id,
+      nullif(trim(p_search), '') as search_term
+  ),
+  base as (
+    select
+      n.id,
+      n.type,
+      n.data,
+      n.is_read,
+      n.created_at,
+      n.updated_at,
+      lower(coalesce(n.data->>'actor_name', '')) as actor_name
+    from public.notifications n
+    where n.recipient_id = (select user_id from params)
+      and (
+        not (n.data ? 'actor_id')
+        or (n.data->>'actor_id') !~* '^[0-9a-fA-F-]{36}$'
+        or not public.is_user_blocked(
+          (select user_id from params),
+          (n.data->>'actor_id')::uuid
+        )
+      )
+  ),
+  filtered as (
+    select *
+    from base
+    where (select search_term from params) is null
+      or actor_name like '%' || lower((select search_term from params)) || '%'
+  ),
+  ordered as (
+    select
+      row(
+        id,
+        type,
+        data,
+        is_read,
+        created_at,
+        updated_at
+      )::public.notification_item as item,
+      created_at as sort_created_at,
+      id as sort_id
+    from filtered
+  ),
+  paged as (
+    select *
+    from ordered
+    where (
+      p_cursor_created_at is null
+      or p_cursor_id is null
+      or (sort_created_at, sort_id) < (p_cursor_created_at, p_cursor_id)
+    )
+    order by sort_created_at desc, sort_id desc
+    limit coalesce(p_limit, 30)
+  ),
+  next_cursor as (
+    select
+      sort_created_at as next_created_at,
+      sort_id as next_id
+    from paged
+    order by sort_created_at asc, sort_id asc
+    limit 1
+  )
+  select row(
+    coalesce(jsonb_agg(to_jsonb(paged.item)), '[]'::jsonb),
+    (select next_created_at from next_cursor),
+    (select next_id from next_cursor)
+  )::public.list_page
+  from paged;
+$$;
+
+create or replace function public.notifications_unread_count()
+returns integer
+language sql
+security definer
+set search_path = public
+as $$
+  select count(*)::integer
+  from public.notifications n
+  where n.recipient_id = (select auth.uid())
+    and n.is_read = false
+    and (
+      not (n.data ? 'actor_id')
+      or (n.data->>'actor_id') !~* '^[0-9a-fA-F-]{36}$'
+      or not public.is_user_blocked(
+        (select auth.uid()),
+        (n.data->>'actor_id')::uuid
+      )
+    );
 $$;

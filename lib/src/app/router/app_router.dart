@@ -28,6 +28,7 @@ import 'package:memuno_app/src/features/groups/presentation/pages/group_create_s
 import 'package:memuno_app/src/features/groups/presentation/pages/groups_page.dart';
 import 'package:memuno_app/src/features/meme_details/presentation/pages/meme_details_page.dart';
 import 'package:memuno_app/src/features/notifications/presentation/pages/notifications_page.dart';
+import 'package:memuno_app/src/features/settings/presentation/pages/blocked_users_page.dart';
 import 'package:memuno_app/src/features/settings/presentation/pages/language_mode_page.dart';
 import 'package:memuno_app/src/features/settings/presentation/pages/settings_page.dart';
 import 'package:memuno_app/src/features/user_details/presentation/pages/user_details_page.dart';
