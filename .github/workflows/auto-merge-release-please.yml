@@ -1,0 +1,193 @@
+name: Auto-merge Release Please PRs
+
+on:
+  pull_request_target:
+    branches: [production]
+    types: [opened, reopened, synchronize, ready_for_review]
+  workflow_dispatch:
+    inputs:
+      pull_request_number:
+        description: "Optional PR number to process manually"
+        required: false
+        type: string
+
+concurrency:
+  group: auto-merge-release-please-${{ github.event.pull_request.number || github.run_id }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  auto_merge_release_please:
+    name: Enable rebase auto-merge for Release Please PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Enable rebase auto-merge
+        uses: actions/github-script@v7
+        env:
+          RELEASE_PR_HEAD_PREFIX: release-please--branches--production
+          CONFLICT_MARKER: "<!-- release-please-conflict-production -->"
+        with:
+          github-token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const headPrefix = process.env.RELEASE_PR_HEAD_PREFIX;
+            const conflictMarker = process.env.CONFLICT_MARKER;
+
+            let payloadPr = context.payload.pull_request;
+
+            if (!payloadPr) {
+              const manualNumberRaw = context.payload.inputs && context.payload.inputs.pull_request_number
+                ? context.payload.inputs.pull_request_number
+                : "";
+
+              if (!manualNumberRaw) {
+                core.info("No pull_request payload found and no manual PR number provided. Nothing to do.");
+                return;
+              }
+
+              const manualNumber = Number(manualNumberRaw);
+              if (!Number.isInteger(manualNumber) || manualNumber <= 0) {
+                core.setFailed(`Invalid pull_request_number input: "${manualNumberRaw}"`);
+                return;
+              }
+
+              const { data: fetchedPr } = await github.rest.pulls.get({
+                owner,
+                repo,
+                pull_number: manualNumber,
+              });
+              payloadPr = fetchedPr;
+            }
+
+            if ((payloadPr.base && payloadPr.base.ref) !== "production") {
+              core.info(`Skipping PR #${payloadPr.number}: base is not production.`);
+              return;
+            }
+
+            if (!payloadPr.head || !payloadPr.head.ref || !payloadPr.head.ref.startsWith(headPrefix)) {
+              core.info(`Skipping PR #${payloadPr.number}: not a Release Please branch.`);
+              return;
+            }
+
+            if (payloadPr.draft) {
+              core.info(`Skipping PR #${payloadPr.number}: PR is draft.`);
+              return;
+            }
+
+            const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+            const upsertConflictComment = async (issueNumber, body) => {
+              const comments = await github.paginate(github.rest.issues.listComments, {
+                owner,
+                repo,
+                issue_number: issueNumber,
+                per_page: 100,
+              });
+
+              const existing = comments.find((comment) => comment.body && comment.body.includes(conflictMarker));
+
+              if (!body) {
+                if (existing) {
+                  await github.rest.issues.deleteComment({
+                    owner,
+                    repo,
+                    comment_id: existing.id,
+                  });
+                  core.info(`Removed obsolete conflict comment from PR #${issueNumber}.`);
+                }
+                return;
+              }
+
+              if (existing) {
+                await github.rest.issues.updateComment({
+                  owner,
+                  repo,
+                  comment_id: existing.id,
+                  body,
+                });
+                core.info(`Updated conflict comment on PR #${issueNumber}.`);
+                return;
+              }
+
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: issueNumber,
+                body,
+              });
+              core.info(`Created conflict comment on PR #${issueNumber}.`);
+            };
+
+            const waitForMergeable = async (pullNumber) => {
+              for (let attempt = 1; attempt <= 8; attempt += 1) {
+                const { data: pr } = await github.rest.pulls.get({
+                  owner,
+                  repo,
+                  pull_number: pullNumber,
+                });
+
+                if (pr.mergeable !== null) {
+                  return pr;
+                }
+
+                core.info(`mergeable is null for PR #${pullNumber}; retry ${attempt}/8...`);
+                await sleep(2000);
+              }
+
+              const { data: pr } = await github.rest.pulls.get({
+                owner,
+                repo,
+                pull_number: pullNumber,
+              });
+              return pr;
+            };
+
+            let pr = await waitForMergeable(payloadPr.number);
+
+            if (pr.mergeable === false) {
+              const body = [
+                conflictMarker,
+                "Release Please PR auto-merge is blocked because this PR is not currently mergeable.",
+                "",
+                "Please resolve the merge conflict. Auto-merge will be retried when the PR updates.",
+              ].join("\n");
+              await upsertConflictComment(pr.number, body);
+              core.warning(`Release Please PR #${pr.number} is not mergeable right now.`);
+              return;
+            }
+
+            await upsertConflictComment(pr.number, "");
+
+            try {
+              await github.graphql(
+                `
+                  mutation EnableAutoMerge($pullRequestId: ID!) {
+                    enablePullRequestAutoMerge(
+                      input: { pullRequestId: $pullRequestId, mergeMethod: REBASE }
+                    ) {
+                      pullRequest {
+                        number
+                      }
+                    }
+                  }
+                `,
+                {
+                  pullRequestId: pr.node_id,
+                },
+              );
+              core.info(`Enabled REBASE auto-merge for Release Please PR #${pr.number}.`);
+            } catch (error) {
+              const message = String(error && error.message ? error.message : error);
+              if (message.toLowerCase().includes("already has auto-merge enabled")) {
+                core.info(`REBASE auto-merge already enabled for Release Please PR #${pr.number}.`);
+                return;
+              }
+              throw error;
+            }

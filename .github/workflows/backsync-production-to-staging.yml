@@ -1,0 +1,193 @@
+name: Back-sync production -> staging
+
+on:
+  push:
+    branches: [production]
+  workflow_dispatch:
+
+concurrency:
+  group: backsync-production-to-staging
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  pull-requests: write
+  issues: write
+
+jobs:
+  backsync:
+    name: Create or update back-sync PR
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      - name: Ensure back-sync PR + enable rebase auto-merge
+        uses: actions/github-script@v7
+        env:
+          SOURCE_BRANCH: production
+          TARGET_BRANCH: staging
+          CONFLICT_MARKER: "<!-- backsync-conflict-production-to-staging -->"
+        with:
+          github-token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+          script: |
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const source = process.env.SOURCE_BRANCH;
+            const target = process.env.TARGET_BRANCH;
+            const conflictMarker = process.env.CONFLICT_MARKER;
+
+            const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+            const upsertConflictComment = async (issueNumber, body) => {
+              const comments = await github.paginate(github.rest.issues.listComments, {
+                owner,
+                repo,
+                issue_number: issueNumber,
+                per_page: 100,
+              });
+
+              const existing = comments.find((comment) => comment.body && comment.body.includes(conflictMarker));
+
+              if (!body) {
+                if (existing) {
+                  await github.rest.issues.deleteComment({
+                    owner,
+                    repo,
+                    comment_id: existing.id,
+                  });
+                  core.info(`Removed obsolete conflict comment from PR #${issueNumber}.`);
+                }
+                return;
+              }
+
+              if (existing) {
+                await github.rest.issues.updateComment({
+                  owner,
+                  repo,
+                  comment_id: existing.id,
+                  body,
+                });
+                core.info(`Updated conflict comment on PR #${issueNumber}.`);
+                return;
+              }
+
+              await github.rest.issues.createComment({
+                owner,
+                repo,
+                issue_number: issueNumber,
+                body,
+              });
+              core.info(`Created conflict comment on PR #${issueNumber}.`);
+            };
+
+            const waitForMergeable = async (pullNumber) => {
+              for (let attempt = 1; attempt <= 8; attempt += 1) {
+                const { data: pr } = await github.rest.pulls.get({
+                  owner,
+                  repo,
+                  pull_number: pullNumber,
+                });
+
+                if (pr.mergeable !== null) {
+                  return pr;
+                }
+
+                core.info(`mergeable is null for PR #${pullNumber}; retry ${attempt}/8...`);
+                await sleep(2000);
+              }
+
+              const { data: pr } = await github.rest.pulls.get({
+                owner,
+                repo,
+                pull_number: pullNumber,
+              });
+              return pr;
+            };
+
+            core.info(`Back-sync check: ${source} -> ${target}`);
+
+            const compare = await github.rest.repos.compareCommitsWithBasehead({
+              owner,
+              repo,
+              basehead: `${target}...${source}`,
+            });
+
+            if (compare.data.ahead_by === 0) {
+              core.info(`No new commits to sync from ${source} to ${target}.`);
+              return;
+            }
+
+            const { data: openPulls } = await github.rest.pulls.list({
+              owner,
+              repo,
+              state: "open",
+              base: target,
+              head: `${owner}:${source}`,
+              per_page: 100,
+            });
+
+            let pr = openPulls[0];
+
+            if (!pr) {
+              const { data: created } = await github.rest.pulls.create({
+                owner,
+                repo,
+                title: `chore(sync): back-sync ${source} -> ${target}`,
+                head: source,
+                base: target,
+                body: [
+                  `Automated back-sync PR from \`${source}\` into \`${target}\`.`,
+                  "",
+                  "- Created by GitHub Actions.",
+                  "- Auto-merge is enabled with `REBASE` once required checks pass.",
+                  "- If conflicts exist, this PR remains open until resolved.",
+                ].join("\n"),
+              });
+              pr = created;
+              core.info(`Created PR #${pr.number} for ${source} -> ${target}.`);
+            } else {
+              core.info(`Using existing PR #${pr.number} for ${source} -> ${target}.`);
+            }
+
+            pr = await waitForMergeable(pr.number);
+
+            if (pr.mergeable === false) {
+              const body = [
+                conflictMarker,
+                `Back-sync auto-merge is blocked because \`${source}\` cannot currently merge into \`${target}\`.`,
+                "",
+                "Please resolve merge conflicts in this PR. Auto-merge will be retried on the next push/update.",
+              ].join("\n");
+              await upsertConflictComment(pr.number, body);
+              core.warning(`PR #${pr.number} is not mergeable right now; left open for conflict resolution.`);
+              return;
+            }
+
+            await upsertConflictComment(pr.number, "");
+
+            try {
+              await github.graphql(
+                `
+                  mutation EnableAutoMerge($pullRequestId: ID!) {
+                    enablePullRequestAutoMerge(
+                      input: { pullRequestId: $pullRequestId, mergeMethod: REBASE }
+                    ) {
+                      pullRequest {
+                        number
+                      }
+                    }
+                  }
+                `,
+                {
+                  pullRequestId: pr.node_id,
+                },
+              );
+              core.info(`Enabled REBASE auto-merge for PR #${pr.number}.`);
+            } catch (error) {
+              const message = String(error && error.message ? error.message : error);
+              if (message.toLowerCase().includes("already has auto-merge enabled")) {
+                core.info(`REBASE auto-merge already enabled for PR #${pr.number}.`);
+                return;
+              }
+              throw error;
+            }
