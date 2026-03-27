@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.2.0](https://github.com/coderaveHQ/memuno_app/compare/v1.1.0...v1.2.0) (2026-03-27)
+
+
+### Features
+
+* **seed:** add localized rich social seed data for App Store screenshots ([6b062af](https://github.com/coderaveHQ/memuno_app/commit/6b062afd1fae1ed149867c335e4aeb9f1f093bfe))
+
+
+### Bug Fixes
+
+* **meme-templates:** remove bottom SafeArea inset in templates bottom sheet ([0f06b74](https://github.com/coderaveHQ/memuno_app/commit/0f06b74d5135b0c09a8bfea62c79be63e084840e))
+
 ## [1.1.0](https://github.com/coderaveHQ/memuno_app/compare/v1.0.0...v1.1.0) (2026-03-25)
 
 
