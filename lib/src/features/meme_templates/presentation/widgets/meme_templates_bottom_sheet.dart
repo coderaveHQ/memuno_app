@@ -149,6 +149,7 @@ class MemeTemplatesBottomSheet extends HookConsumerWidget {
       ),
       child: SafeArea(
         top: false,
+        bottom: false,
         child: Column(
           children: <Widget>[
             Padding(
