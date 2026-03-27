@@ -45,11 +45,9 @@ jobs:
 
           SOURCE_SHA="$(git rev-parse "${SOURCE_REF}")"
           TARGET_SHA="$(git rev-parse "${TARGET_REF}")"
-          MERGE_BASE_SHA="$(git merge-base "${TARGET_REF}" "${SOURCE_REF}")"
 
           echo "source=${SOURCE_REF} (${SOURCE_SHA})"
           echo "target=${TARGET_REF} (${TARGET_SHA})"
-          echo "merge-base=${MERGE_BASE_SHA}"
 
           if [[ "${SOURCE_SHA}" == "${TARGET_SHA}" ]]; then
             echo "Branches are already identical."
@@ -65,9 +63,21 @@ jobs:
             echo "Fast-forwarding target to source."
             git checkout -B "${TARGET_BRANCH}" "${SOURCE_REF}"
           else
-            echo "Branches diverged. Rebasing target-only commits onto source."
-            git checkout -B "${TARGET_BRANCH}" "${TARGET_REF}"
-            git rebase --onto "${SOURCE_REF}" "${MERGE_BASE_SHA}" "${TARGET_BRANCH}"
+            TARGET_PATCH_UNIQUE_COMMITS="$(git rev-list --reverse --right-only --cherry-pick --no-merges "${SOURCE_REF}...${TARGET_REF}")"
+
+            if [[ -z "${TARGET_PATCH_UNIQUE_COMMITS}" ]]; then
+              echo "Branches diverged only by patch-equivalent commits. Resetting target to source."
+              git checkout -B "${TARGET_BRANCH}" "${SOURCE_REF}"
+            else
+              echo "Branches diverged with target-only patch-unique commits."
+              echo "${TARGET_PATCH_UNIQUE_COMMITS}" | sed 's/^/target-only-commit: /'
+              echo "Rebuilding target on top of source via cherry-pick."
+              git checkout -B "${TARGET_BRANCH}" "${SOURCE_REF}"
+              while IFS= read -r commit_sha; do
+                [[ -z "${commit_sha}" ]] && continue
+                git cherry-pick "${commit_sha}"
+              done <<< "${TARGET_PATCH_UNIQUE_COMMITS}"
+            fi
           fi
 
           NEW_TARGET_SHA="$(git rev-parse "${TARGET_BRANCH}")"
