@@ -1,4 +1,4 @@
-name: Back-sync production -> staging
+name: Sync production -> staging
 
 on:
   push:
@@ -6,188 +6,77 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: backsync-production-to-staging
+  group: sync-production-to-staging
   cancel-in-progress: true
 
 permissions:
-  contents: read
-  pull-requests: write
-  issues: write
+  contents: write
 
 jobs:
-  backsync:
-    name: Create or update back-sync PR
+  sync:
+    name: Rebase-sync staging onto production
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 20
 
     steps:
-      - name: Ensure back-sync PR + enable rebase auto-merge
-        uses: actions/github-script@v7
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+          token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+
+      - name: Rebase-sync target branch
         env:
           SOURCE_BRANCH: production
           TARGET_BRANCH: staging
-          CONFLICT_MARKER: "<!-- backsync-conflict-production-to-staging -->"
-        with:
-          github-token: ${{ secrets.RELEASE_PLEASE_TOKEN }}
-          script: |
-            const owner = context.repo.owner;
-            const repo = context.repo.repo;
-            const source = process.env.SOURCE_BRANCH;
-            const target = process.env.TARGET_BRANCH;
-            const conflictMarker = process.env.CONFLICT_MARKER;
+          REPO: ${{ github.repository }}
+          TOKEN: ${{ secrets.RELEASE_PLEASE_TOKEN }}
+        run: |
+          set -euo pipefail
 
-            const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git remote set-url origin "https://x-access-token:${TOKEN}@github.com/${REPO}.git"
 
-            const upsertConflictComment = async (issueNumber, body) => {
-              const comments = await github.paginate(github.rest.issues.listComments, {
-                owner,
-                repo,
-                issue_number: issueNumber,
-                per_page: 100,
-              });
+          git fetch origin "${SOURCE_BRANCH}" "${TARGET_BRANCH}"
 
-              const existing = comments.find((comment) => comment.body && comment.body.includes(conflictMarker));
+          SOURCE_REF="origin/${SOURCE_BRANCH}"
+          TARGET_REF="origin/${TARGET_BRANCH}"
 
-              if (!body) {
-                if (existing) {
-                  await github.rest.issues.deleteComment({
-                    owner,
-                    repo,
-                    comment_id: existing.id,
-                  });
-                  core.info(`Removed obsolete conflict comment from PR #${issueNumber}.`);
-                }
-                return;
-              }
+          SOURCE_SHA="$(git rev-parse "${SOURCE_REF}")"
+          TARGET_SHA="$(git rev-parse "${TARGET_REF}")"
+          MERGE_BASE_SHA="$(git merge-base "${TARGET_REF}" "${SOURCE_REF}")"
 
-              if (existing) {
-                await github.rest.issues.updateComment({
-                  owner,
-                  repo,
-                  comment_id: existing.id,
-                  body,
-                });
-                core.info(`Updated conflict comment on PR #${issueNumber}.`);
-                return;
-              }
+          echo "source=${SOURCE_REF} (${SOURCE_SHA})"
+          echo "target=${TARGET_REF} (${TARGET_SHA})"
+          echo "merge-base=${MERGE_BASE_SHA}"
 
-              await github.rest.issues.createComment({
-                owner,
-                repo,
-                issue_number: issueNumber,
-                body,
-              });
-              core.info(`Created conflict comment on PR #${issueNumber}.`);
-            };
+          if [[ "${SOURCE_SHA}" == "${TARGET_SHA}" ]]; then
+            echo "Branches are already identical."
+            exit 0
+          fi
 
-            const waitForMergeable = async (pullNumber) => {
-              for (let attempt = 1; attempt <= 8; attempt += 1) {
-                const { data: pr } = await github.rest.pulls.get({
-                  owner,
-                  repo,
-                  pull_number: pullNumber,
-                });
+          if git merge-base --is-ancestor "${SOURCE_REF}" "${TARGET_REF}"; then
+            echo "Target already contains source. No sync needed."
+            exit 0
+          fi
 
-                if (pr.mergeable !== null) {
-                  return pr;
-                }
+          if git merge-base --is-ancestor "${TARGET_REF}" "${SOURCE_REF}"; then
+            echo "Fast-forwarding target to source."
+            git checkout -B "${TARGET_BRANCH}" "${SOURCE_REF}"
+          else
+            echo "Branches diverged. Rebasing target-only commits onto source."
+            git checkout -B "${TARGET_BRANCH}" "${TARGET_REF}"
+            git rebase --onto "${SOURCE_REF}" "${MERGE_BASE_SHA}" "${TARGET_BRANCH}"
+          fi
 
-                core.info(`mergeable is null for PR #${pullNumber}; retry ${attempt}/8...`);
-                await sleep(2000);
-              }
+          NEW_TARGET_SHA="$(git rev-parse "${TARGET_BRANCH}")"
+          echo "new-target=${NEW_TARGET_SHA}"
 
-              const { data: pr } = await github.rest.pulls.get({
-                owner,
-                repo,
-                pull_number: pullNumber,
-              });
-              return pr;
-            };
+          if [[ "${NEW_TARGET_SHA}" == "${TARGET_SHA}" ]]; then
+            echo "No branch update required after rebase."
+            exit 0
+          fi
 
-            core.info(`Back-sync check: ${source} -> ${target}`);
-
-            const compare = await github.rest.repos.compareCommitsWithBasehead({
-              owner,
-              repo,
-              basehead: `${target}...${source}`,
-            });
-
-            if (compare.data.ahead_by === 0) {
-              core.info(`No new commits to sync from ${source} to ${target}.`);
-              return;
-            }
-
-            const { data: openPulls } = await github.rest.pulls.list({
-              owner,
-              repo,
-              state: "open",
-              base: target,
-              head: `${owner}:${source}`,
-              per_page: 100,
-            });
-
-            let pr = openPulls[0];
-
-            if (!pr) {
-              const { data: created } = await github.rest.pulls.create({
-                owner,
-                repo,
-                title: `chore(sync): back-sync ${source} -> ${target}`,
-                head: source,
-                base: target,
-                body: [
-                  `Automated back-sync PR from \`${source}\` into \`${target}\`.`,
-                  "",
-                  "- Created by GitHub Actions.",
-                  "- Auto-merge is enabled with `REBASE` once required checks pass.",
-                  "- If conflicts exist, this PR remains open until resolved.",
-                ].join("\n"),
-              });
-              pr = created;
-              core.info(`Created PR #${pr.number} for ${source} -> ${target}.`);
-            } else {
-              core.info(`Using existing PR #${pr.number} for ${source} -> ${target}.`);
-            }
-
-            pr = await waitForMergeable(pr.number);
-
-            if (pr.mergeable === false) {
-              const body = [
-                conflictMarker,
-                `Back-sync auto-merge is blocked because \`${source}\` cannot currently merge into \`${target}\`.`,
-                "",
-                "Please resolve merge conflicts in this PR. Auto-merge will be retried on the next push/update.",
-              ].join("\n");
-              await upsertConflictComment(pr.number, body);
-              core.warning(`PR #${pr.number} is not mergeable right now; left open for conflict resolution.`);
-              return;
-            }
-
-            await upsertConflictComment(pr.number, "");
-
-            try {
-              await github.graphql(
-                `
-                  mutation EnableAutoMerge($pullRequestId: ID!) {
-                    enablePullRequestAutoMerge(
-                      input: { pullRequestId: $pullRequestId, mergeMethod: REBASE }
-                    ) {
-                      pullRequest {
-                        number
-                      }
-                    }
-                  }
-                `,
-                {
-                  pullRequestId: pr.node_id,
-                },
-              );
-              core.info(`Enabled REBASE auto-merge for PR #${pr.number}.`);
-            } catch (error) {
-              const message = String(error && error.message ? error.message : error);
-              if (message.toLowerCase().includes("already has auto-merge enabled")) {
-                core.info(`REBASE auto-merge already enabled for PR #${pr.number}.`);
-                return;
-              }
-              throw error;
-            }
+          git push --force-with-lease="${TARGET_BRANCH}:${TARGET_SHA}" origin "${TARGET_BRANCH}:${TARGET_BRANCH}"
+          echo "Updated ${TARGET_BRANCH} to ${NEW_TARGET_SHA}."
