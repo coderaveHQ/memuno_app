@@ -1,5 +1,5 @@
 -- Rich social seed data for App Store screenshots.
--- Locale: en_US
+-- Locale: en
 -- All users use password: password
 
 CREATE OR REPLACE FUNCTION pg_temp.seed_uuid(p_seed text)
@@ -18,11 +18,11 @@ $$;
 
 DO $$
 DECLARE
-  v_seed_key CONSTANT text := 'en_US';
+  v_seed_key CONSTANT text := 'en';
   v_user_count CONSTANT integer := 36;
   v_seeded_at CONSTANT timestamptz := timezone('utc', now());
-  v_first_names text[] := ARRAY['Ava','Liam','Mia','Noah','Zoe','Mason','Emma','Lucas','Harper','Ethan','Chloe','Logan','Riley','Owen','Natalie','Wyatt','Stella','Caleb'];
-  v_last_names text[] := ARRAY['Parker','Bennett','Carter','Hayes','Brooks','Reed','Foster','Graham','Perry','Sullivan','Morgan','Ellis','Bailey','Turner','Powell','Cooper','Hughes','Walker','Russell','Griffin'];
+  v_first_names text[] := ARRAY['Amelia','Oliver','Isla','George','Freya','Arthur','Ivy','Leo','Poppy','Henry','Elsie','Oscar','Rosie','Theo','Matilda','Jack','Evie','Hugo'];
+  v_last_names text[] := ARRAY['Taylor','Wilson','Clarke','Hughes','Edwards','Jenkins','Baker','Palmer','Davies','Mason','Grant','Fletcher','Chapman','Shaw','Spencer','Cole','Barker','Hunter','Sinclair','Morgan'];
 
   v_pos integer;
   v_name text;
@@ -130,15 +130,15 @@ DISABLE TRIGGER dbwebhook_notifications_insert_send_push;
 
 DO $$
 DECLARE
-  v_seed_key CONSTANT text := 'en_US';
+  v_seed_key CONSTANT text := 'en';
   v_user_count CONSTANT integer := 36;
   v_groups_per_user CONSTANT integer := 4;
   v_group_count CONSTANT integer := v_user_count * v_groups_per_user;
   v_invites_per_group CONSTANT integer := 12;
   v_seeded_at CONSTANT timestamptz := timezone('utc', now());
 
-  v_group_prefixes text[] := ARRAY['Sunrise','Roadtrip','Coffee','GameNight','Design','Sprint','Weekend','Studio','Launch','Pixel','Snack','Meme'];
-  v_group_suffixes text[] := ARRAY['Crew','Squad','Club','Circle','Collective','Guild','Hangout','Hub','Team','Session','Corner','Lab'];
+  v_group_prefixes text[] := ARRAY['TeaBreak','RainyDay','Commute','Retro','Sketch','Sprint','Book','Photo','Weekend','Studio','Launch','Cozy'];
+  v_group_suffixes text[] := ARRAY['Circle','Society','Guild','Collective','Group','Corner','Network','Room','Crew','Table','Forum','Hub'];
 BEGIN
   DROP TABLE IF EXISTS tmp_seed_users;
   CREATE TEMP TABLE tmp_seed_users (
