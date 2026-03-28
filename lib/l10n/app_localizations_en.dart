@@ -661,9 +661,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsLegalCommunitySubtitle => 'Read community behavior rules.';
 
   @override
-  String get settingsLegalAccountDeletionHelpTitle => 'Account deletion help';
-
-  @override
   String get settingsLegalAccountDeletionHelpSubtitle =>
       'Open account deletion instructions.';
 
@@ -1543,9 +1540,6 @@ class AppLocalizationsEnUs extends AppLocalizationsEn {
 
   @override
   String get settingsLegalCommunitySubtitle => 'Read community behavior rules.';
-
-  @override
-  String get settingsLegalAccountDeletionHelpTitle => 'Account deletion help';
 
   @override
   String get settingsLegalAccountDeletionHelpSubtitle =>
