@@ -6,6 +6,8 @@ enum LegalDocument {
   privacyPolicy,
   termsOfUse,
   communityGuidelines,
+
+  /// Not used currently since account deletion is handled in-app, but we keep it here for future use.
   accountDeletion,
   support,
   impressum,

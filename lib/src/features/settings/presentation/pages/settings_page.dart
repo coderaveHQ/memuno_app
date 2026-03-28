@@ -258,23 +258,6 @@ class SettingsPage extends ConsumerWidget {
                   ),
                   MListTile(
                     onPressed: () {
-                      _openLegalDocument(
-                        context,
-                        ref,
-                        LegalDocument.accountDeletion,
-                      );
-                    },
-                    title: l10n.settingsLegalAccountDeletionHelpTitle,
-                    description: l10n.settingsLegalAccountDeletionHelpSubtitle,
-                    trailing: const Icon(
-                      LucideIcons.chevron_right,
-                      color: MColors.gray500,
-                      size: 24.0,
-                    ),
-                    padding: tilePadding,
-                  ),
-                  MListTile(
-                    onPressed: () {
                       _openLegalDocument(context, ref, LegalDocument.impressum);
                     },
                     title: l10n.settingsLegalImpressumTitle,

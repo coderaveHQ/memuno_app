@@ -1297,12 +1297,6 @@ abstract class AppLocalizations {
   /// **'Read community behavior rules.'**
   String get settingsLegalCommunitySubtitle;
 
-  /// No description provided for @settingsLegalAccountDeletionHelpTitle.
-  ///
-  /// In en_US, this message translates to:
-  /// **'Account deletion help'**
-  String get settingsLegalAccountDeletionHelpTitle;
-
   /// No description provided for @settingsLegalAccountDeletionHelpSubtitle.
   ///
   /// In en_US, this message translates to:
