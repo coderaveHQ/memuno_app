@@ -31,7 +31,7 @@ class GroupCreateSheetShell extends ConsumerWidget {
             bottom: MediaQuery.viewInsetsOf(context).bottom,
           ),
           decoration: const MaterialSheetDecoration(
-            size: SheetSize.stretch,
+            size: SheetSize.fit,
             color: MColors.gray900,
             borderRadius: BorderRadius.vertical(top: Radius.circular(20.0)),
             clipBehavior: Clip.antiAlias,
