@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.2.1](https://github.com/coderaveHQ/memuno_app/compare/v1.2.0...v1.2.1) (2026-03-28)
+
+
+### Bug Fixes
+
+* **ui:** correct status bar brightness and icon contrast in MScaffold ([fdfcc42](https://github.com/coderaveHQ/memuno_app/commit/fdfcc4229947af420e43c75c98b6a0e11cbeac7e))
+
 ## [1.2.0](https://github.com/coderaveHQ/memuno_app/compare/v1.1.0...v1.2.0) (2026-03-27)
 
 
