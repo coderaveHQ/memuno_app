@@ -38,8 +38,8 @@ class MScaffold extends StatelessWidget {
         systemNavigationBarIconBrightness: Brightness.light,
         systemNavigationBarDividerColor: MColors.gray900,
         statusBarColor: MColors.transparent,
-        statusBarBrightness: Brightness.dark,
-        statusBarIconBrightness: Brightness.light,
+        statusBarBrightness: Brightness.light,
+        statusBarIconBrightness: Brightness.dark,
       ),
       child: Scaffold(
         backgroundColor: MColors.gray900,
