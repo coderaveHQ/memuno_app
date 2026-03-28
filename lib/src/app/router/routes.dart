@@ -270,10 +270,6 @@ class GroupCreateNameSheetRoute extends GoRouteData
   Page<void> buildPage(BuildContext context, GoRouterState state) {
     return PagedSheetPage<void>(
       key: state.pageKey,
-      initialOffset: const SheetOffset(0.6),
-      snapGrid: const SheetSnapGrid(
-        snaps: <SheetOffset>[SheetOffset(0.6), SheetOffset(1)],
-      ),
       child: const GroupCreateNameSheetPage(),
     );
   }

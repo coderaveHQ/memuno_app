@@ -61,6 +61,7 @@ class GroupCreateNameSheetPage extends HookConsumerWidget {
           right: context.rightPadding + MSpacing.md,
         ),
         child: Column(
+          mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: <Widget>[
             Align(
@@ -89,7 +90,7 @@ class GroupCreateNameSheetPage extends HookConsumerWidget {
               maxLength: 64,
               autofocus: true,
             ),
-            const Spacer(),
+            const MGap.lg(),
             MButton.primary(
               title: l10n.groupsCreateNameContinueButton,
               isEnabled: draft.canProceedFromNameStep,
