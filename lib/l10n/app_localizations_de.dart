@@ -678,9 +678,6 @@ class AppLocalizationsDe extends AppLocalizations {
       'Regeln für das Verhalten in der Community.';
 
   @override
-  String get settingsLegalAccountDeletionHelpTitle => 'Hilfe zur Kontolöschung';
-
-  @override
   String get settingsLegalAccountDeletionHelpSubtitle =>
       'Anleitung zur Kontolöschung öffnen.';
 
@@ -1577,9 +1574,6 @@ class AppLocalizationsDeDe extends AppLocalizationsDe {
   @override
   String get settingsLegalCommunitySubtitle =>
       'Regeln für das Verhalten in der Community.';
-
-  @override
-  String get settingsLegalAccountDeletionHelpTitle => 'Hilfe zur Kontolöschung';
 
   @override
   String get settingsLegalAccountDeletionHelpSubtitle =>
