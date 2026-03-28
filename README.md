@@ -10,6 +10,14 @@ Make memes fast: pick a template, add your caption, and send it to friends insta
 - [Supabase CLI](https://supabase.com/docs/guides/local-development/cli/getting-started?queryGroups=platform&platform=macos) installed
 - [NodeJS](https://nodejs.org/en/download) installed
 
+### Releases
+
+To build a new .ipa file for iOS switch to the `production` branch and run the following command.
+
+```sh
+flutter build ipa --flavor production --dart-define-from-file=.env.production --release --export-method app-store --build-name="$(grep -E '^version:' pubspec.yaml | awk '{print $2}' | cut -d+ -f1)" --build-number="$(date -u +%s)"
+```
+
 ### Declarative Database Schema (public)
 
 This project uses an incremental declarative schema workflow for the `public` schema:
