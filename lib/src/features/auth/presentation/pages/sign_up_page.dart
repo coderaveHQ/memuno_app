@@ -13,10 +13,13 @@ import 'package:memuno_app/src/app/router/app_router.dart';
 import 'package:memuno_app/src/app/widgets/m/m_app_bar.dart';
 import 'package:memuno_app/src/app/widgets/m/m_button.dart';
 import 'package:memuno_app/src/app/widgets/m/m_center.dart';
+import 'package:memuno_app/src/app/widgets/m/m_checkbox.dart';
 import 'package:memuno_app/src/app/widgets/m/m_colors.dart';
 import 'package:memuno_app/src/app/widgets/m/m_gap.dart';
 import 'package:memuno_app/src/app/widgets/m/m_scaffold.dart';
 import 'package:memuno_app/src/app/widgets/m/m_spacing.dart';
+import 'package:memuno_app/src/app/widgets/m/m_tappable.dart';
+import 'package:memuno_app/src/app/widgets/m/m_text.dart';
 import 'package:memuno_app/src/app/widgets/m/m_text_field.dart';
 import 'package:memuno_app/src/core/config/app_env.dart';
 import 'package:memuno_app/src/core/config/legal_urls.dart';
@@ -85,11 +88,11 @@ class SignUpPage extends HookConsumerWidget {
     required VoidCallback onPressed,
     required bool isEnabled,
   }) {
-    return InkWell(
-      onTap: isEnabled ? onPressed : null,
-      borderRadius: BorderRadius.circular(4.0),
-      child: Text(
-        text,
+    return MTappable(
+      onPressed: onPressed,
+      isEnabled: isEnabled,
+      child: MText.p(
+        text: text,
         style: TextStyle(
           color: isEnabled ? MColors.blue400 : MColors.gray500,
           decoration: TextDecoration.underline,
@@ -198,67 +201,62 @@ class SignUpPage extends HookConsumerWidget {
                 ),
                 const MGap.md(),
                 Container(
-                  width: double.infinity,
                   padding: const EdgeInsets.all(MSpacing.sm),
                   decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(MSpacing.sm),
+                    borderRadius: BorderRadius.circular(20.0),
                     border: Border.all(color: MColors.gray700),
                     color: MColors.gray800.withValues(alpha: 0.4),
                   ),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: <Widget>[
-                      Checkbox(
-                        value: hasAcceptedLegal.value,
-                        onChanged: isLoading
-                            ? null
-                            : (bool? nextValue) {
-                                hasAcceptedLegal.value = nextValue ?? false;
-                              },
+                      MCheckbox(
+                        isChecked: hasAcceptedLegal.value,
+                        isEnabled: !isLoading,
+                        onChanged: (bool? nextValue) {
+                          hasAcceptedLegal.value = nextValue ?? false;
+                        },
                       ),
                       Expanded(
-                        child: Padding(
-                          padding: const EdgeInsets.only(top: 12.0),
-                          child: Wrap(
-                            spacing: 4.0,
-                            runSpacing: 4.0,
-                            children: <Widget>[
-                              Text(
-                                l10n.signUpLegalConsentPrefix,
-                                style: const TextStyle(color: MColors.gray100),
-                              ),
-                              _legalLink(
-                                text: l10n.signUpLegalTermsLink,
-                                isEnabled: !isLoading,
-                                onPressed: () {
-                                  _openLegalDocument(
-                                    context,
-                                    ref,
-                                    LegalDocument.termsOfUse,
-                                  );
-                                },
-                              ),
-                              Text(
-                                l10n.signUpLegalConsentAnd,
-                                style: const TextStyle(color: MColors.gray100),
-                              ),
-                              _legalLink(
-                                text: l10n.signUpLegalPrivacyLink,
-                                isEnabled: !isLoading,
-                                onPressed: () {
-                                  _openLegalDocument(
-                                    context,
-                                    ref,
-                                    LegalDocument.privacyPolicy,
-                                  );
-                                },
-                              ),
-                              Text(
-                                '.',
-                                style: const TextStyle(color: MColors.gray100),
-                              ),
-                            ],
-                          ),
+                        child: Wrap(
+                          spacing: 4.0,
+                          runSpacing: 4.0,
+                          children: <Widget>[
+                            MText.p(
+                              text: l10n.signUpLegalConsentPrefix,
+                              style: const TextStyle(color: MColors.gray100),
+                            ),
+                            _legalLink(
+                              text: l10n.signUpLegalTermsLink,
+                              isEnabled: !isLoading,
+                              onPressed: () {
+                                _openLegalDocument(
+                                  context,
+                                  ref,
+                                  LegalDocument.termsOfUse,
+                                );
+                              },
+                            ),
+                            MText.p(
+                              text: l10n.signUpLegalConsentAnd,
+                              style: const TextStyle(color: MColors.gray100),
+                            ),
+                            _legalLink(
+                              text: l10n.signUpLegalPrivacyLink,
+                              isEnabled: !isLoading,
+                              onPressed: () {
+                                _openLegalDocument(
+                                  context,
+                                  ref,
+                                  LegalDocument.privacyPolicy,
+                                );
+                              },
+                            ),
+                            MText.p(
+                              text: '.',
+                              style: const TextStyle(color: MColors.gray100),
+                            ),
+                          ],
                         ),
                       ),
                     ],
