@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.0](https://github.com/coderaveHQ/memuno_app/compare/v1.2.1...v1.3.0) (2026-03-29)
+
+
+### Features
+
+* **auth:** introduce MCheckbox and update sign-up legal consent UI ([cb25c5e](https://github.com/coderaveHQ/memuno_app/commit/cb25c5ed271ffe69420b30a39e49975444358617))
+* **meme-templates:** add templates 37-114 and 20kb/150kb image sets ([9b07d05](https://github.com/coderaveHQ/memuno_app/commit/9b07d0509a91eafbeb6ba73888793526e24c9667))
+
+
+### Bug Fixes
+
+* **groups:** auto-size create-group sheet so continue button is visible ([a40ce3e](https://github.com/coderaveHQ/memuno_app/commit/a40ce3e417723e48e516e832e014f49d285c8230))
+
 ## [1.2.1](https://github.com/coderaveHQ/memuno_app/compare/v1.2.0...v1.2.1) (2026-03-28)
 
 
