@@ -18,6 +18,66 @@ To build a new .ipa file for iOS switch to the `production` branch and run the f
 flutter build ipa --flavor production --dart-define-from-file=.env.production --release --export-method app-store --build-name="$(grep -E '^version:' pubspec.yaml | awk '{print $2}' | cut -d+ -f1)" --build-number="$(date -u +%s)"
 ```
 
+### Working with git
+
+1. Start work (feature branch from `development`)
+
+```sh
+git fetch origin --prune
+git switch development
+git pull --ff-only origin development
+git switch -c feature/<ticket>-<name>
+```
+
+2. Open PR: `feature/...` -> `development`
+
+- Merge method: **Create a merge commit**
+
+3. After feature PR merge cleanup
+
+```sh
+git switch development
+git pull --ff-only origin development
+git branch -d feature/<ticket>-<name>
+git push origin --delete feature/<ticket>-<name>   # if not auto-deleted
+```
+
+4. Promote to `staging` with PR
+
+- Open PR: `development` -> `staging`
+- Merge method: **Create a merge commit**
+- Do not squash and do not rebase this PR
+
+5. After `staging` promotion PR merge cleanup
+
+- No sync-back action needed
+- Update local branches:
+
+```sh
+git fetch origin --prune
+git switch development && git pull --ff-only origin development
+git switch staging && git pull --ff-only origin staging
+```
+
+6. Promote to `production` with PR
+
+- Open PR: `staging` -> `production`
+- Merge method: **Create a merge commit**
+- Do not squash and do not rebase this PR
+
+7. After `production` promotion PR merge cleanup
+
+- Update local branches:
+
+```sh
+git fetch origin --prune
+git switch development && git pull --ff-only origin development
+git switch staging && git pull --ff-only origin staging
+git switch production && git pull --ff-only origin production
+```
+
+8. Start next feature branch from updated `development`.
+
 ### Declarative Database Schema (public)
 
 This project uses an incremental declarative schema workflow for the `public` schema:
